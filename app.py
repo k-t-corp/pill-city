@@ -1,5 +1,4 @@
 import os
-import sys
 from os import urandom
 from pymongo.uri_parser import parse_uri
 from flask import Flask, request, jsonify
@@ -7,7 +6,7 @@ from flask_mongoengine import MongoEngine, MongoEngineSessionInterface
 from flask_restful import Api
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token
-from mini_gplus.resources import UserList, Me
+from mini_gplus.resources import UserList, Me, PostList
 from mini_gplus.models import User
 
 
@@ -56,6 +55,7 @@ CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 api = Api(app)
 api.add_resource(UserList, '/api/users')
+api.add_resource(PostList, '/api/posts')
 api.add_resource(Me, '/api/me')
 
 if __name__ == '__main__':

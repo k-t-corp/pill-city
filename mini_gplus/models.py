@@ -77,8 +77,9 @@ class User(Document, CreatedAtMixin):
         else:
             raise RuntimeError('More than one user for user id {} found!'.format(user_id))
 
+    ###
     # Post
-
+    ###
     def create_post(self, content, is_public, circles):
         """
         Create a post for the user

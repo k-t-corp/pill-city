@@ -22,6 +22,26 @@ class UserList(Resource):
         return other_users, 200
 
 
+post_parser = reqparse.RequestParser()
+post_parser.add_argument('content', type=str, required=True)
+
+
+class PostList(Resource):
+    @jwt_required()
+    def post(self):
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+
+        args = post_parser.parse_args()
+        user.create_post(
+            content=args['content'],
+            # TODO: change
+            is_public=True,
+            # TODO: change
+            circles=[]
+        )
+
+
 class Me(Resource):
     def post(self):
         """
