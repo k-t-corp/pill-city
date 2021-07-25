@@ -1,4 +1,5 @@
 import time
+from typing import List
 from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, PULL, CASCADE, NotUniqueError
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -85,7 +86,7 @@ class User(Document, CreatedAtMixin):
         Create a post for the user
         :param (str) content: the content
         :param (bool) is_public: whether the post is public
-        :param (list[Circle]) circles: circles to share with
+        :param (List[Circle]) circles: circles to share with
         """
         new_post = Post()
         new_post.author = self.id
@@ -133,7 +134,7 @@ class User(Document, CreatedAtMixin):
         """
         All posts that are visible to the user
         :param (User) by_user: posts that are authored by this user
-        :return (list[Post]): all posts that are visible to the user, reverse chronologically ordered
+        :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
         """
         if by_user is None:
             posts = Post.objects()
@@ -276,7 +277,7 @@ class User(Document, CreatedAtMixin):
 class Circle(Document):
     owner = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
     name = StringField(required=True)
-    members = ListField(ReferenceField(User, reverse_delete_rule=PULL), default=[])  # type: list[User]
+    members = ListField(ReferenceField(User, reverse_delete_rule=PULL), default=[])  # type: List[User]
     meta = {
         'indexes': [
             {'fields': ('owner', 'name'), 'unique': True}
@@ -295,15 +296,21 @@ class Circle(Document):
 class Comment(Document, CreatedAtMixin):
     author = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
     content = StringField(required=True)
-    comments = ListField(ReferenceField('Comment', reverse_delete_rule=PULL), default=[])  # type: list[Comment]
+    comments = ListField(ReferenceField('Comment', reverse_delete_rule=PULL), default=[])  # type: List[Comment]
+
+
+class Reaction(Document, CreatedAtMixin):
+    author = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
+    emoji = StringField(required=True)
 
 
 class Post(Document, CreatedAtMixin):
     author = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
     content = StringField(required=True)
     is_public = BooleanField(required=True)
-    circles = ListField(ReferenceField(Circle, reverse_delete_rule=PULL), default=[])  # type: list[Circle]
-    comments = ListField(ReferenceField(Comment, reverse_delete_rule=PULL), default=[])  # type: list[Comment]
+    reactions = ListField(ReferenceField(Reaction, reverse_delete_rule=PULL), default=[])  # type: List[Reaction]
+    circles = ListField(ReferenceField(Circle, reverse_delete_rule=PULL), default=[])  # type: List[Circle]
+    comments = ListField(ReferenceField(Comment, reverse_delete_rule=PULL), default=[])  # type: List[Comment]
 
     @property
     def sharing_scope_str(self):

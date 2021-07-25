@@ -2,6 +2,9 @@ from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from .models import User
 
+###
+# User
+###
 
 user_parser = reqparse.RequestParser()
 user_parser.add_argument('id', type=str, required=True)
@@ -25,14 +28,41 @@ class UserList(Resource):
         return other_users, 200
 
 
+###
+# Circle
+###
+
+circle_fields = {
+    'owner': fields.Nested(user_fields),
+    'name': fields.String,
+    'members': fields.List(fields.Nested(user_fields))
+}
+
+
+###
+# Post
+###
+
 post_parser = reqparse.RequestParser()
 post_parser.add_argument('content', type=str, required=True)
-
 
 post_fields = {
     'author': fields.Nested(user_fields),
     'content': fields.String,
     'is_public': fields.Boolean,
+    'reactions': fields.List(fields.Nested({
+        'emoji': fields.String
+    })),
+    'circles': fields.List(fields.Nested(circle_fields)),
+    'comments': fields.List(fields.Nested({
+        'author': fields.Nested(user_fields),
+        'content': fields.String,
+        # we only assume two-levels of nesting for comments, so no need to recursively define comments fields
+        'comments': fields.List(fields.Nested({
+            'author': fields.Nested(user_fields),
+            'content': fields.String,
+        }))
+    }))
 }
 
 
@@ -66,6 +96,10 @@ class PostList(Resource):
         posts = user.sees_posts()
         return posts, 200
 
+
+###
+# Me
+###
 
 class Me(Resource):
     def post(self):
