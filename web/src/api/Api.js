@@ -103,7 +103,7 @@ export default class Api {
   async getPosts() {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
-      `/post`
+      `/posts`
     )
     if (res.status !== 200) {
       throw new ApiError(res.status)

@@ -28,7 +28,7 @@ export default class App extends Component {
           <Route
             exact={true}
             path='/'
-            component={withAuthRedirect(withNavBar(Home, '/'))}
+            component={withApi(withAuthRedirect(withNavBar(Home, '/')), api)}
           />
           <Route
             path="/profile"
