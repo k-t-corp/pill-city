@@ -38,36 +38,46 @@ export default (WrappedComponent, path) => {
           <Menu fixed='top'>
             <MenuItem
               as='a'
-              onClick={() => {this.handleNavItemClick('/')}}
+              onClick={() => {
+                this.handleNavItemClick('/')
+              }}
               active={path === '/'}
             >
-              <Image size='mini' src={Logo} style={{ marginRight: '3em' }} />
+              <Image size='mini' src={Logo} style={{marginRight: '3em'}}/>
               Home
             </MenuItem>
             <MenuItem
               as='a'
-              onClick={() => {this.handleNavItemClick('/circles')}}
+              onClick={() => {
+                this.handleNavItemClick('/circles')
+              }}
               active={path === '/circles'}
             >
               Circles
             </MenuItem>
             <MenuItem
               as='a'
-              onClick={() => {this.handleNavItemClick('/circles')}}
+              onClick={() => {
+                this.handleNavItemClick('/circles')
+              }}
               active={path === '/collections'}
             >
               Collections
             </MenuItem>
             <MenuItem
               as='a'
-              onClick={() => {this.handleNavItemClick('/users')}}
+              onClick={() => {
+                this.handleNavItemClick('/users')
+              }}
               active={path === '/users'}
             >
               Users
             </MenuItem>
             <MenuItem
               as='a'
-              onClick={() => {this.handleNavItemClick('/profile')}}
+              onClick={() => {
+                this.handleNavItemClick('/profile')
+              }}
               active={path === '/profile'}
             >
               Profile
@@ -78,13 +88,15 @@ export default (WrappedComponent, path) => {
               </MenuItem>
               <MenuItem
                 as='a'
-                onClick={() => {this.handleSignOut()}}
+                onClick={() => {
+                  this.handleSignOut()
+                }}
               >
                 Sign out
               </MenuItem>
             </Menu.Menu>
           </Menu>
-          <Container style={{ marginTop: '5em' }}>
+          <Container style={{marginTop: '5em'}}>
             <WrappedComponent {...this.props}/>
           </Container>
         </div>

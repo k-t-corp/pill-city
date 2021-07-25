@@ -1,0 +1,97 @@
+.post-wrapper {
+    padding: 13px;
+    background-color: #ffffff;
+    max-width: 700px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 1px 1px #e0e0e0;
+}
+
+/*Post Info*/
+
+.post-avatar {
+    width: 50px;
+    height: 50px;
+
+}
+
+.post-avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.post-op-info-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.post-name {
+    margin: 0 10px;
+    font-size: large;
+    font-weight: bold;
+}
+
+.post-visibility {
+    font-size: larger;
+    font-weight: bold;
+    color: cornflowerblue;
+}
+
+/*Post Content*/
+
+.post-content {
+    overflow-wrap: break-word;
+    margin: 15px 0;
+}
+
+/*Reactions*/
+
+.post-reactions-wrapper {
+    display: flex;
+}
+
+.post-reaction {
+    height: 25px;
+    padding: 2px 8px;
+    margin-right: 15px;
+    border-radius: 4px;
+    background-color: #f0f0f0;
+    font-weight: bold;
+    font-size: small;
+    display: flex;
+    align-items: center;
+}
+
+.post-emoji {
+    font-size: large;
+}
+
+/*Post Interactions*/
+
+.post-interactions-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.post-interactions {
+    display: flex;
+}
+
+.post-circle-button {
+    margin-left: 12px;
+    background-color: #f0f0f0;
+    color: #767676;
+    width: 35px;
+    height: 35px;
+    padding: 7px;
+    border-radius: 50%;
+}
+
+/*Comments*/
+
+.divider {
+    border-top: 1px solid #bbb;
+    margin: 10px 0 5px 0;
+}
