@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  mongodb:
+    image: mongo:4.4
+    volumes:
+      - ${PWD}/data/mongodb_data:/data/db
+    ports:
+      - "19023:27017"
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 10
