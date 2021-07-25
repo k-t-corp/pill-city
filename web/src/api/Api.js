@@ -48,7 +48,7 @@ export default class Api {
   signUp(id, password) {
     return new Promise((resolve, reject) => {
       axios.post(
-        `${this.endpoint}/users`,
+        `${this.endpoint}/me`,
         {
           'id': id,
           'password': password

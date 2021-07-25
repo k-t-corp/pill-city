@@ -9,16 +9,11 @@ user_parser.add_argument('password', type=str, required=True)
 
 
 class UserList(Resource):
-    def post(self):
-        args = user_parser.parse_args()
-        successful = User.create(args['id'], args['password'])
-        if successful:
-            return {'id': args['id']}, 201
-        else:
-            return {'message': {'id': 'id is already taken'}}, 409
-
     @jwt_required()
     def get(self):
+        """
+        Get all users other than the logged in user
+        """
         user_id = get_jwt_identity()
         other_users = [
             {'id': user.user_id, 'createdAtSeconds': user.created_at_unix_seconds}
@@ -28,7 +23,21 @@ class UserList(Resource):
 
 
 class Me(Resource):
+    def post(self):
+        """
+        Signs up a new user
+        """
+        args = user_parser.parse_args()
+        successful = User.create(args['id'], args['password'])
+        if successful:
+            return {'id': args['id']}, 201
+        else:
+            return {'message': {'id': 'id is already taken'}}, 409
+
     @jwt_required()
     def get(self):
+        """
+        Get a user's own information
+        """
         user_id = get_jwt_identity()
         return {'id': user_id}, 200
