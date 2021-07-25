@@ -56,9 +56,9 @@
 }
 
 .post-reaction {
-    height: 25px;
+    /*height: 25px;*/
     padding: 2px 8px;
-    margin-right: 15px;
+    margin-right: 5px;
     border-radius: 4px;
     background-color: #f0f0f0;
     font-weight: bold;
@@ -88,10 +88,10 @@
     margin-left: 12px;
     background-color: #f0f0f0;
     color: #767676;
+    border-radius: 5px;
     width: 35px;
     height: 35px;
     padding: 7px;
-    border-radius: 50%;
 }
 
 /*Comments*/

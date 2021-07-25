@@ -1,6 +1,7 @@
-import React, {Component} from 'react';
-import {Card} from "semantic-ui-react";
-import Post from "../components/Post/Post";
+import React from 'react';
+import Post from "../../components/Post/Post";
+import "./Home.css"
+import NewPost from "../../components/NewPost/NewPost";
 
 require('promise.prototype.finally').shim();
 
@@ -51,10 +52,21 @@ export default (props) => {
     ]
   }
 
+  const newPostData = {
+    user: {
+      id: "ika",
+      favicon: "kusuou.PNG",
+    }
+  }
+
   return (
-    <div>
-      <Post data={postData}/>
-      <div>End of stream</div>
+    <div className="home-wrapper">
+      <div className="home-posts-wrapper">
+        <Post data={postData}/>
+      </div>
+      <div className="home-new-post-wrapper">
+        <NewPost data={newPostData}/>
+      </div>
     </div>
   )
 

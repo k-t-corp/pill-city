@@ -80,7 +80,6 @@ export default (props) => {
           <div className="post-visibility">
             &#x25B8; {props.data.is_public ? "Public" : props.data.circles.join(", ")}
           </div>
-
         </div>
         <div className="post-content">
           {props.data.content}

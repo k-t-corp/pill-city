@@ -1,0 +1,11 @@
+.home-wrapper {
+    background-color: red;
+    display: flex;
+}
+
+.home-new-post-wrapper {
+    margin-left: 20px;
+    flex: 1;
+    min-width: 200px;
+}
+
