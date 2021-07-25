@@ -10,7 +10,7 @@ from mini_gplus.resources import UserList, Me, PostList
 from mini_gplus.models import User
 
 
-app = Flask(__name__, template_folder='templates', static_folder='static')
+app = Flask(__name__)
 app.secret_key = urandom(24)
 mongodb_uri = os.environ.get('MONGODB_URI', 'mongodb://localhost:19023/minigplus')
 mongodb_db = parse_uri(mongodb_uri)['database']
