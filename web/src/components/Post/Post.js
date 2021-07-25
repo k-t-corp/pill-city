@@ -20,6 +20,51 @@ export default (props) => {
   )
 
   let comments = []
+  for (let i = 0; i < props.data.comments.length; i++) {
+    const comment = props.data.comments[i]
+    let nestedComments = []
+    for (let i = 0; i < comment.comments.length; i++) {
+      const nestedComment = comment.comments[i]
+      nestedComments.push(
+        <div className="post-nested-comment">
+          <div className="post-name nested-comment-name">{nestedComment.author.id}:&nbsp;</div>
+          <div className="post-nested-comment-content">
+            {nestedComment.content}
+            <span className="post-time post-nested-comment-time">23d</span>
+            <span className="post-comment-reply-btn">
+              Reply
+            </span>
+          </div>
+        </div>
+      )
+    }
+    comments.push(
+      <div className="post-comment" key={i}>
+        <div className="post-avatar post-comment-avatar">
+          <img className="post-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.PNG`} alt=""/>
+        </div>
+        <div className="post-comment-main-content">
+          <div className="post-comment-info">
+            <div className="post-name post-comment-name">
+              {comment.author.id}
+            </div>
+            <div className="post-time">
+              39d
+            </div>
+          </div>
+          <div className="post-content comment-content">
+            {comment.content}
+            <span className="post-comment-reply-btn">
+              Reply
+            </span>
+          </div>
+          <div className="post-nested-comment-wrapper">
+            {nestedComments}
+          </div>
+        </div>
+      </div>
+    )
+  }
 
 
   return (
@@ -63,7 +108,6 @@ export default (props) => {
       </div>
       {props.data.comments.length === 0 ? null :
         <div className="post-comments-wrapper">
-          <div className="divider"/>
           {comments}
         </div>}
     </div>)
