@@ -1,4 +1,7 @@
 .new-post {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 5em;
     padding: 13px;
     background-color: #ffffff;
     max-width: 700px;

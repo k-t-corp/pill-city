@@ -1,14 +1,14 @@
 import React, {Component} from 'react'
 import {Redirect} from 'react-router-dom'
 import {
-  Container,
   Image,
   Menu,
   Icon,
   MenuItem
 } from 'semantic-ui-react'
-import Logo from '../logo.png'
-import {removeCookie} from "../api/authCookie";
+import Logo from '../../logo.png'
+import {removeCookie} from "../../api/authCookie";
+import "./withNavBar.css"
 
 export default (WrappedComponent, path) => {
   return class extends Component {
@@ -96,9 +96,9 @@ export default (WrappedComponent, path) => {
               </MenuItem>
             </Menu.Menu>
           </Menu>
-          <Container style={{marginTop: '5em'}}>
+          <div className="container" >
             <WrappedComponent {...this.props}/>
-          </Container>
+          </div>
         </div>
       )
     }

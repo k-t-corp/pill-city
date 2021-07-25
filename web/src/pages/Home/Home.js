@@ -51,7 +51,7 @@ export default (props) => {
     },
     ]
   }
-
+  const postDatas = [postData, postData, postData, postData]
   const newPostData = {
     user: {
       id: "ika",
@@ -59,10 +59,14 @@ export default (props) => {
     }
   }
 
+  let posts = []
+  for (let i = 0; i < postDatas.length; i++) {
+    posts.push(<Post data={postDatas[i]}/>)
+  }
   return (
     <div className="home-wrapper">
       <div className="home-posts-wrapper">
-        <Post data={postData}/>
+        {posts}
       </div>
       <div className="home-new-post-wrapper">
         <NewPost data={newPostData}/>

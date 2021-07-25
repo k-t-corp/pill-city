@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom'
 import Api from './api/Api'
 import withAuthRedirect from './hoc/withAuthRedirect'
-import withNavBar from './hoc/withNavBar'
+import withNavBar from './hoc/withNavBar/withNavBar'
 import withApi from './hoc/withApi'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
