@@ -17,7 +17,7 @@ class UserList(Resource):
         else:
             return {'message': {'id': 'id is already taken'}}, 409
 
-    @jwt_required
+    @jwt_required()
     def get(self):
         user_id = get_jwt_identity()
         other_users = [
@@ -28,7 +28,7 @@ class UserList(Resource):
 
 
 class Me(Resource):
-    @jwt_required
+    @jwt_required()
     def get(self):
         user_id = get_jwt_identity()
         return {'id': user_id}, 200
