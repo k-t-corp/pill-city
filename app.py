@@ -6,7 +6,7 @@ from flask_mongoengine import MongoEngine, MongoEngineSessionInterface
 from flask_restful import Api
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token
-from mini_gplus.resources import Users, Me, Posts, Comments, NestedComments, Circles, Circle
+from mini_gplus.resources import Users, Me, Posts, Comments, NestedComments, Circles, Circle, CircleMember
 from mini_gplus.models import User
 
 
@@ -59,6 +59,7 @@ api.add_resource(NestedComments, '/api/posts/<string:post_id>/comment/<string:co
 api.add_resource(Comments, '/api/posts/<string:post_id>/comment')
 api.add_resource(Posts, '/api/posts')
 api.add_resource(Circles, '/api/circles')
+api.add_resource(CircleMember, '/api/circle/<string:circle_name>/membership/<string:member_user_id>')
 api.add_resource(Circle, '/api/circle/<string:circle_name>')
 api.add_resource(Me, '/api/me')
 

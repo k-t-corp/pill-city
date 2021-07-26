@@ -85,6 +85,38 @@ class Circle(Resource):
             return {'msg': {'name': f'circle {circle_name} is not found'}}, 404
 
 
+class CircleMember(Resource):
+    @jwt_required()
+    def post(self, circle_name: str, member_user_id: str):
+        """
+        Add a user to a circle
+        """
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+        circle = user.find_circle(circle_name)
+        if not circle:
+            return {'msg': {'name': f'circle {circle_name} is not found'}}, 404
+        member_user = User.find(member_user_id)
+        if member_user in circle.members:
+            return {'msg': {'members': f'member {member_user_id} is already in circle {circle_name}'}}, 409
+        user.toggle_member(circle, member_user)
+
+    @jwt_required()
+    def delete(self, circle_name: str, member_user_id: str):
+        """
+        Remove a user from a circle
+        """
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+        circle = user.find_circle(circle_name)
+        if not circle:
+            return {'msg': {'name': f'circle {circle_name} is not found'}}, 404
+        member_user = User.find(member_user_id)
+        if member_user not in circle.members:
+            return {'msg': {'members': f'member {member_user_id} is already not in circle {circle_name}'}}, 409
+        user.toggle_member(circle, member_user)
+
+
 ########
 # Post #
 ########
