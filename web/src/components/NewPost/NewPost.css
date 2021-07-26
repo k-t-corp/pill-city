@@ -60,7 +60,20 @@
     color: white;
     border-radius: 5px;
     width: auto;
+    cursor: pointer;
 }
+
+.new-post-post-btn-invalid {
+    background-color: #767676;
+    cursor: none;
+    pointer-events: none;
+    user-select: none;
+}
+
+.new-post-post-btn-loading {
+    cursor: wait;
+}
+
 
 
 

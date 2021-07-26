@@ -89,7 +89,7 @@ export default class Api {
   async postPost(content) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.post(
-      `/post`,
+      `/posts`,
       {
         content
       }

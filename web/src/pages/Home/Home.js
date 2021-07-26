@@ -40,7 +40,7 @@ export default (props) => {
           {homePostElement()}
         </div>
         <div className="home-new-post-wrapper">
-          <NewPost data={newPostData}/>
+          <NewPost userinfo={newPostData} api={props.api}/>
         </div>
       </div>
     )
