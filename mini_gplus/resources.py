@@ -1,6 +1,6 @@
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from .models import User
+from .models import User, Post
 
 ###
 # User
@@ -16,7 +16,7 @@ user_fields = {
 }
 
 
-class UserList(Resource):
+class Users(Resource):
     @jwt_required()
     @marshal_with(user_fields)
     def get(self):
@@ -47,6 +47,7 @@ post_parser = reqparse.RequestParser()
 post_parser.add_argument('content', type=str, required=True)
 
 post_fields = {
+    'id': fields.String,
     'author': fields.Nested(user_fields),
     'content': fields.String,
     'is_public': fields.Boolean,
@@ -66,7 +67,7 @@ post_fields = {
 }
 
 
-class PostList(Resource):
+class Posts(Resource):
     @jwt_required()
     def post(self):
         """
@@ -95,6 +96,27 @@ class PostList(Resource):
 
         posts = user.sees_posts()
         return posts, 200
+
+
+###
+# Comment
+###
+
+comment_parser = reqparse.RequestParser()
+comment_parser.add_argument('content', type=str, required=True)
+
+
+class Comments(Resource):
+    @jwt_required()
+    def post(self, post_id: str):
+        """
+        Creates a new comment to a post
+        """
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+        post = Post.objects.get(id=post_id)
+        comment_args = comment_parser.parse_args()
+        user.create_comment(comment_args['content'], post)
 
 
 ###
