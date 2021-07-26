@@ -33,15 +33,29 @@ class Users(Resource):
 ###
 
 circle_fields = {
+    'id': fields.String,
     'owner': fields.Nested(user_fields),
     'name': fields.String,
     'members': fields.List(fields.Nested(user_fields))
 }
 
 
-###
-# Post
-###
+class Circles(Resource):
+    @jwt_required()
+    @marshal_with(circle_fields)
+    def get(self):
+        """
+        Get a user's circles
+        """
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+        circles = user.get_circles()
+        return circles, 200
+
+
+########
+# Post #
+########
 
 post_parser = reqparse.RequestParser()
 post_parser.add_argument('content', type=str, required=True)

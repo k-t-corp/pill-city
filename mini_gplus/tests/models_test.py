@@ -47,6 +47,7 @@ class TestModels(TestCase):
         # Add user2 to circle1 by user1
         self.assertTrue(user1.create_circle('circle1'))
         circle1 = user1.find_circle('circle1')
+        self.assertEqual([circle1.id], list(map(lambda c: c.id, user1.get_circles())))
         user1.toggle_member(circle1, user2)
         self.assertIn(user2, circle1.members)
 
@@ -66,7 +67,11 @@ class TestModels(TestCase):
         user1 = User.find('user1')
         user2 = User.find('user2')
         self.assertTrue(user1.create_circle('circle'))
+        user1_circle = user1.find_circle('circle')
+        self.assertEqual([user1_circle.id], list(map(lambda c: c.id, user1.get_circles())))
         self.assertTrue(user2.create_circle('circle'))
+        user2_circle = user2.find_circle('circle')
+        self.assertEqual([user2_circle.id], list(map(lambda c: c.id, user2.get_circles())))
 
     def test_circle_failure_find_not_found(self):
         self.assertTrue(User.create('user1', '1234'))

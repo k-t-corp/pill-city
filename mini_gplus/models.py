@@ -1,4 +1,3 @@
-import time
 from typing import List
 from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, PULL, CASCADE, NotUniqueError
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -18,8 +17,9 @@ class User(Document, CreatedAtMixin):
     user_id = StringField(required=True, unique=True)
     password = StringField(required=True)
 
-    # User
-
+    ########
+    # User #
+    ########
     @staticmethod
     def create(user_id, password):
         """
@@ -226,9 +226,15 @@ class User(Document, CreatedAtMixin):
         else:
             raise UnauthorizedAccess()
 
-    ###
-    # Circle
-    ###
+    ##########
+    # Circle #
+    ##########
+    def get_circles(self):
+        """
+        Get all user's circles
+        """
+        return list(Circle.objects(owner=self))
+
     def create_circle(self, name):
         """
         Create a circle
