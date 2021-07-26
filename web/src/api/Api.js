@@ -163,4 +163,37 @@ export default class Api {
     }
     return res.data
   }
+
+  async getCircle(circleName) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.get(
+      `/circle/${circleName}`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
+
+  async addToCircle(circleName, memberUserId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.post(
+      `/circle/${circleName}/membership/${memberUserId}`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
+
+  async removeFromCircle(circleName, memberUserId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.delete(
+      `/circle/${circleName}/membership/${memberUserId}`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
 }
