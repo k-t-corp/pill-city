@@ -3,10 +3,10 @@ import "./Post.css"
 
 export default (props) => {
   const [addComment, updateAddComment] = useState(false)
+  const [replyNestedCommentId, updateReplayNestedCommentId] = useState("")
   const timePosted = (postedAtSeconds) => {
     const currentTimeAtSeconds = new Date().getTime() / 1000;
     const deltaAtSeconds = currentTimeAtSeconds - postedAtSeconds
-    console.log(deltaAtSeconds, currentTimeAtSeconds, postedAtSeconds)
     if (deltaAtSeconds < 60) {
       return `${Math.floor(deltaAtSeconds)}s`
     } else if (deltaAtSeconds < 3600) {
@@ -39,17 +39,23 @@ export default (props) => {
   let comments = []
   for (let i = 0; i < props.data.comments.length; i++) {
     const comment = props.data.comments[i]
-    console.log(comment)
+    const replyButtonOnclick = () => {
+      updateAddComment(true)
+      updateReplayNestedCommentId(comment.id)
+    }
     let nestedComments = []
     for (let i = 0; i < comment.comments.length; i++) {
       const nestedComment = comment.comments[i]
       nestedComments.push(
         <div className="post-nested-comment">
+          <div className="post-avatar post-nested-comment-avatar">
+            <img className="post-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.PNG`} alt=""/>
+          </div>
           <div className="post-name nested-comment-name">{nestedComment.author.id}:&nbsp;</div>
           <div className="post-nested-comment-content">
             {nestedComment.content}
-            <span className="post-time post-nested-comment-time">23d</span>
-            <span className="post-comment-reply-btn">
+            <span className="post-time post-nested-comment-time">{timePosted(nestedComment.created_at_seconds)}</span>
+            <span className="post-comment-reply-btn" onClick={replyButtonOnclick}>
               Reply
             </span>
           </div>
@@ -72,7 +78,7 @@ export default (props) => {
           </div>
           <div className="post-content comment-content">
             {comment.content}
-            <span className="post-comment-reply-btn">
+            <span className="post-comment-reply-btn" onClick={replyButtonOnclick}>
               Reply
             </span>
           </div>
@@ -85,12 +91,18 @@ export default (props) => {
   }
 
   const commentButtonOnClick = () => {
-    updateAddComment(!addComment)
+    updateAddComment(true)
   }
 
   const postCommentButtonOnClick = async () => {
     const content = document.getElementById("post-comment-box-input").value
-    await props.api.postComment(content, props.data.id)
+    if (replyNestedCommentId !== "") {
+      // reply rested comment
+      await props.api.postNestedComment(content, props.data.id, replyNestedCommentId)
+      updateReplayNestedCommentId("")
+    } else {
+      await props.api.postComment(content, props.data.id)
+    }
     window.location.reload()
   }
 
@@ -110,7 +122,9 @@ export default (props) => {
             </div>
           </div>
           <div className="post-op-info-right">
-            34d
+            <div className="post-op-info-time">
+              {timePosted(props.data.created_at_seconds)}
+            </div>
           </div>
         </div>
         <div className="post-content">
