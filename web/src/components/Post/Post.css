@@ -24,6 +24,11 @@
 
 .post-op-info-wrapper {
     display: flex;
+    justify-content: space-between;
+}
+
+.post-op-info-wrapper>* {
+    display: flex;
     align-items: center;
 }
 

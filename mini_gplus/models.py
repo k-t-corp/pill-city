@@ -11,11 +11,7 @@ class UnauthorizedAccess(Exception):
 class CreatedAtMixin(object):
     @property
     def created_at(self):
-        return self.id.generation_time
-
-    @property
-    def created_at_unix_seconds(self):
-        return int(time.mktime(self.created_at.timetuple()))
+        return self.id.generation_time.timestamp()
 
 
 class User(Document, CreatedAtMixin):
