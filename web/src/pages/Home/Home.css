@@ -1,0 +1,20 @@
+.home-wrapper {
+    display: flex;
+}
+
+.home-new-post-wrapper {
+    margin-left: 20px;
+    flex: 1;
+    min-width: 200px;
+}
+
+.home-status {
+    padding: 13px;
+    background-color: #ffffff;
+    max-width: 700px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 1px 1px #e0e0e0;
+    margin-bottom: 20px;
+    min-width: 500px;
+}
+
