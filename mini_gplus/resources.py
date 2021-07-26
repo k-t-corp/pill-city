@@ -36,7 +36,6 @@ circle_parser = reqparse.RequestParser()
 circle_parser.add_argument('name', type=str, required=True)
 
 circle_fields = {
-    'id': fields.String,
     'owner': fields.Nested(user_fields),
     'name': fields.String,
     'members': fields.List(fields.Nested(user_fields))
@@ -56,7 +55,7 @@ class Circles(Resource):
         if user.create_circle(circle_args['name']):
             return {'name': circle_args['name']}, 201
         else:
-            return {'message': {'id': 'name is already taken'}}, 409
+            return {'msg': {'name': 'name is already taken'}}, 409
 
     @jwt_required()
     @marshal_with(circle_fields)
@@ -68,6 +67,22 @@ class Circles(Resource):
         user = User.find(user_id)
         circles = user.get_circles()
         return circles, 200
+
+
+class Circle(Resource):
+    @jwt_required()
+    @marshal_with(circle_fields)
+    def get(self, circle_name: str):
+        """
+        Get a user's circle by name
+        """
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+        found_circle = user.find_circle(circle_name)
+        if found_circle:
+            return found_circle, 200
+        else:
+            return {'msg': {'name': f'circle {circle_name} is not found'}}, 404
 
 
 ########
@@ -189,7 +204,7 @@ class Me(Resource):
         if successful:
             return {'id': args['id']}, 201
         else:
-            return {'message': {'id': 'id is already taken'}}, 409
+            return {'msg': {'id': 'id is already taken'}}, 409
 
     @jwt_required()
     def get(self):
