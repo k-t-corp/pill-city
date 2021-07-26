@@ -27,7 +27,7 @@ export default class SignUp extends Component {
     this.setState({'error': err.toString()})
   }
   handleSubmit = (inputForm) => {
-    const {'id': id, 'password': password, 'confirmPassword': confirmPassword} = inputForm
+    const {id, password, confirmPassword} = inputForm
     if (password !== confirmPassword) {
       this.refs.form.updateInputsWithError({
         'password': 'Password does not match',
