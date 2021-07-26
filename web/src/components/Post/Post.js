@@ -1,7 +1,8 @@
-import React from 'react'
+import React, {useState} from 'react'
 import "./Post.css"
 
 export default (props) => {
+  const [addComment, updateAddComment] = useState(false)
   let reactions = []
   for (let i = 0; i < props.data.reactions.length; i++) {
     const reaction = props.data.reactions[i]
@@ -66,6 +67,14 @@ export default (props) => {
     )
   }
 
+  const commentButtonOnClick = () => {
+    updateAddComment(!addComment)
+  }
+
+  const postCommentButtonOnClick = () => {
+    updateAddComment(false)
+  }
+
 
   return (
     <div className="post-wrapper">
@@ -89,7 +98,7 @@ export default (props) => {
             {reactions}
           </div>
           <div className="post-interactions">
-            <div className="post-circle-button">
+            <div className="post-circle-button" onClick={commentButtonOnClick}>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
                       d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
@@ -109,5 +118,22 @@ export default (props) => {
         <div className="post-comments-wrapper">
           {comments}
         </div>}
+
+      {addComment ?
+        <div className="post-comment-box-wrapper fade-in">
+          <div className="post-comment-box-input-area">
+            <div className="post-avatar post-comment-avatar">
+              <img className="post-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.PNG`} alt=""/>
+            </div>
+            <textarea id="post-comment-box-input" placeholder="Add comment"/>
+          </div>
+          <div className="post-comment-box-buttons">
+            <div className="post-comment-box-post-button" onClick={postCommentButtonOnClick}>
+              Comment
+            </div>
+          </div>
+        </div> : null}
     </div>)
 }
+
+
