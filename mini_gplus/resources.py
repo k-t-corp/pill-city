@@ -1,6 +1,6 @@
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from .models import User, Post
+from .models import User, Post, Comment
 
 ###
 # User
@@ -63,6 +63,7 @@ post_fields = {
         'content': fields.String,
         # we only assume two-levels of nesting for comments, so no need to recursively define comments fields
         'comments': fields.List(fields.Nested({
+            'id': fields.String,
             'created_at_seconds': fields.Integer(attribute='created_at'),
             'author': fields.Nested(user_fields),
             'content': fields.String,
@@ -102,9 +103,9 @@ class Posts(Resource):
         return posts, 200
 
 
-###
-# Comment
-###
+############
+# Comments #
+############
 
 comment_parser = reqparse.RequestParser()
 comment_parser.add_argument('content', type=str, required=True)
@@ -122,10 +123,30 @@ class Comments(Resource):
         comment_args = comment_parser.parse_args()
         user.create_comment(comment_args['content'], post)
 
+###################
+# Nested comments #
+###################
 
-###
-# Me
-###
+
+class NestedComments(Resource):
+    @jwt_required()
+    def post(self, post_id: str, comment_id: str):
+        """
+        Creates a nested comment to a comment
+        """
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+        post = Post.objects.get(id=post_id)
+        comment = Comment.objects.get(id=comment_id)
+        if comment not in post.comments:
+            return {'msg': 'Cannot nest more than two levels of comment'}, 403
+        nested_comment_args = comment_parser.parse_args()
+        user.create_nested_comment(nested_comment_args['content'], comment, post)
+
+######
+# Me #
+######
+
 
 class Me(Resource):
     def post(self):

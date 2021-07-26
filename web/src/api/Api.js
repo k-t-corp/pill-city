@@ -124,4 +124,18 @@ export default class Api {
     }
     return null
   }
+
+  async postNestedComment(content, postId, commentId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.post(
+      `/posts/${postId}/comment/${commentId}/comment`,
+      {
+        content
+      }
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return null
+  }
 }
