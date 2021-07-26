@@ -32,16 +32,47 @@ class Users(Resource):
 # Circle
 ###
 
+circle_parser = reqparse.RequestParser()
+circle_parser.add_argument('name', type=str, required=True)
+
 circle_fields = {
+    'id': fields.String,
     'owner': fields.Nested(user_fields),
     'name': fields.String,
     'members': fields.List(fields.Nested(user_fields))
 }
 
 
-###
-# Post
-###
+class Circles(Resource):
+    @jwt_required()
+    def post(self):
+        """
+        Create a new circle
+        """
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+
+        circle_args = circle_parser.parse_args()
+        if user.create_circle(circle_args['name']):
+            return {'name': circle_args['name']}, 201
+        else:
+            return {'message': {'id': 'name is already taken'}}, 409
+
+    @jwt_required()
+    @marshal_with(circle_fields)
+    def get(self):
+        """
+        Get a user's circles
+        """
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+        circles = user.get_circles()
+        return circles, 200
+
+
+########
+# Post #
+########
 
 post_parser = reqparse.RequestParser()
 post_parser.add_argument('content', type=str, required=True)

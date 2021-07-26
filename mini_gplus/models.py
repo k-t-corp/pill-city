@@ -1,4 +1,3 @@
-import time
 from typing import List
 from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, PULL, CASCADE, NotUniqueError
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -18,8 +17,9 @@ class User(Document, CreatedAtMixin):
     user_id = StringField(required=True, unique=True)
     password = StringField(required=True)
 
-    # User
-
+    ########
+    # User #
+    ########
     @staticmethod
     def create(user_id, password):
         """
@@ -127,6 +127,7 @@ class User(Document, CreatedAtMixin):
     def delete_post(self, post):
         """
         Delete a post
+        TODO: do not use, no test yet
         :param (Post) post: the post
         :raise (UnauthorizedAccess) when access is unauthorized
         """
@@ -135,8 +136,9 @@ class User(Document, CreatedAtMixin):
         else:
             raise UnauthorizedAccess()
 
-    # Comment
-
+    ###########
+    # Comment #
+    ###########
     def create_comment(self, content, parent_post):
         """
         Create a comment for the user
@@ -175,6 +177,7 @@ class User(Document, CreatedAtMixin):
     def owns_comment(self, comment, parent_post):
         """
         Whether the user owns a comment
+        TODO: do not use, no test yet
         :param (Comment) comment: the comment
         :param (Post) parent_post: its parent post
         :return (bool): whether the user owns a comment
@@ -184,6 +187,7 @@ class User(Document, CreatedAtMixin):
     def owns_nested_comment(self, comment, parent_comment, parent_post):
         """
         Whether the user owns a nested comment
+        TODO: do not use, no test yet
         :param (Comment) comment: the comment
         :param (Comment) parent_comment: comment's parent comment
         :param (Post) parent_post: parent comment's parent post
@@ -196,6 +200,7 @@ class User(Document, CreatedAtMixin):
     def delete_comment(self, comment, parent_post):
         """
         Delete a comment
+        TODO: do not use, no test yet
         :param (Comment) comment: the comment
         :param (Post) parent_post: comment's parent post
         :raise (UnauthorizedAccess) when access is unauthorized
@@ -209,6 +214,7 @@ class User(Document, CreatedAtMixin):
     def delete_nested_comment(self, comment, parent_comment, parent_post):
         """
         Delete a nested comment
+        TODO: do not use, no test yet
         :param (Comment) comment: the comment
         :param (Comment) parent_comment: comment's parent comment
         :param (Post) parent_post: parent comment's parent post
@@ -220,9 +226,15 @@ class User(Document, CreatedAtMixin):
         else:
             raise UnauthorizedAccess()
 
-    ###
-    # Circle
-    ###
+    ##########
+    # Circle #
+    ##########
+    def get_circles(self):
+        """
+        Get all user's circles
+        """
+        return list(Circle.objects(owner=self))
+
     def create_circle(self, name):
         """
         Create a circle
