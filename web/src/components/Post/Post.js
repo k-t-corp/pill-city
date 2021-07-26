@@ -3,6 +3,21 @@ import "./Post.css"
 
 export default (props) => {
   const [addComment, updateAddComment] = useState(false)
+  const timePosted = (postedAtSeconds) => {
+    const currentTimeAtSeconds = new Date().getTime() / 1000;
+    const deltaAtSeconds = currentTimeAtSeconds - postedAtSeconds
+    if (deltaAtSeconds < 60) {
+      return `${deltaAtSeconds}s`
+    } else if (deltaAtSeconds < 3600) {
+      return `${Math.floor(deltaAtSeconds/60)}m`
+    } else if (deltaAtSeconds < 3600 * 24) {
+      return `${Math.floor(deltaAtSeconds/3600)}h`
+    } else if (deltaAtSeconds < 3600 * 24 * 7) {
+      return `${Math.floor(deltaAtSeconds/(3600 * 24))}d`
+    } else {
+      return new Date(postedAtSeconds).toISOString().split('T')[0];
+    }
+  }
   let reactions = []
   for (let i = 0; i < props.data.reactions.length; i++) {
     const reaction = props.data.reactions[i]
@@ -23,6 +38,7 @@ export default (props) => {
   let comments = []
   for (let i = 0; i < props.data.comments.length; i++) {
     const comment = props.data.comments[i]
+    console.log(comment)
     let nestedComments = []
     for (let i = 0; i < comment.comments.length; i++) {
       const nestedComment = comment.comments[i]
@@ -50,6 +66,7 @@ export default (props) => {
               {comment.author.id}
             </div>
             <div className="post-time">
+              {timePosted(comment.author.created_at_seconds)}
               39d
             </div>
           </div>
