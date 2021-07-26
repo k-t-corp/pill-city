@@ -78,9 +78,9 @@ class User(Document, CreatedAtMixin):
         else:
             raise RuntimeError('More than one user for user id {} found!'.format(user_id))
 
-    ###
-    # Post
-    ###
+    ########
+    # Post #
+    ########
     def create_post(self, content, is_public, circles):
         """
         Create a post for the user
@@ -119,17 +119,6 @@ class User(Document, CreatedAtMixin):
                     return True
         return False
 
-    def delete_post(self, post):
-        """
-        Delete a post
-        :param (Post) post: the post
-        :raise (UnauthorizedAccess) when access is unauthorized
-        """
-        if post.author.id == self.id:
-            post.delete()
-        else:
-            raise UnauthorizedAccess()
-
     def sees_posts(self, by_user=None):
         """
         All posts that are visible to the user
@@ -142,6 +131,17 @@ class User(Document, CreatedAtMixin):
             posts = Post.objects(author=by_user)
         posts = filter(lambda post: self.sees_post(post), posts)
         return list(reversed(sorted(posts, key=lambda post: post.created_at)))
+
+    def delete_post(self, post):
+        """
+        Delete a post
+        :param (Post) post: the post
+        :raise (UnauthorizedAccess) when access is unauthorized
+        """
+        if post.author.id == self.id:
+            post.delete()
+        else:
+            raise UnauthorizedAccess()
 
     # Comment
 
