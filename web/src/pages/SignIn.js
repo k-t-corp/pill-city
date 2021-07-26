@@ -27,7 +27,7 @@ export default class SignIn extends Component {
     this.setState({'error': err.toString()})
   }
   handleSubmit = (inputForm) => {
-    const {'id': id, 'password': password} = inputForm
+    const {id, password} = inputForm
 
     this.setState({'loading': true})
     this.props.api.signIn(

@@ -48,6 +48,7 @@ post_parser.add_argument('content', type=str, required=True)
 
 post_fields = {
     'id': fields.String,
+    'created_at_seconds': fields.Integer(attribute='created_at_unix_seconds'),
     'author': fields.Nested(user_fields),
     'content': fields.String,
     'is_public': fields.Boolean,
@@ -56,10 +57,13 @@ post_fields = {
     })),
     'circles': fields.List(fields.Nested(circle_fields)),
     'comments': fields.List(fields.Nested({
+        'id': fields.String,
+        'created_at_seconds': fields.Integer(attribute='created_at_unix_seconds'),
         'author': fields.Nested(user_fields),
         'content': fields.String,
         # we only assume two-levels of nesting for comments, so no need to recursively define comments fields
         'comments': fields.List(fields.Nested({
+            'created_at_seconds': fields.Integer(attribute='created_at_unix_seconds'),
             'author': fields.Nested(user_fields),
             'content': fields.String,
         }))

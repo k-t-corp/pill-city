@@ -28,7 +28,7 @@ export default (props) => {
     } else {
       let postElements = []
       for (let i = 0; i < posts.length; i++) {
-        postElements.push(<Post data={posts[i]} api={props.api}/>)
+        postElements.push(<Post key={i} data={posts[i]} api={props.api}/>)
       }
       return postElements
     }
