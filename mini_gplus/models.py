@@ -119,16 +119,12 @@ class User(Document, CreatedAtMixin):
                     return True
         return False
 
-    def sees_posts(self, by_user=None):
+    def sees_posts(self):
         """
         All posts that are visible to the user
-        :param (User) by_user: posts that are authored by this user
         :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
         """
-        if by_user is None:
-            posts = Post.objects()
-        else:
-            posts = Post.objects(author=by_user)
+        posts = Post.objects()
         posts = filter(lambda post: self.sees_post(post), posts)
         return list(reversed(sorted(posts, key=lambda post: post.created_at)))
 

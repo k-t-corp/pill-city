@@ -203,3 +203,38 @@ class TestModels(TestCase):
         # User3 should neither own nor see post1
         self.assertFalse(user3.owns_post(post1))
         self.assertFalse(user3.sees_post(post1))
+
+    def test_post_success_sees_posts_from_another_user(self):
+        # Create user1, user2 and user3
+        self.assertTrue(User.create('user1', '1234'))
+        self.assertTrue(User.create('user2', '2345'))
+        self.assertTrue(User.create('user3', '3456'))
+        user1 = User.find('user1')
+        user2 = User.find('user2')
+        user3 = User.find('user3')
+
+        # Create circle1 by user1 and add user2 into circle2 but not user3
+        self.assertTrue(user1.create_circle('circle1'))
+        circle1 = user1.find_circle('circle1')
+        user1.toggle_member(circle1, user2)
+
+        # Create post1 by user1 into circle1
+        user1.create_post('post1', False, [circle1])
+        post1 = Post.objects(author=user1)
+        self.assertTrue(1, len(post1))
+        post1 = post1[0]
+
+        # Create public post2
+        user1.create_post('post2', True, [])
+        post2 = Post.objects(content='post2')
+        self.assertTrue(1, len(post1))
+        post2 = post2[0]
+
+        # User1 sees post2 and post1
+        self.assertEquals([post2, post1], user1.sees_posts())
+
+        # User2 sees post2 and post1
+        self.assertEquals([post2, post1], user2.sees_posts())
+
+        # User3 sees post2
+        self.assertEquals([post2], user3.sees_posts())
