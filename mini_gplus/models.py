@@ -228,8 +228,9 @@ class User(Document, CreatedAtMixin):
         else:
             raise UnauthorizedAccess()
 
+    ###
     # Circle
-
+    ###
     def create_circle(self, name):
         """
         Create a circle
@@ -245,6 +246,21 @@ class User(Document, CreatedAtMixin):
         except NotUniqueError:
             return False
         return True
+
+    def find_circle(self, name):
+        """
+        Find a user's circle
+        :param (str) name: name of the circle
+        :return (Circle|bool): the circle object if the circle is found
+            If not found, returns False
+        """
+        circles = Circle.objects(owner=self, name=name)
+        if not circles:
+            return False
+        elif len(circles) == 1:
+            return circles[0]
+        else:
+            raise RuntimeError(f'More than one circle for circle {name} found!')
 
     def toggle_member(self, circle, toggled_user):
         """
