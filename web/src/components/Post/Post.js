@@ -71,7 +71,9 @@ export default (props) => {
     updateAddComment(!addComment)
   }
 
-  const postCommentButtonOnClick = () => {
+  const postCommentButtonOnClick = async () => {
+    const content = document.getElementById("post-comment-box-input").value
+    await props.api.postComment(content, props.data.id)
     updateAddComment(false)
   }
 
