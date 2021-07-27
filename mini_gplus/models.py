@@ -16,6 +16,7 @@ class CreatedAtMixin(object):
 class User(Document, CreatedAtMixin):
     user_id = StringField(required=True, unique=True)
     password = StringField(required=True)
+    followings = ListField(ReferenceField('User', reverse_delete_rule=PULL), default=[])  # type: List[User]
 
     ########
     # User #
@@ -292,6 +293,40 @@ class User(Document, CreatedAtMixin):
             circle.delete()
         else:
             raise UnauthorizedAccess()
+
+    #############
+    # Following #
+    #############
+    def add_following(self, user):
+        """
+        Add a following
+        :param (User) user: the added user
+        :return (bool): Whether adding is successful.
+        """
+        if user in self.followings:
+            return False
+        self.followings.append(user)
+        self.save()
+        return True
+
+    def remove_following(self, user):
+        """
+        Remove a following
+        :param (User) user: the removed user
+        :return (bool): Whether removing is successful.
+        """
+        if user not in self.followings:
+            return False
+        self.followings = list(filter(lambda u: u.user_id != user.user_id, self.followings))
+        self.save()
+        return True
+
+    def get_followings(self):
+        """
+        Get all followings
+        :return (List[User]): List of following users.
+        """
+        return list(self.followings)
 
 
 class Circle(Document):

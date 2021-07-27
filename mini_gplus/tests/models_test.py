@@ -34,9 +34,9 @@ class TestModels(TestCase):
         self.assertTrue(User.create('user1', '1234'))
         self.assertFalse(User.find('user2'))
 
-    ###
-    # Circle
-    ###
+    ##########
+    # Circle #
+    ##########
     def test_circle_successful_toggle_after_create_and_find(self):
         # Create user1 and user2
         self.assertTrue(User.create('user1', '1234'))
@@ -127,6 +127,24 @@ class TestModels(TestCase):
         def op():
             user2.delete_circle(circle1)
         self.assertRaises(UnauthorizedAccess, op)
+
+    #############
+    # Following #
+    #############
+    def test_following(self):
+        self.assertTrue(User.create('user1', '1234'))
+        self.assertTrue(User.create('user2', '2345'))
+        user1 = User.find('user1')
+        user2 = User.find('user2')
+        self.assertEquals([], user1.get_followings())
+
+        self.assertTrue(user1.add_following(user2))
+        self.assertEquals([user2.user_id], list(map(lambda u: u.user_id, user1.get_followings())))
+        self.assertFalse(user1.add_following(user2))
+
+        self.assertTrue(user1.remove_following(user2))
+        self.assertEquals([], user1.get_followings())
+        self.assertFalse(user1.remove_following(user2))
 
     ######################
     # Posts and comments #
