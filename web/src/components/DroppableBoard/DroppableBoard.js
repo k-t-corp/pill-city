@@ -82,14 +82,12 @@ export default (props) => {
     const colorMap = [
       "rgb(133, 173, 255)", "rgb(255,133,133)", "rgb(190,133,255)", "rgb(255,186,133)",
       "rgb(255,227,97)", "rgb(133,201,188)", "rgb(158,238,158)", "rgb(77,170,255)",
-    ]
+    ] // Color for all inner circles
     const colorCount = colorMap.length
     let hashValue = 0
     for (let i = 0; i < circleName.length; i++) hashValue += circleName.charCodeAt(i);
 
     return colorMap[hashValue % colorCount]
-
-
   }
   const onDrop = e => {
     e.preventDefault();
@@ -99,11 +97,14 @@ export default (props) => {
     innerCircleScale(true, 900)
   }
 
+  // can't be controlled by using css property :hover
   const onMouseEnter = e => {
+    e.preventDefault();
     innerCircleScale(false, 0)
   }
 
   const onMouseLeave = e => {
+    e.preventDefault();
     innerCircleScale(true, 0)
   }
 
