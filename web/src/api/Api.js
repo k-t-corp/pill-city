@@ -86,12 +86,14 @@ export default class Api {
     return res.data
   }
 
-  async postPost(content) {
+  async postPost(content, isPublic, circlesNames) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.post(
       `/posts`,
       {
-        content
+        content,
+        is_public: isPublic,
+        circle_names: circlesNames
       }
     )
     if (res.status !== 200) {

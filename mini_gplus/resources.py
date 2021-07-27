@@ -170,6 +170,8 @@ class Followings(Resource):
 
 post_parser = reqparse.RequestParser()
 post_parser.add_argument('content', type=str, required=True)
+post_parser.add_argument('is_public', type=bool, required=True)
+post_parser.add_argument('circle_names', type=str, action="append", default=[])
 
 post_fields = {
     'id': fields.String,
@@ -208,12 +210,16 @@ class Posts(Resource):
         user = User.find(user_id)
 
         args = post_parser.parse_args()
+        circles = []
+        for circle_name in args['circle_names']:
+            found_circle = user.find_circle(circle_name)
+            if not found_circle:
+                return {'msg': f'Circle {circle_name} is not found'}, 404
+            circles.append(found_circle)
         user.create_post(
             content=args['content'],
-            # TODO: change
-            is_public=True,
-            # TODO: change
-            circles=[]
+            is_public=args['is_public'],
+            circles=circles
         )
 
     @jwt_required()
