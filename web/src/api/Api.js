@@ -139,20 +139,6 @@ export default class Api {
     return null
   }
 
-  async createCircle(name) {
-    Api.throwOnUnauthorized()
-    const res = await this.axiosInstance.post(
-      `/circles`,
-      {
-        name
-      }
-    )
-    if (res.status !== 201) {
-      throw new ApiError(res.status)
-    }
-    return null
-  }
-
   async getCircles() {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
@@ -173,6 +159,17 @@ export default class Api {
       throw new ApiError(res.status)
     }
     return res.data
+  }
+
+  async createCircle(name) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.post(
+      `/circle/${name}`
+    )
+    if (res.status !== 201) {
+      throw new ApiError(res.status)
+    }
+    return null
   }
 
   async addToCircle(circleName, memberUserId) {

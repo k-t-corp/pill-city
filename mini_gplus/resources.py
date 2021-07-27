@@ -2,9 +2,9 @@ from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from .models import User, Post, Comment
 
-###
-# User
-###
+########
+# User #
+########
 
 user_parser = reqparse.RequestParser()
 user_parser.add_argument('id', type=str, required=True)
@@ -28,12 +28,9 @@ class Users(Resource):
         return other_users, 200
 
 
-###
-# Circle
-###
-
-circle_parser = reqparse.RequestParser()
-circle_parser.add_argument('name', type=str, required=True)
+##########
+# Circle #
+##########
 
 circle_fields = {
     'owner': fields.Nested(user_fields),
@@ -43,20 +40,6 @@ circle_fields = {
 
 
 class Circles(Resource):
-    @jwt_required()
-    def post(self):
-        """
-        Create a new circle
-        """
-        user_id = get_jwt_identity()
-        user = User.find(user_id)
-
-        circle_args = circle_parser.parse_args()
-        if user.create_circle(circle_args['name']):
-            return {'name': circle_args['name']}, 201
-        else:
-            return {'msg': {'name': 'name is already taken'}}, 409
-
     @jwt_required()
     @marshal_with(circle_fields)
     def get(self):
@@ -71,6 +54,19 @@ class Circles(Resource):
 
 class Circle(Resource):
     @jwt_required()
+    def post(self, circle_name: str):
+        """
+        Create a new circle
+        """
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+
+        if user.create_circle(circle_name):
+            return {'name': circle_name}, 201
+        else:
+            return {'msg': f'Circle name {circle_name} is already taken'}, 409
+
+    @jwt_required()
     @marshal_with(circle_fields)
     def get(self, circle_name: str):
         """
@@ -82,7 +78,7 @@ class Circle(Resource):
         if found_circle:
             return found_circle, 200
         else:
-            return {'msg': {'name': f'circle {circle_name} is not found'}}, 404
+            return {'msg': f'Circle {circle_name} is not found'}, 404
 
 
 class CircleMember(Resource):
@@ -95,10 +91,10 @@ class CircleMember(Resource):
         user = User.find(user_id)
         circle = user.find_circle(circle_name)
         if not circle:
-            return {'msg': {'name': f'circle {circle_name} is not found'}}, 404
+            return {'msg': f'Circle {circle_name} is not found'}, 404
         member_user = User.find(member_user_id)
         if member_user in circle.members:
-            return {'msg': {'members': f'member {member_user_id} is already in circle {circle_name}'}}, 409
+            return {'msg': f'User {member_user_id} is already in circle {circle_name}'}, 409
         user.toggle_member(circle, member_user)
 
     @jwt_required()
@@ -110,11 +106,52 @@ class CircleMember(Resource):
         user = User.find(user_id)
         circle = user.find_circle(circle_name)
         if not circle:
-            return {'msg': {'name': f'circle {circle_name} is not found'}}, 404
+            return {'msg': f'Circle {circle_name} is not found'}, 404
         member_user = User.find(member_user_id)
         if member_user not in circle.members:
-            return {'msg': {'members': f'member {member_user_id} is already not in circle {circle_name}'}}, 409
+            return {'msg': f'User {member_user_id} is already not in circle {circle_name}'}, 409
         user.toggle_member(circle, member_user)
+
+
+#############
+# Following #
+#############
+
+class Following(Resource):
+    @jwt_required()
+    def post(self, following_user_id):
+        """
+        Follow a user
+        """
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+        target_user = User.find(following_user_id)
+        if not target_user:
+            return {'msg': f'User {following_user_id} is not found'}, 404
+        if not user.add_following(target_user):
+            return {'msg': f"Already following user {following_user_id}"}, 409
+
+    @jwt_required()
+    def delete(self, following_user_id):
+        """
+        Unfollow a user
+        """
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+        target_user = User.find(following_user_id)
+        if not target_user:
+            return {'msg': f'User {following_user_id} is not found'}, 404
+        if not user.remove_following(target_user):
+            return {'msg': f"Already not following user {following_user_id}"}, 409
+
+
+class Followings(Resource):
+    @jwt_required()
+    @marshal_with(user_fields)
+    def get(self):
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+        return user.get_followings()
 
 
 ########
@@ -234,10 +271,11 @@ class Me(Resource):
         """
         args = user_parser.parse_args()
         successful = User.create(args['id'], args['password'])
+        user_id = args['id']
         if successful:
-            return {'id': args['id']}, 201
+            return {'id': user_id}, 201
         else:
-            return {'msg': {'id': 'id is already taken'}}, 409
+            return {'msg': f'ID {user_id} is already taken'}, 409
 
     @jwt_required()
     def get(self):
