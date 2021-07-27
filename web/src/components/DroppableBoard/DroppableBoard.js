@@ -21,14 +21,18 @@ export default (props) => {
     const outerRadius = outerDiameter / 2;
     const innerRadius = outerDiameter * innerCirclePercentage / 2;
     const cardRadius = (outerRadius - innerRadius) / 2;
-    const anglePerCardAsRad = Math.atan(cardRadius / (cardRadius + innerRadius)) * 2
-    const cardNumber = Math.floor(2 / anglePerCardAsRad);
-    const finalAnglePerCardAsRad = 2 / cardNumber
+    const anglePerCardAsDegree = Math.asin((cardRadius / 2) / (cardRadius + innerRadius)) * 4 * (180 / 3.14)
+    console.log(anglePerCardAsDegree)
+    const cardNumber = Math.floor(360 / anglePerCardAsDegree);
+    const finalAnglePerCardAsDegree = 360 / cardNumber
+    console.log(cardNumber)
+    console.log(finalAnglePerCardAsDegree)
     let memberCardElements = []
     for (let i = 0; i < members.length && i < cardNumber; i++) {
-      const currentCardAngleAsRad = - i * finalAnglePerCardAsRad
-      const top = Math.abs((innerRadius + cardRadius) * Math.cos(currentCardAngleAsRad) - outerRadius + cardRadius)
-      const left = Math.abs((innerRadius + cardRadius) * Math.sin(currentCardAngleAsRad) - outerRadius + cardRadius)
+      const currentCardAngleAsDegree = - i * finalAnglePerCardAsDegree
+      console.log(currentCardAngleAsDegree)
+      const top = Math.abs((innerRadius + cardRadius) * Math.cos(currentCardAngleAsDegree) - outerRadius + cardRadius)
+      const left = Math.abs((innerRadius + cardRadius) * Math.sin(currentCardAngleAsDegree) - outerRadius + cardRadius)
       memberCardElements.push(
         <div className="droppable-board-member-card-wrapper"
              style={{
