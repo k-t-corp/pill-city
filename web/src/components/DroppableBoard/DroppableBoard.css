@@ -38,11 +38,6 @@
     justify-content: center;
 }
 
-.droppable-board-inner-circle:hover {
-    -webkit-animation: scale-down-center 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
-    animation: scale-down-center 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
-}
-
 .droppable-board-inner-circle-name {
     font-weight: bold;
     font-size: x-large;
@@ -54,30 +49,6 @@
     font-size: large;
     color: #ffffff;
     margin-top: 20px;
-}
-
-
-/*Animation*/
-
-@-webkit-keyframes scale-down-center {
-    0% {
-        -webkit-transform: scale(1);
-        transform: scale(1);
-    }
-    100% {
-        -webkit-transform: scale(0.65);
-        transform: scale(0.65);
-    }
-}
-@keyframes scale-down-center {
-    0% {
-        -webkit-transform: scale(1);
-        transform: scale(1);
-    }
-    100% {
-        -webkit-transform: scale(0.65);
-        transform: scale(0.65);
-    }
 }
 
 

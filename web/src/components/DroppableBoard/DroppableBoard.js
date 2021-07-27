@@ -4,7 +4,7 @@ import "./DroppableBoard.css"
 export default (props) => {
   const circleMargin = 2 // Margin between the edge of the card circle and inner/outer circles
   const outerDiameter = 250; // Need to be equal to width and height in .droppable-board-wrapper
-  const innerCirclePercentage = 0.65; // Update all numbers in Animation section
+  const innerCirclePercentage = 0.7; // Update all numbers in Animation section
   const outerRadius = outerDiameter / 2;
   const innerRadius = outerDiameter * innerCirclePercentage / 2;
   const cardRadius = (outerRadius - innerRadius) / 2;
@@ -13,38 +13,10 @@ export default (props) => {
   const finalAnglePerCardAsDegree = 360 / cardNumber
 
   const [members, updateCards] = useState(props.members)
-  const [dragOverAnimationTriggered, updateDragOverAnimationTriggered] = useState(false)
-  const dragOverAnimation = (scaleUp, delay) => {
-    if (dragOverAnimationTriggered && scaleUp) {
-      document.getElementById(`${props.circleName}-inner-circle`).animate(
-        [
-          {transform: `scale(${innerCirclePercentage})`},
-          {transform: 'scale(1)'},
-        ], {
-          fill: 'both',
-          easing: "cubic-bezier(0.42, 0, 0.58, 1)",
-          duration: 400,
-          delay: delay
-        });
-      updateDragOverAnimationTriggered(false)
-    } else if (!scaleUp && !dragOverAnimationTriggered) {
-      document.getElementById(`${props.circleName}-inner-circle`).animate(
-        [
-          {transform: 'scale(1)'},
-          {transform: `scale(${innerCirclePercentage})`},
-        ], {
-          fill: 'both',
-          easing: "cubic-bezier(0.42, 0, 0.58, 1)",
-          duration: 400,
-        });
-      updateDragOverAnimationTriggered(true)
-    }
-  }
 
   let animationIntervalId = null;
   const circleAnimation = (circleName, card_id) => {
     let elem = document.getElementById(`${circleName}-temp-card`);
-    elem.style.visibility = "visible"
     let degree = 1;
     let finalDegree = 360 - finalAnglePerCardAsDegree * members.length
     clearInterval(animationIntervalId);
@@ -56,6 +28,7 @@ export default (props) => {
         updateCards([...members, {id: card_id}])
         clearInterval(animationIntervalId);
       } else {
+        elem.style.visibility = "visible"
         degree = degree * 1.1;
         const top = Math.abs((innerRadius + cardRadius) * Math.cos(degree * 3.14 / 180) - outerRadius + cardRadius)
         const left = Math.abs((innerRadius + cardRadius) * Math.sin(degree * 3.14 / 180) - outerRadius + cardRadius)
@@ -64,7 +37,28 @@ export default (props) => {
       }
     }
   }
+  const innerCircleScale= (scaleUp, delay) => {
+    const options = {
+      fill: 'both',
+      easing: "cubic-bezier(0.42, 0, 0.58, 1)",
+      duration: 400,
+      delay: delay
+    }
 
+    if (scaleUp) {
+      document.getElementById(`${props.circleName}-inner-circle`).animate(
+        [
+          {transform: `scale(${innerCirclePercentage})`},
+          {transform: 'scale(1)'},
+        ], options);
+    } else {
+      document.getElementById(`${props.circleName}-inner-circle`).animate(
+        [
+          {transform: 'scale(1)'},
+          {transform: `scale(${innerCirclePercentage})`},
+        ], options);
+    }
+  }
   const tempCard = (circleName) => {
     const currentCardAngleAsDegree = 0
     const top = Math.abs((innerRadius + cardRadius) * Math.cos(currentCardAngleAsDegree * 3.14 / 180) - outerRadius + cardRadius)
@@ -88,18 +82,25 @@ export default (props) => {
   const onDrop = e => {
     e.preventDefault();
     const card_id = e.dataTransfer.getData("card_id")
+    innerCircleScale(false, 0)
     circleAnimation(props.circleName, card_id)
-    dragOverAnimation(true,700)
+    innerCircleScale(true, 900)
+  }
+
+  const onMouseEnter = e => {
+    innerCircleScale(false, 0)
+  }
+
+  const onMouseLeave = e => {
+    innerCircleScale(true, 0)
   }
 
   const onDragOver = e => {
     e.preventDefault();
-    dragOverAnimation(false, 0)
   }
 
   const onDragLeave = e => {
     e.preventDefault();
-    dragOverAnimation(true, 0)
   }
 
   const memberCards = () => {
@@ -125,11 +126,13 @@ export default (props) => {
   }
   return (
     <div
+      className="droppable-board-wrapper"
       id={props.id}
       onDrop={onDrop}
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
-      className="droppable-board-wrapper"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       <div className="droppable-board-member-cards-wrapper">
         {tempCard(props.circleName)}
