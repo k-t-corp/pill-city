@@ -133,7 +133,8 @@ post_fields = {
     'reactions': fields.List(fields.Nested({
         'emoji': fields.String
     })),
-    'circles': fields.List(fields.Nested(circle_fields)),
+    # TODO: only return the circles that the current user is in
+    # 'circles': fields.List(fields.Nested(circle_fields)),
     'comments': fields.List(fields.Nested({
         'id': fields.String,
         'created_at_seconds': fields.Integer(attribute='created_at'),
