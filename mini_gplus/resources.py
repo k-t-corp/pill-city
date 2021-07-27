@@ -61,9 +61,7 @@ class Circle(Resource):
         user_id = get_jwt_identity()
         user = User.find(user_id)
 
-        if user.create_circle(circle_name):
-            return {'name': circle_name}, 201
-        else:
+        if not user.create_circle(circle_name):
             return {'msg': f'Circle name {circle_name} is already taken'}, 409
 
     @jwt_required()
@@ -79,6 +77,18 @@ class Circle(Resource):
             return found_circle, 200
         else:
             return {'msg': f'Circle {circle_name} is not found'}, 404
+
+    @jwt_required()
+    def delete(self, circle_name: str):
+        """
+        Delete a user's circle by name
+        """
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+        found_circle = user.find_circle(circle_name)
+        if not found_circle:
+            return {'msg': f'Circle {circle_name} is not found'}, 404
+        user.delete_circle(found_circle)
 
 
 class CircleMember(Resource):

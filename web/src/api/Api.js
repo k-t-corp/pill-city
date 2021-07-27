@@ -172,6 +172,17 @@ export default class Api {
     return null
   }
 
+  async deleteCircle(name) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.delete(
+      `/circle/${name}`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return null
+  }
+
   async addToCircle(circleName, memberUserId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.post(

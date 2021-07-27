@@ -369,12 +369,3 @@ class Post(Document, CreatedAtMixin):
     reactions = ListField(ReferenceField(Reaction, reverse_delete_rule=PULL), default=[])  # type: List[Reaction]
     circles = ListField(ReferenceField(Circle, reverse_delete_rule=PULL), default=[])  # type: List[Circle]
     comments = ListField(ReferenceField(Comment, reverse_delete_rule=PULL), default=[])  # type: List[Comment]
-
-    @property
-    def sharing_scope_str(self):
-        if self.is_public:
-            return '(public)'
-        elif self.circles:
-            return ', '.join(map(lambda circle: circle.name, self.circles))
-        else:
-            return '(private)'
