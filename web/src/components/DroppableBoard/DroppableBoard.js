@@ -14,6 +14,32 @@ export default (props) => {
 
   const [members, updateCards] = useState(props.members)
   const [dragOverAnimationTriggered, updateDragOverAnimationTriggered] = useState(false)
+  const dragOverAnimation = (scaleUp, delay) => {
+    if (dragOverAnimationTriggered && scaleUp) {
+      document.getElementById(`${props.circleName}-inner-circle`).animate(
+        [
+          {transform: `scale(${innerCirclePercentage})`},
+          {transform: 'scale(1)'},
+        ], {
+          fill: 'both',
+          easing: "cubic-bezier(0.42, 0, 0.58, 1)",
+          duration: 400,
+          delay: delay
+        });
+      updateDragOverAnimationTriggered(false)
+    } else if (!scaleUp && !dragOverAnimationTriggered) {
+      document.getElementById(`${props.circleName}-inner-circle`).animate(
+        [
+          {transform: 'scale(1)'},
+          {transform: `scale(${innerCirclePercentage})`},
+        ], {
+          fill: 'both',
+          easing: "cubic-bezier(0.42, 0, 0.58, 1)",
+          duration: 400,
+        });
+      updateDragOverAnimationTriggered(true)
+    }
+  }
 
   let animationIntervalId = null;
   const circleAnimation = (circleName, card_id) => {
@@ -23,6 +49,7 @@ export default (props) => {
     let finalDegree = 360 - finalAnglePerCardAsDegree * members.length
     clearInterval(animationIntervalId);
     animationIntervalId = setInterval(frame, 10);
+
     function frame() {
       if (degree >= finalDegree || members.length >= cardNumber) {
         elem.style.visibility = "hidden"
@@ -62,53 +89,17 @@ export default (props) => {
     e.preventDefault();
     const card_id = e.dataTransfer.getData("card_id")
     circleAnimation(props.circleName, card_id)
-    if (dragOverAnimationTriggered) {
-      document.getElementById(`${props.circleName}-inner-circle`).animate(
-        [
-          { transform: `scale(${innerCirclePercentage})` },
-          { transform: 'scale(1)' },
-        ], {
-          fill: 'both',
-          easing: "cubic-bezier(0.42, 0, 0.58, 1)",
-          duration: 400,
-          delay: 700
-        });
-      updateDragOverAnimationTriggered(false)
-    }
+    dragOverAnimation(true,700)
   }
 
   const onDragOver = e => {
-    console.log("drag over")
     e.preventDefault();
-
-    if (!dragOverAnimationTriggered) {
-      document.getElementById(`${props.circleName}-inner-circle`).animate(
-        [
-          { transform: 'scale(1)' },
-          { transform: `scale(${innerCirclePercentage})` }
-        ], {
-          fill: 'both',
-          easing: "cubic-bezier(0.42, 0, 0.58, 1)",
-          duration: 400
-        });
-      updateDragOverAnimationTriggered(true)
-    }
+    dragOverAnimation(false, 0)
   }
 
   const onDragLeave = e => {
     e.preventDefault();
-    if (dragOverAnimationTriggered) {
-      document.getElementById(`${props.circleName}-inner-circle`).animate(
-        [
-          { transform: `scale(${innerCirclePercentage})` },
-          { transform: 'scale(1)' },
-        ], {
-          fill: 'both',
-          easing: "cubic-bezier(0.42, 0, 0.58, 1)",
-          duration: 400
-        });
-      updateDragOverAnimationTriggered(false)
-    }
+    dragOverAnimation(true, 0)
   }
 
   const memberCards = () => {

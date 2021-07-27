@@ -59,10 +59,6 @@
 
 /*Animation*/
 
-.temp-card {
-
-}
-
 @-webkit-keyframes scale-down-center {
     0% {
         -webkit-transform: scale(1);
