@@ -37,7 +37,7 @@ export default (props) => {
       }
     }
   }
-  const innerCircleScale= (scaleUp, delay) => {
+  const innerCircleScale = (scaleUp, delay) => {
     const options = {
       fill: 'both',
       easing: "cubic-bezier(0.42, 0, 0.58, 1)",
@@ -78,7 +78,19 @@ export default (props) => {
         <img className="droppable-board-member-card-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.PNG`} alt=""/>
       </div>)
   }
+  const circleColor = (circleName) => {
+    const colorMap = [
+      "rgb(133, 173, 255)", "rgb(255,133,133)", "rgb(190,133,255)", "rgb(255,186,133)",
+      "rgb(255,227,97)", "rgb(133,201,188)", "rgb(158,238,158)", "rgb(77,170,255)",
+    ]
+    const colorCount = colorMap.length
+    let hashValue = 0
+    for (let i = 0; i < circleName.length; i++) hashValue += circleName.charCodeAt(i);
 
+    return colorMap[hashValue % colorCount]
+
+
+  }
   const onDrop = e => {
     e.preventDefault();
     const card_id = e.dataTransfer.getData("card_id")
@@ -138,7 +150,9 @@ export default (props) => {
         {tempCard(props.circleName)}
         {memberCards()}
       </div>
-      <div className="droppable-board-inner-circle" id={`${props.circleName}-inner-circle`}>
+      <div className="droppable-board-inner-circle"
+           id={`${props.circleName}-inner-circle`}
+           style={{backgroundColor: circleColor(props.circleName)}}>
         <div className="droppable-board-inner-circle-name">
           {props.circleName}
         </div>

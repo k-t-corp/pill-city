@@ -27,7 +27,6 @@
 
 .droppable-board-inner-circle {
     z-index: 2;
-    background-color: rgb(133, 173, 255);
     flex-shrink: 0;
     border-radius: 50%;
     width: 250px;
