@@ -11,9 +11,9 @@ class TestModels(TestCase):
         self.connection.drop_database("mongoenginetest")
         disconnect()
 
-    ###
-    # User
-    ###
+    ########
+    # User #
+    ########
     def test_user_successful_check_after_create(self):
         self.assertTrue(User.create('user1', '1234'))
         self.assertEqual('user1', User.check('user1', '1234').user_id)
@@ -146,10 +146,61 @@ class TestModels(TestCase):
         self.assertEquals([], user1.get_followings())
         self.assertFalse(user1.remove_following(user2))
 
-    ######################
-    # Posts and comments #
-    ######################
-    def test_post_success_create_own_see_and_comment_public_post(self):
+    ##############################################
+    # Posts and Comments + Circles and Following #
+    ##############################################
+    def _assert_user_to_post_privilege(
+            self,
+            acting_user,
+            post,
+            owns: bool,
+            sees: bool,
+            comments: bool,
+            nested_comments: bool
+    ):
+        if owns:
+            self.assertTrue(acting_user.owns_post(post))
+        else:
+            self.assertFalse(acting_user.owns_post(post))
+
+        if sees:
+            self.assertTrue(acting_user.sees_post(post))
+        else:
+            self.assertFalse(acting_user.sees_post(post))
+
+        comment1 = None
+        if comments:
+            acting_user.create_comment('comment1', post)
+            comment1 = list(Comment.objects(author=acting_user, content='comment1'))
+            self.assertEquals(1, len(comment1))
+            comment1 = comment1[0]
+            self.assertIn(comment1.id, list(map(lambda c: c.id, post.comments)))
+        else:
+            def op1():
+                acting_user.create_comment('comment1', post)
+
+            self.assertRaises(UnauthorizedAccess, op1)
+            # post author creates a new comment
+            # in case acting_user needs to mess up with nested commenting later
+            naughty_comment_content = 'comment1_for_'+acting_user.user_id+"_to_mess_up_with"
+            post.author.create_comment(naughty_comment_content, post)
+            comment1 = list(Comment.objects(author=post.author, content=naughty_comment_content))
+            self.assertEquals(1, len(comment1))
+            comment1 = comment1[0]
+
+        if nested_comments:
+            acting_user.create_nested_comment('nested_comment1', comment1, post)
+            nested_comment1 = list(Comment.objects(author=acting_user, content='nested_comment1'))
+            self.assertEquals(1, len(nested_comment1))
+            nested_comment1 = nested_comment1[0]
+            self.assertIn(nested_comment1.id, list(map(lambda c: c.id, comment1.comments)))
+        else:
+            def op2():
+                acting_user.create_nested_comment('nested_comment1', comment1, post)
+
+            self.assertRaises(UnauthorizedAccess, op2)
+
+    def test_can_act_on_my_own_public_post(self):
         # Create user1
         self.assertTrue(User.create('user1', '1234'))
         user1 = User.find('user1')
@@ -161,22 +212,18 @@ class TestModels(TestCase):
         post1 = post1[0]
 
         # User1 owns, sees, comments and nested-comments on post1
-        self.assertTrue(user1.owns_post(post1))
-        self.assertTrue(user1.sees_post(post1))
-        user1.create_comment('comment1', post1)
-        comment1 = Comment.objects(author=user1, content='comment1')
-        self.assertEquals(1, len(comment1))
-        comment1 = comment1[0]
-        user1.create_nested_comment('nested_comment1', comment1, post1)
-        nested_comment1 = Comment.objects(author=user1, content='nested_comment1')
-        self.assertEquals(1, len(nested_comment1))
+        self._assert_user_to_post_privilege(
+            user1, post1, owns=True, sees=True, comments=True, nested_comments=True
+        )
 
-    def test_post_success_create_own_see_and_comment_public_post_from_another_user(self):
-        # Create user1 and user2
+    def test_can_act_on_others_public_post(self):
+        # Create users
         self.assertTrue(User.create('user1', '1234'))
         self.assertTrue(User.create('user2', '2345'))
+        self.assertTrue(User.create('user3', '3456'))
         user1 = User.find('user1')
         user2 = User.find('user2')
+        user3 = User.find('user3')
 
         # Create public post1 from user1
         user1.create_post('post1', True, [])
@@ -184,18 +231,20 @@ class TestModels(TestCase):
         self.assertTrue(1, len(post1))
         post1 = post1[0]
 
-        # User2 not owns but sees, comments and nested-comments on post1
-        self.assertFalse(user2.owns_post(post1))
-        self.assertTrue(user2.sees_post(post1))
-        user2.create_comment('comment1', post1)
-        comment1 = Comment.objects(author=user2, content='comment1')
-        self.assertEquals(1, len(comment1))
-        comment1 = comment1[0]
-        user2.create_nested_comment('nested_comment1', comment1, post1)
-        nested_comment1 = Comment.objects(author=user2, content='nested_comment1')
-        self.assertEquals(1, len(nested_comment1))
+        # user2 follows user1
+        user2.add_following(user1)
 
-    def test_post_success_create_own_see_and_comment_private_post(self):
+        # User2 not owns but sees, comments and nested-comments on post1
+        self._assert_user_to_post_privilege(
+            user2, post1, owns=False, sees=True, comments=True, nested_comments=True
+        )
+
+        # User3 cannot do anything to post1
+        self._assert_user_to_post_privilege(
+            user3, post1, owns=False, sees=False, comments=False, nested_comments=False
+        )
+
+    def test_can_act_on_my_own_private_post(self):
         # Create user1
         self.assertTrue(User.create('user1', '1234'))
         user1 = User.find('user1')
@@ -211,29 +260,28 @@ class TestModels(TestCase):
         post1 = post1[0]
 
         # User1 owns, sees, comments and nested-comments on post1
-        self.assertTrue(user1.owns_post(post1))
-        self.assertTrue(user1.sees_post(post1))
-        user1.create_comment('comment1', post1)
-        comment1 = Comment.objects(author=user1, content='comment1')
-        self.assertEquals(1, len(comment1))
-        comment1 = comment1[0]
-        user1.create_nested_comment('nested_comment1', comment1, post1)
-        nested_comment1 = Comment.objects(author=user1, content='nested_comment1')
-        self.assertEquals(1, len(nested_comment1))
+        self._assert_user_to_post_privilege(
+            user1, post1, owns=True, sees=True, comments=True, nested_comments=True
+        )
 
-    def test_post_success_create_own_see_and_comment_private_post_from_another_user(self):
-        # Create user1, user2 and user3
+    def test_can_act_on_others_private_post(self):
+        # Create users
         self.assertTrue(User.create('user1', '1234'))
         self.assertTrue(User.create('user2', '2345'))
         self.assertTrue(User.create('user3', '3456'))
+        self.assertTrue(User.create('user4', '4567'))
         user1 = User.find('user1')
         user2 = User.find('user2')
         user3 = User.find('user3')
+        user4 = User.find('user4')
 
-        # Create circle1 by user1 and add user2 into circle2 but not user3
+        # Create circle1 by user1 and add user2 and user3 into circle1
         self.assertTrue(user1.create_circle('circle1'))
         circle1 = user1.find_circle('circle1')
         user1.toggle_member(circle1, user2)
+
+        # Only user2 follows user1
+        user2.add_following(user1)
 
         # Create post1 by user1 into circle1
         user1.create_post('post1', False, [circle1])
@@ -241,46 +289,44 @@ class TestModels(TestCase):
         self.assertTrue(1, len(post1))
         post1 = post1[0]
 
-        # User1 owns and sees post1
-        self.assertTrue(user1.owns_post(post1))
-        self.assertTrue(user1.sees_post(post1))
+        # User1 owns, sees, comments and nested-comments on post1
+        self._assert_user_to_post_privilege(
+            user1, post1, owns=True, sees=True, comments=True, nested_comments=True
+        )
 
-        # User2 not owns but sees and (nested) comments on post1
-        self.assertFalse(user2.owns_post(post1))
-        self.assertTrue(user2.sees_post(post1))
-        user2.create_comment('comment1', post1)
-        comment1 = Comment.objects(author=user2, content='comment1')
-        self.assertEquals(1, len(comment1))
-        comment1 = comment1[0]
-        user2.create_nested_comment('nested_comment1', comment1, post1)
-        nested_comment1 = Comment.objects(author=user2, content='nested_comment1')
-        self.assertEquals(1, len(nested_comment1))
+        # User2 not owns but sees, comments and nested-comments on post1
+        self._assert_user_to_post_privilege(
+            user2, post1, owns=False, sees=True, comments=True, nested_comments=True
+        )
 
-        # User3 neither own nor see nor (nested) comments on post1
-        self.assertFalse(user3.owns_post(post1))
-        self.assertFalse(user3.sees_post(post1))
+        # User3 cannot do anything to post1
+        self._assert_user_to_post_privilege(
+            user3, post1, owns=False, sees=False, comments=False, nested_comments=False
+        )
 
-        def op1():
-            user3.create_comment('comment2', post1)
-        self.assertRaises(UnauthorizedAccess, op1)
+        # User4 cannot do anything to post1
+        self._assert_user_to_post_privilege(
+            user4, post1, owns=False, sees=False, comments=False, nested_comments=False
+        )
 
-        def op2():
-            user3.create_nested_comment('nested_comment2', comment1, post1)
-        self.assertRaises(UnauthorizedAccess, op2)
-
-    def test_post_success_sees_posts_from_another_user(self):
-        # Create user1, user2 and user3
+    def test_sees_posts(self):
+        # Create users
         self.assertTrue(User.create('user1', '1234'))
         self.assertTrue(User.create('user2', '2345'))
         self.assertTrue(User.create('user3', '3456'))
+        self.assertTrue(User.create('user4', '4567'))
         user1 = User.find('user1')
         user2 = User.find('user2')
         user3 = User.find('user3')
+        user4 = User.find('user4')
 
-        # Create circle1 by user1 and add user2 into circle2 but not user3
+        # Create circle1 by user1 and add user2 and user3 into circle1
         self.assertTrue(user1.create_circle('circle1'))
         circle1 = user1.find_circle('circle1')
         user1.toggle_member(circle1, user2)
+
+        # Only user2 follows user1
+        user2.add_following(user1)
 
         # Create post1 by user1 into circle1
         user1.create_post('post1', False, [circle1])
@@ -288,7 +334,7 @@ class TestModels(TestCase):
         self.assertTrue(1, len(post1))
         post1 = post1[0]
 
-        # Create public post2
+        # Create public post2 by user1
         user1.create_post('post2', True, [])
         post2 = Post.objects(content='post2')
         self.assertTrue(1, len(post1))
@@ -300,5 +346,8 @@ class TestModels(TestCase):
         # User2 sees post2 and post1
         self.assertEquals([post2, post1], user2.sees_posts())
 
-        # User3 sees post2
-        self.assertEquals([post2], user3.sees_posts())
+        # User3 sees nothing
+        self.assertEquals([], user3.sees_posts())
+
+        # User4 sees nothing
+        self.assertEquals([], user3.sees_posts())

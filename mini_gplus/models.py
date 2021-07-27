@@ -108,7 +108,9 @@ class User(Document, CreatedAtMixin):
         """
         if self.owns_post(post):
             return True
-        elif post.is_public:
+        if post.author not in self.followings:
+            return False
+        if post.is_public:
             return True
         else:
             for circle in post.circles:
@@ -121,6 +123,7 @@ class User(Document, CreatedAtMixin):
         All posts that are visible to the user
         :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
         """
+        # todo: pagination
         posts = Post.objects()
         posts = filter(lambda post: self.sees_post(post), posts)
         return list(reversed(sorted(posts, key=lambda post: post.created_at)))
