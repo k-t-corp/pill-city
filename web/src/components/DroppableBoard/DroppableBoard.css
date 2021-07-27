@@ -1,0 +1,83 @@
+.droppable-board-wrapper {
+    flex-shrink: 0;
+    background-color: #ffffff;
+    border-radius: 50%;
+    width: 250px;
+    height: 250px;
+    margin: 20px 20px;
+    box-shadow: 2px 2px 1px 1px #e0e0e0;
+    display: flex;
+}
+
+.droppable-board-member-cards-wrapper {
+    position: relative;
+    height: 0;
+    width: 0;
+}
+
+.droppable-board-member-card-wrapper {
+    position: absolute;
+}
+
+.droppable-board-member-card-avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.droppable-board-inner-circle {
+    z-index: 2;
+    background-color: #85adff;
+    flex-shrink: 0;
+    border-radius: 50%;
+    width: 250px;
+    height: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.droppable-board-inner-circle:hover {
+    -webkit-animation: scale-down-center 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+    animation: scale-down-center 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+.droppable-board-inner-circle-name {
+    font-weight: bold;
+    font-size: x-large;
+    color: #ffffff;
+    margin-top: 30px;
+}
+
+.droppable-board-inner-circle-follow-number {
+    font-size: large;
+    color: #ffffff;
+    margin-top: 20px;
+}
+
+
+/*Animation*/
+
+@-webkit-keyframes scale-down-center {
+    0% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+    100% {
+        -webkit-transform: scale(0.65);
+        transform: scale(0.65);
+    }
+}
+@keyframes scale-down-center {
+    0% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+    100% {
+        -webkit-transform: scale(0.65);
+        transform: scale(0.65);
+    }
+}
+
+

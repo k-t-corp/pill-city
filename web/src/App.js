@@ -12,7 +12,7 @@ import withApi from './hoc/withApi'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
 import Home from './pages/Home/Home'
-import Circles from './pages/Circles'
+import Circles from './pages/Circles/Circles'
 import Users from './pages/Users'
 import Profile from './pages/Profile'
 
