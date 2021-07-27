@@ -1,18 +1,12 @@
 import React, {useState} from 'react'
 import "./DroppableBoard.css"
-import DraggableCard from "../DraggableCard/DraggableCard";
 
 export default (props) => {
   const [members, updateCards] = useState(props.members)
   const onDrop = e => {
     e.preventDefault();
     const card_id = e.dataTransfer.getData("card_id")
-    const card = document.getElementById(card_id)
-    card.style.display = "block"
-    // const newCard = React.createElement("DraggableCard", {id: "new!"}, "new card")
-    const newCard = document.createElement("DraggableCard")
-    newCard.innerText = "new!"
-    e.target.appendChild(newCard)
+    updateCards([...members, {id: card_id}])
   }
 
   const onDragOver = e => {
@@ -63,7 +57,7 @@ export default (props) => {
           {props.circleName}
         </div>
         <div className="droppable-board-inner-circle-follow-number">
-          {props.members.length}
+          {members.length}
         </div>
       </div>
     </div>
