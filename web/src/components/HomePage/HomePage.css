@@ -1,0 +1,35 @@
+.home-page-wrapper {
+    display: flex;
+    width: 100%;
+}
+
+.home-page-info-wrapper {
+    width: 70%;
+    background-color: #9dd0ff;
+    background-image: url("../../img/favicon.png") ;
+    background-size: 350px;
+}
+
+.container {
+    width: 200px;
+
+}
+
+.welcome {
+    font-size: 50px;
+    margin-top: 70px;
+    margin-bottom: 70px;
+}
+.title {
+    font-size: 120px;
+    font-weight: bold;
+}
+
+
+/*Form Container*/
+.home-page-form-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

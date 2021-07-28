@@ -1,0 +1,24 @@
+import React from "react";
+import "./HomePage.css"
+
+export default (props) => {
+  return (
+    <div className="home-page-wrapper">
+      <div className="home-page-info-wrapper">
+        <div className="welcome">
+          Welcome to
+        </div>
+        <div className="title">
+          Pill City
+        </div>
+        <div className="container">
+
+        </div>
+      </div>
+
+      <div className="home-page-form-wrapper">
+        {props.formElement}
+      </div>
+    </div>
+  )
+}
