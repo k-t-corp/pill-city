@@ -18,48 +18,6 @@ export default (props) => {
     updateUserData(latestUserData)
     updateLoadingUserData(false)
   }, [])
-  const circleDataTemp = [
-    {
-      name: "circle 1",
-      members: [{id: "user1"}, {id: "user2"}, {id: "user4"}]
-    },
-    {
-      name: "circle 2",
-      members: [{id: "user5"}, {id: "user2"}, {id: "user4"}]
-    },
-    {
-      name: "circle 3",
-      members: [{id: "user5"}, {id: "user4"}, {id: "user3"}]
-    },
-    {
-      name: "circle 4",
-      members: [{id: "user5"}, {id: "user4"}, {id: "user3"}]
-    },
-    {
-      name: "circle 5",
-      members: [{id: "user5"}, {id: "user4"}, {id: "user3"}]
-    },
-    {
-      name: "circle 6",
-      members: [{id: "user5"}, {id: "user4"}, {id: "user3"}]
-    },
-    {
-      name: "circle 7",
-      members: [{id: "user5"}, {id: "user4"}, {id: "user3"}]
-    },
-  ]
-  const userProfileDataTemp = [
-    {id: "user1"}, {id: "user2"}, {id: "user3"}, {id: "user4"},
-    {id: "user5"}, {id: "user6"}, {id: "user7"}, {id: "user8"},
-    {id: "user5"}, {id: "user6"}, {id: "user7"}, {id: "user8"},
-    {id: "user5"}, {id: "user6"}, {id: "user7"}, {id: "user8"},
-    {id: "user5"}, {id: "user6"}, {id: "user7"}, {id: "user8"},
-    {id: "user5"}, {id: "user6"}, {id: "user7"}, {id: "user8"},
-    {id: "user5"}, {id: "user6"}, {id: "user7"}, {id: "user8"},
-    {id: "user5"}, {id: "user6"}, {id: "user7"}, {id: "user8"},
-    {id: "user5"}, {id: "user6"}, {id: "user7"}, {id: "user8"},
-    {id: "user5"}, {id: "user6"}, {id: "user7"}, {id: "user8"},
-  ]
   return (
     <div className="circle-wrapper">
       {loadingUserData ? <div>loading</div> : <DraggableUserProfileCards userProfileData={userData}/>}
