@@ -6,7 +6,7 @@
 .add-new-circle-button {
     box-shadow: 2px 2px 1px 1px #e0e0e0;
     color: white;
-    background-color: #ff8080;
+    background-color: #000000;
     border-radius: 50%;
     width: 250px;
     height: 250px;
@@ -112,7 +112,7 @@
 
 @-webkit-keyframes color-change-2x {
     0% {
-        background: #ff8080;
+        background: #000000;
     }
     100% {
         background: #E05140;
@@ -120,7 +120,7 @@
 }
 @keyframes color-change-2x {
     0% {
-        background: #ff8080;
+        background: #000000;
     }
     100% {
         background: #E05140;

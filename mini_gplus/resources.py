@@ -63,6 +63,7 @@ class Circle(Resource):
 
         if not user.create_circle(circle_name):
             return {'msg': f'Circle name {circle_name} is already taken'}, 409
+        return {'name': circle_name}, 201
 
     @jwt_required()
     @marshal_with(circle_fields)

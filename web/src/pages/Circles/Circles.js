@@ -48,7 +48,18 @@ export default (props) => {
       members: [{id: "user5"}, {id: "user4"}, {id: "user3"}]
     },
   ]
-  const userProfileData = [{id: "user1"}, {id: "user2"}, {id: "user3"}, {id: "user4"}, {id: "user5"}, {id: "user6"}, {id: "user7"}]
+  const userProfileDataTemp = [
+    {id: "user1"}, {id: "user2"}, {id: "user3"}, {id: "user4"},
+    {id: "user5"}, {id: "user6"}, {id: "user7"}, {id: "user8"},
+    {id: "user5"}, {id: "user6"}, {id: "user7"}, {id: "user8"},
+    {id: "user5"}, {id: "user6"}, {id: "user7"}, {id: "user8"},
+    {id: "user5"}, {id: "user6"}, {id: "user7"}, {id: "user8"},
+    {id: "user5"}, {id: "user6"}, {id: "user7"}, {id: "user8"},
+    {id: "user5"}, {id: "user6"}, {id: "user7"}, {id: "user8"},
+    {id: "user5"}, {id: "user6"}, {id: "user7"}, {id: "user8"},
+    {id: "user5"}, {id: "user6"}, {id: "user7"}, {id: "user8"},
+    {id: "user5"}, {id: "user6"}, {id: "user7"}, {id: "user8"},
+  ]
   return (
     <div className="circle-wrapper">
       {loadingUserData ? <div>loading</div> : <DraggableUserProfileCards userProfileData={userData}/>}
