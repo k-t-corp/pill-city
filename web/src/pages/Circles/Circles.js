@@ -1,10 +1,24 @@
-import React, {Component} from 'react'
+import React, {useEffect, useState} from 'react'
 import "./Circles.css"
 import DraggableUserProfileCards from "../../components/DraggableUserProfileCards/DraggableUserProfileCards";
 import CircleBoards from "../../components/CircleBoards/CircleBoards";
 
-export default () => {
-  const circleData = [
+export default (props) => {
+  const [userData, updateUserData] = useState([])
+  const [loadingUserData, updateLoadingUserData] = useState(true)
+  const [circleData, updateCircleData] = useState([])
+  const [loadingCircleData, updateLoadingCircleData] = useState(true)
+  useEffect(async () => {
+    const latestCircleData = await props.api.getCircles()
+    updateCircleData(latestCircleData)
+    updateLoadingCircleData(false)
+  }, [])
+  useEffect(async () => {
+    const latestUserData = await props.api.getUsers()
+    updateUserData(latestUserData)
+    updateLoadingUserData(false)
+  }, [])
+  const circleDataTemp = [
     {
       name: "circle 1",
       members: [{id: "user1"}, {id: "user2"}, {id: "user4"}]
@@ -37,27 +51,9 @@ export default () => {
   const userProfileData = [{id: "user1"}, {id: "user2"}, {id: "user3"}, {id: "user4"}, {id: "user5"}, {id: "user6"}, {id: "user7"}]
   return (
     <div className="circle-wrapper">
-      <DraggableUserProfileCards userProfileData={userProfileData}/>
-      <CircleBoards circleData={circleData}/>
+      {loadingUserData ? <div>loading</div> : <DraggableUserProfileCards userProfileData={userData}/>}
+      {loadingCircleData ? <div>loading</div> : <CircleBoards circleData={circleData} api={props.api}/>}
     </div>
-    // <div>
-    //   <div className="circle-user-profile-wrapper">
-    //     <DraggableCard id="card1" draggable={true}>
-    //       card1
-    //     </DraggableCard>
-    //   </div>
-    //   <div className="circle-circle-wrapper">
-    //     <DroppableBoard id="circle">
-    //       board1
-    //       <DraggableCard id="card2" draggable={true}>
-    //         card2
-    //       </DraggableCard>
-    //     </DroppableBoard>
-    //     <DroppableBoard id="circle">
-    //       board2
-    //     </DroppableBoard>
-    //   </div>
-    // </div>
   )
 
 }
