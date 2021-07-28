@@ -46,7 +46,7 @@ export default class App extends Component {
             path="/signin"
             component={withApi(SignIn, api)}
           />
-          <Route path="/circles" component={withAuthRedirect(withNavBar(Circles, '/circles'))}/>
+          <Route path="/circles" component={withApi(withAuthRedirect(withNavBar(Circles, '/circles')), api)}/>
           <Redirect to='/'/>
         </Switch>
       </Router>
