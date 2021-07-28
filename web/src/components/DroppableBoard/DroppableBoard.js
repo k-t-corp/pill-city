@@ -112,9 +112,6 @@ export default (props) => {
         alert("Something went wrong, please try again later >_<")
       }
     }
-
-
-
   }
 
   // can't be controlled by using css property :hover

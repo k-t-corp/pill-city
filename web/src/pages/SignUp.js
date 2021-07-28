@@ -3,6 +3,7 @@ import {Button, Grid, Header, Message, Segment, Label, GridColumn} from 'semanti
 import {Form, Input} from 'formsy-semantic-ui-react'
 import {Link, Redirect} from "react-router-dom";
 import CatchApiErrorBuilder from '../api/CatchApiErrorBuilder'
+import HomePage from "../components/HomePage/HomePage";
 
 require('promise.prototype.finally').shim();
 
@@ -56,13 +57,8 @@ export default class SignUp extends Component {
     })
   }
 
-  render() {
-    if (this.state.redirectToSignIn) {
-      return <Redirect to={'/signin'}/>
-    }
-
+  loginForm = () => {
     const errorLabel = <Label color="red" pointing/>
-
     return (
       <div className='login-form'>
         <style>{`
@@ -121,9 +117,9 @@ export default class SignUp extends Component {
               </Segment>
             </Form>
             {this.state.error &&
-              <Message negative>
-                {this.state.error}
-              </Message>
+            <Message negative>
+              {this.state.error}
+            </Message>
             }
             <Message>
               Already have an account? <Link to='/signin'>Sign in here</Link>
@@ -131,6 +127,16 @@ export default class SignUp extends Component {
           </GridColumn>
         </Grid>
       </div>
+    )
+  }
+
+  render() {
+    if (this.state.redirectToSignIn) {
+      return <Redirect to={'/signin'}/>
+    }
+
+    return (
+        <HomePage formElement={this.loginForm()}/>
     )
   }
 }
