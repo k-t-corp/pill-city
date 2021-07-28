@@ -1,7 +1,6 @@
 .container {
-    margin-top: 5em;
     margin-left: auto;
     margin-right: auto;
-    padding: 0 50px;
+    padding: 5em 50px 0 50px;
     max-width: 1200px;
 }
