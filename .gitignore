@@ -183,3 +183,4 @@ $RECYCLE.BIN/
 *.lnk
 
 data
+.env

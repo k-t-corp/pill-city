@@ -8,16 +8,24 @@ A Google+ clone
 * Node.js and Yarn
 * Docker
 
-### Run
+### Install dependencies
+```
+python3 -m venv venv
+./venv/bin/pip install -r requirements.txt
+```
+
+### Prepare .env files
+* Copy `.example.env` to `.env`
+* Copy `./web/.example.env` to `./web/.env`
+
+### Run API
 ```bash
-# Run databases
-docker compose up
+./scripts/dev.sh
+```
 
-# In another terminal, run server
-pip install -r requirements.txt
-FLASK_ENVIRONMENT=development python app.py
-
-# In a third terminal, run web frontend
+### Run web frontend
+In another terminal
+```bash
 cd web
 yarn install
 yarn start

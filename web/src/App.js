@@ -16,9 +16,7 @@ import Circles from './pages/Circles/Circles'
 import Users from './pages/Users'
 import Profile from './pages/Profile'
 
-const api = new Api(
-  "http://localhost:5000/api"
-)
+const api = new Api(process.env.REACT_APP_API_ENDPOINT)
 
 export default class App extends Component {
   render() {
