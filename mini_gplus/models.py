@@ -237,7 +237,7 @@ class User(Document, CreatedAtMixin):
         """
         Get all user's circles by creation time descending
         """
-        return list(reversed(Circle.objects(owner=self)))
+        return list(reversed(sorted(Circle.objects(owner=self), key=lambda circle: circle.created_at)))
 
     def create_circle(self, name):
         """
@@ -332,7 +332,7 @@ class User(Document, CreatedAtMixin):
         return list(self.followings)
 
 
-class Circle(Document):
+class Circle(Document, CreatedAtMixin):
     owner = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
     name = StringField(required=True)
     members = ListField(ReferenceField(User, reverse_delete_rule=PULL), default=[])  # type: List[User]
