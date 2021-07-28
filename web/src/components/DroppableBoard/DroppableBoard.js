@@ -18,7 +18,8 @@ export default (props) => {
   const circleAnimation = (circleName, card_id) => {
     let elem = document.getElementById(`${circleName}-temp-card`);
     let degree = 1;
-    let finalDegree = 360 - finalAnglePerCardAsDegree * members.length
+    let stepCount = 0;
+    let finalDegree = 360 - finalAnglePerCardAsDegree * (members.length + 1)
     clearInterval(animationIntervalId);
     animationIntervalId = setInterval(frame, 10);
 
@@ -29,12 +30,18 @@ export default (props) => {
         clearInterval(animationIntervalId);
       } else {
         elem.style.visibility = "visible"
-        degree = degree * 1.1;
+        // degree = degree * 1.1;
+        degree = finalDegree * easeInOutCubic(stepCount)
+        stepCount += 0.02;
         const top = Math.abs((innerRadius + cardRadius) * Math.cos(degree * 3.14 / 180) - outerRadius + cardRadius)
         const left = Math.abs((innerRadius + cardRadius) * Math.sin(degree * 3.14 / 180) - outerRadius + cardRadius)
         elem.style.top = top + 'px';
         elem.style.left = left + 'px';
       }
+    }
+
+    function easeInOutCubic(x) {
+      return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
     }
   }
   const innerCircleScale = (scaleUp, delay) => {
@@ -89,12 +96,25 @@ export default (props) => {
 
     return colorMap[hashValue % colorCount]
   }
-  const onDrop = e => {
+  const onDrop = async e => {
     e.preventDefault();
     const card_id = e.dataTransfer.getData("card_id")
-    innerCircleScale(false, 0)
-    circleAnimation(props.circleName, card_id)
-    innerCircleScale(true, 900)
+    try {
+      await props.api.addToCircle(props.circleName, card_id)
+      innerCircleScale(false, 0)
+      circleAnimation(props.circleName, card_id)
+      innerCircleScale(true, 900)
+    } catch (e) {
+      console.log(e)
+      if (e.response.status === 409) {
+        alert(`${card_id} is already in this circle.`)
+      } else {
+        alert("Something went wrong, please try again later >_<")
+      }
+    }
+
+
+
   }
 
   // can't be controlled by using css property :hover
