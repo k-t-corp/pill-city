@@ -1,3 +1,5 @@
+import os
+
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from .models import User, Post, Comment
@@ -286,6 +288,8 @@ class Me(Resource):
         """
         Signs up a new user
         """
+        if os.environ.get('ALLOW_SIGNUP', 'true') != 'true':
+            return {'msg': 'Sign up is not open at this moment'}, 403
         args = user_parser.parse_args()
         successful = User.create(args['id'], args['password'])
         user_id = args['id']
