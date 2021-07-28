@@ -235,9 +235,9 @@ class User(Document, CreatedAtMixin):
     ##########
     def get_circles(self):
         """
-        Get all user's circles
+        Get all user's circles by creation time descending
         """
-        return list(Circle.objects(owner=self))
+        return list(reversed(Circle.objects(owner=self)))
 
     def create_circle(self, name):
         """
