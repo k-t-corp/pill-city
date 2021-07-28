@@ -13,7 +13,7 @@ from mini_gplus.models import User
 
 app = Flask(__name__)
 app.secret_key = urandom(24)
-mongodb_uri = os.environ.get('MONGODB_URI', 'mongodb://localhost:19023/minigplus')
+mongodb_uri = os.environ['MONGODB_URI']
 mongodb_db = parse_uri(mongodb_uri)['database']
 app.config['MONGODB_SETTINGS'] = {
     'db': mongodb_db,
@@ -26,7 +26,7 @@ app.session_interface = MongoEngineSessionInterface(db)
 ##################
 # Authentication #
 ##################
-app.config['JWT_SECRET_KEY'] = '123456'  # TODO: read from env
+app.config['JWT_SECRET_KEY'] = os.environ['JWT_SECRET_KEY']
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
 JWTManager(app)
 
