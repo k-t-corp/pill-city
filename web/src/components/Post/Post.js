@@ -118,7 +118,7 @@ export default (props) => {
               {props.data.author.id}
             </div>
             <div className="post-visibility">
-              &#x25B8; {props.data.is_public ? "Public" : props.data.circles.join(", ")}
+              &#x25B8; {props.data.is_public ? "Public" : "Private"}
             </div>
           </div>
           <div className="post-op-info-right">

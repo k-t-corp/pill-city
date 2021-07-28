@@ -16,6 +16,7 @@ class CreatedAtMixin(object):
 class User(Document, CreatedAtMixin):
     user_id = StringField(required=True, unique=True)
     password = StringField(required=True)
+    followings = ListField(ReferenceField('User', reverse_delete_rule=PULL), default=[])  # type: List[User]
 
     ########
     # User #
@@ -107,7 +108,9 @@ class User(Document, CreatedAtMixin):
         """
         if self.owns_post(post):
             return True
-        elif post.is_public:
+        if post.author not in self.followings:
+            return False
+        if post.is_public:
             return True
         else:
             for circle in post.circles:
@@ -120,6 +123,7 @@ class User(Document, CreatedAtMixin):
         All posts that are visible to the user
         :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
         """
+        # todo: pagination
         posts = Post.objects()
         posts = filter(lambda post: self.sees_post(post), posts)
         return list(reversed(sorted(posts, key=lambda post: post.created_at)))
@@ -231,9 +235,9 @@ class User(Document, CreatedAtMixin):
     ##########
     def get_circles(self):
         """
-        Get all user's circles
+        Get all user's circles by creation time descending
         """
-        return list(Circle.objects(owner=self))
+        return list(reversed(Circle.objects(owner=self)))
 
     def create_circle(self, name):
         """
@@ -293,6 +297,40 @@ class User(Document, CreatedAtMixin):
         else:
             raise UnauthorizedAccess()
 
+    #############
+    # Following #
+    #############
+    def add_following(self, user):
+        """
+        Add a following
+        :param (User) user: the added user
+        :return (bool): Whether adding is successful.
+        """
+        if user in self.followings:
+            return False
+        self.followings.append(user)
+        self.save()
+        return True
+
+    def remove_following(self, user):
+        """
+        Remove a following
+        :param (User) user: the removed user
+        :return (bool): Whether removing is successful.
+        """
+        if user not in self.followings:
+            return False
+        self.followings = list(filter(lambda u: u.user_id != user.user_id, self.followings))
+        self.save()
+        return True
+
+    def get_followings(self):
+        """
+        Get all followings
+        :return (List[User]): List of following users.
+        """
+        return list(self.followings)
+
 
 class Circle(Document):
     owner = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
@@ -331,12 +369,3 @@ class Post(Document, CreatedAtMixin):
     reactions = ListField(ReferenceField(Reaction, reverse_delete_rule=PULL), default=[])  # type: List[Reaction]
     circles = ListField(ReferenceField(Circle, reverse_delete_rule=PULL), default=[])  # type: List[Circle]
     comments = ListField(ReferenceField(Comment, reverse_delete_rule=PULL), default=[])  # type: List[Comment]
-
-    @property
-    def sharing_scope_str(self):
-        if self.is_public:
-            return '(public)'
-        elif self.circles:
-            return ', '.join(map(lambda circle: circle.name, self.circles))
-        else:
-            return '(private)'
