@@ -75,11 +75,9 @@ export default (props) => {
             fluid multiple selection
           />
         </div>
-        <div>
           <div className={submitButtonClass()} onClick={postButtonOnClick}>
             Post
           </div>
-        </div>
       </div>
     </div>
   )

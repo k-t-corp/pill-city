@@ -71,6 +71,9 @@
     border-radius: 5px;
     width: auto;
     cursor: pointer;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 45px;  /* todo: xia cai de */
 }
 
 .new-post-post-btn-invalid {
