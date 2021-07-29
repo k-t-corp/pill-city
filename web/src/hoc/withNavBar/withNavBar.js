@@ -41,7 +41,7 @@ export default (WrappedComponent, path) => {
               }}
               active={path === '/'}
             >
-              <span role="img" aria-label={"home"}>🏠</span> Home
+              <span role="img" aria-label="home">🏠</span>&nbsp;Home
             </MenuItem>
             <MenuItem
               as='a'
@@ -50,7 +50,7 @@ export default (WrappedComponent, path) => {
               }}
               active={path === '/circles'}
             >
-              <span role="img" aria-label={"circle"}>⭕</span> Circles
+              <span role="img" aria-label="circle">⭕</span>&nbsp;Circles
             </MenuItem>
             <MenuItem
               as='a'
@@ -59,7 +59,7 @@ export default (WrappedComponent, path) => {
               }}
               active={path === '/collections'}
             >
-              <span role="img" aria-label={"collection"}>📚</span> Collections
+              <span role="img" aria-label="collection">📚</span>&nbsp;Collections
             </MenuItem>
             <MenuItem
               as='a'
@@ -68,7 +68,7 @@ export default (WrappedComponent, path) => {
               }}
               active={path === '/users'}
             >
-              <span role="img" aria-label={"users"}>👩‍👩‍👦‍👦</span> Users
+              <span role="img" aria-label="users">👩‍👩‍👦‍👦</span>&nbsp;Users
             </MenuItem>
             <MenuItem
               as='a'
@@ -77,7 +77,7 @@ export default (WrappedComponent, path) => {
               }}
               active={path === '/profile'}
             >
-              <span role="img" aria-label={"profile"}>🐒</span> Profile
+              <span role="img" aria-label="profile">🐒</span>&nbsp;Profile
             </MenuItem>
             <Menu.Menu position='right'>
               <MenuItem as='a' size='large'>
