@@ -47,7 +47,7 @@ export default (props) => {
     for (let i = 0; i < comment.comments.length; i++) {
       const nestedComment = comment.comments[i]
       nestedComments.push(
-        <div className="post-nested-comment">
+        <div key={i} className="post-nested-comment">
           <div className="post-avatar post-nested-comment-avatar">
             <img className="post-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.png`} alt=""/>
           </div>

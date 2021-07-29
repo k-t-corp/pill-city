@@ -93,7 +93,7 @@ export default (WrappedComponent, path) => {
               </MenuItem>
             </Menu.Menu>
           </Menu>
-          <div className="container" >
+          <div className="faq-semantic-container" >
             <WrappedComponent {...this.props}/>
           </div>
         </div>
