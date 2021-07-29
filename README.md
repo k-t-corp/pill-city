@@ -4,7 +4,7 @@ An one-of-a-kind social network
 ## Development
 
 ### Prerequisites
-* Python 3.7.0
+* Python 3.7+
 * Node.js and Yarn
 * Docker
 
