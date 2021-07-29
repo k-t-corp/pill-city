@@ -1,26 +1,27 @@
 import React, {useState} from 'react'
+import { Checkbox, Dropdown } from 'semantic-ui-react'
 import "./NewPost.css"
 
 export default (props) => {
+  const [content, updateContent] = useState("")
+  const [isPublic, updateIsPublic] = useState(true)
+  const [circleNames, updateCircleNames] = useState([])
   const [posting, updatePosting] = useState(false)
-  const [validContent, updateValidContent] = useState(false)
-  const postButtonOnclick = async () => {
+
+  const isValid = () => {
+    return content.trim().length !== 0 && (isPublic || circleNames.length !== 0)
+  }
+
+  const postButtonOnClick = async () => {
     updatePosting(true);
-    const content = document.getElementById("new-post-content").value;
-    await props.api.postPost(content);
+    console.log(content, isPublic, circleNames)
+    await props.api.postPost(content, isPublic, circleNames);
     window.location.reload();
   }
 
-  const onContentChange = () => {
-    const textAreaElement = document.getElementById("new-post-content")
-    const currentContent = textAreaElement.value;
-    updateValidContent(currentContent.trim().length !== 0);
-  }
-
-
-  const buttonClass = () => {
+  const submitButtonClass = () => {
     let className = ["new-post-post-btn"]
-    if (!validContent) {
+    if (!isValid()) {
       className.push("new-post-post-btn-invalid")
     }
     if (posting) {
@@ -28,6 +29,7 @@ export default (props) => {
     }
     return className.join(" ")
   }
+
   return (
     <div className="new-post">
       <div className="new-post-user-info">
@@ -38,9 +40,37 @@ export default (props) => {
           {props.userinfo.user.id}
         </div>
       </div>
-      <textarea className="new-post-text-box" id="new-post-content" onChange={onContentChange}/>
+      <textarea
+        className="new-post-text-box"
+        value={content}
+        onChange={e => {
+          e.preventDefault();
+          updateContent(e.target.value)
+        }}
+      />
+      <Checkbox
+        label='Public'
+        checked={isPublic}
+        onChange={e => {
+          e.preventDefault();
+          updateIsPublic(!isPublic)
+        }}
+      />
+      {!isPublic ? <Dropdown
+        placeholder='Circles'
+        options={props.circles.map(circle => {
+          const { name } = circle
+          return { key: name, text: name, value: name }
+        })}
+        value={circleNames}
+        onChange={(e, { value }) => {
+          e.preventDefault();
+          updateCircleNames(value)
+        }}
+        fluid multiple selection
+      /> : null }
       <div className="new-post-btns">
-        <div className={buttonClass()} onClick={postButtonOnclick}>
+        <div className={submitButtonClass()} onClick={postButtonOnClick}>
           Post
         </div>
       </div>

@@ -6,17 +6,22 @@ import NewPost from "../../components/NewPost/NewPost";
 require('promise.prototype.finally').shim();
 
 export default (props) => {
-  const newPostData = {
+  const userInfo = {
     user: {
       id: "ika",
       favicon: "kusuou.png",
     }
   }
+
   const [loading, updateLoading] = useState(true)
+
   const [posts, updatePosts] = useState([])
+  const [circles, updateCircles] = useState([])
+
   useEffect(async ()=>{
-    const postData = await props.api.getPosts()
-    updatePosts(postData)
+    updatePosts(await props.api.getPosts())
+    updateCircles(await props.api.getCircles())
+
     updateLoading(false)
   }, [])
 
@@ -40,7 +45,7 @@ export default (props) => {
           {homePostElement()}
         </div>
         <div className="home-new-post-wrapper">
-          <NewPost userinfo={newPostData} api={props.api}/>
+          <NewPost userinfo={userInfo} circles={circles} api={props.api}/>
         </div>
       </div>
     )
