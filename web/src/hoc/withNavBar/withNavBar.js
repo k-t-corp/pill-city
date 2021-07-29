@@ -33,7 +33,7 @@ export default (WrappedComponent, path) => {
 
       return (
         <div>
-          <Menu fixed='top'>
+          <Menu fixed='top' size="large" inverted>
             <MenuItem
               as='a'
               onClick={() => {
@@ -41,7 +41,7 @@ export default (WrappedComponent, path) => {
               }}
               active={path === '/'}
             >
-              Home
+              🏠 Home
             </MenuItem>
             <MenuItem
               as='a'
@@ -50,7 +50,7 @@ export default (WrappedComponent, path) => {
               }}
               active={path === '/circles'}
             >
-              Circles
+              ⭕ Circles
             </MenuItem>
             <MenuItem
               as='a'
@@ -59,7 +59,7 @@ export default (WrappedComponent, path) => {
               }}
               active={path === '/collections'}
             >
-              Collections
+              📚 Collections
             </MenuItem>
             <MenuItem
               as='a'
@@ -68,7 +68,7 @@ export default (WrappedComponent, path) => {
               }}
               active={path === '/users'}
             >
-              Users
+              👩‍👩‍👦‍👦 Users
             </MenuItem>
             <MenuItem
               as='a'
@@ -77,11 +77,11 @@ export default (WrappedComponent, path) => {
               }}
               active={path === '/profile'}
             >
-              Profile
+              🐒 Profile
             </MenuItem>
             <Menu.Menu position='right'>
               <MenuItem as='a' size='large'>
-                <Icon name='bell outline'/>
+                &nbsp;&nbsp;&nbsp;<Icon name='bell outline'/>
               </MenuItem>
               <MenuItem
                 as='a'
