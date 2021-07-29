@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom'
 import Api from './api/Api'
 import withAuthRedirect from './hoc/withAuthRedirect'
+import withNoAuthRedirect from './hoc/withNoAuthRedirect'
 import withNavBar from './hoc/withNavBar/withNavBar'
 import withApi from './hoc/withApi'
 import SignIn from './pages/SignIn/SignIn'
@@ -38,11 +39,11 @@ export default class App extends Component {
           />
           <Route
             path="/signup"
-            component={withApi(SignUp, api)}
+            component={withApi(withNoAuthRedirect(SignUp), api)}
           />
           <Route
             path="/signin"
-            component={withApi(SignIn, api)}
+            component={withApi(withNoAuthRedirect(SignIn), api)}
           />
           <Route path="/circles" component={withApi(withAuthRedirect(withNavBar(Circles, '/circles')), api)}/>
           <Redirect to='/'/>
