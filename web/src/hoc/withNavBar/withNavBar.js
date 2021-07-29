@@ -41,7 +41,7 @@ export default (WrappedComponent, path) => {
               }}
               active={path === '/'}
             >
-              🏠 Home
+              <span role="img" aria-label={"home"}>🏠</span> Home
             </MenuItem>
             <MenuItem
               as='a'
@@ -50,7 +50,7 @@ export default (WrappedComponent, path) => {
               }}
               active={path === '/circles'}
             >
-              ⭕ Circles
+              <span role="img" aria-label={"circle"}>⭕</span> Circles
             </MenuItem>
             <MenuItem
               as='a'
@@ -59,7 +59,7 @@ export default (WrappedComponent, path) => {
               }}
               active={path === '/collections'}
             >
-              📚 Collections
+              <span role="img" aria-label={"collection"}>📚</span> Collections
             </MenuItem>
             <MenuItem
               as='a'
@@ -68,7 +68,7 @@ export default (WrappedComponent, path) => {
               }}
               active={path === '/users'}
             >
-              👩‍👩‍👦‍👦 Users
+              <span role="img" aria-label={"users"}>👩‍👩‍👦‍👦</span> Users
             </MenuItem>
             <MenuItem
               as='a'
@@ -77,7 +77,7 @@ export default (WrappedComponent, path) => {
               }}
               active={path === '/profile'}
             >
-              🐒 Profile
+              <span role="img" aria-label={"profile"}>🐒</span> Profile
             </MenuItem>
             <Menu.Menu position='right'>
               <MenuItem as='a' size='large'>
