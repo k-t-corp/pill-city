@@ -14,7 +14,6 @@ export default (props) => {
 
   const postButtonOnClick = async () => {
     updatePosting(true);
-    console.log(content, isPublic, circleNames)
     await props.api.postPost(content, isPublic, circleNames);
     window.location.reload();
   }
