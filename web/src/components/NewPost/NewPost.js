@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import { Dropdown } from 'semantic-ui-react'
+import { Dropdown, Popup, Icon } from 'semantic-ui-react'
 import "./NewPost.css"
 
 export default (props) => {
@@ -49,30 +49,43 @@ export default (props) => {
           updateContent(e.target.value)
         }}
       />
-      <div className='new-post-controls'>
-        <div className='new-post-options'>
-          <Dropdown
-            className='new-post-circles-dropdown'
-            placeholder='Who can see it'
-            options={
-              [{ key: 'public', text: '🌏 Public', value: true }].concat(
-                props.circles.map(circle => {
-                  const { name } = circle
-                  return { key: name, text: `⭕ ${name}`, value: name }
-                })
-              )
-            }
-            value={circleNames}
-            onChange={(e, { value }) => {
-              e.preventDefault();
-              updateCircleNames(value)
-            }}
-            fluid multiple selection
-          />
+      <div className='new-post-circles-dropdown-wrapper'>
+        <Dropdown
+          placeholder='Who can see it'
+          options={
+            [{ key: 'public', text: '🌏 Public', value: true }].concat(
+              props.circles.map(circle => {
+                const { name } = circle
+                return { key: name, text: `⭕ ${name}`, value: name }
+              })
+            )
+          }
+          value={circleNames}
+          onChange={(e, { value }) => {
+            e.preventDefault();
+            updateCircleNames(value)
+          }}
+          fluid multiple selection
+        />
+        <Popup
+          trigger={
+            <Icon
+              className='new-post-circles-dropdown-question'
+              name='question circle outline'
+            />
+          }
+          position='top right'
+          basic
+        >
+          <p>"Public" means anyone on this site who follows you can see this post</p>
+          <p>If you only pick circles, only people in these circles who follow you can see this post</p>
+          <p>You can pick both "Public" and circles but that still means anyone on this site can see this post. Circle selections in this case are just for your own record</p>
+        </Popup>
+      </div>
+      <div className='new-post-btns'>
+        <div className={submitButtonClass()} onClick={postButtonOnClick}>
+          Post
         </div>
-          <div className={submitButtonClass()} onClick={postButtonOnClick}>
-            Post
-          </div>
       </div>
     </div>
   )

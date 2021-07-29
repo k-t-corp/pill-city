@@ -47,22 +47,24 @@
     border: 2px #e2e2e2 solid;
 }
 
-.new-post-controls {
+.new-post-circles-dropdown-wrapper {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    align-items: center;
 }
 
-.new-post-options {
-    flex-grow: 1;
+.new-post-circles-dropdown-question {
+    padding-left: 5px;
+    padding-top: -5px;
 }
 
-.new-post-circles-dropdown {
-    margin-top: 10px;
+.new-post-btns {
+    display: flex;
+    justify-content: flex-end;
 }
 
 .new-post-post-btn {
-    margin-left: 10px;
+    margin-top: 10px;
     padding: 10px 12px;
     font-weight: bold;
     font-size: medium;
