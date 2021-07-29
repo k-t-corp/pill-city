@@ -1,20 +1,22 @@
 import React, {useState} from 'react'
-import { Checkbox, Dropdown } from 'semantic-ui-react'
+import { Dropdown } from 'semantic-ui-react'
 import "./NewPost.css"
 
 export default (props) => {
   const [content, updateContent] = useState("")
-  const [isPublic, updateIsPublic] = useState(true)
   const [circleNames, updateCircleNames] = useState([])
   const [posting, updatePosting] = useState(false)
 
   const isValid = () => {
-    return content.trim().length !== 0 && (isPublic || circleNames.length !== 0)
+    return content.trim().length !== 0 && circleNames.length !== 0
   }
 
   const postButtonOnClick = async () => {
     updatePosting(true);
-    await props.api.postPost(content, isPublic, circleNames);
+    const actualCircleNames = circleNames.filter(cn => cn !== true)
+    const isPublic = circleNames.filter(cn => cn === true).length !== 0
+    console.log(isPublic, actualCircleNames)
+    await props.api.postPost(content, isPublic, actualCircleNames);
     window.location.reload();
   }
 
@@ -49,23 +51,17 @@ export default (props) => {
       />
       <div className='new-post-controls'>
         <div className='new-post-options'>
-          <Checkbox
-            label='Public'
-            checked={isPublic}
-            onChange={e => {
-              e.preventDefault();
-              updateIsPublic(!isPublic)
-            }}
-            size='small'
-          />
           <Dropdown
             className='new-post-circles-dropdown'
-            disabled={isPublic}
-            placeholder='Circles'
-            options={props.circles.map(circle => {
-              const { name } = circle
-              return { key: name, text: name, value: name }
-            })}
+            placeholder='Who can see it'
+            options={
+              [{ key: 'public', text: '🌏 Public', value: true }].concat(
+                props.circles.map(circle => {
+                  const { name } = circle
+                  return { key: name, text: `⭕ ${name}`, value: name }
+                })
+              )
+            }
             value={circleNames}
             onChange={(e, { value }) => {
               e.preventDefault();
