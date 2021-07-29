@@ -1,4 +1,4 @@
-# mini-gplus
+# pill-city
 An one-of-a-kind social network
 
 ## Development
