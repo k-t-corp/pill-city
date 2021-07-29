@@ -9,7 +9,7 @@ export default (props) => {
   const newPostData = {
     user: {
       id: "ika",
-      favicon: "kusuou.PNG",
+      favicon: "kusuou.png",
     }
   }
   const [loading, updateLoading] = useState(true)

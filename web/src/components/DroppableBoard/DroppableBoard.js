@@ -82,7 +82,7 @@ export default (props) => {
           height: `${cardRadius * 2 - circleMargin * 2}px`,
           visibility: "hidden",
         }}>
-        <img className="droppable-board-member-card-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.PNG`} alt=""/>
+        <img className="droppable-board-member-card-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.png`} alt=""/>
       </div>)
   }
   const circleColor = (circleName) => {
@@ -149,7 +149,7 @@ export default (props) => {
             width: `${cardRadius * 2 - circleMargin * 2}px`,
             height: `${cardRadius * 2 - circleMargin * 2}px`,
           }}>
-          <img className="droppable-board-member-card-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.PNG`} alt=""/>
+          <img className="droppable-board-member-card-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.ong`} alt=""/>
         </div>)
     }
     return memberCardElements

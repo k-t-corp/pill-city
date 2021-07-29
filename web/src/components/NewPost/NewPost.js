@@ -32,7 +32,7 @@ export default (props) => {
     <div className="new-post">
       <div className="new-post-user-info">
         <div className="new-post-avatar">
-          <img className="new-post-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.PNG`} alt=""/>
+          <img className="new-post-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.png`} alt=""/>
         </div>
         <div className="new-post-name">
           {props.userinfo.user.id}
