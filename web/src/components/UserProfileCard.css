@@ -1,0 +1,42 @@
+.user-profile-card-wrapper {
+    background-color: #ffffff;
+    width: 100%;
+    height: 50px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 1px 1px #e0e0e0;
+    display: flex;
+    align-items: center;
+}
+
+.user-profile-card-avatar {
+    height: 50px;
+    width: 50px;
+    flex-shrink: 0;
+}
+
+.user-profile-card-avatar-img {
+    width: 100%;
+    height: 100%;
+}
+
+.user-profile-card-name {
+    flex-grow: 1;
+    font-weight: bold;
+    margin-left: 20px;
+}
+
+.user-profile-card-delete-button {
+    justify-self: flex-end;
+    flex-shrink: 0;
+    color: #767676;
+    border-radius: 5px;
+    width: 35px;
+    height: 35px;
+    padding: 7px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.user-profile-card-delete-button:hover {
+    color: #E05140;
+}

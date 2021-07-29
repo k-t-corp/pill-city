@@ -13,14 +13,15 @@ export default (props) => {
 
   return (
     <div
+      className="draggable-card-wrapper"
       id={props.id}
       onDragStart={onDragStart}
       onDragOver={onDragOver}
       draggable={true}
-      className="draggable-card-wrapper"
     >
-      <div className="draggable-card-avatar">
-        <img className="draggable-card-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.png`} alt=""/>
+      {/*prevent users from dragging the single avatar image*/}
+      <div className="draggable-card-avatar" draggable={false}>
+        <img className="draggable-card-avatar-img" draggable={false} src={`${process.env.PUBLIC_URL}/kusuou.png`} alt=""/>
       </div>
       <div className="draggable-card-name">
         {props.user_id}

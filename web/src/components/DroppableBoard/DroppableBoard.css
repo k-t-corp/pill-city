@@ -1,4 +1,4 @@
-.droppable-board-wrapper {
+.droppable-board {
     flex-shrink: 0;
     background-color: #ffffff;
     border-radius: 50%;
@@ -7,10 +7,12 @@
     margin: 20px 20px;
     box-shadow: 2px 2px 1px 1px #e0e0e0;
     display: flex;
+    cursor: pointer;
 }
 
 .droppable-board-member-cards-wrapper {
     position: relative;
+    z-index: 0;
     height: 0;
     width: 0;
 }
@@ -26,7 +28,7 @@
 }
 
 .droppable-board-inner-circle {
-    z-index: 2;
+    z-index: 1;
     flex-shrink: 0;
     border-radius: 50%;
     width: 250px;
@@ -42,6 +44,12 @@
     font-size: x-large;
     color: #ffffff;
     margin-top: 30px;
+    padding: 0 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    text-align: center;
 }
 
 .droppable-board-inner-circle-follow-number {
@@ -50,5 +58,79 @@
     margin-top: 20px;
 }
 
+/*Modal*/
+
+.droppable-board-modal-wrapper {
+    position: fixed; /* Stay in place */
+    z-index: 2; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0); /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+
+.droppable-board-modal-content {
+    background-color: #fefefe;
+    margin: 10% auto; /* 15% from the top and centered */
+    padding: 60px 30px 30px 30px;
+    border: 1px solid #888;
+    border-radius: 5px;
+    min-width: 400px;
+    max-width: 1200px;
+    width: 80%; /* Could be more or less, depending on screen size */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.droppable-board-modal-circle-name {
+    font-size: xx-large;
+    font-weight: bold;
+    margin-bottom: 40px;
+
+}
+
+.droppable-board-modal-circle-members {
+    min-height: 300px;
+    max-height: 550px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(4, .5fr);
+    grid-template-rows: repeat(1, .5fr);
+    grid-column-gap: 30px;
+    grid-row-gap: 30px;
+}
+
+.droppable-board-modal-buttons {
+    display: flex;
+    width: 100%;
+    margin-top: 30px;
+    justify-content: flex-end;
+}
+
+.droppable-board-modal-buttons>div {
+    padding: 8px 12px;
+    font-size: large;
+    font-weight: bold;
+    color: white;
+    border-radius: 5px;
+    width: auto;
+    cursor: pointer;
+}
+
+.droppable-board-modal-button-delete {
+    background-color: black;
+    margin-right: 20px;
+}
+
+.droppable-board-modal-button-done {
+    background-color: #E05140;
+}
 
 
