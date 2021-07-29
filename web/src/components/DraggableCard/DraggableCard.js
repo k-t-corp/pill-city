@@ -20,7 +20,7 @@ export default (props) => {
       className="draggable-card-wrapper"
     >
       <div className="draggable-card-avatar">
-        <img className="draggable-card-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.PNG`} alt=""/>
+        <img className="draggable-card-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.png`} alt=""/>
       </div>
       <div className="draggable-card-name">
         {props.user_id}

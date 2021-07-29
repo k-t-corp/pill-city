@@ -1,12 +1,10 @@
 import React, {Component} from 'react'
 import {Redirect} from 'react-router-dom'
 import {
-  Image,
   Menu,
   Icon,
   MenuItem
 } from 'semantic-ui-react'
-import Logo from '../../logo.png'
 import {removeCookie} from "../../api/authCookie";
 import "./withNavBar.css"
 
@@ -43,7 +41,6 @@ export default (WrappedComponent, path) => {
               }}
               active={path === '/'}
             >
-              <Image size='mini' src={Logo} style={{marginRight: '3em'}}/>
               Home
             </MenuItem>
             <MenuItem
