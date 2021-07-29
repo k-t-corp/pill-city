@@ -137,7 +137,6 @@ export default (props) => {
 
   const onClick = async () => {
     updateModalOpened(true)
-
   }
 
   const memberCards = () => {
@@ -162,19 +161,25 @@ export default (props) => {
     return memberCardElements
   }
   const memberModalCards = () => {
-    console.log(members)
     let memberModalCardElements = []
     for (let i = 0; i < members.length; i++) {
-      memberModalCardElements.push(<UserProfileCard key={i} enableDeleteButton={true} userId={members[i].id}/>)
+      memberModalCardElements.push(
+        <UserProfileCard
+          key={i}
+          userId={members[i].id}
+          circleName={props.circleName}
+          api={props.api}
+        />)
     }
     return memberModalCardElements
   }
 
   // Close the modal when user clicks outside it
-  window.onclick = function(event) {
+  window.onclick = function (event) {
     let modal = document.getElementById("droppable-board-modal-wrapper");
     if (event.target === modal) {
-      updateModalOpened(false)
+      // reload the page in case user removed people from their circle
+      window.location.reload()
     }
   }
 
@@ -194,20 +199,20 @@ export default (props) => {
       {modalOpened ?
         <div id="droppable-board-modal-wrapper" className="droppable-board-modal-wrapper">
           <div className="droppable-board-modal-content">
-              <div className="droppable-board-modal-circle-name">
-                {props.circleName}
+            <div className="droppable-board-modal-circle-name">
+              {props.circleName}
+            </div>
+            <div className="droppable-board-modal-circle-members">
+              {memberModalCards()}
+            </div>
+            <div className="droppable-board-modal-buttons">
+              <div className="droppable-board-modal-button-delete" onClick={deleteCircleButtonOnClick}>
+                {deleteCircleClicked ? "Confirm Delete Circle" : "Delete Circle"}
               </div>
-              <div className="droppable-board-modal-circle-members">
-                {memberModalCards()}
+              <div className="droppable-board-modal-button-done" onClick={() => {window.location.reload()}}>
+                Done
               </div>
-              <div className="droppable-board-modal-buttons">
-                <div className="droppable-board-modal-button-delete" onClick={deleteCircleButtonOnClick}>
-                  {deleteCircleClicked ? "Confirm Delete Circle" : "Delete Circle"}
-                </div>
-                <div className="droppable-board-modal-button-done" onClick={() => updateModalOpened(false)}>
-                  Done
-                </div>
-              </div>
+            </div>
           </div>
         </div> : null}
       <div

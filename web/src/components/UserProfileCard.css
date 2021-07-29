@@ -40,3 +40,29 @@
 .user-profile-card-delete-button:hover {
     color: #E05140;
 }
+
+/*Loader*/
+.lds-dual-ring {
+    display: inline-block;
+    width: 35px;
+    height: 35px;
+}
+.lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 15px;
+    height: 15px;
+    margin: 8px;
+    border-radius: 50%;
+    border: 2px solid;
+    border-color: #888 transparent #888 transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

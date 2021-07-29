@@ -1,23 +1,42 @@
-import React from 'react'
+import React, {useState} from 'react'
 import "./UserProfileCard.css"
 
 export default (props) => {
-  return (
-    <div className="user-profile-card-wrapper">
-      <div className="user-profile-card-avatar">
-        <img className="user-profile-card-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.png`} alt=""/>
-      </div>
-      <div className="user-profile-card-name">
-        {props.userId}
-      </div>
-      {props.enableDeleteButton ?
-        <div className="user-profile-card-delete-button">
+  const [deleted, updateDeleted] = useState(false)
+  const [loading, updateLoading] = useState(false)
+  const deleteMemberFromCircleOnClick = async () => {
+    updateLoading(true)
+    await props.api.removeFromCircle(props.circleName, props.userId)
+    updateLoading(false)
+    updateDeleted(true)
+  }
+
+  const deleteButton = () => {
+    if (deleted) {
+      return null
+    } else if (loading) {
+      return <div className="lds-dual-ring"/>
+    } else {
+      return (
+        <div className="user-profile-card-delete-button" onClick={deleteMemberFromCircleOnClick}>
           <svg xmlns="http://www.w3.org/2000/svg" className="" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd"
                   d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
                   clipRule="evenodd"/>
           </svg>
-        </div> : null}
+        </div>)
+    }
+  }
+
+  return (
+    <div className="user-profile-card-wrapper">
+      <div className="user-profile-card-avatar">
+        <img className="user-profile-card-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.png`} alt=""/>
+      </div>
+      <div className="user-profile-card-name" style={{textDecoration: deleted ? "line-through" : ""}}>
+        {props.userId}
+      </div>
+      {deleteButton()}
     </div>
   )
 }
