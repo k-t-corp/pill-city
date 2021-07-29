@@ -15,7 +15,6 @@ export default (props) => {
     updatePosting(true);
     const actualCircleNames = circleNames.filter(cn => cn !== true)
     const isPublic = circleNames.filter(cn => cn === true).length !== 0
-    console.log(isPublic, actualCircleNames)
     await props.api.postPost(content, isPublic, actualCircleNames);
     window.location.reload();
   }

@@ -49,7 +49,6 @@
 
 .new-post-circles-dropdown-wrapper {
     display: flex;
-    flex-direction: row;
     align-items: center;
 }
 
