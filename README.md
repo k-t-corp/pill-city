@@ -1,5 +1,5 @@
 # mini-gplus
-A Google+ clone
+An one-of-a-kind social network
 
 ## Development
 
