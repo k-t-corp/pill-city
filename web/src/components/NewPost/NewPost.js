@@ -37,7 +37,7 @@ export default (props) => {
           <img className="new-post-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.png`} alt=""/>
         </div>
         <div className="new-post-name">
-          {props.userinfo.user.id}
+          {props.me !== null ? props.me.id : '...'}
         </div>
       </div>
       <textarea
