@@ -1,0 +1,15 @@
+.sign-in-title {
+    margin-bottom: 50px;
+    font-size: xx-large;
+    text-align: center;
+    font-weight: bold;
+}
+
+.message-box-sign-up {
+    margin-top: 50px;
+    cursor: default;
+}
+
+.sign-in-link {
+    color: #E05140;
+}

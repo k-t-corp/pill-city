@@ -6,13 +6,10 @@ export default (props) => {
     <div className="home-page-wrapper">
       <div className="home-page-info-wrapper">
         <div className="welcome">
-          Welcome to
+          Welcome back to
         </div>
-        <div className="title">
+        <div className="title h1">
           Pill City
-        </div>
-        <div className="container">
-
         </div>
       </div>
 

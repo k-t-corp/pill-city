@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import {Button, Grid, Header, Message, Segment, Label, GridColumn} from 'semantic-ui-react'
+import {Button, Grid, Message, Label, GridColumn} from 'semantic-ui-react'
 import {Form, Input} from 'formsy-semantic-ui-react'
-import {Link, Redirect} from "react-router-dom";
-import CatchApiErrorBuilder from '../api/CatchApiErrorBuilder'
-import HomePage from "../components/HomePage/HomePage";
+import {Redirect} from "react-router-dom";
+import HomePage from "../../components/HomePage/HomePage";
+import "./SignUp.css";
 
 require('promise.prototype.finally').shim();
 
@@ -29,9 +29,19 @@ export default class SignUp extends Component {
   }
   handleSubmit = (inputForm) => {
     const {id, password, confirmPassword} = inputForm
-    if (password !== confirmPassword) {
+    if (id === undefined || id.trim() === "") {
       this.refs.form.updateInputsWithError({
-        'password': 'Password does not match',
+        'id': 'Please enter id',
+      })
+      return
+    }
+    if (password === undefined || password.trim === "") {
+      this.refs.form.updateInputsWithError({
+        'password': 'Please enter password',
+      })
+      return
+    } else if (password !== confirmPassword) {
+      this.refs.form.updateInputsWithError({
         'confirmPassword': 'Password does not match'
       })
       return
@@ -42,23 +52,21 @@ export default class SignUp extends Component {
       id, password
     ).then(() => {
       this.setState({'redirectToSignIn': true})
-    }).catch(
-      new CatchApiErrorBuilder()
-        .handle(409, () => {
-          this.refs.form.updateInputsWithError(
-            {'id': 'id is already taken'}
-          )
-        })
-        .unknownError(this.showError)
-        .unknownStatusCode(this.showError)
-        .build()
+    }).catch((e) => {
+        if (e.response.status === 409) {
+          this.refs.form.updateInputsWithError({
+            'id': 'This id has already been taken',
+          })
+          return
+        }
+      }
     ).finally(() => {
       this.setState({'loading': false})
     })
   }
 
   loginForm = () => {
-    const errorLabel = <Label color="red" pointing/>
+    const errorLabel = <Label color="red" as="small" pointing/>
     return (
       <div className='login-form'>
         <style>{`
@@ -71,31 +79,30 @@ export default class SignUp extends Component {
         </style>
         <Grid textAlign='center' style={{height: '100%'}} verticalAlign='middle'>
           <GridColumn style={{maxWidth: 450}}>
-            <Header as='h2' textAlign='center'>
+            <div className="sign-up-title">
               Sign up
-            </Header>
+            </div>
             <Form
               ref='form'
-              size='large'
+              size='medium'
               loading={this.state.loading}
               onValid={this.handleFormValid}
               onInvalid={this.handleFormInvalid}
               onValidSubmit={this.handleSubmit}
             >
-              <Segment>
+              <div className="signup-form-wrapper">
                 <Input
                   fluid
                   name='id'
                   placeholder='ID'
-                  required
                   errorLabel={errorLabel}
+
                 />
                 <Input
                   fluid
                   name='password'
                   placeholder='Password'
                   type='password'
-                  required
                   errorLabel={errorLabel}
                 />
                 <Input
@@ -103,7 +110,6 @@ export default class SignUp extends Component {
                   name='confirmPassword'
                   placeholder='Confirm password'
                   type='password'
-                  required
                   errorLabel={errorLabel}
                 />
                 <Button
@@ -114,16 +120,16 @@ export default class SignUp extends Component {
                 >
                   Sign up
                 </Button>
-              </Segment>
+              </div>
             </Form>
             {this.state.error &&
             <Message negative>
               {this.state.error}
             </Message>
             }
-            <Message>
-              Already have an account? <Link to='/signin'>Sign in here</Link>
-            </Message>
+            <div className="message-box-sign-in">
+              Already have an account? <a className="sign-in-link" href='/signin'>Sign in here</a>
+            </div>
           </GridColumn>
         </Grid>
       </div>
@@ -136,7 +142,7 @@ export default class SignUp extends Component {
     }
 
     return (
-        <HomePage formElement={this.loginForm()}/>
+      <HomePage formElement={this.loginForm()}/>
     )
   }
 }

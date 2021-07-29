@@ -1,0 +1,26 @@
+.login-form {
+    padding: 70px 40px 40px 40px;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, .15);
+    backdrop-filter: blur(9px);
+}
+
+.signup-form-wrapper {
+    background-color: rgba(255, 255, 255, 0);
+}
+
+.sign-up-title {
+    margin-bottom: 50px;
+    font-size: xx-large;
+    text-align: center;
+    font-weight: bold;
+}
+
+.message-box-sign-in {
+    margin-top: 50px;
+    cursor: default;
+}
+
+.sign-in-link {
+    color: #E05140;
+}
