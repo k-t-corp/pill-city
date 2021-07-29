@@ -48,30 +48,37 @@ export default (props) => {
           updateContent(e.target.value)
         }}
       />
-      <Checkbox
-        label='Public'
-        checked={isPublic}
-        onChange={e => {
-          e.preventDefault();
-          updateIsPublic(!isPublic)
-        }}
-      />
-      {!isPublic ? <Dropdown
-        placeholder='Circles'
-        options={props.circles.map(circle => {
-          const { name } = circle
-          return { key: name, text: name, value: name }
-        })}
-        value={circleNames}
-        onChange={(e, { value }) => {
-          e.preventDefault();
-          updateCircleNames(value)
-        }}
-        fluid multiple selection
-      /> : null }
-      <div className="new-post-btns">
-        <div className={submitButtonClass()} onClick={postButtonOnClick}>
-          Post
+      <div className='new-post-controls'>
+        <div className='new-post-options'>
+          <Checkbox
+            label='Public'
+            checked={isPublic}
+            onChange={e => {
+              e.preventDefault();
+              updateIsPublic(!isPublic)
+            }}
+            size='small'
+          />
+          <Dropdown
+            className='new-post-circles-dropdown'
+            disabled={isPublic}
+            placeholder='Circles'
+            options={props.circles.map(circle => {
+              const { name } = circle
+              return { key: name, text: name, value: name }
+            })}
+            value={circleNames}
+            onChange={(e, { value }) => {
+              e.preventDefault();
+              updateCircleNames(value)
+            }}
+            fluid multiple selection
+          />
+        </div>
+        <div>
+          <div className={submitButtonClass()} onClick={postButtonOnClick}>
+            Post
+          </div>
         </div>
       </div>
     </div>

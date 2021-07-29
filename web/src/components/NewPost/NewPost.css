@@ -47,13 +47,23 @@
     border: 2px #e2e2e2 solid;
 }
 
-.new-post-btns {
+.new-post-controls {
     display: flex;
-    justify-content: flex-end;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.new-post-options {
+    flex-grow: 1;
+}
+
+.new-post-circles-dropdown {
+    margin-top: 10px;
 }
 
 .new-post-post-btn {
-    padding: 8px 10px;
+    margin-left: 10px;
+    padding: 10px 12px;
     font-weight: bold;
     font-size: medium;
     background-color: #E05140;
