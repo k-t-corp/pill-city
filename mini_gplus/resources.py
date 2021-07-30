@@ -219,11 +219,12 @@ class Posts(Resource):
             if not found_circle:
                 return {'msg': f'Circle {circle_name} is not found'}, 404
             circles.append(found_circle)
-        user.create_post(
+        post_id = user.create_post(
             content=args['content'],
             is_public=args['is_public'],
             circles=circles
         )
+        return {'id': post_id}, 201
 
     @jwt_required()
     @marshal_with(post_fields)
@@ -271,7 +272,8 @@ class Comments(Resource):
         user = User.find(user_id)
         post = Post.objects.get(id=post_id)
         comment_args = comment_parser.parse_args()
-        user.create_comment(comment_args['content'], post)
+        comment_id = user.create_comment(comment_args['content'], post)
+        return {"id": comment_id}, 201
 
 ###################
 # Nested comments #
