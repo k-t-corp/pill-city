@@ -46,11 +46,15 @@ export default class Users extends Component {
 
     const users = this.state.data
 
+
     let userCardElements = []
     for (let i = 0; i < users.length; i++) {
+      const userCardOnClick = () => {
+        window.location.href = `/profile/${users[i].id}`
+      }
       const createdAtDate = new Date(users[i]['created_at_seconds'] * 1000)
       userCardElements.push(
-        <div className="users-user-card-wrapper" key={i}>
+        <div className="users-user-card-wrapper" key={i} onClick={userCardOnClick}>
           <div className="users-user-card-avatar">
             <img className="users-user-card-avatar-img"  src={`${process.env.PUBLIC_URL}/kusuou.png`} alt=""/>
           </div>

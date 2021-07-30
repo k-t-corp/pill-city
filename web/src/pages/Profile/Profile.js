@@ -24,8 +24,7 @@ export default class Profile extends Component {
   componentDidMount() {
     this.props.api.getMe()
       .then(data => {
-
-        if (data.id === this.props.userId) {
+        if (this.props.userId === undefined || data.id === this.props.userId) {
           this.setState({'isMe': true})
           this.setState({'data': data})
         } else {
