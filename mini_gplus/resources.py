@@ -234,7 +234,7 @@ class Posts(Resource):
         user_id = get_jwt_identity()
         user = User.find(user_id)
 
-        posts = user.sees_posts()
+        posts = user.sees_posts_on_home()
         return posts, 200
 
 

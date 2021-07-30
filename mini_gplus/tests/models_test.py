@@ -164,9 +164,9 @@ class TestModels(TestCase):
             self.assertFalse(acting_user.owns_post(post))
 
         if sees:
-            self.assertTrue(acting_user.sees_post(post))
+            self.assertTrue(acting_user.sees_post_on_home(post))
         else:
-            self.assertFalse(acting_user.sees_post(post))
+            self.assertFalse(acting_user.sees_post_on_home(post))
 
         comment1 = None
         if comments:
@@ -341,13 +341,13 @@ class TestModels(TestCase):
         post2 = post2[0]
 
         # User1 sees post2 and post1
-        self.assertEquals([post2, post1], user1.sees_posts())
+        self.assertEquals([post2, post1], user1.sees_posts_on_home())
 
         # User2 sees post2 and post1
-        self.assertEquals([post2, post1], user2.sees_posts())
+        self.assertEquals([post2, post1], user2.sees_posts_on_home())
 
         # User3 sees nothing
-        self.assertEquals([], user3.sees_posts())
+        self.assertEquals([], user3.sees_posts_on_home())
 
         # User4 sees nothing
-        self.assertEquals([], user3.sees_posts())
+        self.assertEquals([], user3.sees_posts_on_home())

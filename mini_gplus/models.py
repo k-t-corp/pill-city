@@ -100,9 +100,9 @@ class User(Document, CreatedAtMixin):
         """
         return self.id == post.author.id
 
-    def sees_post(self, post):
+    def sees_post_on_home(self, post):
         """
-        Whether the user can see a post
+        Whether the user can see a post on home
         :param (Post) post: the post
         :return (bool): whether the user sees the post
         """
@@ -118,14 +118,14 @@ class User(Document, CreatedAtMixin):
                     return True
         return False
 
-    def sees_posts(self):
+    def sees_posts_on_home(self):
         """
-        All posts that are visible to the user
+        All posts that are visible to the user on home
         :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
         """
         # todo: pagination
         posts = Post.objects()
-        posts = filter(lambda post: self.sees_post(post), posts)
+        posts = filter(lambda post: self.sees_post_on_home(post), posts)
         return list(reversed(sorted(posts, key=lambda post: post.created_at)))
 
     def delete_post(self, post):
@@ -150,7 +150,7 @@ class User(Document, CreatedAtMixin):
         :param (Post) parent_post: the post that this comment is attached to
         :raise (UnauthorizedAccess) when access is unauthorized
         """
-        if self.sees_post(parent_post):
+        if self.sees_post_on_home(parent_post):
             new_comment = Comment()
             new_comment.author = self.id
             new_comment.content = content
@@ -168,7 +168,7 @@ class User(Document, CreatedAtMixin):
         :param (Post) parent_post: the post that this comment is attached to
         :raise (UnauthorizedAccess) when access is unauthorized
         """
-        if self.sees_post(parent_post):
+        if self.sees_post_on_home(parent_post):
             new_comment = Comment()
             new_comment.author = self.id
             new_comment.content = content
