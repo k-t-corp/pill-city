@@ -59,6 +59,10 @@ class User(object):
             'content': content
         })
 
+    def follow(self, following_user_id: str):
+        self._raise_on_unauthenticated()
+        return self.sess.post(f"/api/following/{following_user_id}")
+
 
 def main():
     # drop everything in database
@@ -104,6 +108,13 @@ def main():
     kt.add_user_to_circle('g+', 'duff')
     kt.add_user_to_circle('g+', 'kele')
     kt.add_user_to_circle('g+', 'ahuhu')
+
+    # people follow back
+    ika.follow('kt')
+    van.follow('kt')
+    xiaolaba.follow('kt')
+    senpai.follow('kt')
+    sirjie.follow('kt')
 
     # post something
     kt.create_post('rua', is_public=True, circle_names=[])
