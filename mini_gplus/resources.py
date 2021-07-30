@@ -30,6 +30,19 @@ class Users(Resource):
         return other_users, 200
 
 
+class UserResource(Resource):
+    @jwt_required()
+    @marshal_with(user_fields)
+    def get(self, user_id):
+        """
+        Get a specific user by ID
+        """
+        user = User.find(user_id)
+        if not user:
+            return {'msg': f'User {user_id} is not found'}, 404
+        return user
+
+
 ##########
 # Circle #
 ##########
