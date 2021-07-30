@@ -16,6 +16,7 @@ import Home from './pages/Home/Home'
 import Circles from './pages/Circles/Circles'
 import Users from './pages/Users/Users'
 import Profile from './pages/Profile/Profile'
+import withUserId from "./hoc/withUserId";
 
 const api = new Api(process.env.REACT_APP_API_ENDPOINT)
 
@@ -28,6 +29,10 @@ export default class App extends Component {
             exact={true}
             path='/'
             component={withApi(withAuthRedirect(withNavBar(Home, '/')), api)}
+          />
+          <Route
+            path="/profile/:id"
+            component={withUserId(withApi(withAuthRedirect(withNavBar(Profile, '/profile')), api))}
           />
           <Route
             path="/profile"

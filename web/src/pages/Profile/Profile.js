@@ -12,7 +12,8 @@ export default class Profile extends Component {
     this.state = {
       'loading': true,
       'error': undefined,
-      'data': undefined
+      'data': undefined,
+      'isMe': false
     }
   }
 
@@ -23,7 +24,15 @@ export default class Profile extends Component {
   componentDidMount() {
     this.props.api.getMe()
       .then(data => {
-        this.setState({'data': data})
+
+        if (data.id === this.props.userId) {
+          this.setState({'isMe': true})
+          this.setState({'data': data})
+        } else {
+
+              this.setState({'data': {"id": this.props.userId}})
+
+        }
       })
       .catch(
         new CatchApiErrorBuilder()
@@ -47,6 +56,6 @@ export default class Profile extends Component {
       )
     }
 
-    return (<UserProfile me={true} userData={this.state.data} api={this.props.api}/>)
+    return (<UserProfile me={this.state.isMe} userData={this.state.data} api={this.props.api}/>)
   }
 }

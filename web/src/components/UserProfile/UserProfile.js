@@ -40,7 +40,7 @@ export default (props) => {
           // </div>
           null
           :
-          <div>
+          <div className="user-profile-info-button">
             Follow
           </div>}
       </div>
