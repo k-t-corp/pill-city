@@ -100,15 +100,17 @@ class User(Document, CreatedAtMixin):
         """
         return self.id == post.author.id
 
-    def sees_post_on_home(self, post):
+    def sees_post(self, post, context_home_or_profile):
         """
-        Whether the user can see a post on home
+        Whether the user can see a post
         :param (Post) post: the post
+        :param (bool) context_home_or_profile: whether the seeing context is home or profile
+                        True for home, and False for profile
         :return (bool): whether the user sees the post
         """
         if self.owns_post(post):
             return True
-        if post.author not in self.followings:
+        if context_home_or_profile and post.author not in self.followings:
             return False
         if post.is_public:
             return True
@@ -125,7 +127,7 @@ class User(Document, CreatedAtMixin):
         """
         # todo: pagination
         posts = Post.objects()
-        posts = filter(lambda post: self.sees_post_on_home(post), posts)
+        posts = filter(lambda post: self.sees_post(post, context_home_or_profile=True), posts)
         return list(reversed(sorted(posts, key=lambda post: post.created_at)))
 
     def delete_post(self, post):
@@ -150,7 +152,12 @@ class User(Document, CreatedAtMixin):
         :param (Post) parent_post: the post that this comment is attached to
         :raise (UnauthorizedAccess) when access is unauthorized
         """
-        if self.sees_post_on_home(parent_post):
+        # context_home_or_profile=False because context_home_or_profile only affects public posts
+        # and it is fine for someone who does not see a public post on his home
+        # to be able to interact (comment, nested-comment, etc) with this post
+        # e.g. context_home_or_profile is reduced to the most permissive because context_home_or_profile only affects
+        # public posts
+        if self.sees_post(parent_post, context_home_or_profile=False):
             new_comment = Comment()
             new_comment.author = self.id
             new_comment.content = content
@@ -168,7 +175,8 @@ class User(Document, CreatedAtMixin):
         :param (Post) parent_post: the post that this comment is attached to
         :raise (UnauthorizedAccess) when access is unauthorized
         """
-        if self.sees_post_on_home(parent_post):
+        # same explanation for context_home_or_profile=False
+        if self.sees_post(parent_post, context_home_or_profile=False):
             new_comment = Comment()
             new_comment.author = self.id
             new_comment.content = content
