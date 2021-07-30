@@ -72,6 +72,20 @@ export default class Api {
     return res.data
   }
 
+  async getUser(userId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.get(
+      `/user/${userId}`,
+      {
+        headers: Api.authorizedHeaders()
+      }
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
+
   async getProfile(profileUserId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
