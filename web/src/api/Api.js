@@ -220,4 +220,37 @@ export default class Api {
     }
     return res.data
   }
+
+  async follow(followingUserId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.post(
+      `/following/${followingUserId}`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
+
+  async unfollow(followingUserId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.delete(
+      `/following/${followingUserId}`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
+
+  async getFollowings() {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.delete(
+      `/followings`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
 }
