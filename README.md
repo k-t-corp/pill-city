@@ -33,6 +33,12 @@ yarn start
 
 View web frontend at [`http://localhost:3000`](http://localhost:3000/)
 
+### Dump some mock data into API
+**WARNING: all data on the development database will be wiped**
+```bash
+./venv/bin/python ./scripts/dev_dump_mock_data.py
+```
+
 ### Run API unit tests
 ```bash
 nosetests

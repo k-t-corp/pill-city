@@ -84,6 +84,7 @@ class User(Document, CreatedAtMixin):
         :param (str) content: the content
         :param (bool) is_public: whether the post is public
         :param (List[Circle]) circles: circles to share with
+        :return (str) ID of the new post
         """
         new_post = Post()
         new_post.author = self.id
@@ -91,6 +92,7 @@ class User(Document, CreatedAtMixin):
         new_post.is_public = is_public
         new_post.circles = circles
         new_post.save()
+        return str(new_post.id)
 
     def owns_post(self, post):
         """
@@ -161,6 +163,7 @@ class User(Document, CreatedAtMixin):
         Create a comment for the user
         :param (str) content: the content
         :param (Post) parent_post: the post that this comment is attached to
+        :return (str) ID of the new comment
         :raise (UnauthorizedAccess) when access is unauthorized
         """
         # context_home_or_profile=False because context_home_or_profile only affects public posts
@@ -175,6 +178,7 @@ class User(Document, CreatedAtMixin):
             new_comment.save()
             parent_post.comments.append(new_comment)
             parent_post.save()
+            return str(new_comment.id)
         else:
             raise UnauthorizedAccess()
 

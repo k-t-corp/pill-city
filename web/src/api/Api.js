@@ -110,7 +110,7 @@ export default class Api {
         circle_names: circlesNames
       }
     )
-    if (res.status !== 200) {
+    if (res.status !== 201) {
       throw new ApiError(res.status)
     }
     return null
@@ -135,7 +135,7 @@ export default class Api {
         content
       }
     )
-    if (res.status !== 200) {
+    if (res.status !== 201) {
       throw new ApiError(res.status)
     }
     return null
