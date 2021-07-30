@@ -26,6 +26,7 @@ export default (props) => {
       <div className="draggable-card-name">
         {props.user_id}
       </div>
+
     </div>
   )
 }

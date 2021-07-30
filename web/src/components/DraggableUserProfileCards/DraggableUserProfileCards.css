@@ -8,8 +8,7 @@
     top: 5em;
     width: 100%;
     left: 0;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(1, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     grid-column-gap: 30px;
     grid-row-gap: 30px;
 }

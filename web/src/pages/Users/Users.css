@@ -1,7 +1,7 @@
 .users-grid-container {
     display: grid;
     width: 100%;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     grid-column-gap: 30px;
     grid-row-gap: 30px;
     padding: 5em 50px 0 50px;
@@ -28,10 +28,14 @@
     height: 100%;
 }
 
+
 .users-user-card-name {
     font-weight: bold;
     font-size: large;
     margin-left: 20px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .users-user-card-join-time {

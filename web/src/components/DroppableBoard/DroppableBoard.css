@@ -91,18 +91,16 @@
     font-size: xx-large;
     font-weight: bold;
     margin-bottom: 40px;
-
 }
 
 .droppable-board-modal-circle-members {
-    min-height: 300px;
+    padding: 10px 0;
     max-height: 550px;
     overflow-y: scroll;
     overflow-x: hidden;
     display: grid;
     width: 100%;
-    grid-template-columns: repeat(4, .5fr);
-    grid-template-rows: repeat(1, .5fr);
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     grid-column-gap: 30px;
     grid-row-gap: 30px;
 }

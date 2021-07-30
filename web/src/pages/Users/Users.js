@@ -58,14 +58,13 @@ export default class Users extends Component {
           <div className="users-user-card-avatar">
             <img className="users-user-card-avatar-img"  src={`${process.env.PUBLIC_URL}/kusuou.png`} alt=""/>
           </div>
-          <div>
             <div className="users-user-card-name">
               {users[i].id}
             </div>
-            <div className="users-user-card-join-time">
-              Joined on {createdAtDate.toLocaleDateString()}
-            </div>
-          </div>
+          {/*Will cause overflow at this later*/}
+          {/*<div className="users-user-card-join-time">*/}
+          {/*  Joined on {createdAtDate.toLocaleDateString()}*/}
+          {/*</div>*/}
         </div>
       )
     }
