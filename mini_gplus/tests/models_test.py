@@ -311,7 +311,7 @@ class TestModels(TestCase):
             user4, post1, owns=False, sees=False, sees_on_profile=False, comments=False, nested_comments=False
         )
 
-    def test_sees_posts(self):
+    def test_retrieves_posts(self):
         # Create users
         self.assertTrue(User.create('user1', '1234'))
         self.assertTrue(User.create('user2', '2345'))
@@ -326,6 +326,7 @@ class TestModels(TestCase):
         self.assertTrue(user1.create_circle('circle1'))
         circle1 = user1.find_circle('circle1')
         user1.toggle_member(circle1, user2)
+        user1.toggle_member(circle1, user3)
 
         # Only user2 follows user1
         user2.add_following(user1)
@@ -342,14 +343,18 @@ class TestModels(TestCase):
         self.assertTrue(1, len(post1))
         post2 = post2[0]
 
-        # User1 sees post2 and post1
-        self.assertEquals([post2, post1], user1.sees_posts_on_home())
+        # User1 sees post2 and post1 on home and user1's profile
+        self.assertEquals([post2, post1], user1.retrieves_posts_on_home())
+        self.assertEquals([post2, post1], user1.retrieves_posts_on_profile(user1))
 
-        # User2 sees post2 and post1
-        self.assertEquals([post2, post1], user2.sees_posts_on_home())
+        # User2 sees post2 and post1 on home and user1's profile
+        self.assertEquals([post2, post1], user2.retrieves_posts_on_home())
+        self.assertEquals([post2, post1], user2.retrieves_posts_on_profile(user1))
 
-        # User3 sees nothing
-        self.assertEquals([], user3.sees_posts_on_home())
+        # User3 sees nothing on home and post2 and post1 on user1's profile
+        self.assertEquals([], user3.retrieves_posts_on_home())
+        self.assertEquals([post2, post1], user3.retrieves_posts_on_profile(user1))
 
-        # User4 sees nothing
-        self.assertEquals([], user4.sees_posts_on_home())
+        # User4 sees nothing on home and post2 on user1's profile
+        self.assertEquals([], user4.retrieves_posts_on_home())
+        self.assertEquals([post2], user4.retrieves_posts_on_profile(user1))

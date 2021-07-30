@@ -120,7 +120,7 @@ class User(Document, CreatedAtMixin):
                     return True
         return False
 
-    def sees_posts_on_home(self):
+    def retrieves_posts_on_home(self):
         """
         All posts that are visible to the user on home
         :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
@@ -128,6 +128,17 @@ class User(Document, CreatedAtMixin):
         # todo: pagination
         posts = Post.objects()
         posts = filter(lambda post: self.sees_post(post, context_home_or_profile=True), posts)
+        return list(reversed(sorted(posts, key=lambda post: post.created_at)))
+
+    def retrieves_posts_on_profile(self, profile_user):
+        """
+        All posts that are visible to the user on a certain user's profile
+        :param (User) profile_user: the user whose profile is being viewed
+        :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
+        """
+        # todo: pagination
+        posts = Post.objects(author=profile_user)
+        posts = filter(lambda post: self.sees_post(post, context_home_or_profile=False), posts)
         return list(reversed(sorted(posts, key=lambda post: post.created_at)))
 
     def delete_post(self, post):
