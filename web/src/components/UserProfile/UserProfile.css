@@ -1,5 +1,7 @@
 .user-profile-wrapper {
-
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .user-profile-user-info {
@@ -54,5 +56,11 @@
     border-radius: 5px;
     width: auto;
     cursor: pointer;
+}
+
+.user-profile-posts {
+    width: 60%;
+    min-width: 700px;
+    max-width: 1000px;
 }
 

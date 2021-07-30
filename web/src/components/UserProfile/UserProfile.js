@@ -1,7 +1,26 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import "./UserProfile.css"
+import Post from "../Post/Post";
 
 export default (props) => {
+  const [postLoading, updatePostLoading] = useState(true)
+  const [postData, updatePostData] = useState([])
+  useEffect(async () => {
+    updatePostData(await props.api.getProfile(props.userData.id))
+    updatePostLoading(false)
+  }, [])
+  const posts = () => {
+    if (postLoading) {
+      return <div/>
+    } else {
+      let postElements = []
+      for (let i = 0; i < postData.length; i ++) {
+        postElements.push(<Post key={i} data={postData[i]} api={props.api} />)
+      }
+      return postElements
+    }
+  }
+
   return (
     <div className="user-profile-wrapper">
       <div className="user-profile-user-info">
@@ -24,6 +43,9 @@ export default (props) => {
           <div>
             Follow
           </div>}
+      </div>
+      <div className="user-profile-posts">
+        {posts()}
       </div>
     </div>
   )

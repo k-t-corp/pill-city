@@ -3,6 +3,12 @@
     padding: 5em 50px 0 50px;
 }
 
+.home-posts-wrapper {
+    width: 60%;
+    min-width: 700px;
+    max-width: 1000px;
+}
+
 .home-new-post-wrapper {
     margin-left: 20px;
     flex: 1;

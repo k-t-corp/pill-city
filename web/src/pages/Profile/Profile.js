@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import CatchApiErrorBuilder from '../../api/CatchApiErrorBuilder'
-import {Header, HeaderContent, Message, Loader} from 'semantic-ui-react'
+import {Message, Loader} from 'semantic-ui-react'
 import UserProfile from "../../components/UserProfile/UserProfile";
 
 require('promise.prototype.finally').shim();
@@ -47,9 +47,6 @@ export default class Profile extends Component {
       )
     }
 
-    return (
-      <UserProfile me={true} userData={this.state.data}/>
-
-    )
+    return (<UserProfile me={true} userData={this.state.data} api={this.props.api}/>)
   }
 }
