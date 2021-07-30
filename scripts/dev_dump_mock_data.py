@@ -13,13 +13,13 @@ class User(object):
         self.access_token = None
 
     def sign_up(self):
-        self.sess.post('/api/me', json={
+        self.sess.post('/api/signUp', json={
             'id': self.user_id,
             'password': '1234'
         })
 
     def sign_in(self):
-        self.access_token = self.sess.post('/api/auth', json={
+        self.access_token = self.sess.post('/api/signIn', json={
             'id': self.user_id,
             'password': '1234'
         }).json()['access_token']
@@ -111,32 +111,33 @@ def main():
 
     # people follow back
     ika.follow('kt')
+    kt.follow('ika')
     van.follow('kt')
     xiaolaba.follow('kt')
+    kt.follow('xiaolaba')
     senpai.follow('kt')
     sirjie.follow('kt')
+    kt.follow('sirjie')
 
     # post something
     kt.create_post('rua', is_public=True, circle_names=[])
     kt.create_post('Hello, World!', is_public=True, circle_names=[])
     kt_ika_post = kt.create_post('Ika!1!!!!', is_public=False, circle_names=['ika'])
-    kt.create_post('BOY NEXT DOOR. SLABU GET UR AS BACK HERE. HENG HENG HENG AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', is_public=False, circle_names=['gachi'])
-    kt.create_post('鬼城！！！', is_public=False, circle_names=['g+'])
-
     ika.create_post('iPhone', is_public=True, circle_names=[])
     ika.create_post('iPad', is_public=True, circle_names=[])
     ika.create_post('MacBook Pro', is_public=True, circle_names=[])
     ika.create_post('MacBook Air', is_public=True, circle_names=[])
+    kt.create_post('BOY NEXT DOOR. SLABU GET UR AS BACK HERE. HENG HENG HENG AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', is_public=False, circle_names=['gachi'])
+    kt.create_post('鬼城！！！', is_public=False, circle_names=['g+'])
     ika.create_post('iMac', is_public=True, circle_names=[])
     ika.create_post('AirPod Pro', is_public=True, circle_names=[])
 
     senpai.create_post('henghenghengaaaa', is_public=True, circle_names=[])
     senpai.create_post('kouchaiidesuka', is_public=True, circle_names=[])
-    senpai.create_post('114514', is_public=True, circle_names=[])
-
     sirjie.create_post('我家呢還蠻大的', is_public=True, circle_names=[])
     sirjie.create_post('拿都可以拿', is_public=True, circle_names=[])
     sirjie.create_post('你看這個彬彬才喝幾罐就醉了', is_public=True, circle_names=[])
+    senpai.create_post('114514', is_public=True, circle_names=[])
     sirjie.create_post('這麼說你很勇ho', is_public=True, circle_names=[])
     sirjie.create_post('我房裡有好康的', is_public=True, circle_names=[])
     sirjie.create_post('聽話！讓我看看！', is_public=True, circle_names=[])

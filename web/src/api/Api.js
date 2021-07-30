@@ -27,7 +27,7 @@ export default class Api {
 
   async signUp(id, password) {
     const res = await this.axiosInstance.post(
-      `/me`,
+      `/signUp`,
       {
         'id': id,
         'password': password
@@ -41,7 +41,7 @@ export default class Api {
 
   async signIn(id, password) {
     const res = await this.axiosInstance.post(
-      `/auth`,
+      `/signIn`,
       {
         'id': id,
         'password': password
@@ -62,6 +62,20 @@ export default class Api {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
       `/me`,
+      {
+        headers: Api.authorizedHeaders()
+      }
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
+
+  async getUser(userId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.get(
+      `/user/${userId}`,
       {
         headers: Api.authorizedHeaders()
       }
@@ -214,6 +228,39 @@ export default class Api {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.delete(
       `/circle/${circleName}/membership/${memberUserId}`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
+
+  async follow(followingUserId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.post(
+      `/following/${followingUserId}`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
+
+  async unfollow(followingUserId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.delete(
+      `/following/${followingUserId}`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
+
+  async getFollowings() {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.get(
+      `/followings`
     )
     if (res.status !== 200) {
       throw new ApiError(res.status)

@@ -5,19 +5,70 @@ import Post from "../Post/Post";
 export default (props) => {
   const [postLoading, updatePostLoading] = useState(true)
   const [postData, updatePostData] = useState([])
+  const [followingLoading, updateFollowingLoading] = useState(true)
+  const [following, updateFollowing] = useState(false)
+
   useEffect(async () => {
     updatePostData(await props.api.getProfile(props.userData.id))
     updatePostLoading(false)
+  }, [])
+  useEffect(async () => {
+    if (!props.me) {
+      const myFollowing = await props.api.getFollowings()
+      for (let i = 0; i < myFollowing.length; i++) {
+        if (myFollowing[i].id === props.userData.id) {
+          updateFollowing(true)
+          break
+        }
+      }
+    }
+    updateFollowingLoading(false)
   }, [])
   const posts = () => {
     if (postLoading) {
       return <div/>
     } else {
       let postElements = []
-      for (let i = 0; i < postData.length; i ++) {
-        postElements.push(<Post key={i} data={postData[i]} api={props.api} />)
+      for (let i = 0; i < postData.length; i++) {
+        postElements.push(<Post key={i} data={postData[i]} api={props.api}/>)
       }
       return postElements
+    }
+  }
+
+  const unfollowOnClick = async () => {
+    await props.api.unfollow(props.userData.id)
+    window.location.reload()
+  }
+
+  const followOnClick = async () => {
+    await props.api.follow(props.userData.id)
+    window.location.reload()
+  }
+
+  const userInfoButton = () => {
+    if (props.me) {
+      // Save this part for later
+      // <div className="user-profile-info-button">
+      //   Edit profile
+      // </div>
+      return null
+    } else {
+      if (followingLoading) {
+        return null
+      } else if (following) {
+        return (
+          <div className="user-profile-info-button" onClick={unfollowOnClick}>
+            Unfollow
+          </div>
+        )
+      } else {
+        return (
+          <div className="user-profile-info-button" onClick={followOnClick}>
+            Follow
+          </div>
+        )
+      }
     }
   }
 
@@ -33,16 +84,7 @@ export default (props) => {
         <div className="user-profile-user-name">
           {props.userData.id}
         </div>
-        {props.me ?
-          // Save this part for later
-          // <div className="user-profile-info-button">
-          //   Edit profile
-          // </div>
-          null
-          :
-          <div className="user-profile-info-button">
-            Follow
-          </div>}
+        {userInfoButton()}
       </div>
       <div className="user-profile-posts">
         {posts()}
