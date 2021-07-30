@@ -26,8 +26,7 @@
 
 /* The Modal (background) */
 .modal {
-    /*display: none; !* Hidden by default *!*/
-    visibility: hidden;
+    visibility: hidden; /* Hidden by default *!*/
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */
     left: 0;
@@ -62,9 +61,9 @@
     flex: 1;
     resize: none;
     margin-left: 10px;
-    margin-top: 5px;
+    margin-top: 20px;
     height: auto;
-    width: 100%;
+    width: 70%;
     border-bottom: #e0e0e0 1px solid;
 }
 
@@ -80,6 +79,8 @@
 
 /*Error Message*/
 #new-circle-error-message-box {
+    width: 70%;
+    height: 50px;
     visibility: hidden;
     margin-top: 10px;
     color: cornflowerblue;

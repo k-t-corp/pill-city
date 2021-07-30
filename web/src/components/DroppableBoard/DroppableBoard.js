@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import "./DroppableBoard.css"
+import UserProfileCard from "../UserProfileCard";
 
 export default (props) => {
   const circleMargin = 2 // Margin between the edge of the card circle and inner/outer circles
@@ -13,6 +14,8 @@ export default (props) => {
   const finalAnglePerCardAsDegree = 360 / cardNumber
 
   const [members, updateCards] = useState(props.members)
+  const [modalOpened, updateModalOpened] = useState(false)
+  const [deleteCircleClicked, updateDeleteCircleClicked] = useState(false)
 
   let animationIntervalId = null;
   const circleAnimation = (circleName, card_id) => {
@@ -30,7 +33,6 @@ export default (props) => {
         clearInterval(animationIntervalId);
       } else {
         elem.style.visibility = "visible"
-        // degree = degree * 1.1;
         degree = finalDegree * easeInOutCubic(stepCount)
         stepCount += 0.02;
         const top = Math.abs((innerRadius + cardRadius) * Math.cos(degree * 3.14 / 180) - outerRadius + cardRadius)
@@ -133,6 +135,10 @@ export default (props) => {
     e.preventDefault();
   }
 
+  const onClick = async () => {
+    updateModalOpened(true)
+  }
+
   const memberCards = () => {
     let memberCardElements = []
     for (let i = 0; i < members.length && i < cardNumber; i++) {
@@ -154,28 +160,84 @@ export default (props) => {
     }
     return memberCardElements
   }
+  const memberModalCards = () => {
+    let memberModalCardElements = []
+    for (let i = 0; i < members.length; i++) {
+      memberModalCardElements.push(
+        <UserProfileCard
+          key={i}
+          userId={members[i].id}
+          circleName={props.circleName}
+          api={props.api}
+        />)
+    }
+    return memberModalCardElements
+  }
+
+  // Close the modal when user clicks outside it
+  window.onclick = function (event) {
+    let modal = document.getElementById("droppable-board-modal-wrapper");
+    if (event.target === modal) {
+      // reload the page in case user removed people from their circle
+      window.location.reload()
+    }
+  }
+
+  const deleteCircleButtonOnClick = async () => {
+    if (!deleteCircleClicked) {
+      // ask user to confirm
+      updateDeleteCircleClicked(true)
+    } else {
+      // actually delete the circle
+      await props.api.deleteCircle(props.circleName)
+      window.location.reload()
+    }
+  }
+
   return (
-    <div
-      className="droppable-board-wrapper"
-      id={props.id}
-      onDrop={onDrop}
-      onDragOver={onDragOver}
-      onDragLeave={onDragLeave}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-    >
-      <div className="droppable-board-member-cards-wrapper">
-        {tempCard(props.circleName)}
-        {memberCards()}
-      </div>
-      <div className="droppable-board-inner-circle"
-           id={`${props.circleName}-inner-circle`}
-           style={{backgroundColor: circleColor(props.circleName)}}>
-        <div className="droppable-board-inner-circle-name">
-          {props.circleName}
+    <div className="droppable-board-wrapper">
+      {modalOpened ?
+        <div id="droppable-board-modal-wrapper" className="droppable-board-modal-wrapper">
+          <div className="droppable-board-modal-content">
+            <div className="droppable-board-modal-circle-name">
+              {props.circleName}
+            </div>
+            <div className="droppable-board-modal-circle-members">
+              {memberModalCards()}
+            </div>
+            <div className="droppable-board-modal-buttons">
+              <div className="droppable-board-modal-button-delete" onClick={deleteCircleButtonOnClick}>
+                {deleteCircleClicked ? "Confirm Delete Circle" : "Delete Circle"}
+              </div>
+              <div className="droppable-board-modal-button-done" onClick={() => {window.location.reload()}}>
+                Done
+              </div>
+            </div>
+          </div>
+        </div> : null}
+      <div
+        className="droppable-board"
+        id={props.id}
+        onDrop={onDrop}
+        onDragOver={onDragOver}
+        onDragLeave={onDragLeave}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        onClick={onClick}
+      >
+        <div className="droppable-board-member-cards-wrapper">
+          {tempCard(props.circleName)}
+          {memberCards()}
         </div>
-        <div className="droppable-board-inner-circle-follow-number">
-          {members.length}
+        <div className="droppable-board-inner-circle"
+             id={`${props.circleName}-inner-circle`}
+             style={{backgroundColor: circleColor(props.circleName)}}>
+          <div className="droppable-board-inner-circle-name">
+            {props.circleName}
+          </div>
+          <div className="droppable-board-inner-circle-follow-number">
+            {members.length}
+          </div>
         </div>
       </div>
     </div>

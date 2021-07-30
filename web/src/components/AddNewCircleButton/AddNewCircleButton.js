@@ -26,7 +26,6 @@ export default (props) => {
       await props.api.createCircle(circleName)
       window.location.reload()
     } catch (e) {
-      console.log(e)
       let errorMessage = ""
       if (e.response.status === 409) {
         errorMessage = "You've used this name before. Please try another name >_<"

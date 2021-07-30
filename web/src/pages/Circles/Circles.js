@@ -8,7 +8,9 @@ export default (props) => {
   const [loadingUserData, updateLoadingUserData] = useState(true)
   const [circleData, updateCircleData] = useState([])
   const [loadingCircleData, updateLoadingCircleData] = useState(true)
+
   useEffect(async () => {
+    updateLoadingCircleData(true)
     const latestCircleData = await props.api.getCircles()
     updateCircleData(latestCircleData)
     updateLoadingCircleData(false)
@@ -21,7 +23,11 @@ export default (props) => {
   return (
     <div className="circle-wrapper">
       {loadingUserData ? <div>loading</div> : <DraggableUserProfileCards userProfileData={userData}/>}
-      {loadingCircleData ? <div>loading</div> : <CircleBoards circleData={circleData} api={props.api}/>}
+      {loadingCircleData ? <div>loading</div> :
+        <CircleBoards
+          circleData={circleData}
+          api={props.api}
+        />}
     </div>
   )
 
