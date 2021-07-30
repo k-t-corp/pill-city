@@ -167,9 +167,9 @@ class Followings(Resource):
         return user.get_followings()
 
 
-########
-# Post #
-########
+####################
+# Post and profile #
+####################
 
 post_parser = reqparse.RequestParser()
 post_parser.add_argument('content', type=str, required=True)
@@ -236,6 +236,21 @@ class Posts(Resource):
 
         posts = user.retrieves_posts_on_home()
         return posts, 200
+
+
+class Profile(Resource):
+    @jwt_required()
+    @marshal_with(post_fields)
+    def get(self, profile_user_id):
+        """
+        Get a user's posts on profile
+        """
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+        profile_user = User.find(profile_user_id)
+        if not profile_user:
+            return {'msg': f'User {profile_user_id} is not found'}, 404
+        return user.retrieves_posts_on_profile(profile_user)
 
 
 ############
