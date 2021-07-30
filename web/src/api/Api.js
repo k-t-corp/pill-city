@@ -27,7 +27,7 @@ export default class Api {
 
   async signUp(id, password) {
     const res = await this.axiosInstance.post(
-      `/me`,
+      `/signUp`,
       {
         'id': id,
         'password': password
@@ -41,7 +41,7 @@ export default class Api {
 
   async signIn(id, password) {
     const res = await this.axiosInstance.post(
-      `/auth`,
+      `/signIn`,
       {
         'id': id,
         'password': password
