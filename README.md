@@ -1,12 +1,12 @@
-# mini-gplus
-A Google+ clone
+# pill-city
+An one-of-a-kind social network
 
 ## Development
 
 ### Prerequisites
-* Python 3.7.0
+* Python 3.7+
 * Node.js and Yarn
-* Docker
+* Docker and docker-compose
 
 ### Install dependencies
 ```
@@ -32,3 +32,8 @@ yarn start
 ```
 
 View web frontend at [`http://localhost:3000`](http://localhost:3000/)
+
+### Run API unit tests
+```bash
+nosetests
+```

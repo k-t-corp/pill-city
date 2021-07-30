@@ -7,7 +7,7 @@ from flask_restful import Api
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token
 from mini_gplus.resources import Users, Me, Posts, Comments, NestedComments, Circles, Circle, CircleMember, \
-    Followings, Following
+    Followings, Following, Profile
 from mini_gplus.models import User
 
 
@@ -56,6 +56,8 @@ CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 api = Api(app)
 api.add_resource(Users, '/api/users')
+
+api.add_resource(Profile, '/api/profile/<string:profile_user_id>')
 
 api.add_resource(NestedComments, '/api/posts/<string:post_id>/comment/<string:comment_id>/comment')
 api.add_resource(Comments, '/api/posts/<string:post_id>/comment')
