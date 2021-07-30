@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
-import CatchApiErrorBuilder from '../api/CatchApiErrorBuilder'
+import CatchApiErrorBuilder from '../../api/CatchApiErrorBuilder'
 import {Header, HeaderContent, Message, Loader} from 'semantic-ui-react'
+import UserProfile from "../../components/UserProfile/UserProfile";
 
 require('promise.prototype.finally').shim();
 
@@ -30,7 +31,7 @@ export default class Profile extends Component {
           .unknownStatusCode(this.showError)
           .build()
       ).finally(() => {
-        this.setState({'loading': false})
+      this.setState({'loading': false})
     })
   }
 
@@ -47,11 +48,8 @@ export default class Profile extends Component {
     }
 
     return (
-      <div>
-        <Header as='h1' icon textAlign='center'>
-          <HeaderContent>{this.state.data['id']}</HeaderContent>
-        </Header>
-      </div>
+      <UserProfile me={true} userData={this.state.data}/>
+
     )
   }
 }

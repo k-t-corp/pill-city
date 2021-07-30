@@ -4,6 +4,7 @@
     grid-template-columns: repeat(4, 1fr);
     grid-column-gap: 30px;
     grid-row-gap: 30px;
+    padding: 5em 50px 0 50px;
 }
 
 .users-user-card-wrapper {

@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {Loader, Message} from "semantic-ui-react";
-import CatchApiErrorBuilder from "../api/CatchApiErrorBuilder";
+import CatchApiErrorBuilder from "../../api/CatchApiErrorBuilder";
 import "./Users.css"
 
 export default class Users extends Component {
