@@ -32,3 +32,8 @@ yarn start
 ```
 
 View web frontend at [`http://localhost:3000`](http://localhost:3000/)
+
+### Run API unit tests
+```bash
+nosetests
+```

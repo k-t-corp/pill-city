@@ -155,6 +155,7 @@ class TestModels(TestCase):
             post,
             owns: bool,
             sees: bool,
+            sees_on_profile: bool,
             comments: bool,
             nested_comments: bool
     ):
@@ -164,9 +165,14 @@ class TestModels(TestCase):
             self.assertFalse(acting_user.owns_post(post))
 
         if sees:
-            self.assertTrue(acting_user.sees_post(post))
+            self.assertTrue(acting_user.sees_post(post, context_home_or_profile=True))
         else:
-            self.assertFalse(acting_user.sees_post(post))
+            self.assertFalse(acting_user.sees_post(post, context_home_or_profile=True))
+
+        if sees_on_profile:
+            self.assertTrue(acting_user.sees_post(post, context_home_or_profile=False))
+        else:
+            self.assertFalse(acting_user.sees_post(post, context_home_or_profile=False))
 
         comment1 = None
         if comments:
@@ -211,9 +217,9 @@ class TestModels(TestCase):
         self.assertTrue(1, len(post1))
         post1 = post1[0]
 
-        # User1 owns, sees, comments and nested-comments on post1
+        # User1 owns, sees, sees on profile, comments and nested-comments on post1
         self._assert_user_to_post_privilege(
-            user1, post1, owns=True, sees=True, comments=True, nested_comments=True
+            user1, post1, owns=True, sees=True, sees_on_profile=True, comments=True, nested_comments=True
         )
 
     def test_can_act_on_others_public_post(self):
@@ -234,14 +240,14 @@ class TestModels(TestCase):
         # user2 follows user1
         user2.add_following(user1)
 
-        # User2 not owns but sees, comments and nested-comments on post1
+        # User2 not owns but sees, sees on profile, comments and nested-comments on post1
         self._assert_user_to_post_privilege(
-            user2, post1, owns=False, sees=True, comments=True, nested_comments=True
+            user2, post1, owns=False, sees=True, sees_on_profile=True, comments=True, nested_comments=True
         )
 
-        # User3 cannot do anything to post1
+        # User3 not owns nor sees, but sees on profile, comments and nested comments on post1
         self._assert_user_to_post_privilege(
-            user3, post1, owns=False, sees=False, comments=False, nested_comments=False
+            user3, post1, owns=False, sees=False, sees_on_profile=True, comments=True, nested_comments=True
         )
 
     def test_can_act_on_my_own_private_post(self):
@@ -259,9 +265,9 @@ class TestModels(TestCase):
         self.assertTrue(1, len(post1))
         post1 = post1[0]
 
-        # User1 owns, sees, comments and nested-comments on post1
+        # User1 owns, sees, sees on profile, comments and nested-comments on post1
         self._assert_user_to_post_privilege(
-            user1, post1, owns=True, sees=True, comments=True, nested_comments=True
+            user1, post1, owns=True, sees=True, sees_on_profile=True, comments=True, nested_comments=True
         )
 
     def test_can_act_on_others_private_post(self):
@@ -279,6 +285,7 @@ class TestModels(TestCase):
         self.assertTrue(user1.create_circle('circle1'))
         circle1 = user1.find_circle('circle1')
         user1.toggle_member(circle1, user2)
+        user1.toggle_member(circle1, user3)
 
         # Only user2 follows user1
         user2.add_following(user1)
@@ -289,27 +296,22 @@ class TestModels(TestCase):
         self.assertTrue(1, len(post1))
         post1 = post1[0]
 
-        # User1 owns, sees, comments and nested-comments on post1
+        # User2 not owns but sees, sees on profile, comments and nested-comments on post1
         self._assert_user_to_post_privilege(
-            user1, post1, owns=True, sees=True, comments=True, nested_comments=True
-        )
-
-        # User2 not owns but sees, comments and nested-comments on post1
-        self._assert_user_to_post_privilege(
-            user2, post1, owns=False, sees=True, comments=True, nested_comments=True
+            user2, post1, owns=False, sees=True, sees_on_profile=True, comments=True, nested_comments=True
         )
 
         # User3 cannot do anything to post1
         self._assert_user_to_post_privilege(
-            user3, post1, owns=False, sees=False, comments=False, nested_comments=False
+            user3, post1, owns=False, sees=False, sees_on_profile=True, comments=True, nested_comments=True
         )
 
         # User4 cannot do anything to post1
         self._assert_user_to_post_privilege(
-            user4, post1, owns=False, sees=False, comments=False, nested_comments=False
+            user4, post1, owns=False, sees=False, sees_on_profile=False, comments=False, nested_comments=False
         )
 
-    def test_sees_posts(self):
+    def test_retrieves_posts(self):
         # Create users
         self.assertTrue(User.create('user1', '1234'))
         self.assertTrue(User.create('user2', '2345'))
@@ -324,6 +326,7 @@ class TestModels(TestCase):
         self.assertTrue(user1.create_circle('circle1'))
         circle1 = user1.find_circle('circle1')
         user1.toggle_member(circle1, user2)
+        user1.toggle_member(circle1, user3)
 
         # Only user2 follows user1
         user2.add_following(user1)
@@ -340,14 +343,18 @@ class TestModels(TestCase):
         self.assertTrue(1, len(post1))
         post2 = post2[0]
 
-        # User1 sees post2 and post1
-        self.assertEquals([post2, post1], user1.sees_posts())
+        # User1 sees post2 and post1 on home and user1's profile
+        self.assertEquals([post2, post1], user1.retrieves_posts_on_home())
+        self.assertEquals([post2, post1], user1.retrieves_posts_on_profile(user1))
 
-        # User2 sees post2 and post1
-        self.assertEquals([post2, post1], user2.sees_posts())
+        # User2 sees post2 and post1 on home and user1's profile
+        self.assertEquals([post2, post1], user2.retrieves_posts_on_home())
+        self.assertEquals([post2, post1], user2.retrieves_posts_on_profile(user1))
 
-        # User3 sees nothing
-        self.assertEquals([], user3.sees_posts())
+        # User3 sees nothing on home and post2 and post1 on user1's profile
+        self.assertEquals([], user3.retrieves_posts_on_home())
+        self.assertEquals([post2, post1], user3.retrieves_posts_on_profile(user1))
 
-        # User4 sees nothing
-        self.assertEquals([], user3.sees_posts())
+        # User4 sees nothing on home and post2 on user1's profile
+        self.assertEquals([], user4.retrieves_posts_on_home())
+        self.assertEquals([post2], user4.retrieves_posts_on_profile(user1))
