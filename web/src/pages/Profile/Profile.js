@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
-import CatchApiErrorBuilder from '../api/CatchApiErrorBuilder'
-import {Header, HeaderContent, Message, Loader} from 'semantic-ui-react'
+import CatchApiErrorBuilder from '../../api/CatchApiErrorBuilder'
+import {Message, Loader} from 'semantic-ui-react'
+import UserProfile from "../../components/UserProfile/UserProfile";
 
 require('promise.prototype.finally').shim();
 
@@ -11,7 +12,8 @@ export default class Profile extends Component {
     this.state = {
       'loading': true,
       'error': undefined,
-      'data': undefined
+      'data': undefined,
+      'isMe': false
     }
   }
 
@@ -22,7 +24,12 @@ export default class Profile extends Component {
   componentDidMount() {
     this.props.api.getMe()
       .then(data => {
-        this.setState({'data': data})
+        if (this.props.userId === undefined || data.id === this.props.userId) {
+          this.setState({'isMe': true})
+          this.setState({'data': data})
+        } else {
+          this.setState({'data': {"id": this.props.userId}})
+        }
       })
       .catch(
         new CatchApiErrorBuilder()
@@ -30,7 +37,7 @@ export default class Profile extends Component {
           .unknownStatusCode(this.showError)
           .build()
       ).finally(() => {
-        this.setState({'loading': false})
+      this.setState({'loading': false})
     })
   }
 
@@ -46,12 +53,6 @@ export default class Profile extends Component {
       )
     }
 
-    return (
-      <div>
-        <Header as='h1' icon textAlign='center'>
-          <HeaderContent>{this.state.data['id']}</HeaderContent>
-        </Header>
-      </div>
-    )
+    return (<UserProfile me={this.state.isMe} userData={this.state.data} api={this.props.api}/>)
   }
 }
