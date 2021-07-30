@@ -9,7 +9,7 @@ export default (props) => {
     cards.push(<DraggableCard key={i} id={user.id} user_id={user.id}/>)
   }
   return (
-    <div className="grid-container">
+    <div className="draggable-card-grid-container">
       {cards}
     </div>
   )

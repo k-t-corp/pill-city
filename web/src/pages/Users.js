@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
-import {Loader, Message, Grid, GridRow, GridColumn} from "semantic-ui-react";
+import {Loader, Message} from "semantic-ui-react";
 import CatchApiErrorBuilder from "../api/CatchApiErrorBuilder";
-import UserCard from '../components/UserCard'
+import "./Users.css"
 
 export default class Users extends Component {
   constructor(props) {
@@ -45,44 +45,31 @@ export default class Users extends Component {
     }
 
     const users = this.state.data
-    const fullRowCount = Math.floor(users.length / 3)
-    const lastColCount = users.length % 3
-    const rows = []
-    for (let i = 0; i < fullRowCount; ++i) {
-      rows.push(
-        <GridRow key={i}>
-          <GridColumn key={0}>
-            <UserCard user={users[i]}/>
-          </GridColumn>
-          <GridColumn key={1}>
-            <UserCard user={users[i + 1]}/>
-          </GridColumn>
-          <GridColumn key={2}>
-            <UserCard user={users[i + 2]}/>
-          </GridColumn>
-        </GridRow>
-      )
-    }
-    if (lastColCount !== 0) {
-      const lastCols = []
-      for (let i = 0; i < lastColCount; ++i) {
-        lastCols.push(
-          <GridColumn key={i}>
-            <UserCard user={users[fullRowCount * 3 + i]}/>
-          </GridColumn>
-        )
-      }
-      rows.push(
-        <GridRow key={fullRowCount}>
-          {lastCols}
-        </GridRow>
+
+    let userCardElements = []
+    for (let i = 0; i < users.length; i++) {
+      const createdAtDate = new Date(users[i]['created_at_seconds'] * 1000)
+      userCardElements.push(
+        <div className="users-user-card-wrapper" key={i}>
+          <div className="users-user-card-avatar">
+            <img className="users-user-card-avatar-img"  src={`${process.env.PUBLIC_URL}/kusuou.png`} alt=""/>
+          </div>
+          <div>
+            <div className="users-user-card-name">
+              {users[i].id}
+            </div>
+            <div className="users-user-card-join-time">
+              Joined on {createdAtDate.toLocaleDateString()}
+            </div>
+          </div>
+        </div>
       )
     }
 
     return (
-      <Grid columns={3}>
-        {rows}
-      </Grid>
+      <div className="users-grid-container">
+        {userCardElements}
+      </div>
     )
   }
 }
