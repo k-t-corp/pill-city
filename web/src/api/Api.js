@@ -1,6 +1,6 @@
 import axios from 'axios'
 import ApiError from './ApiError'
-import {getCookie, setCookie, cookieExists} from "./authCookie";
+import {getAccessToken, setAccessToken, accessTokenExists} from "./AuthStorage";
 
 export default class Api {
   constructor(endpoint) {
@@ -14,14 +14,14 @@ export default class Api {
   }
 
   static throwOnUnauthorized() {
-    if (!cookieExists()) {
+    if (!accessTokenExists()) {
       throw new ApiError(401)
     }
   }
 
   static authorizedHeaders() {
     return {
-      'Authorization': `Bearer ${getCookie()}`
+      'Authorization': `Bearer ${getAccessToken()}`
     }
   }
 
@@ -50,7 +50,7 @@ export default class Api {
     if (res.status !== 200) {
       throw new ApiError(res.status)
     }
-    setCookie(res.data['access_token'])
+    setAccessToken(res.data['access_token'])
     this.axiosInstance.defaults.headers = {
       ...this.axiosInstance.defaults.headers,
       ...Api.authorizedHeaders(),

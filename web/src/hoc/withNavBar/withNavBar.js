@@ -5,7 +5,7 @@ import {
   Icon,
   MenuItem
 } from 'semantic-ui-react'
-import {removeCookie} from "../../api/authCookie";
+import {removeAccessToken} from "../../api/AuthStorage";
 import "./withNavBar.css"
 
 export default (WrappedComponent, path) => {
@@ -22,7 +22,7 @@ export default (WrappedComponent, path) => {
     }
 
     handleSignOut = () => {
-      removeCookie()
+      removeAccessToken()
       this.setState({'redirectTo': '/signin'})
     }
 
