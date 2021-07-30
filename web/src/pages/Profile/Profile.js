@@ -28,9 +28,7 @@ export default class Profile extends Component {
           this.setState({'isMe': true})
           this.setState({'data': data})
         } else {
-
-              this.setState({'data': {"id": this.props.userId}})
-
+          this.setState({'data': {"id": this.props.userId}})
         }
       })
       .catch(
