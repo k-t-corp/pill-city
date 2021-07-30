@@ -245,7 +245,7 @@ export default class Api {
 
   async getFollowings() {
     Api.throwOnUnauthorized()
-    const res = await this.axiosInstance.delete(
+    const res = await this.axiosInstance.get(
       `/followings`
     )
     if (res.status !== 200) {
