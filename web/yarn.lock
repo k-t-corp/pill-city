@@ -6597,11 +6597,6 @@ text-table@0.2.0, text-table@~0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
 
-three-dots@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/three-dots/-/three-dots-0.2.1.tgz#489e9dcac541a10f3507cdf27917ee0801cb0f44"
-  integrity sha512-+zRdWo1jsIRv6mq49gI7GeGyf28tTT+W5lWwm8qtizy4etIgXiv9GiF/PzpqpXxxDucAf2Xp9fKh5+iowQ5j3Q==
-
 throat@^3.0.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/throat/-/throat-3.2.0.tgz#50cb0670edbc40237b9e347d7e1f88e4620af836"

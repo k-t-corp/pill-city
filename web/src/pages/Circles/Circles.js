@@ -10,7 +10,6 @@ export default (props) => {
   const [loadingCircleData, updateLoadingCircleData] = useState(true)
 
   useEffect(async () => {
-    console.log("reload circle")
     updateLoadingCircleData(true)
     const latestCircleData = await props.api.getCircles()
     updateCircleData(latestCircleData)

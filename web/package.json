@@ -13,7 +13,6 @@
     "react-scripts": "1.1.4",
     "semantic-ui-css": "^2.3.3",
     "semantic-ui-react": "^0.82.1",
-    "three-dots": "^0.2.1",
     "universal-cookie": "^2.2.0"
   },
   "scripts": {
