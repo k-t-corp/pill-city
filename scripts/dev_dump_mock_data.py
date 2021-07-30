@@ -13,13 +13,13 @@ class User(object):
         self.access_token = None
 
     def sign_up(self):
-        self.sess.post('/api/me', json={
+        self.sess.post('/api/signUp', json={
             'id': self.user_id,
             'password': '1234'
         })
 
     def sign_in(self):
-        self.access_token = self.sess.post('/api/auth', json={
+        self.access_token = self.sess.post('/api/signIn', json={
             'id': self.user_id,
             'password': '1234'
         }).json()['access_token']

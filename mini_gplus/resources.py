@@ -30,6 +30,19 @@ class Users(Resource):
         return other_users, 200
 
 
+class UserResource(Resource):
+    @jwt_required()
+    @marshal_with(user_fields)
+    def get(self, user_id):
+        """
+        Get a specific user by ID
+        """
+        user = User.find(user_id)
+        if not user:
+            return {'msg': f'User {user_id} is not found'}, 404
+        return user
+
+
 ##########
 # Circle #
 ##########
@@ -294,31 +307,3 @@ class NestedComments(Resource):
             return {'msg': 'Cannot nest more than two levels of comment'}, 403
         nested_comment_args = comment_parser.parse_args()
         user.create_nested_comment(nested_comment_args['content'], comment, post)
-
-######
-# Me #
-######
-
-
-class Me(Resource):
-    def post(self):
-        """
-        Signs up a new user
-        """
-        if os.environ.get('ALLOW_SIGNUP', 'true') != 'true':
-            return {'msg': 'Sign up is not open at this moment'}, 403
-        args = user_parser.parse_args()
-        successful = User.create(args['id'], args['password'])
-        user_id = args['id']
-        if successful:
-            return {'id': user_id}, 201
-        else:
-            return {'msg': f'ID {user_id} is already taken'}, 409
-
-    @jwt_required()
-    def get(self):
-        """
-        Get a user's own information
-        """
-        user_id = get_jwt_identity()
-        return {'id': user_id}, 200
