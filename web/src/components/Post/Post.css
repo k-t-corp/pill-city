@@ -57,6 +57,7 @@
 .post-content {
     overflow-wrap: break-word;
     margin: 15px 0;
+    white-space: pre
 }
 
 /*Reactions*/
