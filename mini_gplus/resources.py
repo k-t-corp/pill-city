@@ -318,7 +318,7 @@ reaction_parser = reqparse.RequestParser()
 reaction_parser.add_argument('emoji', type=str, required=True)
 
 
-class Reaction(Resource):
+class Reactions(Resource):
     @jwt_required()
     def post(self, post_id: str):
         """
@@ -327,8 +327,10 @@ class Reaction(Resource):
         user_id = get_jwt_identity()
         user = User.find(user_id)
         post = Post.objects.get(id=post_id)
+        if not post:
+            return {"msg": "post is not found"}, 404
         reaction_args = reaction_parser.parse_args()
-        reaction_id = user.create_comment(reaction_args['content'], post)
+        reaction_id = user.create_comment(reaction_args['emoji'], post)
         return {"id": reaction_id}, 201
 
     @jwt_required()
@@ -339,6 +341,8 @@ class Reaction(Resource):
         user_id = get_jwt_identity()
         user = User.find(user_id)
         post = Post.objects.get(id=post_id)
+        if not post:
+            return {"msg": "post is not found"}, 404
         reaction_to_delete = Reaction.objects.get(id=reaction_id)
         if reaction_to_delete not in post.reactions:
             return {'msg': f'Reaction {reaction_to_delete} is already not in post {post_id}'}, 409

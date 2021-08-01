@@ -282,12 +282,12 @@ export default class Api {
     return null
   }
 
-  async deleteReaction(postId, reaction_id){
+  async deleteReaction(postId, reactionId){
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.delete(
-      `/posts/${postId}/reaction`
+      `/posts/${postId}/reaction/${reactionId}`,
     )
-    if (res.status !== 201) {
+    if (res.status !== 200) {
       throw new ApiError(res.status)
     }
     return null

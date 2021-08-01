@@ -266,14 +266,21 @@ class User(Document, CreatedAtMixin):
         :raise (UnauthorizedAccess) when access is unauthorized
         """
         if self.sees_post(parent_post, context_home_or_profile=False):
+            if len(list(filter(lambda x: self.id == x.author and emoji == x.emoji, parent_post.reactions))):
+                raise UnauthorizedAccess()
             new_reaction = Reaction()
             new_reaction.author = self.id
             new_reaction.emoji = emoji
+            new_reaction.save()
+            parent_post.reactions.append(new_reaction)
+            parent_post.save()
+            return str(new_reaction.id)
+        else:
+            raise UnauthorizedAccess()
 
     def owns_reaction(self, reaction):
         """
         Whether the user owns a reaction
-        TODO: do not use, no test yet
         :param (Reaction) reaction: the reaction
         :return (bool): whether the user owns a reaction
         """
@@ -282,12 +289,13 @@ class User(Document, CreatedAtMixin):
     def delete_reaction(self, reaction, parent_post):
         """
         Delete a reaction
-        TODO: do not use, no test yet
         :param (Reaction) reaction: the comment
         :param (Post) parent_post: reaction's parent post
         :raise (UnauthorizedAccess) when access is unauthorized
         """
         if self.owns_reaction(reaction):
+            if reaction not in parent_post.reactions:
+                raise UnauthorizedAccess()
             parent_post.reactions.remove(reaction)
             reaction.delete()
         else:

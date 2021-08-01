@@ -1,6 +1,6 @@
 from unittest import TestCase
 from mongoengine import connect, disconnect
-from mini_gplus.models import User, Post, Comment, UnauthorizedAccess
+from mini_gplus.models import User, Post, Comment, UnauthorizedAccess, Reaction
 
 
 class TestModels(TestCase):
@@ -99,6 +99,7 @@ class TestModels(TestCase):
 
         def op():
             user2.toggle_member(circle1, user2)
+
         self.assertRaises(UnauthorizedAccess, op)
 
     def test_circle_successful_delete_circle(self):
@@ -126,6 +127,7 @@ class TestModels(TestCase):
 
         def op():
             user2.delete_circle(circle1)
+
         self.assertRaises(UnauthorizedAccess, op)
 
     #############
@@ -157,7 +159,8 @@ class TestModels(TestCase):
             sees: bool,
             sees_on_profile: bool,
             comments: bool,
-            nested_comments: bool
+            nested_comments: bool,
+            react_once: bool
     ):
         if owns:
             self.assertTrue(acting_user.owns_post(post))
@@ -188,7 +191,7 @@ class TestModels(TestCase):
             self.assertRaises(UnauthorizedAccess, op1)
             # post author creates a new comment
             # in case acting_user needs to mess up with nested commenting later
-            naughty_comment_content = 'comment1_for_'+acting_user.user_id+"_to_mess_up_with"
+            naughty_comment_content = 'comment1_for_' + acting_user.user_id + "_to_mess_up_with"
             post.author.create_comment(naughty_comment_content, post)
             comment1 = list(Comment.objects(author=post.author, content=naughty_comment_content))
             self.assertEquals(1, len(comment1))
@@ -206,6 +209,18 @@ class TestModels(TestCase):
 
             self.assertRaises(UnauthorizedAccess, op2)
 
+        if react_once:
+            acting_user.create_reaction("💩", post)
+            reaction1 = list(Reaction.objects(author=acting_user, emoji='💩'))
+            self.assertEquals(1, len(reaction1))
+            reaction1 = reaction1[0]
+            self.assertIn(reaction1.id, list(map(lambda c: c.id, post.reactions)))
+        else:
+            def op3():
+                acting_user.create_reaction('💩', post)
+
+            self.assertRaises(UnauthorizedAccess, op3)
+
     def test_can_act_on_my_own_public_post(self):
         # Create user1
         self.assertTrue(User.create('user1', '1234'))
@@ -219,7 +234,8 @@ class TestModels(TestCase):
 
         # User1 owns, sees, sees on profile, comments and nested-comments on post1
         self._assert_user_to_post_privilege(
-            user1, post1, owns=True, sees=True, sees_on_profile=True, comments=True, nested_comments=True
+            user1, post1, owns=True, sees=True, sees_on_profile=True, comments=True, nested_comments=True,
+            react_once=True
         )
 
     def test_can_act_on_others_public_post(self):
@@ -242,12 +258,14 @@ class TestModels(TestCase):
 
         # User2 not owns but sees, sees on profile, comments and nested-comments on post1
         self._assert_user_to_post_privilege(
-            user2, post1, owns=False, sees=True, sees_on_profile=True, comments=True, nested_comments=True
+            user2, post1, owns=False, sees=True, sees_on_profile=True, comments=True, nested_comments=True,
+            react_once=True
         )
 
         # User3 not owns nor sees, but sees on profile, comments and nested comments on post1
         self._assert_user_to_post_privilege(
-            user3, post1, owns=False, sees=False, sees_on_profile=True, comments=True, nested_comments=True
+            user3, post1, owns=False, sees=False, sees_on_profile=True, comments=True, nested_comments=True,
+            react_once=True
         )
 
     def test_can_act_on_my_own_private_post(self):
@@ -267,7 +285,8 @@ class TestModels(TestCase):
 
         # User1 owns, sees, sees on profile, comments and nested-comments on post1
         self._assert_user_to_post_privilege(
-            user1, post1, owns=True, sees=True, sees_on_profile=True, comments=True, nested_comments=True
+            user1, post1, owns=True, sees=True, sees_on_profile=True, comments=True, nested_comments=True,
+            react_once=True
         )
 
     def test_can_act_on_others_private_post(self):
@@ -298,17 +317,20 @@ class TestModels(TestCase):
 
         # User2 not owns but sees, sees on profile, comments and nested-comments on post1
         self._assert_user_to_post_privilege(
-            user2, post1, owns=False, sees=True, sees_on_profile=True, comments=True, nested_comments=True
+            user2, post1, owns=False, sees=True, sees_on_profile=True, comments=True, nested_comments=True,
+            react_once=True
         )
 
         # User3 cannot do anything to post1
         self._assert_user_to_post_privilege(
-            user3, post1, owns=False, sees=False, sees_on_profile=True, comments=True, nested_comments=True
+            user3, post1, owns=False, sees=False, sees_on_profile=True, comments=True, nested_comments=True,
+            react_once=False
         )
 
         # User4 cannot do anything to post1
         self._assert_user_to_post_privilege(
-            user4, post1, owns=False, sees=False, sees_on_profile=False, comments=False, nested_comments=False
+            user4, post1, owns=False, sees=False, sees_on_profile=False, comments=False, nested_comments=False,
+            react_once=False
         )
 
     def test_retrieves_posts(self):
@@ -340,7 +362,7 @@ class TestModels(TestCase):
         # Create public post2 by user1
         user1.create_post('post2', True, [])
         post2 = Post.objects(content='post2')
-        self.assertTrue(1, len(post1))
+        self.assertTrue(1, len(post2))
         post2 = post2[0]
 
         # User1 sees post2 and post1 on home and user1's profile
@@ -358,3 +380,57 @@ class TestModels(TestCase):
         # User4 sees nothing on home and post2 on user1's profile
         self.assertEquals([], user4.retrieves_posts_on_home())
         self.assertEquals([post2], user4.retrieves_posts_on_profile(user1))
+
+    ############
+    # Reaction #
+    ############
+    def test_react_twice(self):
+        # Create users
+        self.assertTrue(User.create('user1', '1234'))
+        user1 = User.find('user1')
+
+        # Create post
+        user1.create_post('post1', True, [])
+        post1 = Post.objects(author=user1)
+        self.assertTrue(1, len(post1))
+        post1 = post1[0]
+
+        def op():
+            user1.create_reaction('💩', post1)
+            user1.create_reaction('💩', post1)
+
+        self.assertRaises(UnauthorizedAccess, op)
+
+    def test_delete_reaction(self):
+        # Create users
+        self.assertTrue(User.create('user1', '1234'))
+        self.assertTrue(User.create('user2', '1234'))
+        user1 = User.find('user1')
+        user2 = User.find('user2')
+
+        # Create post
+        user1.create_post('post1', True, [])
+        post1 = Post.objects(author=user1)
+        self.assertTrue(1, len(post1))
+        post1 = post1[0]
+
+        # User2 creates reaction
+        user2.create_reaction('💩', post1)
+        reaction1 = Reaction.objects(author=user2)
+        self.assertTrue(1, len(reaction1))
+        reaction1 = reaction1[0]
+
+        # User2 creates reaction and user1 tries to delete it
+        def op():
+            user1.delete_reaction(reaction1, post1)
+
+        self.assertRaises(UnauthorizedAccess, op)
+
+        # User2 deletes his own reaction
+        user2.delete_reaction(reaction1, post1)
+
+        # User2 tries to delete a reaction that doesn't exit
+        def op2():
+            user2.delete_reaction(reaction1, post1)
+
+        self.assertRaises(UnauthorizedAccess, op2)
