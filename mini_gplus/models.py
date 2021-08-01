@@ -1,3 +1,4 @@
+import bleach
 from typing import List
 from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, PULL, CASCADE, NotUniqueError
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -88,7 +89,7 @@ class User(Document, CreatedAtMixin):
         """
         new_post = Post()
         new_post.author = self.id
-        new_post.content = content
+        new_post.content = bleach.clean(content)
         new_post.is_public = is_public
         new_post.circles = circles
         new_post.save()
@@ -174,7 +175,7 @@ class User(Document, CreatedAtMixin):
         if self.sees_post(parent_post, context_home_or_profile=False):
             new_comment = Comment()
             new_comment.author = self.id
-            new_comment.content = content
+            new_comment.content = bleach.clean(content)
             new_comment.save()
             parent_post.comments.append(new_comment)
             parent_post.save()
@@ -194,7 +195,7 @@ class User(Document, CreatedAtMixin):
         if self.sees_post(parent_post, context_home_or_profile=False):
             new_comment = Comment()
             new_comment.author = self.id
-            new_comment.content = content
+            new_comment.content = bleach.clean(content)
             new_comment.save()
             parent_comment.comments.append(new_comment)
             parent_comment.save()
