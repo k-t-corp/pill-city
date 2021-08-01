@@ -7,12 +7,13 @@ from flask_restful import Api
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
 from mini_gplus.resources import Users, Posts, Comments, NestedComments, Circles, Circle, CircleMember, \
-    Followings, Following, Profile, UserResource
+    Followings, Following, Profile, UserResource, MyAvatar
 from mini_gplus.models import User
 
 
 app = Flask(__name__)
 app.secret_key = urandom(24)
+
 mongodb_uri = os.environ['MONGODB_URI']
 mongodb_db = parse_uri(mongodb_uri)['database']
 app.config['MONGODB_SETTINGS'] = {
@@ -22,6 +23,7 @@ app.config['MONGODB_SETTINGS'] = {
 db = MongoEngine(app)
 app.session_interface = MongoEngineSessionInterface(db)
 
+app.config['MAX_CONTENT_LENGTH'] = 40 * 1024 * 1024  # 40MB max upload size
 
 ##################
 # Authentication #
@@ -88,6 +90,9 @@ app.config['BUNDLE_ERRORS'] = True
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 api = Api(app)
+
+api.add_resource(MyAvatar, '/api/me/avatar')
+
 api.add_resource(Users, '/api/users')
 api.add_resource(UserResource, '/api/user/<string:user_id>')
 

@@ -1,5 +1,6 @@
 from typing import List
-from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, PULL, CASCADE, NotUniqueError
+from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, PULL, CASCADE, NULLIFY, \
+    NotUniqueError
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -13,10 +14,15 @@ class CreatedAtMixin(object):
         return self.id.generation_time.timestamp()
 
 
+class Media(Document, CreatedAtMixin):
+    object_name = StringField(required=True, unique=True)
+
+
 class User(Document, CreatedAtMixin):
     user_id = StringField(required=True, unique=True)
     password = StringField(required=True)
     followings = ListField(ReferenceField('User', reverse_delete_rule=PULL), default=[])  # type: List[User]
+    avatar = ReferenceField(Media, reverse_delete_rule=NULLIFY)
 
     ########
     # User #

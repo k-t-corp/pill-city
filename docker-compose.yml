@@ -34,40 +34,12 @@ services:
       /usr/bin/mc alias set local http://minio:9000 minioadmin minioadmin;
       /usr/bin/mc mb --ignore-existing local/minigplus;
       /usr/bin/mc admin user add local stsadmin stsadmin-secret;
-      /usr/bin/mc admin policy add local rwall /root/dev-rwall-policy.json;
+      /usr/bin/mc admin policy add local rwall /root/dev-rwall-role-policy.json;
       /usr/bin/mc admin policy set local rwall user=stsadmin;
+      /usr/bin/mc policy set-json /root/dev-public-read-bucket-policy.json local/minigplus;
       "
     volumes:
-      - ${PWD}/scripts/dev-rwall-policy.json:/root/dev-rwall-policy.json
-    depends_on:
-      - minio
-  nginx:
-    image: nginx:1.21.1
-    command: |
-      bash -c 'bash -s <<EOF
-        cat > /etc/nginx/nginx.conf <<EON
-          daemon off;
-          events {
-            worker_connections 768;
-          }
-          http {
-            gzip on;
-            gzip_disable "msie6";
-            include /etc/nginx/mime.types;
-            server {
-              listen 80;
-              server_name localhost:19026;
-
-              return 301 http://localhost:19025/minigplus$$request_uri;
-            }
-          }
-      EON
-      nginx
-      EOF'
-    ports:
-      - "19026:80"
-    healthcheck:
-      test: [ "CMD-SHELL", "wget -O /dev/null http://localhost || exit 1" ]
-      timeout: 10s
+      - ${PWD}/scripts/dev-rwall-role-policy.json:/root/dev-rwall-role-policy.json
+      - ${PWD}/scripts/dev-public-read-bucket-policy.json:/root/dev-public-read-bucket-policy.json
     depends_on:
       - minio
