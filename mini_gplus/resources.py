@@ -87,6 +87,7 @@ class MyAvatar(Resource):
 
         # check file size
         # flask will limit upload size for us :)
+        # would return 413 if file is too large
 
         # save the file
         temp_fp = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
