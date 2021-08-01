@@ -33,7 +33,12 @@ services:
       /bin/sh -c "
       /usr/bin/mc alias set local http://minio:9000 minioadmin minioadmin;
       /usr/bin/mc mb --ignore-existing local/minigplus;
+      /usr/bin/mc admin user add local stsadmin stsadmin-secret;
+      /usr/bin/mc admin policy add local rwall /root/dev-rwall-policy.json;
+      /usr/bin/mc admin policy set local rwall user=stsadmin;
       "
+    volumes:
+      - ${PWD}/scripts/dev-rwall-policy.json:/root/dev-rwall-policy.json
     depends_on:
       - minio
   nginx:
