@@ -23,9 +23,9 @@ sts_client = boto3.client(
 s3_bucket_name = os.environ['S3_BUCKET_NAME']
 
 
-########
-# User #
-########
+######
+# Me #
+######
 
 class AvatarUrl(fields.Raw):
     def format(self, avatar):
@@ -44,34 +44,17 @@ user_fields = {
     'avatar_url': AvatarUrl(attribute='avatar')
 }
 
+user_avatar_parser = reqparse.RequestParser()
+user_avatar_parser.add_argument('file', type=werkzeug.datastructures.FileStorage, location='files', required=True)
 
-class Users(Resource):
+
+class Me(Resource):
     @jwt_required()
     @marshal_with(user_fields)
     def get(self):
-        """
-        Get all users other than the logged in user
-        """
         user_id = get_jwt_identity()
-        other_users = [_ for _ in User.objects(user_id__ne=user_id)]
-        return other_users, 200
-
-
-class UserResource(Resource):
-    @jwt_required()
-    @marshal_with(user_fields)
-    def get(self, user_id):
-        """
-        Get a specific user by ID
-        """
         user = User.find(user_id)
-        if not user:
-            return {'msg': f'User {user_id} is not found'}, 404
         return user
-
-
-user_avatar_parser = reqparse.RequestParser()
-user_avatar_parser.add_argument('file', type=werkzeug.datastructures.FileStorage, location='files', required=True)
 
 
 class MyAvatar(Resource):
@@ -156,6 +139,35 @@ class MyAvatar(Resource):
 
         # TODO: remove previous avatar
         os.remove(temp_fp)
+
+
+#########
+# Users #
+#########
+
+class Users(Resource):
+    @jwt_required()
+    @marshal_with(user_fields)
+    def get(self):
+        """
+        Get all users other than the logged in user
+        """
+        user_id = get_jwt_identity()
+        other_users = [_ for _ in User.objects(user_id__ne=user_id)]
+        return other_users, 200
+
+
+class UserResource(Resource):
+    @jwt_required()
+    @marshal_with(user_fields)
+    def get(self, user_id):
+        """
+        Get a specific user by ID
+        """
+        user = User.find(user_id)
+        if not user:
+            return {'msg': f'User {user_id} is not found'}, 404
+        return user
 
 
 ##########

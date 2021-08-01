@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import "./UserProfile.css"
 import Post from "../Post/Post";
+import getAvatarUrl from "../../api/getAvatarUrl";
 
 export default (props) => {
   const [postLoading, updatePostLoading] = useState(true)
@@ -48,11 +49,11 @@ export default (props) => {
 
   const userInfoButton = () => {
     if (props.me) {
-      // Save this part for later
-      // <div className="user-profile-info-button">
-      //   Edit profile
-      // </div>
-      return null
+      return (
+        <div className="user-profile-info-button">
+          Edit profile
+        </div>
+      )
     } else {
       if (followingLoading) {
         return null
@@ -79,7 +80,7 @@ export default (props) => {
           <img className="user-profile-banner-img" alt="user-banner"/>
         </div>
         <div className="user-profile-avatar-wrapper">
-          <img className="user-profile-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.png`} alt="user-avatar"/>
+          <img className="user-profile-avatar-img" src={getAvatarUrl(props.userData)} alt="user-avatar"/>
         </div>
         <div className="user-profile-user-name">
           {props.userData.id}

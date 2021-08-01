@@ -7,7 +7,7 @@ from flask_restful import Api
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
 from mini_gplus.resources import Users, Posts, Comments, NestedComments, Circles, Circle, CircleMember, \
-    Followings, Following, Profile, UserResource, MyAvatar
+    Followings, Following, Profile, UserResource, MyAvatar, Me
 from mini_gplus.models import User
 
 
@@ -73,16 +73,6 @@ def sign_up():
         return {'msg': f'ID {user_id} is already taken'}, 409
 
 
-@app.route('/api/me', methods=['GET'])
-@jwt_required()
-def me():
-    """
-    Get a user's own information
-    """
-    user_id = get_jwt_identity()
-    return {'id': user_id}, 200
-
-
 ########
 # APIs #
 ########
@@ -92,6 +82,7 @@ CORS(app, resources={r"/api/*": {"origins": "*"}})
 api = Api(app)
 
 api.add_resource(MyAvatar, '/api/me/avatar')
+api.add_resource(Me, '/api/me')
 
 api.add_resource(Users, '/api/users')
 api.add_resource(UserResource, '/api/user/<string:user_id>')

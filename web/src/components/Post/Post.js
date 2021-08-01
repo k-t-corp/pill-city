@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import "./Post.css"
+import getAvatarUrl from "../../api/getAvatarUrl";
 
 export default (props) => {
   const [addComment, updateAddComment] = useState(false)
@@ -49,7 +50,11 @@ export default (props) => {
       nestedComments.push(
         <div key={i} className="post-nested-comment">
           <div className="post-avatar post-nested-comment-avatar">
-            <img className="post-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.png`} alt=""/>
+            <img
+              className="post-avatar-img"
+              src={getAvatarUrl(nestedComment.author)}
+              alt=""
+            />
           </div>
           <div className="post-name nested-comment-name">{nestedComment.author.id}:&nbsp;</div>
           <div className="post-nested-comment-content">
@@ -65,7 +70,11 @@ export default (props) => {
     comments.push(
       <div className="post-comment" key={i}>
         <div className="post-avatar post-comment-avatar">
-          <img className="post-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.png`} alt=""/>
+          <img
+            className="post-avatar-img"
+            src={getAvatarUrl(comment.author)}
+            alt=""
+          />
         </div>
         <div className="post-comment-main-content">
           <div className="post-comment-info">
@@ -112,7 +121,11 @@ export default (props) => {
         <div className="post-op-info-wrapper">
           <div className="post-op-info-left">
             <div className="post-avatar">
-              <img className="post-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.png`} alt=""/>
+              <img
+                className="post-avatar-img"
+                src={getAvatarUrl(props.data.author)}
+                alt=""
+              />
             </div>
             <div className="post-name">
               {props.data.author.id}
@@ -160,7 +173,11 @@ export default (props) => {
         <div className="post-comment-box-wrapper fade-in">
           <div className="post-comment-box-input-area">
             <div className="post-avatar post-comment-avatar">
-              <img className="post-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.png`} alt=""/>
+              <img
+                className="post-avatar-img"
+                src={getAvatarUrl(props.data.author)}
+                alt=""
+              />
             </div>
             <textarea id="post-comment-box-input" placeholder="Add comment"/>
           </div>
