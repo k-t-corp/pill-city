@@ -121,10 +121,10 @@ def main():
 
     # post something
     kt.create_post('rua', is_public=True, circle_names=[])
-    kt.create_post('Hello, World!', is_public=True, circle_names=[])
+    kt.create_post(' _Hello, World!_ ', is_public=True, circle_names=[])
     kt_ika_post = kt.create_post('Ika!1!!!!', is_public=False, circle_names=['ika'])
     ika.create_post('iPhone', is_public=True, circle_names=[])
-    ika.create_post('iPad', is_public=True, circle_names=[])
+    ika.create_post(' *iPad* ', is_public=True, circle_names=[])
     ika.create_post('MacBook Pro', is_public=True, circle_names=[])
     ika.create_post('MacBook Air', is_public=True, circle_names=[])
     kt.create_post('BOY NEXT DOOR. SLABU GET UR AS BACK HERE. HENG HENG HENG AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', is_public=False, circle_names=['gachi'])
@@ -134,23 +134,23 @@ def main():
 
     senpai.create_post('henghenghengaaaa', is_public=True, circle_names=[])
     senpai.create_post('kouchaiidesuka', is_public=True, circle_names=[])
-    sirjie.create_post('我家呢還蠻大的', is_public=True, circle_names=[])
+    sirjie.create_post('我家呢還 *蠻大* 的', is_public=True, circle_names=[])
     sirjie.create_post('拿都可以拿', is_public=True, circle_names=[])
     sirjie.create_post('你看這個彬彬才喝幾罐就醉了', is_public=True, circle_names=[])
     senpai.create_post('114514', is_public=True, circle_names=[])
     sirjie.create_post('這麼說你很勇ho', is_public=True, circle_names=[])
     sirjie.create_post('我房裡有好康的', is_public=True, circle_names=[])
-    sirjie.create_post('聽話！讓我看看！', is_public=True, circle_names=[])
+    sirjie.create_post(' -聽話！讓我看看！- ', is_public=True, circle_names=[])
 
     # Create some comments
     ika_kt_ika_comment = ika.create_comment(kt_ika_post, 'rua')
     innkuika.create_comment(kt_ika_post, 'twitter.com/realInnkuIka')
     innkuika.create_nested_comment(kt_ika_post, ika_kt_ika_comment, '')
-    ikayaki.create_comment(kt_ika_post, 'twitter.com/realIkaYaki')
+    ikayaki.create_comment(kt_ika_post, ' _twitter.com/realIkaYaki_ ')
     ikayaki.create_nested_comment(kt_ika_post, ika_kt_ika_comment, 'Innkuika is crokked!!!! Make Ika Great Again!!!!!!')
     ikayaro.create_comment(kt_ika_post, 'twitter.com/realIkaYaro')
     ikayaki.create_nested_comment(kt_ika_post, ika_kt_ika_comment, 'twitter.com/realIkaYaro twitter.com/realIkaYaro twitter.com/realIkaYaro twitter.com/realIkaYaro twitter.com/realIkaYaro twitter.com/realIkaYaro twitter.com/realIkaYaro twitter.com/realIkaYaro twitter.com/realIkaYaro twitter.com/realIkaYaro twitter.com/realIkaYaro')
-    ika2.create_comment(kt_ika_post, "I'm 混亂邪惡")
+    ika2.create_comment(kt_ika_post, " -I'm 混亂邪惡- ")
     ika2.create_nested_comment(kt_ika_post, ika_kt_ika_comment, '/profile/ikaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
 
 
