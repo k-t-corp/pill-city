@@ -2,7 +2,7 @@ import os
 
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from .models import User, Post, Comment, Reaction
+from .models import User, Post, Comment, Reaction as ReactionModel
 
 ########
 # User #
@@ -196,7 +196,9 @@ post_fields = {
     'content': fields.String,
     'is_public': fields.Boolean,
     'reactions': fields.List(fields.Nested({
-        'emoji': fields.String
+        'emoji': fields.String,
+        'author': fields.Nested(user_fields),
+        'id': fields.String,
     })),
     # TODO: only return the circles that the current user is in
     # 'circles': fields.List(fields.Nested(circle_fields)),
@@ -333,6 +335,8 @@ class Reactions(Resource):
         reaction_id = user.create_comment(reaction_args['emoji'], post)
         return {"id": reaction_id}, 201
 
+
+class Reaction(Resource):
     @jwt_required()
     def delete(self, post_id: str, reaction_id: str):
         """
@@ -343,7 +347,7 @@ class Reactions(Resource):
         post = Post.objects.get(id=post_id)
         if not post:
             return {"msg": "post is not found"}, 404
-        reaction_to_delete = Reaction.objects.get(id=reaction_id)
+        reaction_to_delete = ReactionModel.objects.get(id=reaction_id)
         if reaction_to_delete not in post.reactions:
             return {'msg': f'Reaction {reaction_to_delete} is already not in post {post_id}'}, 409
         user.delete_reaction(reaction_to_delete, post)

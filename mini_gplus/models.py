@@ -1,10 +1,19 @@
 from typing import List
 from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, PULL, CASCADE, NotUniqueError
 from werkzeug.security import generate_password_hash, check_password_hash
+import emoji as emoji_lib
 
 
 class UnauthorizedAccess(Exception):
     status_code = 401
+
+
+class BadRequest(Exception):
+    status_code = 400
+
+
+class NotFound(Exception):
+    status_code = 404
 
 
 class CreatedAtMixin(object):
@@ -268,6 +277,9 @@ class User(Document, CreatedAtMixin):
         if self.sees_post(parent_post, context_home_or_profile=False):
             if len(list(filter(lambda x: self.id == x.author and emoji == x.emoji, parent_post.reactions))):
                 raise UnauthorizedAccess()
+            if len(emoji) != 1 or emoji not in emoji_lib.UNICODE_EMOJI['en']:
+                raise BadRequest()
+
             new_reaction = Reaction()
             new_reaction.author = self.id
             new_reaction.emoji = emoji
@@ -295,7 +307,7 @@ class User(Document, CreatedAtMixin):
         """
         if self.owns_reaction(reaction):
             if reaction not in parent_post.reactions:
-                raise UnauthorizedAccess()
+                raise NotFound()
             parent_post.reactions.remove(reaction)
             reaction.delete()
         else:

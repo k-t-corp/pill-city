@@ -271,7 +271,7 @@ export default class Api {
   async addReaction(emoji, postId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.post(
-      `/posts/${postId}/reaction`,
+      `/posts/${postId}/reactions`,
       {
         emoji
       }

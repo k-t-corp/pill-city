@@ -1,6 +1,6 @@
 from unittest import TestCase
 from mongoengine import connect, disconnect
-from mini_gplus.models import User, Post, Comment, UnauthorizedAccess, Reaction
+from mini_gplus.models import User, Post, Comment, UnauthorizedAccess, Reaction, NotFound, BadRequest
 
 
 class TestModels(TestCase):
@@ -324,7 +324,7 @@ class TestModels(TestCase):
         # User3 cannot do anything to post1
         self._assert_user_to_post_privilege(
             user3, post1, owns=False, sees=False, sees_on_profile=True, comments=True, nested_comments=True,
-            react_once=False
+            react_once=True
         )
 
         # User4 cannot do anything to post1
@@ -433,4 +433,27 @@ class TestModels(TestCase):
         def op2():
             user2.delete_reaction(reaction1, post1)
 
-        self.assertRaises(UnauthorizedAccess, op2)
+        self.assertRaises(NotFound, op2)
+
+    def test_add_bad_reaction(self):
+        # Create users
+        self.assertTrue(User.create('user1', '1234'))
+        user1 = User.find('user1')
+
+        # Create post
+        user1.create_post('post1', True, [])
+        post1 = Post.objects(author=user1)
+        self.assertTrue(1, len(post1))
+        post1 = post1[0]
+
+        # User1 tries to add more than one emoji
+        def op():
+            user1.create_reaction('💩💩', post1)
+
+        self.assertRaises(BadRequest, op)
+
+        # User1 tries to add something that is not emoji
+        def op2():
+            user1.create_reaction('r', post1)
+
+        self.assertRaises(BadRequest, op2)
