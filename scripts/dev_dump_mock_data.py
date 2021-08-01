@@ -1,4 +1,6 @@
+import os
 import pymongo
+import boto3
 from typing import List
 from requests_toolbelt.sessions import BaseUrlSession
 
@@ -30,6 +32,14 @@ class User(object):
     def _raise_on_unauthenticated(self):
         if not self.access_token:
             raise RuntimeError(f'{self.user_id} is unauthenticated')
+
+    def update_avatar(self, fn):
+        self._raise_on_unauthenticated()
+        fp = os.path.join('scripts', "dev_mock_data_avatars", fn)
+        with open(fp, 'rb') as f:
+            self.sess.post(f'/api/me/avatar', files={
+                'file': f
+            })
 
     def create_circle(self, circle_name: str):
         self._raise_on_unauthenticated()
@@ -65,27 +75,38 @@ class User(object):
 
 
 def main():
-    # drop everything in database
+    # drop everything in mino
+    s3 = boto3.resource(
+        's3',
+        endpoint_url="http://localhost:19025",
+        region_name="",
+        aws_access_key_id="minioadmin",
+        aws_secret_access_key="minioadmin"
+    )
+    bucket = s3.Bucket('minigplus')
+    bucket.objects.all().delete()
+
+    # drop everything in mongodb
     client = pymongo.MongoClient("mongodb://localhost:19023/minigplus")
     client.drop_database("minigplus")
 
     # sign up some users
-    kt = User('kt'); kt.sign_up(); kt.sign_in()
-    ika = User('ika'); ika.sign_up(); ika.sign_in()
-    innkuika = User('innkuika'); innkuika.sign_up(); innkuika.sign_in()
-    ikayaki = User('ikayaki'); ikayaki.sign_up(); ikayaki.sign_in()
-    ikayaro = User('ikayaro'); ikayaro.sign_up(); ikayaro.sign_in()
-    ika2 = User('ikaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'); ika2.sign_up(); ika2.sign_in()
-    billy = User('billy'); billy.sign_up(); billy.sign_in()
-    van = User('van'); van.sign_up(); van.sign_in()
-    xiaolaba = User('xiaolaba'); xiaolaba.sign_up(); xiaolaba.sign_in()
-    buki = User('buki'); buki.sign_up(); buki.sign_in()
-    mawei = User('mawei'); mawei.sign_up(); mawei.sign_in()
-    duff = User('duff'); duff.sign_up(); duff.sign_in()
-    kele = User('kele'); kele.sign_up(); kele.sign_in()
+    kt = User('kt'); kt.sign_up(); kt.sign_in(); kt.update_avatar('kt.jpeg')
+    ika = User('ika'); ika.sign_up(); ika.sign_in(); ika.update_avatar('ika.jpeg')
+    innkuika = User('innkuika'); innkuika.sign_up(); innkuika.sign_in(); innkuika.update_avatar('innkuika.jpg')
+    ikayaki = User('ikayaki'); ikayaki.sign_up(); ikayaki.sign_in(); ikayaki.update_avatar('ikayaki.jpg')
+    ikayaro = User('ikayaro'); ikayaro.sign_up(); ikayaro.sign_in(); ikayaro.update_avatar('ikayaro.png')
+    ika2 = User('ikaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'); ika2.sign_up(); ika2.sign_in(); ika2.update_avatar('ika2.png')
+    billy = User('billy'); billy.sign_up(); billy.sign_in(); billy.update_avatar('billy.jpeg')
+    van = User('van'); van.sign_up(); van.sign_in(); van.update_avatar('van.png')
+    xiaolaba = User('xiaolaba'); xiaolaba.sign_up(); xiaolaba.sign_in(); xiaolaba.update_avatar('xiaolaba.png')
+    buki = User('buki'); buki.sign_up(); buki.sign_in(); buki.update_avatar('buki.jpg')
+    mawei = User('mawei'); mawei.sign_up(); mawei.sign_in(); mawei.update_avatar('mawei.jpg')
+    duff = User('duff'); duff.sign_up(); duff.sign_in(); duff.update_avatar('duff.jpeg')
+    kele = User('kele'); kele.sign_up(); kele.sign_in(); kele.update_avatar('kele.jpg')
     ahuhu = User('ahuhu'); ahuhu.sign_up(); ahuhu.sign_in()
-    senpai = User('114514'); senpai.sign_up(); senpai.sign_in()
-    sirjie = User('sirjie'); sirjie.sign_up(); sirjie.sign_in()
+    senpai = User('114514'); senpai.sign_up(); senpai.sign_in(); senpai.update_avatar('senpai.png')
+    sirjie = User('sirjie'); sirjie.sign_up(); sirjie.sign_in(); sirjie.update_avatar('sirjie.bmp')
 
     # create some circles
     kt.create_circle('ika')
