@@ -1,6 +1,5 @@
 import React, {useState} from 'react'
 import "./Post.css"
-import DOMPurify from 'dompurify';
 
 export default (props) => {
   const [addComment, updateAddComment] = useState(false)
@@ -27,7 +26,6 @@ export default (props) => {
     let newContent = content.replace(regExForStrikeThrough, '<del>$1</del>');
     newContent = newContent.replace(regExForItalic, '<i>$1</i>')
     newContent = newContent.replace(regExForBold, '<b>$1</b>')
-    newContent = DOMPurify.sanitize(newContent);
     return <div className={className} dangerouslySetInnerHTML={{__html: newContent}}/>
   }
   let reactions = []
