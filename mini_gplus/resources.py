@@ -2,7 +2,7 @@ import os
 
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from .models import User, Post, Comment
+from .models import User, Post, Comment, Reaction
 
 ########
 # User #
@@ -288,6 +288,7 @@ class Comments(Resource):
         comment_id = user.create_comment(comment_args['content'], post)
         return {"id": comment_id}, 201
 
+
 ###################
 # Nested comments #
 ###################
@@ -307,3 +308,38 @@ class NestedComments(Resource):
             return {'msg': 'Cannot nest more than two levels of comment'}, 403
         nested_comment_args = comment_parser.parse_args()
         user.create_nested_comment(nested_comment_args['content'], comment, post)
+
+
+#############
+# Reactions #
+#############
+
+reaction_parser = reqparse.RequestParser()
+reaction_parser.add_argument('emoji', type=str, required=True)
+
+
+class Reaction(Resource):
+    @jwt_required()
+    def post(self, post_id: str):
+        """
+        Creates a new reaction to a post
+        """
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+        post = Post.objects.get(id=post_id)
+        reaction_args = reaction_parser.parse_args()
+        reaction_id = user.create_comment(reaction_args['content'], post)
+        return {"id": reaction_id}, 201
+
+    @jwt_required()
+    def delete(self, post_id: str, reaction_id: str):
+        """
+        Remove a reaction from a post
+        """
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+        post = Post.objects.get(id=post_id)
+        reaction_to_delete = Reaction.objects.get(id=reaction_id)
+        if reaction_to_delete not in post.reactions:
+            return {'msg': f'Reaction {reaction_to_delete} is already not in post {post_id}'}, 409
+        user.delete_reaction(reaction_to_delete, post)
