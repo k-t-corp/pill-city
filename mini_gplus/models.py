@@ -221,8 +221,8 @@ class User(Document, CreatedAtMixin):
         :return (bool): whether the user owns the nested comment
         """
         return self.owns_post(parent_post) \
-            or self.owns_comment(parent_comment, parent_post) \
-            or self.id == comment.author.id
+               or self.owns_comment(parent_comment, parent_post) \
+               or self.id == comment.author.id
 
     def delete_comment(self, comment, parent_post):
         """
@@ -250,6 +250,46 @@ class User(Document, CreatedAtMixin):
         if self.owns_comment(parent_comment, parent_post):
             parent_comment.comments.remove(comment)
             comment.delete()
+        else:
+            raise UnauthorizedAccess()
+
+    ############
+    # Reaction #
+    ############
+
+    def create_reaction(self, emoji, parent_post):
+        """
+        Create a reaction for the user
+        :param (str) emoji: the emoji
+        :param (Post) parent_post: the post that this reaction is attached to
+        :return (str) ID of the new reaction
+        :raise (UnauthorizedAccess) when access is unauthorized
+        """
+        if self.sees_post(parent_post, context_home_or_profile=False):
+            new_reaction = Reaction()
+            new_reaction.author = self.id
+            new_reaction.emoji = emoji
+
+    def owns_reaction(self, reaction):
+        """
+        Whether the user owns a reaction
+        TODO: do not use, no test yet
+        :param (Reaction) reaction: the reaction
+        :return (bool): whether the user owns a reaction
+        """
+        return self.id == reaction.author.id
+
+    def delete_reaction(self, reaction, parent_post):
+        """
+        Delete a reaction
+        TODO: do not use, no test yet
+        :param (Reaction) reaction: the comment
+        :param (Post) parent_post: reaction's parent post
+        :raise (UnauthorizedAccess) when access is unauthorized
+        """
+        if self.owns_reaction(reaction):
+            parent_post.reactions.remove(reaction)
+            reaction.delete()
         else:
             raise UnauthorizedAccess()
 
