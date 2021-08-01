@@ -7,7 +7,7 @@ export default (props) => {
   const [loading, updateLoading] = useState(false)
   const deleteMemberFromCircleOnClick = async () => {
     updateLoading(true)
-    await props.api.removeFromCircle(props.circleName, props.userId)
+    await props.api.removeFromCircle(props.circleName, props.user.id)
     updateLoading(false)
     updateDeleted(true)
   }
