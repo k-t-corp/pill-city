@@ -5,7 +5,7 @@ An one-of-a-kind social network
 
 ### Prerequisites
 * Python 3.7+
-* Node.js and Yarn
+* Node.js v14 and Yarn
 * Docker and docker-compose
 
 ### Install dependencies

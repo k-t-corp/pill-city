@@ -1,0 +1,18 @@
+name: Web build and test
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: yarn install
+        working-directory: ./web
+      - run: yarn build
+        working-directory: ./web
+      - run: yarn test
+        working-directory: ./web

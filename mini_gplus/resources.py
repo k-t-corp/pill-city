@@ -200,8 +200,11 @@ post_fields = {
         'author': fields.Nested(user_fields),
         'id': fields.String,
     })),
-    # TODO: only return the circles that the current user is in
-    # 'circles': fields.List(fields.Nested(circle_fields)),
+    # TODO: only return the circles that the seeing user is in
+    'circles': fields.List(fields.Nested({
+        # not using circle_fields because not exposing what members a circle has
+        'name': fields.String,
+    })),
     'comments': fields.List(fields.Nested({
         'id': fields.String,
         'created_at_seconds': fields.Integer(attribute='created_at'),
