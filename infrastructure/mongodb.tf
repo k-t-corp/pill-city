@@ -90,7 +90,7 @@ resource mongodbatlas_database_user "database-rw-user" {
   }
 
   username = local.rw_username
-  password = random_password.mongodb_rw_user_password
+  password = random_password.mongodb_rw_user_password.result
 }
 
 // TODO: add user scope
@@ -104,7 +104,7 @@ resource "mongodbatlas_database_user" "database-admin-user" {
   }
 
   username = local.admin_username
-  password = random_password.mongodb_admin_user_password
+  password = random_password.mongodb_admin_user_password.result
 }
 
 resource "mongodbatlas_cluster" "database" {
