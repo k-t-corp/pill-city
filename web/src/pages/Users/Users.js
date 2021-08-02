@@ -54,7 +54,7 @@ export default class Users extends Component {
       const userCardOnClick = () => {
         window.location.href = `/profile/${user.id}`
       }
-      const createdAtDate = new Date(user['created_at_seconds'] * 1000)
+      // const createdAtDate = new Date(user['created_at_seconds'] * 1000)
       userCardElements.push(
         <div className="users-user-card-wrapper" key={i} onClick={userCardOnClick}>
           <div className="users-user-card-avatar">
