@@ -52,15 +52,15 @@ export default (WrappedComponent, path) => {
             >
               <span role="img" aria-label="circle">⭕</span>&nbsp;Circles
             </MenuItem>
-            <MenuItem
-              as='a'
-              onClick={() => {
-                this.handleNavItemClick('/circles')
-              }}
-              active={path === '/collections'}
-            >
-              <span role="img" aria-label="collection">📚</span>&nbsp;Collections
-            </MenuItem>
+            {/*<MenuItem*/}
+            {/*  as='a'*/}
+            {/*  onClick={() => {*/}
+            {/*    this.handleNavItemClick('/circles')*/}
+            {/*  }}*/}
+            {/*  active={path === '/collections'}*/}
+            {/*>*/}
+            {/*  <span role="img" aria-label="collection">📚</span>&nbsp;Collections*/}
+            {/*</MenuItem>*/}
             <MenuItem
               as='a'
               onClick={() => {
