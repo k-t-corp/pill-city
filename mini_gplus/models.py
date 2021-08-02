@@ -275,7 +275,7 @@ class User(Document, CreatedAtMixin):
         :raise (UnauthorizedAccess) when access is unauthorized
         """
         if self.sees_post(parent_post, context_home_or_profile=False):
-            if len(list(filter(lambda x: self.id == x.author and emoji == x.emoji, parent_post.reactions))):
+            if len(list(filter(lambda x: self.id == x.author.id and emoji == x.emoji, parent_post.reactions))):
                 raise UnauthorizedAccess()
             if len(emoji) != 1 or emoji not in emoji_lib.UNICODE_EMOJI['en']:
                 raise BadRequest()

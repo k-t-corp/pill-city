@@ -1,9 +1,12 @@
-import React, {useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
+import Picker from 'emoji-picker-react';
 import "./Post.css"
 
 export default (props) => {
   const [addComment, updateAddComment] = useState(false)
   const [replyNestedCommentId, updateReplayNestedCommentId] = useState("")
+  const [showEmojiPicker, updateShowEmojiPicker] = useState(false)
+  // const [reaction, setReaction] = useRef([])
   const timePosted = (postedAtSeconds) => {
     const currentTimeAtSeconds = new Date().getTime() / 1000;
     const deltaAtSeconds = currentTimeAtSeconds - postedAtSeconds
@@ -20,19 +23,60 @@ export default (props) => {
     }
   }
   let reactions = []
-  for (let i = 0; i < props.data.reactions.length; i++) {
-    const reaction = props.data.reactions[i]
+  for (const [emoji, reactionDetail] of Object.entries(props.data.reactions)) {
     reactions.push(
-      <div className="post-reaction" key={i}>
-        <span className="post-emoji">{reaction.emoji}</span><span>&nbsp;{reaction.count}</span>
+      <div className="post-reaction" key={`${props.data.id}-${emoji}`}>
+        <span className="post-emoji">{emoji}</span><span>&nbsp;{reactionDetail.length}</span>
       </div>
     )
   }
 
+  const addNewReactionOnClick = () => {
+    // show emoji picker
+    updateShowEmojiPicker(true)
+  }
+
+  const onEmojiClick = async (event, emojiObject) => {
+    updateShowEmojiPicker(false)
+    console.log(props.data)
+    await props.api.addReaction(emojiObject.emoji, props.data.id)
+  }
+
+  function closePickerWhenClickOutside(ref) {
+    useEffect(() => {
+      /**
+       * Alert if clicked on outside of element
+       */
+      function handleClickOutside(event) {
+        if (ref.current && !ref.current.contains(event.target)) {
+          updateShowEmojiPicker(false)
+        }
+      }
+
+      // Bind the event listener
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        // Unbind the event listener on clean up
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [ref]);
+  }
+
+  const emojiPickerRef = useRef(null);
+  closePickerWhenClickOutside(emojiPickerRef);
+
   reactions.push(
-    <div className="post-reaction" key={props.data.reactions.length}>
-      <span className="post-emoji" role="img" aria-label="Add Reaction">➕</span>
-      {props.data.reactions.length === 0 ? "Add Reaction" : null}
+    <div key={'add-reaction'}>
+      <div className="post-reaction" onClick={addNewReactionOnClick}>
+        <span className="post-emoji" role="img" aria-label="Add Reaction">➕</span>
+        {Object.keys(props.data.reactions).length === 0 ? "Add Reaction" : null}
+      </div>
+      {showEmojiPicker ? <div id="post-reaction-emoji-picker-wrapper" ref={emojiPickerRef}>
+          <div className="post-reaction-emoji-picker">
+            <Picker onEmojiClick={onEmojiClick}/>
+          </div>
+        </div>
+        : null}
     </div>
   )
 

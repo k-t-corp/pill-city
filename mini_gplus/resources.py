@@ -332,7 +332,7 @@ class Reactions(Resource):
         if not post:
             return {"msg": "post is not found"}, 404
         reaction_args = reaction_parser.parse_args()
-        reaction_id = user.create_comment(reaction_args['emoji'], post)
+        reaction_id = user.create_reaction(reaction_args['emoji'], post)
         return {"id": reaction_id}, 201
 
 

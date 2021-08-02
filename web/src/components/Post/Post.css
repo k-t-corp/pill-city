@@ -235,6 +235,19 @@
     cursor: pointer;
 }
 
+/*Emoji Picker*/
+
+#post-reaction-emoji-picker-wrapper {
+    position: relative;
+    width: 0;
+    height: 0;
+}
+
+.post-reaction-emoji-picker {
+    position: absolute;
+    top: 10px;
+}
+
 /*Animation*/
 
 .fade-in {
