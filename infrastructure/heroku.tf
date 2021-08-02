@@ -9,7 +9,7 @@ resource "heroku_config" "app-config" {
 }
 
 resource "heroku_app_config_association" "app-config-association" {
-  app_id = heroku_app.app.id
+  app_id = data.heroku_app.app.id
 
   sensitive_vars = heroku_config.app-config.sensitive_vars
 }
