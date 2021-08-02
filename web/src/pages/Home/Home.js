@@ -17,28 +17,6 @@ export default (props) => {
     updateLoading(false)
   }, [])
 
-  let parseReactionData = (data) => {
-    let parsedData = {} // Format: {emoji: [{author, reactionId}]}
-    for (let i = 0; i < data.length; i++) {
-      let emoji = data[i].emoji
-      let author = data[i].author
-      let reactionId = data[i].id
-      if (emoji in parsedData) {
-        parsedData[emoji].push({
-          key: i,
-          author: author,
-          reactionId: reactionId
-        })
-      } else {
-        parsedData[emoji] = [{
-          key: i,
-          author: author,
-          reactionId: reactionId
-        }]
-      }
-    }
-    return parsedData
-  }
 
   let homePostElement = () => {
     if (loading) {
@@ -48,7 +26,6 @@ export default (props) => {
     } else {
       let postElements = []
       for (let i = 0; i < posts.length; i++) {
-        posts[i].reactions = parseReactionData(posts[i].reactions)
         postElements.push(<Post key={i} data={posts[i]} me={me} api={props.api}/>)
       }
       return postElements

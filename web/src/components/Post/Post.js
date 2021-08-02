@@ -6,7 +6,7 @@ export default (props) => {
   const [addComment, updateAddComment] = useState(false)
   const [replyNestedCommentId, updateReplayNestedCommentId] = useState("")
   const [showEmojiPicker, updateShowEmojiPicker] = useState(false)
-  const [reactionData, setReactionData] = useState(props.data.reactions)
+  const [reactionData, setReactionData] = useState(parseReactionData(props.data.reactions))
   const timePosted = (postedAtSeconds) => {
     const currentTimeAtSeconds = new Date().getTime() / 1000;
     const deltaAtSeconds = currentTimeAtSeconds - postedAtSeconds
@@ -30,6 +30,29 @@ export default (props) => {
     newContent = newContent.replace(regExForItalic, '<i>$1</i>')
     newContent = newContent.replace(regExForBold, '<b>$1</b>')
     return <div className={className} dangerouslySetInnerHTML={{__html: newContent}}/>
+  }
+  function parseReactionData(data) {
+    let parsedData = {} // Format: {emoji: [{author, reactionId}]}
+    for (let i = 0; i < data.length; i++) {
+      let emoji = data[i].emoji
+      let author = data[i].author
+      let reactionId = data[i].id
+      if (emoji in parsedData) {
+        parsedData[emoji].push({
+          key: i,
+          author: author,
+          reactionId: reactionId
+        })
+      } else {
+        parsedData[emoji] = [{
+          key: i,
+          author: author,
+          reactionId: reactionId
+        }]
+      }
+    }
+    console.log(parsedData)
+    return parsedData
   }
   const meReactedWithEmoji = (emoji) => {
     //  return reaction id if me reacted with emoji, return null otherwise
