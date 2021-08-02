@@ -115,6 +115,15 @@ export default (props) => {
     window.location.reload()
   }
 
+  let sharingScope
+  if (props.data.is_public) {
+    sharingScope = 'Public'
+  } else if (props.data.circles.length !== 0) {
+    sharingScope = props.data.circles.map(c => c.name).join(', ')
+  } else {
+    sharingScope = 'Only you'
+  }
+
   return (
     <div className="post-wrapper">
       <div className="post-op">
@@ -127,7 +136,7 @@ export default (props) => {
               {props.data.author.id}
             </div>
             <div className="post-visibility">
-              &#x25B8; {props.data.is_public ? "Public" : "Private"}
+              &#x25B8; {sharingScope}
             </div>
           </div>
           <div className="post-op-info-right">
