@@ -16,8 +16,8 @@ provider "mongodbatlas" {
   public_key = var.atlas_public_key
   private_key  = var.atlas_private_key
 }
-//
-//provider "heroku" {
-//  email = var.heroku_email
-//  api_key = var.heroku_api_key
-//}
+
+provider "heroku" {
+  email = var.heroku_email
+  api_key = var.heroku_api_key
+}
