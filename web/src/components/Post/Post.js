@@ -19,6 +19,15 @@ export default (props) => {
       return new Date(postedAtSeconds).toISOString().split('T')[0];
     }
   }
+  const parseContent = (content, className) => {
+    const regExForStrikeThrough = / -(.+)- /g
+    const regExForItalic = / _(.+)_ /g
+    const regExForBold = / \*(.+)\* /g
+    let newContent = content.replace(regExForStrikeThrough, '<del>$1</del>');
+    newContent = newContent.replace(regExForItalic, '<i>$1</i>')
+    newContent = newContent.replace(regExForBold, '<b>$1</b>')
+    return <div className={className} dangerouslySetInnerHTML={{__html: newContent}}/>
+  }
   let reactions = []
   for (let i = 0; i < props.data.reactions.length; i++) {
     const reaction = props.data.reactions[i]
@@ -53,7 +62,7 @@ export default (props) => {
           </div>
           <div className="post-name nested-comment-name">{nestedComment.author.id}:&nbsp;</div>
           <div className="post-nested-comment-content">
-            {nestedComment.content}
+            {parseContent(nestedComment.content, "")}
             <span className="post-time post-nested-comment-time">{timePosted(nestedComment.created_at_seconds)}</span>
             <span className="post-comment-reply-btn" onClick={replyButtonOnclick}>
               Reply
@@ -77,7 +86,7 @@ export default (props) => {
             </div>
           </div>
           <div className="post-content comment-content">
-            {comment.content}
+            {parseContent(comment.content, "")}
             <span className="post-comment-reply-btn" onClick={replyButtonOnclick}>
               Reply
             </span>
@@ -127,9 +136,7 @@ export default (props) => {
             </div>
           </div>
         </div>
-        <div className="post-content">
-          {props.data.content}
-        </div>
+        {parseContent(props.data.content, "post-content")}
         <div className="post-interactions-wrapper">
           <div className="post-reactions-wrapper">
             {reactions}
