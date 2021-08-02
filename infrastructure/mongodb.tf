@@ -7,17 +7,17 @@ resource "mongodbatlas_project_ip_access_list" "atlas-project-ip-access-list" {
   cidr_block = "0.0.0.0/0"
 }
 
-resource "random_password" "mongodb_rw_user_password" {
-  length = 16
-  special = true
-  override_special = "_%@"
-}
-
-resource "random_password" "mongodb_admin_user_password" {
-  length = 16
-  special = true
-  override_special = "_%@"
-}
+//resource "random_password" "mongodb_rw_user_password" {
+//  length = 16
+//  special = true
+//  override_special = "_%@"
+//}
+//
+//resource "random_password" "mongodb_admin_user_password" {
+//  length = 16
+//  special = true
+//  override_special = "_%@"
+//}
 
 //locals {
 //  mongodb_database_name = "db"
