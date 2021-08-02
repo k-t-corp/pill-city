@@ -13,15 +13,3 @@ variable "atlas_private_key" {
   sensitive = true
   description = "Private key for a 'Project Owner' API key in the Atlas project"
 }
-
-variable "mongodb_rw_user_password" {
-  type = string
-  sensitive = true
-  description = "Password for the MongoDB rw user"
-}
-
-variable "mongodb_admin_user_password" {
-  type = string
-  sensitive = true
-  description = "Password for the MongoDB admin user"
-}
