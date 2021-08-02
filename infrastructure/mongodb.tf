@@ -102,5 +102,5 @@ resource "mongodbatlas_cluster" "database" {
   provider_name = "TENANT"
   backing_provider_name = "AWS"
   provider_region_name = "US_WEST_2"
-  auto_scaling_disk_gb_enabled = true
+  auto_scaling_disk_gb_enabled = false
 }
