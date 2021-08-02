@@ -279,7 +279,7 @@ export default class Api {
     if (res.status !== 201) {
       throw new ApiError(res.status)
     }
-    return null
+    return res.data
   }
 
   async deleteReaction(postId, reactionId){

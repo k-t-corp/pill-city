@@ -49,7 +49,7 @@ export default (props) => {
       let postElements = []
       for (let i = 0; i < posts.length; i++) {
         posts[i].reactions = parseReactionData(posts[i].reactions)
-        postElements.push(<Post key={i} data={posts[i]} api={props.api}/>)
+        postElements.push(<Post key={i} data={posts[i]} me={me} api={props.api}/>)
       }
       return postElements
     }

@@ -6,7 +6,7 @@ export default (props) => {
   const [addComment, updateAddComment] = useState(false)
   const [replyNestedCommentId, updateReplayNestedCommentId] = useState("")
   const [showEmojiPicker, updateShowEmojiPicker] = useState(false)
-  // const [reaction, setReaction] = useRef([])
+  const [reactionData, setReactionData] = useState(props.data.reactions)
   const timePosted = (postedAtSeconds) => {
     const currentTimeAtSeconds = new Date().getTime() / 1000;
     const deltaAtSeconds = currentTimeAtSeconds - postedAtSeconds
@@ -31,14 +31,22 @@ export default (props) => {
     newContent = newContent.replace(regExForBold, '<b>$1</b>')
     return <div className={className} dangerouslySetInnerHTML={{__html: newContent}}/>
   }
-  let reactions = []
-  for (const [emoji, reactionDetail] of Object.entries(props.data.reactions)) {
-    reactions.push(
-      <div className="post-reaction" key={`${props.data.id}-${emoji}`}>
-        <span className="post-emoji">{emoji}</span><span>&nbsp;{reactionDetail.length}</span>
-      </div>
-    )
+
+  const updateReactions = () => {
+    let reactionElements = []
+    for (const [emoji, reactionDetail] of Object.entries(reactionData)) {
+      reactionElements.push(
+        <div className="post-reaction" key={`${props.data.id}-${emoji}`}>
+          <span className="post-emoji">{emoji}</span><span>&nbsp;{reactionDetail.length}</span>
+        </div>
+      )
+    }
+    return reactionElements
   }
+  let reactions = updateReactions()
+  useEffect(() => {
+    reactions = updateReactions()
+  }, [reactionData])
 
   const addNewReactionOnClick = () => {
     // show emoji picker
@@ -47,8 +55,20 @@ export default (props) => {
 
   const onEmojiClick = async (event, emojiObject) => {
     updateShowEmojiPicker(false)
-    console.log(props.data)
-    await props.api.addReaction(emojiObject.emoji, props.data.id)
+    const emoji = emojiObject.emoji
+
+    try {
+      const res = await props.api.addReaction(emoji, props.data.id)
+      setReactionData({
+        ...reactionData,
+        [emoji]: [
+          ...(reactionData[emoji] || []),
+          { author: props.me.id, reactionId: res.id}
+        ]
+      })
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   function closePickerWhenClickOutside(ref) {

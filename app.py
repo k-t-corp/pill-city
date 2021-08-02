@@ -87,7 +87,17 @@ def me():
 app.config['BUNDLE_ERRORS'] = True
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-api = Api(app)
+api = Api(app, errors={
+    'UnauthorizedAccess': {
+        'status': 401,
+    },
+    'BadRequest': {
+        'status': 400,
+    },
+    'NotFound': {
+        'status': 404,
+    }
+})
 api.add_resource(Users, '/api/users')
 api.add_resource(UserResource, '/api/user/<string:user_id>')
 

@@ -1,20 +1,21 @@
 import bleach
 from typing import List
 from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, PULL, CASCADE, NotUniqueError
+from werkzeug.exceptions import HTTPException
 from werkzeug.security import generate_password_hash, check_password_hash
 import emoji as emoji_lib
 
 
-class UnauthorizedAccess(Exception):
-    status_code = 401
+class UnauthorizedAccess(HTTPException):
+    pass
 
 
-class BadRequest(Exception):
-    status_code = 400
+class BadRequest(HTTPException):
+    pass
 
 
-class NotFound(Exception):
-    status_code = 404
+class NotFound(HTTPException):
+    pass
 
 
 class CreatedAtMixin(object):
