@@ -31,18 +31,70 @@ export default (props) => {
     newContent = newContent.replace(regExForBold, '<b>$1</b>')
     return <div className={className} dangerouslySetInnerHTML={{__html: newContent}}/>
   }
+  const meReactedWithEmoji = (emoji) => {
+    //  return reaction id if me reacted with emoji, return null otherwise
+    let reactionDetail = reactionData[emoji]
+    if (reactionDetail === undefined) {
+      return null
+    }
+    for (let i = 0; i < reactionDetail.length; i++) {
+      if (reactionDetail[i].author.id === props.me.id) {
+        return reactionDetail[i].reactionId
+      }
+    }
+    return null
+  }
+
+  const toggleReactionOnClick = async (emoji) => {
+    let reactionId = meReactedWithEmoji(emoji)
+    if (reactionId === null) {
+      // add reaction
+      try {
+        const res = await props.api.addReaction(emoji, props.data.id)
+        setReactionData({
+          ...reactionData,
+          [emoji]: [
+            ...(reactionData[emoji] || []),
+            {author: props.me, reactionId: res.id}
+          ]
+        })
+      } catch (e) {
+        console.log(e)
+      }
+    } else {
+      // delete reaction with reactionId
+      try {
+        const res = await props.api.deleteReaction(props.data.id, reactionId)
+        setReactionData({
+          ...reactionData,
+          [emoji]: reactionData[emoji].filter(({ reactionId: rId }) => rId !== reactionId)
+        })
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  }
 
   const updateReactions = () => {
     let reactionElements = []
     for (const [emoji, reactionDetail] of Object.entries(reactionData)) {
+      if (reactionDetail.length === 0) {
+        continue
+      }
+
+      let className = "post-reaction"
+      if (meReactedWithEmoji(emoji) !== null) {
+        className += " post-reaction-active"
+      }
       reactionElements.push(
-        <div className="post-reaction" key={`${props.data.id}-${emoji}`}>
+        <div className={className} key={emoji} onClick={() => toggleReactionOnClick(emoji)}>
           <span className="post-emoji">{emoji}</span><span>&nbsp;{reactionDetail.length}</span>
         </div>
       )
     }
     return reactionElements
   }
+
   let reactions = updateReactions()
   useEffect(() => {
     reactions = updateReactions()
@@ -63,7 +115,7 @@ export default (props) => {
         ...reactionData,
         [emoji]: [
           ...(reactionData[emoji] || []),
-          { author: props.me.id, reactionId: res.id}
+          {author: props.me, reactionId: res.id}
         ]
       })
     } catch (e) {
@@ -73,9 +125,6 @@ export default (props) => {
 
   function closePickerWhenClickOutside(ref) {
     useEffect(() => {
-      /**
-       * Alert if clicked on outside of element
-       */
       function handleClickOutside(event) {
         if (ref.current && !ref.current.contains(event.target)) {
           updateShowEmojiPicker(false)
@@ -102,7 +151,7 @@ export default (props) => {
       </div>
       {showEmojiPicker ? <div id="post-reaction-emoji-picker-wrapper" ref={emojiPickerRef}>
           <div className="post-reaction-emoji-picker">
-            <Picker onEmojiClick={onEmojiClick}/>
+            <Picker onEmojiClick={onEmojiClick} preload={true}/>
           </div>
         </div>
         : null}
