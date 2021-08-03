@@ -64,11 +64,14 @@
 
 .post-reactions-wrapper {
     display: flex;
+    max-width: 80%;
+    flex-wrap: wrap;
 }
 
 .post-reaction {
     padding: 2px 8px;
     margin-right: 5px;
+    margin-top: 3px;
     border-radius: 4px;
     background-color: #f0f0f0;
     font-weight: bold;
@@ -82,6 +85,14 @@
     background-color: #e7e7e7;
 }
 
+.post-reaction-active {
+    background-color: #ffe0e0;
+}
+
+.post-reaction-active:hover {
+    background-color: #fcb8b8;
+}
+
 .post-emoji {
     font-size: large;
 }
@@ -92,7 +103,7 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .post-interactions {
@@ -235,6 +246,20 @@
     border-radius: 5px;
     width: auto;
     cursor: pointer;
+}
+
+/*Emoji Picker*/
+
+#post-reaction-emoji-picker-wrapper {
+    position: relative;
+    width: 0;
+    height: 0;
+    z-index: 3;
+}
+
+.post-reaction-emoji-picker {
+    position: absolute;
+    top: 10px;
 }
 
 /*Animation*/

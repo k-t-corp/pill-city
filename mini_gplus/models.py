@@ -1,11 +1,21 @@
 import bleach
 from typing import List
 from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, PULL, CASCADE, NotUniqueError
+from werkzeug.exceptions import HTTPException
 from werkzeug.security import generate_password_hash, check_password_hash
+import emoji as emoji_lib
 
 
-class UnauthorizedAccess(Exception):
-    status_code = 401
+class UnauthorizedAccess(HTTPException):
+    pass
+
+
+class BadRequest(HTTPException):
+    pass
+
+
+class NotFound(HTTPException):
+    pass
 
 
 class CreatedAtMixin(object):
@@ -222,8 +232,8 @@ class User(Document, CreatedAtMixin):
         :return (bool): whether the user owns the nested comment
         """
         return self.owns_post(parent_post) \
-            or self.owns_comment(parent_comment, parent_post) \
-            or self.id == comment.author.id
+               or self.owns_comment(parent_comment, parent_post) \
+               or self.id == comment.author.id
 
     def delete_comment(self, comment, parent_post):
         """
@@ -251,6 +261,59 @@ class User(Document, CreatedAtMixin):
         if self.owns_comment(parent_comment, parent_post):
             parent_comment.comments.remove(comment)
             comment.delete()
+        else:
+            raise UnauthorizedAccess()
+
+    ############
+    # Reaction #
+    ############
+
+    def create_reaction(self, emoji, parent_post):
+        """
+        Create a reaction for the user
+        :param (str) emoji: the emoji
+        :param (Post) parent_post: the post that this reaction is attached to
+        :return (str) ID of the new reaction
+        :raise (UnauthorizedAccess) when access is unauthorized
+        """
+        if self.sees_post(parent_post, context_home_or_profile=False):
+            for r in parent_post.reactions:
+                if r.author.id == self.id and r.emoji == emoji:
+                    raise UnauthorizedAccess()
+
+            if emoji_lib.emoji_count(emoji) != 1:
+                raise BadRequest()
+
+            new_reaction = Reaction()
+            new_reaction.author = self.id
+            new_reaction.emoji = emoji
+            new_reaction.save()
+            parent_post.reactions.append(new_reaction)
+            parent_post.save()
+            return str(new_reaction.id)
+        else:
+            raise UnauthorizedAccess()
+
+    def owns_reaction(self, reaction):
+        """
+        Whether the user owns a reaction
+        :param (Reaction) reaction: the reaction
+        :return (bool): whether the user owns a reaction
+        """
+        return self.id == reaction.author.id
+
+    def delete_reaction(self, reaction, parent_post):
+        """
+        Delete a reaction
+        :param (Reaction) reaction: the comment
+        :param (Post) parent_post: reaction's parent post
+        :raise (UnauthorizedAccess) when access is unauthorized
+        """
+        if self.owns_reaction(reaction):
+            if reaction not in parent_post.reactions:
+                raise NotFound()
+            parent_post.reactions.remove(reaction)
+            reaction.delete()
         else:
             raise UnauthorizedAccess()
 

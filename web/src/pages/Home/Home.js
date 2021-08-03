@@ -17,6 +17,7 @@ export default (props) => {
     updateLoading(false)
   }, [])
 
+
   let homePostElement = () => {
     if (loading) {
       return (<div className="home-status">Loading...</div>)
@@ -25,7 +26,7 @@ export default (props) => {
     } else {
       let postElements = []
       for (let i = 0; i < posts.length; i++) {
-        postElements.push(<Post key={i} data={posts[i]} api={props.api}/>)
+        postElements.push(<Post key={i} data={posts[i]} me={me} api={props.api}/>)
       }
       return postElements
     }

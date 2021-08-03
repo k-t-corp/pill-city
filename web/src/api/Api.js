@@ -267,4 +267,29 @@ export default class Api {
     }
     return res.data
   }
+
+  async addReaction(emoji, postId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.post(
+      `/posts/${postId}/reactions`,
+      {
+        emoji
+      }
+    )
+    if (res.status !== 201) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
+
+  async deleteReaction(postId, reactionId){
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.delete(
+      `/posts/${postId}/reaction/${reactionId}`,
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return null
+  }
 }
