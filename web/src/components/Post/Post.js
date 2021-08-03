@@ -51,7 +51,6 @@ export default (props) => {
         }]
       }
     }
-    console.log(parsedData)
     return parsedData
   }
   const meReactedWithEmoji = (emoji) => {
@@ -174,7 +173,7 @@ export default (props) => {
       </div>
       {showEmojiPicker ? <div id="post-reaction-emoji-picker-wrapper" ref={emojiPickerRef}>
           <div className="post-reaction-emoji-picker">
-            <Picker onEmojiClick={onEmojiClick} preload={true}/>
+            <Picker onEmojiClick={onEmojiClick} preload={true} native={true}/>
           </div>
         </div>
         : null}
