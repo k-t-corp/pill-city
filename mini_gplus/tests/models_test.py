@@ -138,14 +138,14 @@ class TestModels(TestCase):
         self.assertTrue(User.create('user2', '2345'))
         user1 = User.find('user1')
         user2 = User.find('user2')
-        self.assertEquals([], user1.get_followings())
+        self.assertEqual([], user1.get_followings())
 
         self.assertTrue(user1.add_following(user2))
-        self.assertEquals([user2.user_id], list(map(lambda u: u.user_id, user1.get_followings())))
+        self.assertEqual([user2.user_id], list(map(lambda u: u.user_id, user1.get_followings())))
         self.assertFalse(user1.add_following(user2))
 
         self.assertTrue(user1.remove_following(user2))
-        self.assertEquals([], user1.get_followings())
+        self.assertEqual([], user1.get_followings())
         self.assertFalse(user1.remove_following(user2))
 
     ##############################################
@@ -181,7 +181,7 @@ class TestModels(TestCase):
         if comments:
             acting_user.create_comment('comment1', post)
             comment1 = list(Comment.objects(author=acting_user, content='comment1'))
-            self.assertEquals(1, len(comment1))
+            self.assertEqual(1, len(comment1))
             comment1 = comment1[0]
             self.assertIn(comment1.id, list(map(lambda c: c.id, post.comments)))
         else:
@@ -194,13 +194,13 @@ class TestModels(TestCase):
             naughty_comment_content = 'comment1_for_' + acting_user.user_id + "_to_mess_up_with"
             post.author.create_comment(naughty_comment_content, post)
             comment1 = list(Comment.objects(author=post.author, content=naughty_comment_content))
-            self.assertEquals(1, len(comment1))
+            self.assertEqual(1, len(comment1))
             comment1 = comment1[0]
 
         if nested_comments:
             acting_user.create_nested_comment('nested_comment1', comment1, post)
             nested_comment1 = list(Comment.objects(author=acting_user, content='nested_comment1'))
-            self.assertEquals(1, len(nested_comment1))
+            self.assertEqual(1, len(nested_comment1))
             nested_comment1 = nested_comment1[0]
             self.assertIn(nested_comment1.id, list(map(lambda c: c.id, comment1.comments)))
         else:
@@ -209,15 +209,17 @@ class TestModels(TestCase):
 
             self.assertRaises(UnauthorizedAccess, op2)
 
+        # has to re-query post object because author in reactions won't be filled as an actual User object
+        reacted_post = Post.objects(id=post.id)[0]
         if react_once:
-            acting_user.create_reaction("💩", post)
+            acting_user.create_reaction("💩", reacted_post)
             reaction1 = list(Reaction.objects(author=acting_user, emoji='💩'))
-            self.assertEquals(1, len(reaction1))
+            self.assertEqual(1, len(reaction1))
             reaction1 = reaction1[0]
-            self.assertIn(reaction1.id, list(map(lambda c: c.id, post.reactions)))
+            self.assertIn(reaction1.id, list(map(lambda c: c.id, reacted_post.reactions)))
         else:
             def op3():
-                acting_user.create_reaction('💩', post)
+                acting_user.create_reaction('💩', reacted_post)
 
             self.assertRaises(UnauthorizedAccess, op3)
 
@@ -366,20 +368,20 @@ class TestModels(TestCase):
         post2 = post2[0]
 
         # User1 sees post2 and post1 on home and user1's profile
-        self.assertEquals([post2, post1], user1.retrieves_posts_on_home())
-        self.assertEquals([post2, post1], user1.retrieves_posts_on_profile(user1))
+        self.assertEqual([post2, post1], user1.retrieves_posts_on_home())
+        self.assertEqual([post2, post1], user1.retrieves_posts_on_profile(user1))
 
         # User2 sees post2 and post1 on home and user1's profile
-        self.assertEquals([post2, post1], user2.retrieves_posts_on_home())
-        self.assertEquals([post2, post1], user2.retrieves_posts_on_profile(user1))
+        self.assertEqual([post2, post1], user2.retrieves_posts_on_home())
+        self.assertEqual([post2, post1], user2.retrieves_posts_on_profile(user1))
 
         # User3 sees nothing on home and post2 and post1 on user1's profile
-        self.assertEquals([], user3.retrieves_posts_on_home())
-        self.assertEquals([post2, post1], user3.retrieves_posts_on_profile(user1))
+        self.assertEqual([], user3.retrieves_posts_on_home())
+        self.assertEqual([post2, post1], user3.retrieves_posts_on_profile(user1))
 
         # User4 sees nothing on home and post2 on user1's profile
-        self.assertEquals([], user4.retrieves_posts_on_home())
-        self.assertEquals([post2], user4.retrieves_posts_on_profile(user1))
+        self.assertEqual([], user4.retrieves_posts_on_home())
+        self.assertEqual([post2], user4.retrieves_posts_on_profile(user1))
 
     ############
     # Reaction #
@@ -397,7 +399,10 @@ class TestModels(TestCase):
 
         def op():
             user1.create_reaction('💩', post1)
-            user1.create_reaction('💩', post1)
+            post11 = Post.objects(author=user1)
+            self.assertTrue(1, len(post11))
+            post11 = post11[0]
+            user1.create_reaction('💩', post11)
 
         self.assertRaises(UnauthorizedAccess, op)
 
