@@ -74,6 +74,7 @@
     margin-top: 3px;
     border-radius: 4px;
     background-color: #f0f0f0;
+    border: #f0f0f0 1px solid;
     font-weight: bold;
     font-size: small;
     display: flex;
@@ -86,11 +87,12 @@
 }
 
 .post-reaction-active {
-    background-color: #ffe0e0;
+    background-color: #e0f4ff;
+    border: #9dd0ff 1px solid;
 }
 
 .post-reaction-active:hover {
-    background-color: #fcb8b8;
+    background-color: #e0f4ff;
 }
 
 .post-emoji {
