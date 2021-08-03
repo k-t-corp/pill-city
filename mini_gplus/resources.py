@@ -8,7 +8,7 @@ import werkzeug
 import tempfile
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from .models import User, Post, Comment, Media
+from .models import User, Post, Comment, Media, Reaction as ReactionModel
 
 ALLOWED_IMAGE_TYPES = ['gif', 'jpeg', 'bmp', 'png']
 
@@ -323,7 +323,9 @@ post_fields = {
     'content': fields.String,
     'is_public': fields.Boolean,
     'reactions': fields.List(fields.Nested({
-        'emoji': fields.String
+        'emoji': fields.String,
+        'author': fields.Nested(user_fields),
+        'id': fields.String,
     })),
     # TODO: only return the circles that the seeing user is in
     'circles': fields.List(fields.Nested({
@@ -418,6 +420,7 @@ class Comments(Resource):
         comment_id = user.create_comment(comment_args['content'], post)
         return {"id": comment_id}, 201
 
+
 ###################
 # Nested comments #
 ###################
@@ -437,3 +440,44 @@ class NestedComments(Resource):
             return {'msg': 'Cannot nest more than two levels of comment'}, 403
         nested_comment_args = comment_parser.parse_args()
         user.create_nested_comment(nested_comment_args['content'], comment, post)
+
+
+#############
+# Reactions #
+#############
+
+reaction_parser = reqparse.RequestParser()
+reaction_parser.add_argument('emoji', type=str, required=True)
+
+
+class Reactions(Resource):
+    @jwt_required()
+    def post(self, post_id: str):
+        """
+        Creates a new reaction to a post
+        """
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+        post = Post.objects.get(id=post_id)
+        if not post:
+            return {"msg": "post is not found"}, 404
+        reaction_args = reaction_parser.parse_args()
+        reaction_id = user.create_reaction(reaction_args['emoji'], post)
+        return {"id": reaction_id}, 201
+
+
+class Reaction(Resource):
+    @jwt_required()
+    def delete(self, post_id: str, reaction_id: str):
+        """
+        Remove a reaction from a post
+        """
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+        post = Post.objects.get(id=post_id)
+        if not post:
+            return {"msg": "post is not found"}, 404
+        reaction_to_delete = ReactionModel.objects.get(id=reaction_id)
+        if reaction_to_delete not in post.reactions:
+            return {'msg': f'Reaction {reaction_to_delete} is already not in post {post_id}'}, 409
+        user.delete_reaction(reaction_to_delete, post)

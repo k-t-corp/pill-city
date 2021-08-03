@@ -7,7 +7,7 @@ from flask_restful import Api
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
 from mini_gplus.resources import Users, Posts, Comments, NestedComments, Circles, Circle, CircleMember, \
-    Followings, Following, Profile, UserResource, MyAvatar, Me
+    Followings, Following, Profile, UserResource, Reactions, Reaction, MyAvatar, Me
 from mini_gplus.models import User
 
 
@@ -79,11 +79,20 @@ def sign_up():
 app.config['BUNDLE_ERRORS'] = True
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-api = Api(app)
+api = Api(app, errors={
+    'UnauthorizedAccess': {
+        'status': 401,
+    },
+    'BadRequest': {
+        'status': 400,
+    },
+    'NotFound': {
+        'status': 404,
+    }
+})
 
 api.add_resource(MyAvatar, '/api/me/avatar')
 api.add_resource(Me, '/api/me')
-
 api.add_resource(Users, '/api/users')
 api.add_resource(UserResource, '/api/user/<string:user_id>')
 
@@ -91,6 +100,8 @@ api.add_resource(Profile, '/api/profile/<string:profile_user_id>')
 
 api.add_resource(NestedComments, '/api/posts/<string:post_id>/comment/<string:comment_id>/comment')
 api.add_resource(Comments, '/api/posts/<string:post_id>/comment')
+api.add_resource(Reactions, '/api/posts/<string:post_id>/reactions')
+api.add_resource(Reaction, '/api/posts/<string:post_id>/reaction/<string:reaction_id>')
 api.add_resource(Posts, '/api/posts')
 
 api.add_resource(Circles, '/api/circles')

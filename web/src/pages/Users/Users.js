@@ -46,8 +46,6 @@ export default class Users extends Component {
     }
 
     const users = this.state.data
-
-
     let userCardElements = []
     for (let i = 0; i < users.length; i++) {
       const user = users[i]

@@ -7,6 +7,7 @@ flask-cors==3.0.10
 flask-jwt-extended==4.2.3
 requests==2.26.0
 requests_toolbelt==0.9.1
+emoji==1.4.2
 bleach<4.0
 boto3==1.18.11
 
