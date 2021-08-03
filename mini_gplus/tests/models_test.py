@@ -451,15 +451,21 @@ class TestModels(TestCase):
         self.assertTrue(1, len(post1))
         post1 = post1[0]
 
-        # TODO: this is a bug
-        # # User1 tries to add more than one emoji
-        # def op():
-        #     user1.create_reaction('💩💩', post1)
-        #
-        # self.assertRaises(BadRequest, op)
+        # User1 tries to add more than one emoji
+        def op():
+            user1.create_reaction('💩💩', post1)
+
+        self.assertRaises(BadRequest, op)
 
         # User1 tries to add something that is not emoji
         def op2():
             user1.create_reaction('r', post1)
 
         self.assertRaises(BadRequest, op2)
+
+        # todo: this is a bug
+        # User1 tries to add something that is not emoji
+        # def op3():
+        #     user1.create_reaction('r💩rrr', post1)
+
+        # self.assertRaises(BadRequest, op3)
