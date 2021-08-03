@@ -86,7 +86,7 @@ export default (props) => {
     } else {
       // delete reaction with reactionId
       try {
-        const res = await props.api.deleteReaction(props.data.id, reactionId)
+        await props.api.deleteReaction(props.data.id, reactionId)
         setReactionData({
           ...reactionData,
           [emoji]: reactionData[emoji].filter(({ reactionId: rId }) => rId !== reactionId)
