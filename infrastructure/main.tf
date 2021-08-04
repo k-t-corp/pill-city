@@ -9,6 +9,11 @@ terraform {
       source = "heroku/heroku"
       version = "4.6.0"
     }
+
+    aws = {
+      source = "hashicorp/aws"
+      version = "3.52.0"
+    }
   }
 }
 
@@ -20,4 +25,10 @@ provider "mongodbatlas" {
 provider "heroku" {
   email = var.heroku_email
   api_key = var.heroku_api_key
+}
+
+provider "aws" {
+  region = "us-west-2"
+  access_key = var.aws_access_key
+  secret_key = var.aws_secret_key
 }
