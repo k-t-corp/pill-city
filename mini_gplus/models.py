@@ -89,12 +89,13 @@ class User(Document, CreatedAtMixin):
     ########
     # Post #
     ########
-    def create_post(self, content, is_public, circles):
+    def create_post(self, content, is_public, circles, reshareable):
         """
         Create a post for the user
         :param (str) content: the content
         :param (bool) is_public: whether the post is public
         :param (List[Circle]) circles: circles to share with
+        :param (bool) reshareable: whether the post is reshareable
         :return (str) ID of the new post
         """
         new_post = Post()
@@ -102,6 +103,7 @@ class User(Document, CreatedAtMixin):
         new_post.content = bleach.clean(content)
         new_post.is_public = is_public
         new_post.circles = circles
+        new_post.reshareable = reshareable
         new_post.save()
         return str(new_post.id)
 
@@ -456,3 +458,4 @@ class Post(Document, CreatedAtMixin):
     reactions = ListField(ReferenceField(Reaction, reverse_delete_rule=PULL), default=[])  # type: List[Reaction]
     circles = ListField(ReferenceField(Circle, reverse_delete_rule=PULL), default=[])  # type: List[Circle]
     comments = ListField(ReferenceField(Comment, reverse_delete_rule=PULL), default=[])  # type: List[Comment]
+    reshareable = BooleanField(required=False, default=False)

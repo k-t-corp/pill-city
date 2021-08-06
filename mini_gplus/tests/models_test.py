@@ -229,7 +229,7 @@ class TestModels(TestCase):
         user1 = User.find('user1')
 
         # Post post1 by user1
-        user1.create_post('post1', True, [])
+        user1.create_post('post1', True, [], False)
         post1 = Post.objects(author=user1)
         self.assertTrue(1, len(post1))
         post1 = post1[0]
@@ -250,7 +250,7 @@ class TestModels(TestCase):
         user3 = User.find('user3')
 
         # Create public post1 from user1
-        user1.create_post('post1', True, [])
+        user1.create_post('post1', True, [], False)
         post1 = Post.objects(author=user1)
         self.assertTrue(1, len(post1))
         post1 = post1[0]
@@ -280,7 +280,7 @@ class TestModels(TestCase):
         circle1 = user1.find_circle('circle1')
 
         # Create post1 into circle1
-        user1.create_post('post1', False, [circle1])
+        user1.create_post('post1', False, [circle1], False)
         post1 = Post.objects(author=user1)
         self.assertTrue(1, len(post1))
         post1 = post1[0]
@@ -312,7 +312,7 @@ class TestModels(TestCase):
         user2.add_following(user1)
 
         # Create post1 by user1 into circle1
-        user1.create_post('post1', False, [circle1])
+        user1.create_post('post1', False, [circle1], False)
         post1 = Post.objects(author=user1)
         self.assertTrue(1, len(post1))
         post1 = post1[0]
@@ -356,13 +356,13 @@ class TestModels(TestCase):
         user2.add_following(user1)
 
         # Create post1 by user1 into circle1
-        user1.create_post('post1', False, [circle1])
+        user1.create_post('post1', False, [circle1], False)
         post1 = Post.objects(author=user1)
         self.assertTrue(1, len(post1))
         post1 = post1[0]
 
         # Create public post2 by user1
-        user1.create_post('post2', True, [])
+        user1.create_post('post2', True, [], False)
         post2 = Post.objects(content='post2')
         self.assertTrue(1, len(post2))
         post2 = post2[0]
@@ -392,7 +392,7 @@ class TestModels(TestCase):
         user1 = User.find('user1')
 
         # Create post
-        user1.create_post('post1', True, [])
+        user1.create_post('post1', True, [], False)
         post1 = Post.objects(author=user1)
         self.assertTrue(1, len(post1))
         post1 = post1[0]
@@ -414,7 +414,7 @@ class TestModels(TestCase):
         user2 = User.find('user2')
 
         # Create post
-        user1.create_post('post1', True, [])
+        user1.create_post('post1', True, [], False)
         post1 = Post.objects(author=user1)
         self.assertTrue(1, len(post1))
         post1 = post1[0]
@@ -446,7 +446,7 @@ class TestModels(TestCase):
         user1 = User.find('user1')
 
         # Create post
-        user1.create_post('post1', True, [])
+        user1.create_post('post1', True, [], False)
         post1 = Post.objects(author=user1)
         self.assertTrue(1, len(post1))
         post1 = post1[0]

@@ -1,5 +1,3 @@
-import os
-
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from .models import User, Post, Comment, Reaction as ReactionModel
@@ -188,6 +186,7 @@ post_parser = reqparse.RequestParser()
 post_parser.add_argument('content', type=str, required=True)
 post_parser.add_argument('is_public', type=bool, required=True)
 post_parser.add_argument('circle_names', type=str, action="append", default=[])
+post_parser.add_argument('reshareable', type=bool, required=True)
 
 post_fields = {
     'id': fields.String,
@@ -195,6 +194,7 @@ post_fields = {
     'author': fields.Nested(user_fields),
     'content': fields.String,
     'is_public': fields.Boolean,
+    'reshareable': fields.Boolean,
     'reactions': fields.List(fields.Nested({
         'emoji': fields.String,
         'author': fields.Nested(user_fields),
@@ -240,7 +240,8 @@ class Posts(Resource):
         post_id = user.create_post(
             content=args['content'],
             is_public=args['is_public'],
-            circles=circles
+            circles=circles,
+            reshareable=args['reshareable']
         )
         return {'id': post_id}, 201
 
