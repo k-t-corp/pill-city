@@ -6,7 +6,7 @@ import 'react-image-crop/dist/ReactCrop.css';
 const FormData = require('form-data');
 
 export default (props) => {
-  const [image, updateImage] = useState()
+  const [imageUrl, updateImageUrl] = useState()
   const imgRef = useRef(null);
   const [loading, updateLoading] = useState(true)
   const [modalOpened, updateModalOpened] = useState(false)
@@ -19,19 +19,19 @@ export default (props) => {
       y: 0,
       width: 100,
     });
-  const [upImage, updateUpImage] = useState()
+  const [uploadedImage, updateUploadedImage] = useState()
 
   useEffect(async () => {
     const meProfile = await props.api.getMe()
     updateMe(meProfile)
-    updateImage(meProfile.avatar_url)
+    updateImageUrl(meProfile.avatar_url)
     updateLoading(false)
   }, [])
 
   const changeAvatarOnClick = (event) => {
     if (event.target.files && event.target.files[0]) {
       let img = event.target.files[0];
-      updateUpImage(URL.createObjectURL(img))
+      updateUploadedImage(URL.createObjectURL(img))
       updateModalOpened(true)
     }
   }
@@ -66,7 +66,7 @@ export default (props) => {
       canvas.toBlob(blob => {
         blob.name = fileName;
         resolve(blob);
-      }, 'image/jpeg', 1);
+      }, 'image/*', 1);
     });
   }
 
@@ -87,7 +87,7 @@ export default (props) => {
         <div className="settings-user-info">
           <div className="settings-avatar-box">
             <div className="settings-avatar-wrapper">
-              <img className="settings-avatar-img" src={image} alt="user-avatar"/>
+              <img className="settings-avatar-img" src={imageUrl} alt="user-avatar"/>
             </div>
             <label className="settings-change-avatar-button-wrapper">
               <input id="settings-change-avatar-button"
@@ -109,7 +109,7 @@ export default (props) => {
           {modalOpened ?
             <div className="settings-avatar-modal">
               <div className="settings-avatar-modal-content">
-                <ReactCrop src={upImage}
+                <ReactCrop src={uploadedImage}
                            crop={crop}
                            minWidth={50}
                            onImageLoaded={onLoad}
@@ -127,7 +127,7 @@ export default (props) => {
                   <div className="settings-modal-update-button"
                        onClick={async () => {
                          const croppedImg = await getCroppedImg(imgRef.current, crop, "new-avatar");
-                         updateImage(URL.createObjectURL(croppedImg))
+                         updateImageUrl(URL.createObjectURL(croppedImg))
                          let data = new FormData();
                          data.append('file', croppedImg, croppedImg.name);
 
