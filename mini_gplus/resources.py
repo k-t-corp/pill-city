@@ -105,9 +105,9 @@ class MyAvatar(Resource):
         }
         assume_role_response = sts_client.assume_role(
             # TODO: ?
-            RoleArn='arn:x:ignored:by:minio:',
+            RoleArn='arn:xxx:xxx:xxx:xxxx',
             # TODO: ?
-            RoleSessionName='ignored-by-minio',
+            RoleSessionName='anything',
             Policy=json.dumps(upload_policy),
             DurationSeconds=900,
         )
