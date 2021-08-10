@@ -50,7 +50,7 @@ export default (props) => {
   const userInfoButton = () => {
     if (props.me) {
       return (
-        <div className="user-profile-info-button">
+        <div className="user-profile-info-button" onClick={() => window.location.href = `/settings`}>
           Edit profile
         </div>
       )

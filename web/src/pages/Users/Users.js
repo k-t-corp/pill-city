@@ -61,7 +61,7 @@ export default class Users extends Component {
             <div className="users-user-card-name">
               {user.id}
             </div>
-          {/*Will cause overflow at this later*/}
+          {/*Will cause overflow. let's deal with this later*/}
           {/*<div className="users-user-card-join-time">*/}
           {/*  Joined on {createdAtDate.toLocaleDateString()}*/}
           {/*</div>*/}

@@ -5,11 +5,13 @@
   "dependencies": {
     "axios": "^0.21.1",
     "emoji-picker-react": "^3.4.8",
+    "form-data": "^4.0.0",
     "formsy-react": "^1.1.4",
     "formsy-semantic-ui-react": "^0.3.3",
     "promise.prototype.finally": "^3.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-image-crop": "^8.6.12",
     "react-router-dom": "^4.3.1",
     "react-scripts": "1.1.4",
     "semantic-ui-css": "^2.3.3",
