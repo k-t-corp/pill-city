@@ -1,0 +1,125 @@
+.settings-wrapper {
+    margin-top: 5em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.settings-user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 2px 2px 1px 1px #e0e0e0;
+    width: 60%;
+    min-width: 600px;
+    max-width: 1000px;
+    margin: 0 auto 50px auto;
+    padding-bottom: 20px;
+}
+
+.settings-avatar-wrapper {
+    width: 120px;
+    height: 120px;
+    flex-shrink: 0;
+}
+
+.settings-avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: white 3px solid;
+}
+
+/* Avatar Upload Button */
+input[type="file"] {
+    display: none;
+}
+
+.settings-change-avatar-button-wrapper {
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    margin-left: -30px;
+    margin-top: -10px
+}
+
+.settings-change-avatar-button-icon {
+    width: 100%;
+    height: 100%;
+    padding: 5px;
+    color: white;
+}
+
+.settings-avatar-box {
+    display: flex;
+    align-items: flex-end;
+    margin-top: 20px;
+}
+
+/* User Name */
+.settings-user-name {
+    font-size: x-large;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+/* The Modal (background) */
+.settings-avatar-modal {
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0); /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.settings-avatar-modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 60px 20px 20px 20px;
+    border: 1px solid #888;
+    border-radius: 5px;
+    min-width: 300px;
+    max-width: 1000px;
+    width: 80%; /* Could be more or less, depending on screen size */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+/* Modal Buttons */
+.settings-modal-buttons {
+    display: flex;
+    justify-content: center;
+}
+
+.settings-modal-buttons > * {
+    margin-top: 20px;
+    padding: 8px 10px;
+    font-weight: bold;
+    font-size: medium;
+    background-color: #E05140;
+    color: white;
+    border-radius: 5px;
+    width: auto;
+    cursor: pointer;
+}
+
+.settings-modal-cancel-button {
+    background-color: #727272;
+    margin-right: 20px;
+}
+
+

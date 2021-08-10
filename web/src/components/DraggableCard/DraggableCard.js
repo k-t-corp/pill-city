@@ -1,10 +1,12 @@
 import React from 'react'
 import "./DraggableCard.css"
+import getAvatarUrl from "../../api/getAvatarUrl";
 
 export default (props) => {
   const onDragStart = e => {
     const target = e.target
     e.dataTransfer.setData("card_id", target.id)
+    e.dataTransfer.setData("avatar_url", getAvatarUrl(props.user))
   }
 
   const onDragOver = e => {
@@ -21,12 +23,11 @@ export default (props) => {
     >
       {/*prevent users from dragging the single avatar image*/}
       <div className="draggable-card-avatar" draggable={false}>
-        <img className="draggable-card-avatar-img" draggable={false} src={`${process.env.PUBLIC_URL}/kusuou.png`} alt=""/>
+        <img className="draggable-card-avatar-img" draggable={false} src={getAvatarUrl(props.user)} alt=""/>
       </div>
       <div className="draggable-card-name">
-        {props.user_id}
+        {props.user.id}
       </div>
-
     </div>
   )
 }

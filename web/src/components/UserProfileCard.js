@@ -1,12 +1,13 @@
 import React, {useState} from 'react'
 import "./UserProfileCard.css"
+import getAvatarUrl from "../api/getAvatarUrl";
 
 export default (props) => {
   const [deleted, updateDeleted] = useState(false)
   const [loading, updateLoading] = useState(false)
   const deleteMemberFromCircleOnClick = async () => {
     updateLoading(true)
-    await props.api.removeFromCircle(props.circleName, props.userId)
+    await props.api.removeFromCircle(props.circleName, props.user.id)
     updateLoading(false)
     updateDeleted(true)
   }
@@ -31,10 +32,10 @@ export default (props) => {
   return (
     <div className="user-profile-card-wrapper">
       <div className="user-profile-card-avatar">
-        <img className="user-profile-card-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.png`} alt=""/>
+        <img className="user-profile-card-avatar-img" src={getAvatarUrl(props.user)} alt=""/>
       </div>
       <div className="user-profile-card-name" style={{textDecoration: deleted ? "line-through" : ""}}>
-        {props.userId}
+        {props.user.id}
       </div>
       {deleteButton()}
     </div>

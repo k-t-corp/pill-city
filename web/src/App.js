@@ -17,6 +17,7 @@ import Circles from './pages/Circles/Circles'
 import Users from './pages/Users/Users'
 import Profile from './pages/Profile/Profile'
 import withUserId from "./hoc/withUserId";
+import Settings from './pages/Settings/Settings'
 
 const api = new Api(process.env.REACT_APP_API_ENDPOINT)
 
@@ -50,7 +51,14 @@ export default class App extends Component {
             path="/signin"
             component={withApi(withNoAuthRedirect(SignIn), api)}
           />
-          <Route path="/circles" component={withApi(withAuthRedirect(withNavBar(Circles, '/circles')), api)}/>
+          <Route
+            path="/circles"
+            component={withApi(withAuthRedirect(withNavBar(Circles, '/circles')), api)}
+          />
+          <Route
+            path="/settings"
+            component={withApi(withAuthRedirect(withNavBar(Settings, '/settings')), api)}
+          />
           <Redirect to='/'/>
         </Switch>
       </Router>

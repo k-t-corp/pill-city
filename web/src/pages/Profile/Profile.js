@@ -1,9 +1,6 @@
 import React, {Component} from 'react'
-import CatchApiErrorBuilder from '../../api/CatchApiErrorBuilder'
 import {Message, Loader} from 'semantic-ui-react'
 import UserProfile from "../../components/UserProfile/UserProfile";
-
-require('promise.prototype.finally').shim();
 
 
 export default class Profile extends Component {
@@ -13,7 +10,6 @@ export default class Profile extends Component {
       'loading': true,
       'error': undefined,
       'data': undefined,
-      'isMe': false
     }
   }
 
@@ -22,23 +18,22 @@ export default class Profile extends Component {
   }
 
   componentDidMount() {
-    this.props.api.getMe()
+    let promise
+    if (!this.props.userId) {
+      promise = this.props.api.getMe()
+    } else {
+      promise = this.props.api.getUser(this.props.userId)
+    }
+    promise
       .then(data => {
-        if (this.props.userId === undefined || data.id === this.props.userId) {
-          this.setState({'isMe': true})
-          this.setState({'data': data})
-        } else {
-          this.setState({'data': {"id": this.props.userId}})
-        }
+        this.setState({ data })
       })
-      .catch(
-        new CatchApiErrorBuilder()
-          .unknownError(this.showError)
-          .unknownStatusCode(this.showError)
-          .build()
+      .catch(error => {
+        this.setState({ error })
+      }
       ).finally(() => {
-      this.setState({'loading': false})
-    })
+        this.setState({'loading': false})
+      })
   }
 
   render() {
@@ -52,7 +47,6 @@ export default class Profile extends Component {
         <Message negative>{this.state.error}</Message>
       )
     }
-
-    return (<UserProfile me={this.state.isMe} userData={this.state.data} api={this.props.api}/>)
+    return (<UserProfile userData={this.state.data} me={!this.props.userId} api={this.props.api}/>)
   }
 }

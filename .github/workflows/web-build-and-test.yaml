@@ -14,5 +14,5 @@ jobs:
         working-directory: ./web
       - run: yarn build
         working-directory: ./web
-      - run: yarn test
-        working-directory: ./web
+#      - run: yarn test
+#        working-directory: ./web
