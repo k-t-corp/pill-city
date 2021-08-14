@@ -1,7 +1,6 @@
 import os
 import uuid
 import time
-import json
 import imghdr
 import boto3
 import werkzeug
@@ -12,8 +11,8 @@ from .models import User, Post, Comment, Media, Reaction as ReactionModel
 
 ALLOWED_IMAGE_TYPES = ['gif', 'jpeg', 'bmp', 'png']
 
-sts_client = boto3.client(
-    'sts',
+s3_client = boto3.client(
+    's3',
     endpoint_url=os.environ['S3_ENDPOINT_URL'],
     region_name=os.environ.get('S3_REGION', ''),
     aws_access_key_id=os.environ['S3_ACCESS_KEY'],
@@ -84,41 +83,6 @@ class MyAvatar(Resource):
         # avatars prefix is made explicitly public readable
         # because it's faster to read a user's metadata, and we are fine with all avatars being public
         object_name = f"avatars/{user_id}-{str(time.time_ns() // 1_000_000)}.{img_type}"
-
-        # obtain temporary token
-        upload_policy = {
-            "Version": "2012-10-17",
-            "Statement": [
-                {
-                    "Sid": "PutObject",
-                    "Effect": "Allow",
-                    "Action": "s3:PutObject",
-                    "Resource": [f"arn:aws:s3:::{s3_bucket_name}/{object_name}"],
-                },
-                {
-                    "Sid": "AbortMultipartUpload",
-                    "Effect": "Allow",
-                    "Action": "s3:AbortMultipartUpload",
-                    "Resource": [f"arn:aws:s3:::{s3_bucket_name}/{object_name}"],
-                },
-            ],
-        }
-        assume_role_response = sts_client.assume_role(
-            # TODO: ?
-            RoleArn='arn:xxx:xxx:xxx:xxxx',
-            # TODO: ?
-            RoleSessionName='anything',
-            Policy=json.dumps(upload_policy),
-            DurationSeconds=900,
-        )
-        s3_client = boto3.client(
-            's3',
-            endpoint_url=os.environ['S3_ENDPOINT_URL'],
-            region_name=os.environ.get('S3_REGION', ''),
-            aws_access_key_id=assume_role_response['Credentials']['AccessKeyId'],
-            aws_secret_access_key=assume_role_response['Credentials']['SecretAccessKey'],
-            aws_session_token=assume_role_response['Credentials']['SessionToken'],
-        )
 
         # upload avatar
         s3_client.upload_file(
