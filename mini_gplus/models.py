@@ -221,6 +221,7 @@ class User(Document, CreatedAtMixin):
         :param (str) content: the content
         :param (Comment) parent_comment: the comment that this nested comment is attached to
         :param (Post) parent_post: the post that this comment is attached to
+        :return (str) ID of the new comment
         :raise (UnauthorizedAccess) when access is unauthorized
         """
         # same explanation for context_home_or_profile=False
@@ -231,6 +232,7 @@ class User(Document, CreatedAtMixin):
             new_comment.save()
             parent_comment.comments.append(new_comment)
             parent_comment.save()
+            return str(new_comment.id)
         else:
             raise UnauthorizedAccess()
 
