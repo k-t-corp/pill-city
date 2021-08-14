@@ -1,10 +1,37 @@
+import os
+import uuid
+import time
+import imghdr
+import boto3
+import werkzeug
+import tempfile
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from .models import User, Post, Comment, Reaction as ReactionModel
+from .models import User, Post, Comment, Media, Reaction as ReactionModel
 
-########
-# User #
-########
+ALLOWED_IMAGE_TYPES = ['gif', 'jpeg', 'bmp', 'png']
+
+s3_client = boto3.client(
+    's3',
+    endpoint_url=os.environ['S3_ENDPOINT_URL'],
+    region_name=os.environ.get('S3_REGION', ''),
+    aws_access_key_id=os.environ['S3_ACCESS_KEY'],
+    aws_secret_access_key=os.environ['S3_SECRET_KEY']
+)
+
+s3_bucket_name = os.environ['S3_BUCKET_NAME']
+
+
+######
+# Me #
+######
+
+class AvatarUrl(fields.Raw):
+    def format(self, avatar):
+        if not avatar:
+            return None
+        return f"{os.environ['CDN_URL']}/{avatar.object_name}"
+
 
 user_parser = reqparse.RequestParser()
 user_parser.add_argument('id', type=str, required=True)
@@ -12,9 +39,75 @@ user_parser.add_argument('password', type=str, required=True)
 
 user_fields = {
     'id': fields.String(attribute='user_id'),
-    'created_at_seconds': fields.Integer(attribute='created_at')
+    'created_at_seconds': fields.Integer(attribute='created_at'),
+    'avatar_url': AvatarUrl(attribute='avatar')
 }
 
+user_avatar_parser = reqparse.RequestParser()
+user_avatar_parser.add_argument('file', type=werkzeug.datastructures.FileStorage, location='files', required=True)
+
+
+class Me(Resource):
+    @jwt_required()
+    @marshal_with(user_fields)
+    def get(self):
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+        return user
+
+
+class MyAvatar(Resource):
+    @jwt_required()
+    def post(self):
+        # check user
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+        if not user:
+            return {'msg': f'User {user_id} is not found'}, 404
+        args = user_avatar_parser.parse_args()
+        file = args['file']
+
+        # check file size
+        # flask will limit upload size for us :)
+        # would return 413 if file is too large
+
+        # save the file
+        temp_fp = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
+        file.save(temp_fp)
+
+        # check upload format
+        img_type = imghdr.what(temp_fp)
+        if img_type not in ALLOWED_IMAGE_TYPES:
+            return {'msg': f"Blacklisted image type {img_type}"}, 400
+        # the resulting object name looks like avatars/kt-1627815711477.jpeg
+        # avatars prefix is made explicitly public readable
+        # because it's faster to read a user's metadata, and we are fine with all avatars being public
+        object_name = f"avatars/{user_id}-{str(time.time_ns() // 1_000_000)}.{img_type}"
+
+        # upload avatar
+        s3_client.upload_file(
+            Filename=temp_fp,
+            Bucket=s3_bucket_name,
+            Key=object_name,
+            ExtraArgs={
+                'ContentType': f"image/{img_type}",
+            }
+        )
+
+        # update user model
+        avatar_media = Media()
+        avatar_media.object_name = object_name
+        avatar_media.save()
+        user.avatar = avatar_media
+        user.save()
+
+        # TODO: remove previous avatar
+        os.remove(temp_fp)
+
+
+#########
+# Users #
+#########
 
 class Users(Resource):
     @jwt_required()

@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import "./DroppableBoard.css"
 import UserProfileCard from "../UserProfileCard";
+import getAvatarUrl from "../../api/getAvatarUrl";
 
 export default (props) => {
   const circleMargin = 2 // Margin between the edge of the card circle and inner/outer circles
@@ -18,7 +19,10 @@ export default (props) => {
   const [deleteCircleClicked, updateDeleteCircleClicked] = useState(false)
 
   let animationIntervalId = null;
-  const circleAnimation = (circleName, card_id) => {
+  const circleAnimation = (circleName, card_id, avatar_url) => {
+    const avatar = document.getElementById(`${circleName}-temp-card-avatar`)
+    avatar.src = avatar_url
+
     let elem = document.getElementById(`${circleName}-temp-card`);
     let degree = 1;
     let stepCount = 0;
@@ -29,7 +33,7 @@ export default (props) => {
     function frame() {
       if (degree >= finalDegree || members.length >= cardNumber) {
         elem.style.visibility = "hidden"
-        updateCards([...members, {id: card_id}])
+        updateCards([...members, {id: card_id, avatar_url}])
         clearInterval(animationIntervalId);
       } else {
         elem.style.visibility = "visible"
@@ -84,8 +88,13 @@ export default (props) => {
           height: `${cardRadius * 2 - circleMargin * 2}px`,
           visibility: "hidden",
         }}>
-        <img className="droppable-board-member-card-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.png`} alt=""/>
-      </div>)
+        <img
+          id={`${circleName}-temp-card-avatar`}
+          className="droppable-board-member-card-avatar-img"
+          alt=""
+        />
+      </div>
+    )
   }
   const circleColor = (circleName) => {
     const colorMap = [
@@ -101,13 +110,13 @@ export default (props) => {
   const onDrop = async e => {
     e.preventDefault();
     const card_id = e.dataTransfer.getData("card_id")
+    const avatarUrl = e.dataTransfer.getData("avatar_url")
     try {
       await props.api.addToCircle(props.circleName, card_id)
       innerCircleScale(false, 0)
-      circleAnimation(props.circleName, card_id)
+      circleAnimation(props.circleName, card_id, avatarUrl)
       innerCircleScale(true, 900)
     } catch (e) {
-      console.log(e)
       if (e.response.status === 409) {
         alert(`${card_id} is already in this circle.`)
       } else {
@@ -142,6 +151,7 @@ export default (props) => {
   const memberCards = () => {
     let memberCardElements = []
     for (let i = 0; i < members.length && i < cardNumber; i++) {
+      const member = members[i]
       const currentCardAngleAsDegree = -(i + 1) * finalAnglePerCardAsDegree
       const top = Math.abs((innerRadius + cardRadius) * Math.cos(currentCardAngleAsDegree * 3.14 / 180) - outerRadius + cardRadius)
       const left = Math.abs((innerRadius + cardRadius) * Math.sin(currentCardAngleAsDegree * 3.14 / 180) - outerRadius + cardRadius)
@@ -155,7 +165,11 @@ export default (props) => {
             width: `${cardRadius * 2 - circleMargin * 2}px`,
             height: `${cardRadius * 2 - circleMargin * 2}px`,
           }}>
-          <img className="droppable-board-member-card-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.ong`} alt=""/>
+          <img
+            className="droppable-board-member-card-avatar-img"
+            src={getAvatarUrl(member)}
+            alt=""
+          />
         </div>)
     }
     return memberCardElements
@@ -163,10 +177,11 @@ export default (props) => {
   const memberModalCards = () => {
     let memberModalCardElements = []
     for (let i = 0; i < members.length; i++) {
+      const member = members[i]
       memberModalCardElements.push(
         <UserProfileCard
           key={i}
-          userId={members[i].id}
+          user={member}
           circleName={props.circleName}
           api={props.api}
         />)

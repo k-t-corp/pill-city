@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import { Dropdown, Popup, Icon } from 'semantic-ui-react'
 import "./NewPost.css"
+import getAvatarUrl from "../../api/getAvatarUrl";
 
 export default (props) => {
   const [content, updateContent] = useState("")
@@ -34,7 +35,11 @@ export default (props) => {
     <div className="new-post">
       <div className="new-post-user-info">
         <div className="new-post-avatar">
-          <img className="new-post-avatar-img" src={`${process.env.PUBLIC_URL}/kusuou.png`} alt=""/>
+          <img
+            className="new-post-avatar-img"
+            src={getAvatarUrl(props.me)}
+            alt=""
+          />
         </div>
         <div className="new-post-name">
           {props.me !== null ? props.me.id : '...'}
