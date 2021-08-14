@@ -1,7 +1,7 @@
 import os
 import pymongo
 import boto3
-from typing import List
+from typing import List, Optional
 from requests_toolbelt.sessions import BaseUrlSession
 
 
@@ -49,13 +49,17 @@ class User(object):
         self._raise_on_unauthenticated()
         self.sess.post(f'/api/circle/{circle_name}/membership/{member_user_id}')
 
-    def create_post(self, content: str, is_public: bool, circle_names: List[str], reshareable: bool):
+    def create_post(self, content: str, is_public: bool, circle_names=None, reshareable: bool = False,
+                    reshared_from: Optional[str] = None):
+        if circle_names is None:
+            circle_names = []
         self._raise_on_unauthenticated()
         return self.sess.post(f'/api/posts', json={
             'content': content,
             'is_public': is_public,
             'circle_names': circle_names,
-            'reshareable': reshareable
+            'reshareable': reshareable,
+            'reshared_from': reshared_from
         }).json()['id']
 
     def create_comment(self, post_id: str, content: str):
@@ -142,32 +146,33 @@ def main():
     kt.follow('sirjie')
 
     # post something
-    kt.create_post('rua', is_public=True, circle_names=[], reshareable=False)
-    kt.create_post(' _Hello, World!_ ', is_public=True, circle_names=[], reshareable=False)
-    kt_ika_post = kt.create_post('Ika!1!!!!', is_public=False, circle_names=['ika'], reshareable=False)
-    ika.create_post('iPhone', is_public=True, circle_names=[], reshareable=False)
-    ika.create_post(' *iPad* ', is_public=True, circle_names=[], reshareable=False)
-    ika.create_post('MacBook Pro', is_public=True, circle_names=[], reshareable=False)
-    ika.create_post('MacBook Air', is_public=True, circle_names=[], reshareable=False)
+    kt.create_post('rua', is_public=True)
+    kt.create_post(' _Hello, World!_ ', is_public=True)
+    kt_ika_post = kt.create_post('Ika!1!!!!', is_public=False, circle_names=['ika'])
+    ika.create_post('iPhone', is_public=True)
+    ika.create_post(' *iPad* ', is_public=True)
+    ika.create_post('MacBook Pro', is_public=True)
+    ika.create_post('MacBook Air', is_public=True)
     kt.create_post('BOY NEXT DOOR. SLABU GET UR AS BACK HERE. HENG HENG HENG AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
                    'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
                    'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', is_public=False,
-                   circle_names=['gachi'], reshareable=False)
-    kt.create_post('鬼城！！！', is_public=False, circle_names=['g+'], reshareable=False)
+                   circle_names=['gachi'])
+    kt.create_post('鬼城！！！', is_public=False, circle_names=['g+'])
     with open('./scripts/xss.txt') as f:
-        kt.create_post(f.read(), is_public=True, circle_names=['g+'], reshareable=False)
-    ika.create_post('iMac', is_public=True, circle_names=[], reshareable=False)
-    ika.create_post('AirPod Pro', is_public=True, circle_names=[], reshareable=False)
+        kt.create_post(f.read(), is_public=True, circle_names=['g+'])
+    ika.create_post('iMac', is_public=True)
+    ika.create_post('AirPod Pro', is_public=True)
 
-    senpai.create_post('henghenghengaaaa', is_public=True, circle_names=[], reshareable=False)
-    senpai.create_post('kouchaiidesuka', is_public=True, circle_names=[], reshareable=False)
-    sirjie.create_post('我家呢還 *蠻大* 的', is_public=True, circle_names=[], reshareable=False)
-    sirjie.create_post('拿都可以拿', is_public=True, circle_names=[], reshareable=False)
-    sirjie.create_post('你看這個彬彬才喝幾罐就醉了', is_public=True, circle_names=[], reshareable=False)
-    senpai.create_post('114514', is_public=True, circle_names=[], reshareable=False)
-    sirjie.create_post('這麼說你很勇ho', is_public=True, circle_names=[], reshareable=False)
-    sirjie.create_post('我房裡有好康的', is_public=True, circle_names=[], reshareable=False)
-    sirjie.create_post(' -聽話！讓我看看！- ', is_public=True, circle_names=[], reshareable=False)
+    senpai.create_post('henghenghengaaaa', is_public=True)
+    senpai.create_post('kouchaiidesuka', is_public=True)
+    sirjie_post_id = sirjie.create_post('我家呢還 *蠻大* 的', is_public=True, reshareable=True)
+    sirjie.create_post('拿都可以拿', is_public=True)
+    sirjie.create_post('你看這個彬彬才喝幾罐就醉了', is_public=True)
+    senpai.create_post('114514', is_public=True)
+    sirjie.create_post('這麼說你很勇ho', is_public=True)
+    sirjie.create_post('我房裡有好康的', is_public=True)
+    sirjie.create_post(' -聽話！讓我看看！- ', is_public=True)
+    kt.create_post('是傑哥耶！！', is_public=True, reshared_from=sirjie_post_id)
 
     # Create some comments
     ika_kt_ika_comment = ika.create_comment(kt_ika_post, 'rua')
