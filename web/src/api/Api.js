@@ -122,7 +122,8 @@ export default class Api {
         content,
         is_public: isPublic,
         circle_names: circlesNames,
-        reshareable: false // TODO: passed in
+        reshareable: false, // TODO: passed in
+        // reshared_from: 'post id' // TODO: passed in
       }
     )
     if (res.status !== 201) {
