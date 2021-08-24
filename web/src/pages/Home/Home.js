@@ -10,7 +10,7 @@ export default (props) => {
   const [me, updateMe] = useState(null)
 
   useEffect(async ()=>{
-    updatePosts(await props.api.getPosts())
+    updatePosts(await props.api.getHome())
     updateCircles(await props.api.getCircles())
     updateMe(await props.api.getMe())
 

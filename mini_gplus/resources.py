@@ -335,6 +335,8 @@ class Posts(Resource):
         )
         return {'id': post_id}, 201
 
+
+class Home(Resource):
     @jwt_required()
     @marshal_with(post_fields)
     def get(self):
