@@ -279,6 +279,8 @@ post_parser = reqparse.RequestParser()
 post_parser.add_argument('content', type=str, required=True)
 post_parser.add_argument('is_public', type=bool, required=True)
 post_parser.add_argument('circle_names', type=str, action="append", default=[])
+post_parser.add_argument('reshareable', type=bool, required=True)
+post_parser.add_argument('reshared_from', type=str, required=False)
 
 post_fields = {
     'id': fields.String,
@@ -286,6 +288,14 @@ post_fields = {
     'author': fields.Nested(user_fields),
     'content': fields.String,
     'is_public': fields.Boolean,
+    'reshareable': fields.Boolean,
+    'reshared_from': fields.Nested({
+        # this is a trimmed down version of post_fields
+        'id': fields.String,
+        'created_at_seconds': fields.Integer(attribute='created_at'),
+        'author': fields.Nested(user_fields),
+        'content': fields.String,
+    }),
     'reactions': fields.List(fields.Nested({
         'emoji': fields.String,
         'author': fields.Nested(user_fields),
@@ -328,11 +338,21 @@ class Posts(Resource):
             if not found_circle:
                 return {'msg': f'Circle {circle_name} is not found'}, 404
             circles.append(found_circle)
+        reshared_from = args['reshared_from']
+        reshared_from_post = None
+        if reshared_from:
+            reshared_from_post = Post.objects.get(id=reshared_from)
+            if not reshared_from_post:
+                return {"msg": f"Post {reshared_from} is not found"}, 404
         post_id = user.create_post(
             content=args['content'],
             is_public=args['is_public'],
-            circles=circles
+            circles=circles,
+            reshareable=args['reshareable'],
+            reshared_from=reshared_from_post
         )
+        if not post_id:
+            return {"msg": f"Not allowed to reshare post {reshared_from}"}, 403
         return {'id': post_id}, 201
 
 
