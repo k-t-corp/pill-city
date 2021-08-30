@@ -4,6 +4,7 @@ import boto3
 import werkzeug
 import tempfile
 import uuid
+import json
 from typing import Optional
 from PIL import Image, UnidentifiedImageError
 from flask_restful import reqparse, Resource, fields, marshal_with
@@ -18,8 +19,15 @@ MaxPostMediaCount = 9
 # Upload to S3 #
 ################
 
-s3_client = boto3.client(
+sts_admin_s3 = boto3.client(
     's3',
+    endpoint_url=os.environ['S3_ENDPOINT_URL'],
+    region_name=os.environ.get('S3_REGION', ''),
+    aws_access_key_id=os.environ['S3_ACCESS_KEY'],
+    aws_secret_access_key=os.environ['S3_SECRET_KEY']
+)
+sts_admin = boto3.client(
+    'sts',
     endpoint_url=os.environ['S3_ENDPOINT_URL'],
     region_name=os.environ.get('S3_REGION', ''),
     aws_access_key_id=os.environ['S3_ACCESS_KEY'],
@@ -49,7 +57,7 @@ def upload_to_s3(file, object_name_stem) -> Optional[Media]:
     object_name = f"{object_name_stem}.{img_type}"
 
     # upload avatar
-    s3_client.upload_file(
+    sts_admin_s3.upload_file(
         Filename=temp_fp,
         Bucket=s3_bucket_name,
         Key=object_name,
@@ -312,11 +320,44 @@ class MediaUrls(fields.Raw):
             return []
 
         def get_media_url(media):
-            # TODO: how would this work with a CDN?
-            return s3_client.generate_presigned_url(
+            # TODO: how would this work with an actual CDN e.g. cloudfront?
+
+            # obtain temp token
+            object_name = media.object_name
+            read_media_policy = {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Sid": "GetObject",
+                        "Effect": "Allow",
+                        "Action": "s3:GetObject",
+                        "Resource": [f"arn:aws:s3:::{s3_bucket_name}/{object_name}"],
+                    },
+                ],
+            }
+            assume_role_response = sts_admin.assume_role(
+                # for minio this is moot
+                # for s3 this role allows all media read, but intersects with the inline policy, the temp role
+                #    would still be minimal privilege
+                RoleArn=os.environ['MEDIA_READER_ROLE_ARN'],
+                RoleSessionName='read-media-' + object_name,
+                Policy=json.dumps(read_media_policy),
+                DurationSeconds=900,
+            )
+            temp_s3_client = boto3.client(
+                's3',
+                endpoint_url=os.environ['S3_ENDPOINT_URL'],
+                region_name=os.environ.get('S3_REGION', ''),
+                aws_access_key_id=assume_role_response['Credentials']['AccessKeyId'],
+                aws_secret_access_key=assume_role_response['Credentials']['SecretAccessKey'],
+                aws_session_token=assume_role_response['Credentials']['SessionToken'],
+            )
+
+            # get pre-signed url
+            return temp_s3_client.generate_presigned_url(
                 ClientMethod='get_object',
                 Params={'Bucket': s3_bucket_name, 'Key': media.object_name},
-                ExpiresIn=3600
+                ExpiresIn=900
             )
 
         return list(map(get_media_url, media_list))
