@@ -13,6 +13,11 @@ from .models import User, Post, Comment, Media, Reaction as ReactionModel
 WhitelistedImageTypes = ['gif', 'jpeg', 'bmp', 'png']
 MaxPostMediaCount = 9
 
+
+################
+# Upload to S3 #
+################
+
 s3_client = boto3.client(
     's3',
     endpoint_url=os.environ['S3_ENDPOINT_URL'],
@@ -22,10 +27,6 @@ s3_client = boto3.client(
 )
 
 s3_bucket_name = os.environ['S3_BUCKET_NAME']
-
-################
-# Upload to S3 #
-################
 
 
 def upload_to_s3(file, object_name_stem) -> Optional[Media]:
@@ -304,6 +305,18 @@ for i in range(MaxPostMediaCount):
     post_parser.add_argument('media' + str(i), type=werkzeug.datastructures.FileStorage, location='files',
                              required=False, default=None)
 
+
+class MediaUrls(fields.Raw):
+    def format(self, media_list):
+        if not media_list:
+            return []
+
+        def get_media_url(media):
+            return f"{os.environ['CDN_URL']}/{media.object_name}"
+
+        return list(map(get_media_url, media_list))
+
+
 post_fields = {
     'id': fields.String,
     'created_at_seconds': fields.Integer(attribute='created_at'),
@@ -318,6 +331,7 @@ post_fields = {
         'author': fields.Nested(user_fields),
         'content': fields.String,
     }),
+    'media_urls': MediaUrls(attribute='media_list'),
     'reactions': fields.List(fields.Nested({
         'emoji': fields.String,
         'author': fields.Nested(user_fields),
