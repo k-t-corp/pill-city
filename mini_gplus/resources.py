@@ -1,11 +1,11 @@
 import os
-import uuid
 import time
-import imghdr
 import boto3
 import werkzeug
 import tempfile
+import uuid
 from typing import Optional
+from PIL import Image, UnidentifiedImageError
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from .models import User, Post, Comment, Media, Reaction as ReactionModel
@@ -38,7 +38,10 @@ def upload_to_s3(file, object_name_stem) -> Optional[Media]:
     file.save(temp_fp)
 
     # check upload format
-    img_type = imghdr.what(temp_fp)
+    try:
+        img_type = Image.open(temp_fp).format.lower()
+    except UnidentifiedImageError:
+        return None
     if img_type not in WhitelistedImageTypes:
         return None
 
@@ -349,7 +352,6 @@ class Posts(Resource):
         """
         user_id = get_jwt_identity()
         user = User.find(user_id)
-
         args = post_parser.parse_args()
 
         # check circles
@@ -367,13 +369,30 @@ class Posts(Resource):
             reshared_from_post = Post.objects.get(id=reshared_from)
             if not reshared_from_post:
                 return {"msg": f"Post {reshared_from} is not found"}, 404
+
+        # upload media
+        media_files = []
+        for i in range(MaxPostMediaCount):
+            media_file = args['media' + str(i)]
+            if media_file:
+                media_files.append(media_file)
+        if reshared_from and media_files:
+            return {'msg': "Reshared post is not allowed to have media"}, 400
+        media_objects = []
+        for media_file in media_files:
+            object_name_stem = f"media/{uuid.uuid4()}"
+            media_object = upload_to_s3(media_file, object_name_stem)
+            if not media_object:
+                return {'msg': f"Blacklisted image type"}, 400
+            media_objects.append(media_object)
+
         post_id = user.create_post(
             content=args['content'],
             is_public=args['is_public'],
             circles=circles,
             reshareable=args['reshareable'],
             reshared_from=reshared_from_post,
-            media_list=[]
+            media_list=media_objects
         )
         if not post_id:
             return {"msg": f"Not allowed to reshare post {reshared_from}"}, 403
