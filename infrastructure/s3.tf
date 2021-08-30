@@ -57,3 +57,39 @@ resource "aws_iam_user_policy" "stsadmin-user-policy" {
 }
 EOF
 }
+
+resource "aws_iam_role" "media-reader" {
+  name = "media-reader"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Resource = aws_iam_user.stsadmin.arn
+      },
+    ]
+  })
+
+  inline_policy = {
+    name = "media-reader-policy"
+    policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "s3:GetObject",
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:s3:::pill-city/media/*"
+            ],
+            "Sid": ""
+        }
+    ]
+}
+EOF
+  }
+}
