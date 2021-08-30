@@ -5,7 +5,7 @@ import werkzeug
 import tempfile
 import uuid
 import json
-from typing import Optional
+from typing import Optional, Dict, Tuple
 from PIL import Image, UnidentifiedImageError
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -13,6 +13,7 @@ from .models import User, Post, Comment, Media, Reaction as ReactionModel
 
 WhitelistedImageTypes = ['gif', 'jpeg', 'bmp', 'png']
 MaxPostMediaCount = 9
+PostMediaUrlExpireSeconds = 900
 
 
 ################
@@ -313,6 +314,9 @@ for i in range(MaxPostMediaCount):
     post_parser.add_argument('media' + str(i), type=werkzeug.datastructures.FileStorage, location='files',
                              required=False, default=None)
 
+# stores media object name -> (media url, media url generation time in ms epoch)
+MediaUrlCache = {}  # type: Dict[str, Tuple[str, int]]
+
 
 class MediaUrls(fields.Raw):
     def format(self, media_list):
@@ -320,10 +324,16 @@ class MediaUrls(fields.Raw):
             return []
 
         def get_media_url(media):
+            object_name = media.object_name
+            now_ms = time.time_ns() // 1_000_000
+            # subtract expiry by 10 seconds for some network overhead
+            if object_name in MediaUrlCache and now_ms < MediaUrlCache[object_name][1] + \
+                    (PostMediaUrlExpireSeconds - 10) * 1000:
+                return MediaUrlCache[object_name][0]
+
             # TODO: how would this work with an actual CDN e.g. cloudfront?
 
             # obtain temp token
-            object_name = media.object_name
             read_media_policy = {
                 "Version": "2012-10-17",
                 "Statement": [
@@ -342,7 +352,7 @@ class MediaUrls(fields.Raw):
                 RoleArn=os.environ['MEDIA_READER_ROLE_ARN'],
                 RoleSessionName='read-media-' + object_name,
                 Policy=json.dumps(read_media_policy),
-                DurationSeconds=900,
+                DurationSeconds=PostMediaUrlExpireSeconds,
             )
             temp_s3_client = boto3.client(
                 's3',
@@ -354,11 +364,14 @@ class MediaUrls(fields.Raw):
             )
 
             # get pre-signed url
-            return temp_s3_client.generate_presigned_url(
+            media_url = temp_s3_client.generate_presigned_url(
                 ClientMethod='get_object',
                 Params={'Bucket': s3_bucket_name, 'Key': media.object_name},
-                ExpiresIn=900
+                ExpiresIn=PostMediaUrlExpireSeconds
             )
+
+            MediaUrlCache[object_name] = (media_url, now_ms)
+            return media_url
 
         return list(map(get_media_url, media_list))
 
