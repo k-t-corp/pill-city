@@ -312,7 +312,12 @@ class MediaUrls(fields.Raw):
             return []
 
         def get_media_url(media):
-            return f"{os.environ['CDN_URL']}/{media.object_name}"
+            # TODO: how would this work with a CDN?
+            return s3_client.generate_presigned_url(
+                ClientMethod='get_object',
+                Params={'Bucket': s3_bucket_name, 'Key': media.object_name},
+                ExpiresIn=3600
+            )
 
         return list(map(get_media_url, media_list))
 
