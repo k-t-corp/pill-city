@@ -5,11 +5,13 @@ import imghdr
 import boto3
 import werkzeug
 import tempfile
+from typing import Optional
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from .models import User, Post, Comment, Media, Reaction as ReactionModel
 
-ALLOWED_IMAGE_TYPES = ['gif', 'jpeg', 'bmp', 'png']
+WhitelistedImageTypes = ['gif', 'jpeg', 'bmp', 'png']
+MaxPostMediaCount = 9
 
 s3_client = boto3.client(
     's3',
@@ -21,10 +23,50 @@ s3_client = boto3.client(
 
 s3_bucket_name = os.environ['S3_BUCKET_NAME']
 
+################
+# Upload to S3 #
+################
+
+
+def upload_to_s3(file, object_name_stem) -> Optional[Media]:
+    # check file size
+    # flask will limit upload size for us :)
+    # would return 413 if file is too large
+
+    # save the file
+    temp_fp = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
+    file.save(temp_fp)
+
+    # check upload format
+    img_type = imghdr.what(temp_fp)
+    if img_type not in WhitelistedImageTypes:
+        return None
+
+    object_name = f"{object_name_stem}.{img_type}"
+
+    # upload avatar
+    s3_client.upload_file(
+        Filename=temp_fp,
+        Bucket=s3_bucket_name,
+        Key=object_name,
+        ExtraArgs={
+            'ContentType': f"image/{img_type}",
+        }
+    )
+
+    # update user model
+    avatar_media = Media()
+    avatar_media.object_name = object_name
+    avatar_media.save()
+    os.remove(temp_fp)
+
+    return avatar_media
+
 
 ######
 # Me #
 ######
+
 
 class AvatarUrl(fields.Raw):
     def format(self, avatar):
@@ -67,42 +109,16 @@ class MyAvatar(Resource):
         args = user_avatar_parser.parse_args()
         file = args['file']
 
-        # check file size
-        # flask will limit upload size for us :)
-        # would return 413 if file is too large
-
-        # save the file
-        temp_fp = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
-        file.save(temp_fp)
-
-        # check upload format
-        img_type = imghdr.what(temp_fp)
-        if img_type not in ALLOWED_IMAGE_TYPES:
-            return {'msg': f"Blacklisted image type {img_type}"}, 400
         # the resulting object name looks like avatars/kt-1627815711477.jpeg
         # avatars prefix is made explicitly public readable
         # because it's faster to read a user's metadata, and we are fine with all avatars being public
-        object_name = f"avatars/{user_id}-{str(time.time_ns() // 1_000_000)}.{img_type}"
+        object_name_stem = f"avatars/{user_id}-{str(time.time_ns() // 1_000_000)}"
+        avatar_media = upload_to_s3(file, object_name_stem)
+        if not avatar_media:
+            return {'msg': f"Blacklisted image type"}, 400
 
-        # upload avatar
-        s3_client.upload_file(
-            Filename=temp_fp,
-            Bucket=s3_bucket_name,
-            Key=object_name,
-            ExtraArgs={
-                'ContentType': f"image/{img_type}",
-            }
-        )
-
-        # update user model
-        avatar_media = Media()
-        avatar_media.object_name = object_name
-        avatar_media.save()
         user.avatar = avatar_media
         user.save()
-
-        # TODO: remove previous avatar
-        os.remove(temp_fp)
 
 
 #########
@@ -281,6 +297,9 @@ post_parser.add_argument('is_public', type=bool, required=True)
 post_parser.add_argument('circle_names', type=str, action="append", default=[])
 post_parser.add_argument('reshareable', type=bool, required=True)
 post_parser.add_argument('reshared_from', type=str, required=False)
+for i in range(MaxPostMediaCount):
+    post_parser.add_argument('media' + str(i), type=werkzeug.datastructures.FileStorage, location='files',
+                             required=False, default=None)
 
 post_fields = {
     'id': fields.String,
@@ -332,12 +351,16 @@ class Posts(Resource):
         user = User.find(user_id)
 
         args = post_parser.parse_args()
+
+        # check circles
         circles = []
         for circle_name in args['circle_names']:
             found_circle = user.find_circle(circle_name)
             if not found_circle:
                 return {'msg': f'Circle {circle_name} is not found'}, 404
             circles.append(found_circle)
+
+        # check reshare
         reshared_from = args['reshared_from']
         reshared_from_post = None
         if reshared_from:
@@ -349,7 +372,8 @@ class Posts(Resource):
             is_public=args['is_public'],
             circles=circles,
             reshareable=args['reshareable'],
-            reshared_from=reshared_from_post
+            reshared_from=reshared_from_post,
+            media_list=[]
         )
         if not post_id:
             return {"msg": f"Not allowed to reshare post {reshared_from}"}, 403
