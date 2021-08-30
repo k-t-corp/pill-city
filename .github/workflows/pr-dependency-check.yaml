@@ -1,3 +1,5 @@
+name: PR dependency check
+
 on: [pull_request]
 
 jobs:
