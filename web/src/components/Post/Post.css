@@ -264,6 +264,30 @@
     top: 10px;
 }
 
+/* Reshare */
+
+.post-reshared-wrapper {
+    border: #f0f0f0 solid 2px;
+    margin: 20px 20px;
+    padding: 20px;
+    border-radius: 4px;
+}
+
+.post-reshared-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+.post-reshared-avatar {
+    width: 40px;
+    height: 40px;
+}
+
+.post-reshared-author {
+    margin-left: 10px;
+    font-weight: bold;
+    font-size: larger;
+}
 /*Animation*/
 
 .fade-in {

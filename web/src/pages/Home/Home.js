@@ -26,6 +26,7 @@ export default (props) => {
     } else {
       let postElements = []
       for (let i = 0; i < posts.length; i++) {
+        console.log(posts[i])
         postElements.push(<Post key={i} data={posts[i]} me={me} api={props.api}/>)
       }
       return postElements

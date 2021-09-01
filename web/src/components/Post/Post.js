@@ -32,6 +32,28 @@ export default (props) => {
     newContent = newContent.replace(regExForBold, '<b>$1</b>')
     return <div className={className} dangerouslySetInnerHTML={{__html: newContent}}/>
   }
+  const resharedElem = (resharedFrom) => {
+    if (resharedFrom.id === null) {
+      return null
+    }
+    return (
+      <div className="post-reshared-wrapper">
+        <div className="post-reshared-info">
+          <div className="post-avatar post-reshared-avatar">
+            <img
+              className="post-avatar-img"
+              src={getAvatarUrl(resharedFrom.author)}
+              alt=""
+            />
+          </div>
+          <div className="post-reshared-author">
+            {resharedFrom.author.id}
+          </div>
+        </div>
+        {parseContent(resharedFrom.content, "")}
+      </div>)
+  }
+
   function parseReactionData(data) {
     let parsedData = {} // Format: {emoji: [{author, reactionId}]}
     for (let i = 0; i < data.length; i++) {
@@ -54,6 +76,7 @@ export default (props) => {
     }
     return parsedData
   }
+
   const meReactedWithEmoji = (emoji) => {
     //  return reaction id if me reacted with emoji, return null otherwise
     let reactionDetail = reactionData[emoji]
@@ -90,7 +113,7 @@ export default (props) => {
         await props.api.deleteReaction(props.data.id, reactionId)
         setReactionData({
           ...reactionData,
-          [emoji]: reactionData[emoji].filter(({ reactionId: rId }) => rId !== reactionId)
+          [emoji]: reactionData[emoji].filter(({reactionId: rId}) => rId !== reactionId)
         })
       } catch (e) {
         console.log(e)
@@ -294,6 +317,7 @@ export default (props) => {
           </div>
         </div>
         {parseContent(props.data.content, "post-content")}
+        {resharedElem(props.data.reshared_from)}
         <div className="post-interactions-wrapper">
           <div className="post-reactions-wrapper">
             {reactions}
