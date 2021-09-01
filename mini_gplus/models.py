@@ -1,7 +1,8 @@
 import bleach
+from enum import Enum
 from typing import List
-from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, PULL, CASCADE, NULLIFY, \
-    NotUniqueError
+from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, GenericReferenceField, \
+    EnumField, PULL, CASCADE, NULLIFY, NotUniqueError
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import generate_password_hash, check_password_hash
 import emoji as emoji_lib
@@ -462,3 +463,15 @@ class Post(Document, CreatedAtMixin):
     reactions = ListField(ReferenceField(Reaction, reverse_delete_rule=PULL), default=[])  # type: List[Reaction]
     circles = ListField(ReferenceField(Circle, reverse_delete_rule=PULL), default=[])  # type: List[Circle]
     comments = ListField(ReferenceField(Comment, reverse_delete_rule=PULL), default=[])  # type: List[Comment]
+
+
+class NotifyingAction(Enum):
+    Comment = "comment"
+    Mention = "mention"
+
+
+class Notification(Document, CreatedAtMixin):
+    owner = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
+    notified_location = GenericReferenceField(required=True)
+    notifier = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
+    notifying_action = EnumField(NotifyingAction, required=True)  # type: NotifyingAction
