@@ -109,7 +109,7 @@ class User(Document, CreatedAtMixin):
         :param (bool) is_public: whether the post is public
         :param (List[Circle]) circles: circles to share with
         :param (bool) reshareable: whether the post is reshareable
-        :param (Optional[Post]) reshared_from: Post object for the resharing post
+        :param (Post) reshared_from: Post object for the resharing post
         :return (str) ID of the new post
         """
         # TODO: when resharing, only allow content (text), e.g. no media
@@ -549,9 +549,9 @@ class User(Document, CreatedAtMixin):
             return
         new_notification = Notification()
         new_notification.notifier = self
-        new_notification.notifying_location = notifying_href
+        new_notification.notifying_href = notifying_href
         new_notification.notifying_action = notifying_action
-        new_notification.notified_location = notified_href
+        new_notification.notified_href = notified_href
         new_notification.owner = owner
         new_notification.save()
 

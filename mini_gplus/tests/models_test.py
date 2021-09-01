@@ -1,6 +1,6 @@
 from unittest import TestCase
 from mongoengine import connect, disconnect
-from mini_gplus.models import User, Post, Comment, Notification, NotifyingAction, UnauthorizedAccess, Reaction, \
+from mini_gplus.models import User, Post, Notification, NotifyingAction, UnauthorizedAccess, Reaction, \
     NotFound, BadRequest
 
 
@@ -186,9 +186,9 @@ class TestModels(TestCase):
             self.assertIn(comment1.id, list(map(lambda c: c.id, post.comments)))
             if acting_user.id != post.author.id:
                 self.assertEqual(1, len(Notification.objects(notifier=acting_user,
-                                                             notifying_location=comment1,
+                                                             notifying_href=f"/post/{post.eid}#comment-{comment_id}",
                                                              notifying_action=NotifyingAction.Comment,
-                                                             notified_location=post,
+                                                             notified_href=f"/post/{post.eid}",
                                                              owner=post.author.id)))
         else:
             def op1():
@@ -204,9 +204,10 @@ class TestModels(TestCase):
             self.assertIn(nested_comment1.id, list(map(lambda c: c.id, comment1.comments)))
             if acting_user.id != comment1.author.id:
                 self.assertEqual(1, len(Notification.objects(notifier=acting_user,
-                                                             notifying_location=nested_comment1,
+                                                             notifying_href=f"/post/{post.eid}"
+                                                                            f"#comment-{nested_comment_id}",
                                                              notifying_action=NotifyingAction.Comment,
-                                                             notified_location=comment1,
+                                                             notified_href=f"/post/{post.eid}#comment-{comment_id}",
                                                              owner=comment1.author.id)))
         else:
             def op2():
@@ -222,9 +223,9 @@ class TestModels(TestCase):
             self.assertIn(reaction1.id, list(map(lambda c: c.id, post.reactions)))
             if acting_user.id != post.author.id:
                 self.assertEqual(1, len(Notification.objects(notifier=acting_user,
-                                                             notifying_location=reaction1,
+                                                             notifying_href=f"/post/{post.eid}#reaction-{reaction_id}",
                                                              notifying_action=NotifyingAction.Reaction,
-                                                             notified_location=post,
+                                                             notified_href=f"/post/{post.eid}",
                                                              owner=post.author.id)))
         else:
             def op3():
@@ -241,9 +242,9 @@ class TestModels(TestCase):
             self.assertEqual(post.id, new_post.reshared_from.id)
             if acting_user.id != post.author.id:
                 self.assertEqual(1, len(Notification.objects(notifier=acting_user,
-                                                             notifying_location=new_post,
+                                                             notifying_href=f"/post/{new_post_id}",
                                                              notifying_action=NotifyingAction.Reshare,
-                                                             notified_location=post,
+                                                             notified_href=f"/post/{post.eid}",
                                                              owner=post.author.id)))
         else:
             self.assertFalse(acting_user.create_post('resharing', is_public=True, circles=[], reshareable=True,
