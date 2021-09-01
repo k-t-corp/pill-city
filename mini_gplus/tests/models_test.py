@@ -188,6 +188,7 @@ class TestModels(TestCase):
             self.assertIn(comment1.id, list(map(lambda c: c.id, post.comments)))
             if acting_user.id != post.author.id:
                 self.assertEqual(1, len(Notification.objects(notifier=acting_user,
+                                                             notifying_location=comment1,
                                                              notifying_action=NotifyingAction.Comment,
                                                              notified_location=post,
                                                              owner=post.author.id)))
@@ -209,6 +210,7 @@ class TestModels(TestCase):
             self.assertIn(nested_comment1.id, list(map(lambda c: c.id, comment1.comments)))
             if acting_user.id != comment1.author.id:
                 self.assertEqual(1, len(Notification.objects(notifier=acting_user,
+                                                             notifying_location=nested_comment1,
                                                              notifying_action=NotifyingAction.Comment,
                                                              notified_location=comment1,
                                                              owner=comment1.author.id)))
@@ -228,6 +230,7 @@ class TestModels(TestCase):
             self.assertIn(reaction1.id, list(map(lambda c: c.id, post.reactions)))
             if acting_user.id != post.author.id:
                 self.assertEqual(1, len(Notification.objects(notifier=acting_user,
+                                                             notifying_location=reaction1,
                                                              notifying_action=NotifyingAction.Reaction,
                                                              notified_location=post,
                                                              owner=post.author.id)))
@@ -246,6 +249,7 @@ class TestModels(TestCase):
             self.assertEqual(post.id, new_post.reshared_from.id)
             if acting_user.id != post.author.id:
                 self.assertEqual(1, len(Notification.objects(notifier=acting_user,
+                                                             notifying_location=new_post,
                                                              notifying_action=NotifyingAction.Reshare,
                                                              notified_location=post,
                                                              owner=post.author.id)))

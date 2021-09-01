@@ -113,6 +113,8 @@ class User(Document, CreatedAtMixin):
         new_post.is_public = is_public
         new_post.circles = circles
         new_post.reshareable = reshareable
+
+        sharing_from = None
         if reshared_from:
             if reshared_from.reshared_from:
                 # if reshared_from itself is a reshared post, reshare reshared_from's original post
@@ -125,14 +127,16 @@ class User(Document, CreatedAtMixin):
             if not sharing_from.reshareable:
                 return False
             new_post.reshared_from = sharing_from
+        new_post.save()
 
+        if sharing_from:
             self.create_notification(
+                notifying_location=new_post,
                 notifying_action=NotifyingAction.Reshare,
                 notified_location=sharing_from,
                 owner=sharing_from.author
             )
 
-        new_post.save()
         return str(new_post.id)
 
     def owns_post(self, post):
@@ -222,6 +226,7 @@ class User(Document, CreatedAtMixin):
             parent_post.save()
 
             self.create_notification(
+                notifying_location=new_comment,
                 notifying_action=NotifyingAction.Comment,
                 notified_location=parent_post,
                 owner=parent_post.author
@@ -251,6 +256,7 @@ class User(Document, CreatedAtMixin):
             parent_comment.save()
 
             self.create_notification(
+                notifying_location=new_comment,
                 notifying_action=NotifyingAction.Comment,
                 notified_location=parent_comment,
                 owner=parent_comment.author
@@ -341,6 +347,7 @@ class User(Document, CreatedAtMixin):
             parent_post.save()
 
             self.create_notification(
+                notifying_location=new_reaction,
                 notifying_action=NotifyingAction.Reaction,
                 notified_location=parent_post,
                 owner=parent_post.author
@@ -477,11 +484,12 @@ class User(Document, CreatedAtMixin):
     ################
     # Notification #
     ################
-    def create_notification(self, notifying_action, notified_location, owner):
+    def create_notification(self, notifying_location, notifying_action, notified_location, owner):
         if self.id == owner.id:
             return
         new_notification = Notification()
         new_notification.notifier = self
+        new_notification.notifying_location = notifying_location
         new_notification.notifying_action = notifying_action
         new_notification.notified_location = notified_location
         new_notification.owner = owner
@@ -537,7 +545,8 @@ class NotifyingAction(Enum):
 
 
 class Notification(Document, CreatedAtMixin):
-    owner = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
     notifier = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
+    notifying_location = GenericReferenceField(required=True)
     notifying_action = EnumField(NotifyingAction, required=True)  # type: NotifyingAction
     notified_location = GenericReferenceField(required=True)
+    owner = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
