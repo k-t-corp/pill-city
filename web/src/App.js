@@ -17,7 +17,9 @@ import Circles from './pages/Circles/Circles'
 import Users from './pages/Users/Users'
 import Profile from './pages/Profile/Profile'
 import withUserId from "./hoc/withUserId";
+import withPostId from "./hoc/withPostId";
 import Settings from './pages/Settings/Settings'
+import Post from './pages/Post/Post'
 
 const api = new Api(process.env.REACT_APP_API_ENDPOINT)
 
@@ -30,6 +32,10 @@ export default class App extends Component {
             exact={true}
             path='/'
             component={withApi(withAuthRedirect(withNavBar(Home, '/')), api)}
+          />
+          <Route
+            path='/post/:id'
+            component={withPostId(withApi(withAuthRedirect(withNavBar(Post, '/')), api))}
           />
           <Route
             path="/profile/:id"
