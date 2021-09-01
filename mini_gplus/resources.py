@@ -7,7 +7,7 @@ import werkzeug
 import tempfile
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from .models import User, Post, Comment, Media, Reaction as ReactionModel
+from .models import User, Media
 
 ALLOWED_IMAGE_TYPES = ['gif', 'jpeg', 'bmp', 'png']
 
@@ -297,15 +297,15 @@ post_parser.add_argument('is_public', type=bool, required=True)
 post_parser.add_argument('circle_names', type=str, action="append", default=[])
 
 post_fields = {
-    'id': fields.String,
+    'id': fields.String(attribute='eid'),
     'created_at_seconds': fields.Integer(attribute='created_at'),
     'author': fields.Nested(user_fields),
     'content': fields.String,
     'is_public': fields.Boolean,
     'reactions': fields.List(fields.Nested({
+        'id': fields.String(attribute='eid'),
         'emoji': fields.String,
         'author': fields.Nested(user_fields),
-        'id': fields.String,
     })),
     # TODO: only return the circles that the seeing user is in
     'circles': fields.List(fields.Nested({
@@ -313,13 +313,13 @@ post_fields = {
         'name': fields.String,
     })),
     'comments': fields.List(fields.Nested({
-        'id': fields.String,
+        'id': fields.String(attribute='eid'),
         'created_at_seconds': fields.Integer(attribute='created_at'),
         'author': fields.Nested(user_fields),
         'content': fields.String,
         # we only assume two-levels of nesting for comments, so no need to recursively define comments fields
         'comments': fields.List(fields.Nested({
-            'id': fields.String,
+            'id': fields.String(attribute='eid'),
             'created_at_seconds': fields.Integer(attribute='created_at'),
             'author': fields.Nested(user_fields),
             'content': fields.String,
@@ -395,10 +395,10 @@ class Comments(Resource):
         """
         user_id = get_jwt_identity()
         user = User.find(user_id)
-        post = Post.objects.get(id=post_id)
+        post = user.get_post(post_id)
         comment_args = comment_parser.parse_args()
         comment_id = user.create_comment(comment_args['content'], post)
-        return {"id": comment_id}, 201
+        return {'id': comment_id}, 201
 
 
 ###################
@@ -414,8 +414,8 @@ class NestedComments(Resource):
         """
         user_id = get_jwt_identity()
         user = User.find(user_id)
-        post = Post.objects.get(id=post_id)
-        comment = Comment.objects.get(id=comment_id)
+        post = user.get_post(post_id)
+        comment = user.get_comment(comment_id)
         if comment not in post.comments:
             return {'msg': 'Cannot nest more than two levels of comment'}, 403
         nested_comment_args = comment_parser.parse_args()
@@ -438,12 +438,12 @@ class Reactions(Resource):
         """
         user_id = get_jwt_identity()
         user = User.find(user_id)
-        post = Post.objects.get(id=post_id)
+        post = user.get_post(post_id)
         if not post:
             return {"msg": "post is not found"}, 404
         reaction_args = reaction_parser.parse_args()
         reaction_id = user.create_reaction(reaction_args['emoji'], post)
-        return {"id": reaction_id}, 201
+        return {'id': reaction_id}, 201
 
 
 class Reaction(Resource):
@@ -454,10 +454,10 @@ class Reaction(Resource):
         """
         user_id = get_jwt_identity()
         user = User.find(user_id)
-        post = Post.objects.get(id=post_id)
+        post = user.get_post(post_id)
         if not post:
             return {"msg": "post is not found"}, 404
-        reaction_to_delete = ReactionModel.objects.get(id=reaction_id)
+        reaction_to_delete = user.get_reaction(reaction_id)
         if reaction_to_delete not in post.reactions:
             return {'msg': f'Reaction {reaction_to_delete} is already not in post {post_id}'}, 409
         user.delete_reaction(reaction_to_delete, post)
