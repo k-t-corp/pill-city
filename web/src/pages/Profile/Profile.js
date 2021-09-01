@@ -13,10 +13,6 @@ export default class Profile extends Component {
     }
   }
 
-  showError = (err) => {
-    this.setState({'error': err.toString()})
-  }
-
   componentDidMount() {
     let promise
     if (!this.props.userId) {

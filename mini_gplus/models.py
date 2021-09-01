@@ -1,3 +1,4 @@
+import uuid
 import bleach
 from typing import List
 from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, PULL, CASCADE, NULLIFY, \
@@ -5,6 +6,10 @@ from mongoengine import Document, ListField, BooleanField, ReferenceField, Strin
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import generate_password_hash, check_password_hash
 import emoji as emoji_lib
+
+
+def make_uuid():
+    return str(uuid.uuid4())
 
 
 class UnauthorizedAccess(HTTPException):
@@ -108,6 +113,7 @@ class User(Document, CreatedAtMixin):
         """
         # TODO: when resharing, only allow content (text), e.g. no media
         new_post = Post()
+        new_post.eid = make_uuid()
         new_post.author = self.id
         new_post.content = bleach.clean(content)
         new_post.is_public = is_public
@@ -129,7 +135,14 @@ class User(Document, CreatedAtMixin):
             return False
         new_post.reshareable = reshareable
         new_post.save()
-        return str(new_post.id)
+        return str(new_post.eid)
+
+    @staticmethod
+    def get_post(post_id):
+        """
+        Get a post by its ID
+        """
+        return Post.objects.get(eid=post_id)
 
     def owns_post(self, post):
         """
@@ -210,12 +223,13 @@ class User(Document, CreatedAtMixin):
         # public posts
         if self.sees_post(parent_post, context_home_or_profile=False):
             new_comment = Comment()
+            new_comment.eid = make_uuid()
             new_comment.author = self.id
             new_comment.content = bleach.clean(content)
             new_comment.save()
             parent_post.comments.append(new_comment)
             parent_post.save()
-            return str(new_comment.id)
+            return str(new_comment.eid)
         else:
             raise UnauthorizedAccess()
 
@@ -231,14 +245,22 @@ class User(Document, CreatedAtMixin):
         # same explanation for context_home_or_profile=False
         if self.sees_post(parent_post, context_home_or_profile=False):
             new_comment = Comment()
+            new_comment.eid = make_uuid()
             new_comment.author = self.id
             new_comment.content = bleach.clean(content)
             new_comment.save()
             parent_comment.comments.append(new_comment)
             parent_comment.save()
-            return str(new_comment.id)
+            return str(new_comment.eid)
         else:
             raise UnauthorizedAccess()
+
+    @staticmethod
+    def get_comment(comment_id):
+        """
+        Get a Comment by its ID
+        """
+        return Comment.objects.get(eid=comment_id)
 
     def owns_comment(self, comment, parent_post):
         """
@@ -295,7 +317,6 @@ class User(Document, CreatedAtMixin):
     ############
     # Reaction #
     ############
-
     def create_reaction(self, emoji, parent_post):
         """
         Create a reaction for the user
@@ -313,14 +334,19 @@ class User(Document, CreatedAtMixin):
                 raise BadRequest()
 
             new_reaction = Reaction()
+            new_reaction.eid = make_uuid()
             new_reaction.author = self.id
             new_reaction.emoji = emoji
             new_reaction.save()
             parent_post.reactions.append(new_reaction)
             parent_post.save()
-            return str(new_reaction.id)
+            return str(new_reaction.eid)
         else:
             raise UnauthorizedAccess()
+
+    @staticmethod
+    def get_reaction(reaction_id):
+        return Reaction.objects.get(eid=reaction_id)
 
     def owns_reaction(self, reaction):
         """
@@ -482,17 +508,20 @@ class Circle(Document, CreatedAtMixin):
 
 
 class Comment(Document, CreatedAtMixin):
+    eid = StringField(required=True)
     author = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
     content = StringField(required=True)
     comments = ListField(ReferenceField('Comment', reverse_delete_rule=PULL), default=[])  # type: List[Comment]
 
 
 class Reaction(Document, CreatedAtMixin):
+    eid = StringField(required=True)
     author = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
     emoji = StringField(required=True)
 
 
 class Post(Document, CreatedAtMixin):
+    eid = StringField(required=True)
     author = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
     content = StringField(required=True)
     is_public = BooleanField(required=True)
