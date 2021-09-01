@@ -1,6 +1,7 @@
 from unittest import TestCase
 from mongoengine import connect, disconnect
-from mini_gplus.models import User, Post, Comment, UnauthorizedAccess, Reaction, NotFound, BadRequest
+from mini_gplus.models import User, Post, Comment, Notification, NotifyingAction, UnauthorizedAccess, Reaction, \
+    NotFound, BadRequest
 
 
 class TestModels(TestCase):
@@ -148,12 +149,6 @@ class TestModels(TestCase):
         self.assertEqual([], user1.get_followings())
         self.assertFalse(user1.remove_following(user2))
 
-    #################
-    # Notifications #
-    #################
-    def test_notifications_from_post_comment(self):
-        pass
-
     ###############################################################################
     # Posts, comments, nested-comments, reacts and reshares + circles + following #
     ###############################################################################
@@ -191,6 +186,11 @@ class TestModels(TestCase):
             self.assertEqual(1, len(comment1))
             comment1 = comment1[0]
             self.assertIn(comment1.id, list(map(lambda c: c.id, post.comments)))
+            if acting_user.id != post.author.id:
+                self.assertEqual(1, len(Notification.objects(notifier=acting_user,
+                                                             notifying_action=NotifyingAction.Comment,
+                                                             notified_location=post,
+                                                             owner=post.author.id)))
         else:
             def op1():
                 acting_user.create_comment('comment1', post)
@@ -207,6 +207,11 @@ class TestModels(TestCase):
             self.assertEqual(1, len(nested_comment1))
             nested_comment1 = nested_comment1[0]
             self.assertIn(nested_comment1.id, list(map(lambda c: c.id, comment1.comments)))
+            if acting_user.id != comment1.author.id:
+                self.assertEqual(1, len(Notification.objects(notifier=acting_user,
+                                                             notifying_action=NotifyingAction.Comment,
+                                                             notified_location=comment1,
+                                                             owner=comment1.author.id)))
         else:
             def op2():
                 acting_user.create_nested_comment('nested_comment1', comment1, post)
@@ -221,6 +226,11 @@ class TestModels(TestCase):
             self.assertEqual(1, len(reaction1))
             reaction1 = reaction1[0]
             self.assertIn(reaction1.id, list(map(lambda c: c.id, post.reactions)))
+            if acting_user.id != post.author.id:
+                self.assertEqual(1, len(Notification.objects(notifier=acting_user,
+                                                             notifying_action=NotifyingAction.Reaction,
+                                                             notified_location=post,
+                                                             owner=post.author.id)))
         else:
             def op3():
                 acting_user.create_reaction('💩', post)
@@ -234,6 +244,11 @@ class TestModels(TestCase):
             self.assertEqual(1, len(Post.objects(id=new_post_id)))
             new_post = Post.objects(id=new_post_id)[0]
             self.assertEqual(post.id, new_post.reshared_from.id)
+            if acting_user.id != post.author.id:
+                self.assertEqual(1, len(Notification.objects(notifier=acting_user,
+                                                             notifying_action=NotifyingAction.Reshare,
+                                                             notified_location=post,
+                                                             owner=post.author.id)))
         else:
             self.assertFalse(acting_user.create_post('resharing', is_public=True, circles=[], reshareable=True,
                                                      reshared_from=post))
