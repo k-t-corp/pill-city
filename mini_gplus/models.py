@@ -125,6 +125,14 @@ class User(Document, CreatedAtMixin):
             if not sharing_from.reshareable:
                 return False
             new_post.reshared_from = sharing_from
+
+            reshare_notification = Notification()
+            reshare_notification.owner = sharing_from.author
+            reshare_notification.notifier = self
+            reshare_notification.notifying_action = NotifyingAction.Reshare
+            reshare_notification.notified_location = sharing_from
+            reshare_notification.save()
+
         new_post.save()
         return str(new_post.id)
 
@@ -210,8 +218,17 @@ class User(Document, CreatedAtMixin):
             new_comment.author = self.id
             new_comment.content = bleach.clean(content)
             new_comment.save()
+
             parent_post.comments.append(new_comment)
             parent_post.save()
+
+            new_notification = Notification()
+            new_notification.owner = parent_post.author
+            new_notification.notifier = self
+            new_notification.notifying_action = NotifyingAction.Comment
+            new_notification.notified_location = parent_post
+            new_notification.save()
+
             return str(new_comment.id)
         else:
             raise UnauthorizedAccess()
@@ -231,8 +248,17 @@ class User(Document, CreatedAtMixin):
             new_comment.author = self.id
             new_comment.content = bleach.clean(content)
             new_comment.save()
+
             parent_comment.comments.append(new_comment)
             parent_comment.save()
+
+            new_notification = Notification()
+            new_notification.owner = parent_comment.author
+            new_notification.notifier = self
+            new_notification.notifying_action = NotifyingAction.Comment
+            new_notification.notified_location = parent_comment
+            new_notification.save()
+
             return str(new_comment.id)
         else:
             raise UnauthorizedAccess()
@@ -313,8 +339,17 @@ class User(Document, CreatedAtMixin):
             new_reaction.author = self.id
             new_reaction.emoji = emoji
             new_reaction.save()
+
             parent_post.reactions.append(new_reaction)
             parent_post.save()
+
+            new_notification = Notification()
+            new_notification.owner = parent_post.author
+            new_notification.notifier = self
+            new_notification.notifying_action = NotifyingAction.Reaction
+            new_notification.notified_location = parent_post
+            new_notification.save()
+
             return str(new_reaction.id)
         else:
             raise UnauthorizedAccess()
@@ -488,10 +523,12 @@ class Post(Document, CreatedAtMixin):
 class NotifyingAction(Enum):
     Comment = "comment"
     Mention = "mention"
+    Reaction = "reaction"
+    Reshare = "reshare"
 
 
 class Notification(Document, CreatedAtMixin):
     owner = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
-    notified_location = GenericReferenceField(required=True)
     notifier = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
     notifying_action = EnumField(NotifyingAction, required=True)  # type: NotifyingAction
+    notified_location = GenericReferenceField(required=True)
