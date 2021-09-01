@@ -114,7 +114,7 @@ export default class Api {
     return res.data
   }
 
-  async postPost(content, isPublic, circlesNames) {
+  async postPost(content, isPublic, circlesNames, reshareable, resharedFrom) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.post(
       `/posts`,
@@ -122,8 +122,8 @@ export default class Api {
         content,
         is_public: isPublic,
         circle_names: circlesNames,
-        reshareable: false, // TODO: passed in
-        // reshared_from: 'post id' // TODO: passed in
+        reshareable: reshareable,
+        reshared_from: resharedFrom
       }
     )
     if (res.status !== 201) {
@@ -136,6 +136,17 @@ export default class Api {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
       `/posts`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
+
+  async getPost(postId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.get(
+      `/post/${postId}`
     )
     if (res.status !== 200) {
       throw new ApiError(res.status)
@@ -284,7 +295,7 @@ export default class Api {
     return res.data
   }
 
-  async deleteReaction(postId, reactionId){
+  async deleteReaction(postId, reactionId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.delete(
       `/posts/${postId}/reaction/${reactionId}`,
@@ -307,6 +318,16 @@ export default class Api {
           'Content-Type': `multipart/form-data;`,
         }
       }
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+  }
+
+  async updateProfilePic(newProfilePic, userId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.patch(
+      `/me/profilePic/${newProfilePic}`
     )
     if (res.status !== 200) {
       throw new ApiError(res.status)

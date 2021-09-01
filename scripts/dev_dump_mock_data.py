@@ -182,7 +182,7 @@ def main():
     sirjie.create_post(' -聽話！讓我看看！- ', is_public=True)
 
     # Create some reshares
-    kt.create_post('是傑哥耶！！', is_public=True, reshared_from=sirjie_post_id)
+    kt.create_post('是傑哥耶！！', is_public=True, reshareable=True, reshared_from=sirjie_post_id)
 
     # Create some reactions
     kt.create_reaction(sirjie_post_id, '👦')
