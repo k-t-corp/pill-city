@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from 'react'
 import Picker from 'emoji-picker-react';
 import "./Post.css"
 import getAvatarUrl from "../../api/getAvatarUrl";
+import parseContent from "../../parseContent";
 
 export default (props) => {
   const [addComment, updateAddComment] = useState(false)
@@ -22,15 +23,6 @@ export default (props) => {
     } else {
       return new Date(postedAtSeconds).toISOString().split('T')[0];
     }
-  }
-  const parseContent = (content, className) => {
-    const regExForStrikeThrough = / -(.+)- /g
-    const regExForItalic = / _(.+)_ /g
-    const regExForBold = / \*(.+)\* /g
-    let newContent = content.replace(regExForStrikeThrough, '<del>$1</del>');
-    newContent = newContent.replace(regExForItalic, '<i>$1</i>')
-    newContent = newContent.replace(regExForBold, '<b>$1</b>')
-    return <div className={className} dangerouslySetInnerHTML={{__html: newContent}}/>
   }
   const resharedElem = (resharedFrom) => {
     if (resharedFrom.id === null) {
