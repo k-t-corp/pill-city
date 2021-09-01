@@ -6,11 +6,11 @@ import 'react-image-crop/dist/ReactCrop.css';
 const FormData = require('form-data');
 
 export default (props) => {
-  const [imageUrl, updateImageUrl] = useState()
-  const imgRef = useRef(null);
   const [loading, updateLoading] = useState(true)
-  const [modalOpened, updateModalOpened] = useState(false)
   const [me, updateMe] = useState("")
+  const [avatarImageUrl, updateAvatarImageUrl] = useState()
+  const avatarImageRef = useRef(null);
+  const [avatarModalOpened, updateAvatarModalOpened] = useState(false)
   const [crop, setCrop] = useState(
     {
       unit: '%',
@@ -19,20 +19,40 @@ export default (props) => {
       y: 0,
       width: 100,
     });
-  const [uploadedImage, updateUploadedImage] = useState()
+  const [uploadedAvatarImage, updateUploadedAvatarImage] = useState()
+  const profilePicOptions = ["pill1.png", "pill2.png", "pill3.png", "pill4.png", "pill5.png", "pill6.png"]
+  const [profilePic, updateProfilePic] = useState()
+  const [profileModalOpened, updateProfileModalOpened] = useState(false)
+  const [profileModalSelectedPic, updateProfileModalSelectedPic] = useState()
+  const profileModalOptionsElem = () => {
+    let optionElem = []
+    for (let i = 0; i < profilePicOptions.length; i++) {
+      const selected = profileModalSelectedPic === profilePicOptions[i] ? "settings-profile-selection-option-selected" : null
+      optionElem.push(
+        <div className={`settings-profile-selection-option ${selected}`} key={i}
+             onClick={() => updateProfileModalSelectedPic(profilePicOptions[i])}>
+          <img className="settings-profile-selection-option-img"
+               src={`${process.env.PUBLIC_URL}/${profilePicOptions[i]}`} alt=""/>
+        </div>
+      )
+    }
+    return optionElem
+  }
 
   useEffect(async () => {
     const meProfile = await props.api.getMe()
     updateMe(meProfile)
-    updateImageUrl(meProfile.avatar_url)
+    updateAvatarImageUrl(meProfile.avatar_url)
+    updateProfilePic(meProfile.profile_pic)
+    updateProfileModalSelectedPic(meProfile.profile_pic)
     updateLoading(false)
   }, [])
 
   const changeAvatarOnClick = (event) => {
     if (event.target.files && event.target.files[0]) {
       let img = event.target.files[0];
-      updateUploadedImage(URL.createObjectURL(img))
-      updateModalOpened(true)
+      updateUploadedAvatarImage(URL.createObjectURL(img))
+      updateAvatarModalOpened(true)
     }
   }
 
@@ -71,7 +91,7 @@ export default (props) => {
   }
 
   const onLoad = useCallback((img) => {
-    imgRef.current = img;
+    avatarImageRef.current = img;
   }, []);
 
   const inputAvatarElement = document.getElementById("settings-change-avatar-button")
@@ -81,13 +101,29 @@ export default (props) => {
       <div>
         loading
       </div>
-    )} else {
+    )
+  } else {
     return (
       <div className="settings-wrapper">
         <div className="settings-user-info">
+          <div className="settings-banner-wrapper" style={{
+            backgroundColor: "#9dd0ff",
+            backgroundImage: `url(${process.env.PUBLIC_URL}/${profilePic})`
+          }}>
+            <div className="settings-change-profile-pic-button-wrapper">
+              <div className="settings-change-profile-pic-button" onClick={() => updateProfileModalOpened(true)}>
+                <svg className="settings-change-avatar-button-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
           <div className="settings-avatar-box">
             <div className="settings-avatar-wrapper">
-              <img className="settings-avatar-img" src={imageUrl} alt="user-avatar"/>
+              <img className="settings-avatar-img" src={avatarImageUrl} alt="user-avatar"/>
             </div>
             <label className="settings-change-avatar-button-wrapper">
               <input id="settings-change-avatar-button"
@@ -106,10 +142,44 @@ export default (props) => {
           <div className="settings-user-name">
             {me.id}
           </div>
-          {modalOpened ?
+          {profileModalOpened ?
+            <div className="settings-profile-pic-modal">
+              <div className="settings-profile-pic-modal-content">
+                <div id="settings-profile-pic-modal-preview" style={{
+                  backgroundColor: "#9dd0ff",
+                  backgroundImage: `url(${process.env.PUBLIC_URL}/${profileModalSelectedPic})`,
+                }}/>
+                <div className="settings-profile-pic-modal-selections">
+                  {profileModalOptionsElem()}
+                </div>
+                <div className="settings-modal-buttons">
+                  <div className="settings-modal-cancel-button"
+                       onClick={() => {
+                         updateProfileModalOpened(false)
+                       }}>
+                    Cancel
+                  </div>
+                  <div className="settings-modal-update-button"
+                       onClick={async () => {
+                         try {
+                           await props.api.updateProfilePic(profileModalSelectedPic, me.id)
+                           updateProfileModalOpened(false)
+                           updateProfilePic(profileModalSelectedPic)
+                         } catch (e) {
+                           console.log(e)
+                         }
+                       }
+                       }>
+                    Update
+                  </div>
+                </div>
+              </div>
+            </div>
+            : null}
+          {avatarModalOpened ?
             <div className="settings-avatar-modal">
               <div className="settings-avatar-modal-content">
-                <ReactCrop src={uploadedImage}
+                <ReactCrop src={uploadedAvatarImage}
                            crop={crop}
                            minWidth={50}
                            onImageLoaded={onLoad}
@@ -120,21 +190,21 @@ export default (props) => {
                   <div className="settings-modal-cancel-button"
                        onClick={() => {
                          inputAvatarElement.value = ''
-                         updateModalOpened(false)
+                         updateAvatarModalOpened(false)
                        }}>
                     Cancel
                   </div>
                   <div className="settings-modal-update-button"
                        onClick={async () => {
-                         const croppedImg = await getCroppedImg(imgRef.current, crop, "new-avatar");
-                         updateImageUrl(URL.createObjectURL(croppedImg))
+                         const croppedImg = await getCroppedImg(avatarImageRef.current, crop, "new-avatar");
+                         updateAvatarImageUrl(URL.createObjectURL(croppedImg))
                          let data = new FormData();
                          data.append('file', croppedImg, croppedImg.name);
 
                          try {
                            await props.api.updateAvatar(data)
                            inputAvatarElement.value = ''
-                           updateModalOpened(false)
+                           updateAvatarModalOpened(false)
                          } catch (e) {
                            console.log(e)
                          }

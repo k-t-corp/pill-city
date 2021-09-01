@@ -34,6 +34,7 @@ class User(Document, CreatedAtMixin):
     password = StringField(required=True)
     followings = ListField(ReferenceField('User', reverse_delete_rule=PULL), default=[])  # type: List[User]
     avatar = ReferenceField(Media, reverse_delete_rule=NULLIFY)
+    profile_pic = StringField(required=False, default="pill1.png")
 
     ########
     # User #
@@ -423,6 +424,21 @@ class User(Document, CreatedAtMixin):
         :return (List[User]): List of following users.
         """
         return list(self.followings)
+
+    ###############
+    # Profile Pic #
+    ###############
+
+    def update_profile_pic(self, profile_pic):
+        """
+        update users profile picture
+        """
+        available_profile_pic = ["pill1.png", "pill2.png", "pill3.png", "pill4.png", "pill5.png", "pill6.png"]
+        if profile_pic in available_profile_pic:
+            self.profile_pic = profile_pic
+            self.save()
+        else:
+            raise UnauthorizedAccess()
 
 
 class Circle(Document, CreatedAtMixin):

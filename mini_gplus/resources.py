@@ -41,7 +41,8 @@ user_parser.add_argument('password', type=str, required=True)
 user_fields = {
     'id': fields.String(attribute='user_id'),
     'created_at_seconds': fields.Integer(attribute='created_at'),
-    'avatar_url': AvatarUrl(attribute='avatar')
+    'avatar_url': AvatarUrl(attribute='avatar'),
+    'profile_pic': fields.String
 }
 
 user_avatar_parser = reqparse.RequestParser()
@@ -139,6 +140,21 @@ class MyAvatar(Resource):
 
         # TODO: remove previous avatar
         os.remove(temp_fp)
+
+
+class MyProfilePic(Resource):
+    @jwt_required()
+    def patch(self, user_profile_pic):
+        """
+        Update User profile pic
+        """
+        # check user
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+        if not user:
+            return {'msg': f'User {user_id} is not found'}, 404
+
+        user.update_profile_pic(user_profile_pic)
 
 
 #########
