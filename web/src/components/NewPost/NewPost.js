@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import {Dropdown, Popup, Icon, Checkbox} from 'semantic-ui-react'
 import "./NewPost.css"
 import getAvatarUrl from "../../api/getAvatarUrl";
+import parseContent from "../../parseContent";
 
 export default (props) => {
   const [content, updateContent] = useState("")
@@ -12,15 +13,6 @@ export default (props) => {
   const isValid = () => {
     return content.trim().length !== 0 && circleNames.length !== 0
   }
-  const parseContent = (content, className) => {
-    const regExForStrikeThrough = / -(.+)- /g
-    const regExForItalic = / _(.+)_ /g
-    const regExForBold = / \*(.+)\* /g
-    let newContent = content.replace(regExForStrikeThrough, '<del>$1</del>');
-    newContent = newContent.replace(regExForItalic, '<i>$1</i>')
-    newContent = newContent.replace(regExForBold, '<b>$1</b>')
-    return <div className={className} dangerouslySetInnerHTML={{__html: newContent}}/>
-  }
   const postButtonOnClick = async () => {
     updatePosting(true);
     const actualCircleNames = circleNames.filter(cn => cn !== true)
@@ -29,7 +21,7 @@ export default (props) => {
       content,
       isPublic,
       actualCircleNames,
-      resharableToggleChecked,
+      props.resharePostData === null ? resharableToggleChecked : true,
       props.resharePostData === null ? null : props.resharePostData.id);
     window.location.reload();
   }
