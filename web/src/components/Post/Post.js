@@ -167,6 +167,9 @@ export default (props) => {
   closePickerWhenClickOutside(emojiPickerRef);
 
   const highlightCommentId = props.highlightCommentId
+  const isHighlightComment = (commentId) => {
+    return highlightCommentId === commentId
+  }
   const highlightCommentRef = useRef(null)
   useEffect(() => {
     if (highlightCommentId) {
@@ -201,7 +204,12 @@ export default (props) => {
     for (let i = 0; i < comment.comments.length; i++) {
       const nestedComment = comment.comments[i]
       nestedComments.push(
-        <div id={nestedComment.id} ref={highlightCommentId === nestedComment.id ? highlightCommentRef : null} key={i} className="post-nested-comment">
+        <div
+          id={nestedComment.id}
+          ref={isHighlightComment(nestedComment.id) ? highlightCommentRef : null}
+          key={i}
+          className={`post-nested-comment ${isHighlightComment(nestedComment.id) ? "highlight-comment" : ""}`}
+        >
           <div className="post-avatar post-nested-comment-avatar">
             <img
               className="post-avatar-img"
@@ -221,7 +229,12 @@ export default (props) => {
       )
     }
     comments.push(
-      <div className="post-comment" id={comment.id} ref={highlightCommentId === comment.id ? highlightCommentRef : null} key={i}>
+      <div
+        id={comment.id}
+        ref={isHighlightComment(comment.id) ? highlightCommentRef : null}
+        key={i}
+        className={`post-comment ${isHighlightComment(comment.id) ? "highlight-comment" : ""}`}
+      >
         <div className="post-avatar post-comment-avatar">
           <img
             className="post-avatar-img"

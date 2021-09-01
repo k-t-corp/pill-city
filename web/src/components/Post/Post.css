@@ -143,6 +143,12 @@
     padding: 3px 0;
 }
 
+.highlight-comment {
+    background: #f0f0f0;
+    border: 2px solid #f0f0f0;
+    border-radius: 2px;
+}
+
 .post-comment-name {
     font-size: medium;
 }

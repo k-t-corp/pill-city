@@ -35,7 +35,7 @@ export default class Post extends Component {
   render() {
     let highlightCommentId
     if (this.props.location.hash) {
-      highlightCommentId = this.props.location.hash.split('#comment-id-')[1]
+      highlightCommentId = this.props.location.hash.split('#comment-')[1]
     }
     console.log(highlightCommentId)
     if (this.state.loading) {
