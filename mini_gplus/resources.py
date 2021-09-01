@@ -364,6 +364,19 @@ class Posts(Resource):
         return posts, 200
 
 
+class Post(Resource):
+    @jwt_required()
+    @marshal_with(post_fields)
+    def get(self, post_id: str):
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+
+        post = user.get_post(post_id)
+        if not user.sees_post(post, context_home_or_profile=False):
+            return {'msg': 'Do not have permission to see the post'}, 403
+        return post
+
+
 class Profile(Resource):
     @jwt_required()
     @marshal_with(post_fields)
