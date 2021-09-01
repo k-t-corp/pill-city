@@ -35,7 +35,7 @@ export default class App extends Component {
           />
           <Route
             path='/post/:id'
-            component={withPostId(withApi(withAuthRedirect(withNavBar(Post, '/')), api))}
+            component={withPostId(withApi(withAuthRedirect(withNavBar(Post, '/post')), api))}
           />
           <Route
             path="/profile/:id"

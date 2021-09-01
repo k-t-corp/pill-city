@@ -33,6 +33,7 @@
 
 .post-op-info-time {
     color: #767676;
+    cursor: pointer;
 }
 
 .post-name {
@@ -53,6 +54,9 @@
 }
 
 /*Post Content*/
+.post-content-wrapper {
+    cursor: pointer;
+}
 
 .post-content {
     overflow-wrap: break-word;

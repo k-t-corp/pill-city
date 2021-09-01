@@ -190,7 +190,6 @@ export default (props) => {
   const highlightCommentRef = useRef(null)
   useEffect(() => {
     if (highlightCommentId) {
-      console.log(highlightCommentRef)
       highlightCommentRef.current.scrollIntoView({behavior: 'smooth'})
     }
   }, [highlightCommentRef])
@@ -297,6 +296,7 @@ export default (props) => {
     }
     window.location.reload()
   }
+
   const reshareButtonOnClick = () => {
     if (props.data.reshared_from.id === null) {
       props.updateResharePostData(props.data)
@@ -312,6 +312,11 @@ export default (props) => {
     sharingScope = props.data.circles.map(c => c.name).join(', ')
   } else {
     sharingScope = 'Only you'
+  }
+
+  const navigateToPostPage = e => {
+    e.preventDefault();
+    window.location.href = `/post/${props.data.id}`
   }
 
   return (
@@ -334,12 +339,14 @@ export default (props) => {
             </div>
           </div>
           <div className="post-op-info-right">
-            <div className="post-op-info-time">
+            <div className="post-op-info-time" onClick={navigateToPostPage}>
               {timePosted(props.data.created_at_seconds)}
             </div>
           </div>
         </div>
-        {parseContent(props.data.content, "post-content")}
+        <div className='post-content-wrapper' onClick={navigateToPostPage}>
+          {parseContent(props.data.content, "post-content")}
+        </div>
         {resharedElem(props.data.reshared_from)}
         <div className="post-interactions-wrapper">
           <div className="post-reactions-wrapper">

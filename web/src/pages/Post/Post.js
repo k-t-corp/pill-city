@@ -37,7 +37,6 @@ export default class Post extends Component {
     if (this.props.location.hash) {
       highlightCommentId = this.props.location.hash.split('#comment-')[1]
     }
-    console.log(highlightCommentId)
     if (this.state.loading) {
       return (
         <Loader size='massive'/>
