@@ -78,9 +78,15 @@ class User(object):
         self._raise_on_unauthenticated()
         return self.sess.post(f"/api/following/{following_user_id}")
 
+    def create_reaction(self, post_id: str, emoji: str):
+        self._raise_on_unauthenticated()
+        return self.sess.post(f"/api/posts/{post_id}/reactions", json={
+            'emoji': emoji
+        })
+
 
 def main():
-    # drop everything in mino
+    # Drop everything in mino
     s3 = boto3.resource(
         's3',
         endpoint_url="http://localhost:19025",
@@ -89,13 +95,15 @@ def main():
         aws_secret_access_key="minioadmin"
     )
     bucket = s3.Bucket('minigplus')
+    print("Vacuuming s3")
     bucket.objects.all().delete()
 
-    # drop everything in mongodb
+    # Drop everything in mongodb
     client = pymongo.MongoClient("mongodb://localhost:19023/minigplus")
+    print("Vacuuming mongodb")
     client.drop_database("minigplus")
 
-    # sign up some users
+    # Sign up some users
     kt = User('kt'); kt.sign_up(); kt.sign_in(); kt.update_avatar('kt.jpeg')
     ika = User('ika'); ika.sign_up(); ika.sign_in(); ika.update_avatar('ika.jpeg')
     innkuika = User('innkuika'); innkuika.sign_up(); innkuika.sign_in(); innkuika.update_avatar('innkuika.jpg')
@@ -113,12 +121,12 @@ def main():
     senpai = User('114514'); senpai.sign_up(); senpai.sign_in(); senpai.update_avatar('senpai.png')
     sirjie = User('sirjie'); sirjie.sign_up(); sirjie.sign_in(); sirjie.update_avatar('sirjie.bmp')
 
-    # create some circles
+    # Create some circles
     kt.create_circle('ika')
     kt.create_circle('gachi')
     kt.create_circle('g+')
 
-    # add people to circles
+    # Add people to circles
     kt.add_user_to_circle('ika', 'ika')
     kt.add_user_to_circle('ika', 'innkuika')
     kt.add_user_to_circle('ika', 'ikayaki')
@@ -135,7 +143,7 @@ def main():
     kt.add_user_to_circle('g+', 'kele')
     kt.add_user_to_circle('g+', 'ahuhu')
 
-    # people follow back
+    # Add some followings
     ika.follow('kt')
     kt.follow('ika')
     van.follow('kt')
@@ -145,7 +153,7 @@ def main():
     sirjie.follow('kt')
     kt.follow('sirjie')
 
-    # post something
+    # Create some posts
     kt.create_post('rua', is_public=True)
     kt.create_post(' _Hello, World!_ ', is_public=True)
     kt_ika_post = kt.create_post('Ika!1!!!!', is_public=False, circle_names=['ika'])
@@ -172,7 +180,12 @@ def main():
     sirjie.create_post('這麼說你很勇ho', is_public=True)
     sirjie.create_post('我房裡有好康的', is_public=True)
     sirjie.create_post(' -聽話！讓我看看！- ', is_public=True)
+
+    # Create some reshares
     kt.create_post('是傑哥耶！！', is_public=True, reshared_from=sirjie_post_id)
+
+    # Create some reactions
+    kt.create_reaction(sirjie_post_id, '👦')
 
     # Create some comments
     ika_kt_ika_comment = ika.create_comment(kt_ika_post, 'rua')

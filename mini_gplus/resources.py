@@ -7,7 +7,7 @@ import werkzeug
 import tempfile
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from .models import User, Post, Comment, Media, Reaction as ReactionModel, Notification
+from .models import User, Post, Comment, Media, Reaction as ReactionModel
 
 ALLOWED_IMAGE_TYPES = ['gif', 'jpeg', 'bmp', 'png']
 
@@ -491,7 +491,7 @@ class NotificationLocation(fields.Raw):
             location_summary = NestedComments.objects.get(id=_id).content
         elif cls == 'Reaction':
             location_type = 'reaction'
-            location_summary = Reaction.objects.get(id=_id).emoji
+            location_summary = ReactionModel.objects.get(id=_id).emoji
         else:
             return {
                 'error': f'unknown notification location type {cls}'
@@ -505,6 +505,8 @@ class NotificationLocation(fields.Raw):
 
 
 notification_fields = {
+    'id': fields.String,
+    'created_at_seconds': fields.Integer(attribute='created_at'),
     'notifier': fields.Nested(user_fields),
     'notifying_location': NotificationLocation,
     'notifying_action': NotifyingAction,
