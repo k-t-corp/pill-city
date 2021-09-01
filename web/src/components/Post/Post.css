@@ -56,8 +56,8 @@
 
 .post-content {
     overflow-wrap: break-word;
-    margin: 15px 0;
     white-space: pre-line;
+    margin: 15px 0;
 }
 
 /*Reactions*/
@@ -268,8 +268,8 @@
 
 .post-reshared-wrapper {
     border: #e0e0e0 solid 1px;
-    margin: 20px 20px;
-    padding: 20px;
+    margin: -10px 0 10px 10px;
+    padding: 10px;
     border-radius: 4px;
 }
 

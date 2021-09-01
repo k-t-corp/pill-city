@@ -42,7 +42,9 @@ export default (props) => {
             {resharedFrom.author.id}
           </div>
         </div>
-        {parseContent(resharedFrom.content, "")}
+        <div className="post-content">
+          {parseContent(resharedFrom.content, "")}
+        </div>
       </div>)
   }
 

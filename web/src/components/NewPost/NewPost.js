@@ -70,7 +70,9 @@ export default (props) => {
               &times;
             </div>
           </div>
-          {parseContent(props.resharePostData.content, "")}
+          <div className="post-content">
+            {parseContent(props.resharePostData.content, "")}
+          </div>
         </div>
       }
       <textarea
