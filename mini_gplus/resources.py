@@ -357,7 +357,7 @@ class Posts(Resource):
         reshared_from = args['reshared_from']
         reshared_from_post = None
         if reshared_from:
-            reshared_from_post = Post.objects.get(id=reshared_from)
+            reshared_from_post = user.get_post(reshared_from)
             if not reshared_from_post:
                 return {"msg": f"Post {reshared_from} is not found"}, 404
         post_id = user.create_post(
