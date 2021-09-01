@@ -251,7 +251,7 @@ class User(Document, CreatedAtMixin):
             new_comment.save()
             parent_comment.comments.append(new_comment)
             parent_comment.save()
-            return str(new_comment.id)
+            return str(new_comment.eid)
         else:
             raise UnauthorizedAccess()
 
