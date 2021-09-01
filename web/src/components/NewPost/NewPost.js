@@ -123,7 +123,6 @@ export default (props) => {
             selections in this case are just for your own record</p>
         </Popup>
       </div>
-
       {props.resharePostData === null ?
         <div className="new-post-resharable">
           <Checkbox toggle
@@ -131,12 +130,39 @@ export default (props) => {
                     onChange={() => updateResharableToggleChecked(!resharableToggleChecked)}
                     checked={resharableToggleChecked}
           />
+          <Popup
+            trigger={
+              <Icon
+                className='new-post-circles-dropdown-question'
+                name='question circle outline'
+              />
+            }
+            position='top right'
+            basic
+          >
+            <p>If you enable resharing, other users can potentially reshare the post to "public" (anyone on this site)</p>
+            <p>All interactions such as comments and reactions belong to the resharing post unless users explicitly click into your original post and interact with it</p>
+          </Popup>
         </div> : null
       }
       <div className='new-post-btns'>
-        <div className={submitButtonClass()} onClick={postButtonOnClick}>
-          {props.resharePostData === null ? "Post" : "Reshare"}
-        </div>
+        {props.resharePostData === null ?
+          <div className={submitButtonClass()} onClick={postButtonOnClick}>
+            Post
+          </div> :
+          <Popup
+            trigger={
+              <div className={submitButtonClass()} onClick={postButtonOnClick}>
+                Reshare
+              </div>
+            }
+            position='top right'
+            basic
+          >
+            <p>If you reshare a resharing post, you will be resharing the original post instead of the resharing post</p>
+            <p>You post is reshareable by default</p>
+          </Popup>
+        }
       </div>
     </div>
   )
