@@ -34,6 +34,7 @@ class User(Document, CreatedAtMixin):
     password = StringField(required=True)
     followings = ListField(ReferenceField('User', reverse_delete_rule=PULL), default=[])  # type: List[User]
     avatar = ReferenceField(Media, reverse_delete_rule=NULLIFY)
+    profile_pic = StringField(required=False, default="pill1.png")
 
     ########
     # User #
@@ -111,7 +112,6 @@ class User(Document, CreatedAtMixin):
         new_post.content = bleach.clean(content)
         new_post.is_public = is_public
         new_post.circles = circles
-        new_post.reshareable = reshareable
         new_post.media_list = media_list
         if reshared_from:
             if media_list:
@@ -128,6 +128,10 @@ class User(Document, CreatedAtMixin):
             if not sharing_from.reshareable:
                 return False
             new_post.reshared_from = sharing_from
+        if reshared_from and not reshareable:
+            # if resharing from a post, this post must also be reshareable, otherwise it's logically wrong
+            return False
+        new_post.reshareable = reshareable
         new_post.save()
         return str(new_post.id)
 
@@ -445,6 +449,21 @@ class User(Document, CreatedAtMixin):
         :return (List[User]): List of following users.
         """
         return list(self.followings)
+
+    ###############
+    # Profile Pic #
+    ###############
+
+    def update_profile_pic(self, profile_pic):
+        """
+        update users profile picture
+        """
+        available_profile_pic = ["pill1.png", "pill2.png", "pill3.png", "pill4.png", "pill5.png", "pill6.png"]
+        if profile_pic in available_profile_pic:
+            self.profile_pic = profile_pic
+            self.save()
+        else:
+            raise UnauthorizedAccess()
 
 
 class Circle(Document, CreatedAtMixin):

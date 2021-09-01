@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from 'react'
 import Picker from 'emoji-picker-react';
 import "./Post.css"
 import getAvatarUrl from "../../api/getAvatarUrl";
+import parseContent from "../../parseContent";
 
 export default (props) => {
   const [addComment, updateAddComment] = useState(false)
@@ -23,15 +24,30 @@ export default (props) => {
       return new Date(postedAtSeconds).toISOString().split('T')[0];
     }
   }
-  const parseContent = (content, className) => {
-    const regExForStrikeThrough = / -(.+)- /g
-    const regExForItalic = / _(.+)_ /g
-    const regExForBold = / \*(.+)\* /g
-    let newContent = content.replace(regExForStrikeThrough, '<del>$1</del>');
-    newContent = newContent.replace(regExForItalic, '<i>$1</i>')
-    newContent = newContent.replace(regExForBold, '<b>$1</b>')
-    return <div className={className} dangerouslySetInnerHTML={{__html: newContent}}/>
+  const resharedElem = (resharedFrom) => {
+    if (resharedFrom.id === null) {
+      return null
+    }
+    return (
+      <div className="post-reshared-wrapper">
+        <div className="post-reshared-info">
+          <div className="post-avatar post-reshared-avatar">
+            <img
+              className="post-avatar-img"
+              src={getAvatarUrl(resharedFrom.author)}
+              alt=""
+            />
+          </div>
+          <div className="post-reshared-author">
+            {resharedFrom.author.id}
+          </div>
+        </div>
+        <div className="post-content">
+          {parseContent(resharedFrom.content, "")}
+        </div>
+      </div>)
   }
+
   function parseReactionData(data) {
     let parsedData = {} // Format: {emoji: [{author, reactionId}]}
     for (let i = 0; i < data.length; i++) {
@@ -54,6 +70,7 @@ export default (props) => {
     }
     return parsedData
   }
+
   const meReactedWithEmoji = (emoji) => {
     //  return reaction id if me reacted with emoji, return null otherwise
     let reactionDetail = reactionData[emoji]
@@ -90,7 +107,7 @@ export default (props) => {
         await props.api.deleteReaction(props.data.id, reactionId)
         setReactionData({
           ...reactionData,
-          [emoji]: reactionData[emoji].filter(({ reactionId: rId }) => rId !== reactionId)
+          [emoji]: reactionData[emoji].filter(({reactionId: rId}) => rId !== reactionId)
         })
       } catch (e) {
         console.log(e)
@@ -258,6 +275,13 @@ export default (props) => {
     }
     window.location.reload()
   }
+  const reshareButtonOnClick = () => {
+    if (props.data.reshared_from.id === null) {
+      props.updateResharePostData(props.data)
+    } else {
+      props.updateResharePostData(props.data.reshared_from)
+    }
+  }
 
   let sharingScope
   if (props.data.is_public) {
@@ -294,6 +318,7 @@ export default (props) => {
           </div>
         </div>
         {parseContent(props.data.content, "post-content")}
+        {resharedElem(props.data.reshared_from)}
         <div className="post-interactions-wrapper">
           <div className="post-reactions-wrapper">
             {reactions}
@@ -306,12 +331,23 @@ export default (props) => {
                       clipRule="evenodd"/>
               </svg>
             </div>
-            <div className="post-circle-button">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path
-                  d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/>
-              </svg>
-            </div>
+
+            {props.data.reshareable ?
+              <div className="post-circle-button" onClick={reshareButtonOnClick}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path
+                    d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/>
+                </svg>
+              </div>
+              :
+              <div className="post-circle-button">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd"
+                        d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z"
+                        clipRule="evenodd"/>
+                </svg>
+              </div>
+            }
           </div>
         </div>
       </div>

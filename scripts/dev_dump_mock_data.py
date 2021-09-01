@@ -190,7 +190,7 @@ def main():
     sirjie.create_post('這麼說你很勇ho', is_public=True)
     sirjie.create_post('我房裡有好康的', is_public=True)
     sirjie.create_post(' -聽話！讓我看看！- ', is_public=True)
-    kt.create_post('是傑哥耶！！', is_public=True, reshared_from=sirjie_post_id)
+    kt.create_post('是傑哥耶！！', is_public=True, reshareable=True, reshared_from=sirjie_post_id)
 
     # Create some comments
     ika_kt_ika_comment = ika.create_comment(kt_ika_post, 'rua')
