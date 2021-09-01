@@ -307,7 +307,7 @@ post_fields = {
     'reshareable': fields.Boolean,
     'reshared_from': fields.Nested({
         # this is a trimmed down version of post_fields
-        'id': fields.String,
+        'id': fields.String(attribute='eid'),
         'created_at_seconds': fields.Integer(attribute='created_at'),
         'author': fields.Nested(user_fields),
         'content': fields.String,

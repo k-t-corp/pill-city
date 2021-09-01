@@ -29,7 +29,10 @@ export default (props) => {
       return null
     }
     return (
-      <div className="post-reshared-wrapper">
+      <div className="post-reshared-wrapper" onClick={e => {
+        e.preventDefault()
+        window.location.href = `/post/${resharedFrom.id}`
+      }}>
         <div className="post-reshared-info">
           <div className="post-avatar post-reshared-avatar">
             <img
@@ -403,7 +406,8 @@ export default (props) => {
             </div>
           </div>
         </div> : null}
-    </div>)
+    </div>
+  )
 }
 
 
