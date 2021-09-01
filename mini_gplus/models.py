@@ -111,7 +111,6 @@ class User(Document, CreatedAtMixin):
         new_post.content = bleach.clean(content)
         new_post.is_public = is_public
         new_post.circles = circles
-        new_post.reshareable = reshareable
         if reshared_from:
             if reshared_from.reshared_from:
                 # if reshared_from itself is a reshared post, reshare reshared_from's original post
@@ -124,6 +123,10 @@ class User(Document, CreatedAtMixin):
             if not sharing_from.reshareable:
                 return False
             new_post.reshared_from = sharing_from
+        if reshared_from and not reshareable:
+            # if resharing from a post, this post must also be reshareable, otherwise it's logically wrong
+            return False
+        new_post.reshareable = reshareable
         new_post.save()
         return str(new_post.id)
 
