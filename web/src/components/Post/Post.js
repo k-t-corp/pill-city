@@ -281,6 +281,12 @@ export default (props) => {
     }
     window.location.reload()
   }
+  const reshareButtonOnClick = () => {
+    if (props.data.reshared_from === null) {
+      props.updateResharePostData(props.data)
+    }
+    props.updateResharePostData(props.data.reshared_from)
+  }
 
   let sharingScope
   if (props.data.is_public) {
@@ -330,12 +336,23 @@ export default (props) => {
                       clipRule="evenodd"/>
               </svg>
             </div>
-            <div className="post-circle-button">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path
-                  d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/>
-              </svg>
-            </div>
+
+            {props.data.reshareable ?
+              <div className="post-circle-button" onClick={reshareButtonOnClick}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path
+                    d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/>
+                </svg>
+              </div>
+              :
+              <div className="post-circle-button">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd"
+                        d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z"
+                        clipRule="evenodd"/>
+                </svg>
+              </div>
+            }
           </div>
         </div>
       </div>

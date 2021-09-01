@@ -8,6 +8,7 @@ export default (props) => {
   const [posts, updatePosts] = useState([])
   const [circles, updateCircles] = useState([])
   const [me, updateMe] = useState(null)
+  const [resharePostData, updateResharePostData] = useState(null)
 
   useEffect(async ()=>{
     updatePosts(await props.api.getPosts())
@@ -27,7 +28,7 @@ export default (props) => {
       let postElements = []
       for (let i = 0; i < posts.length; i++) {
         console.log(posts[i])
-        postElements.push(<Post key={i} data={posts[i]} me={me} api={props.api}/>)
+        postElements.push(<Post key={i} data={posts[i]} me={me} api={props.api} updateResharePostData={updateResharePostData}/>)
       }
       return postElements
     }
@@ -39,7 +40,11 @@ export default (props) => {
           {homePostElement()}
         </div>
         <div className="home-new-post-wrapper">
-          <NewPost circles={circles} me={me} api={props.api}/>
+          <NewPost circles={circles}
+                   me={me}
+                   api={props.api}
+                   resharePostData={resharePostData}
+                   updateResharePostData={updateResharePostData}/>
         </div>
       </div>
     )
