@@ -282,10 +282,11 @@ export default (props) => {
     window.location.reload()
   }
   const reshareButtonOnClick = () => {
-    if (props.data.reshared_from === null) {
+    if (props.data.reshared_from.id === null) {
       props.updateResharePostData(props.data)
+    } else {
+      props.updateResharePostData(props.data.reshared_from)
     }
-    props.updateResharePostData(props.data.reshared_from)
   }
 
   let sharingScope
