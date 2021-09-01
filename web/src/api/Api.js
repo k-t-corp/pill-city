@@ -114,14 +114,16 @@ export default class Api {
     return res.data
   }
 
-  async postPost(content, isPublic, circlesNames) {
+  async postPost(content, isPublic, circlesNames, reshareable, resharedFrom) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.post(
       `/posts`,
       {
         content,
         is_public: isPublic,
-        circle_names: circlesNames
+        circle_names: circlesNames,
+        reshareable: reshareable,
+        reshared_from: resharedFrom
       }
     )
     if (res.status !== 201) {
@@ -293,7 +295,7 @@ export default class Api {
     return res.data
   }
 
-  async deleteReaction(postId, reactionId){
+  async deleteReaction(postId, reactionId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.delete(
       `/posts/${postId}/reaction/${reactionId}`,
