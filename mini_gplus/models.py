@@ -126,12 +126,11 @@ class User(Document, CreatedAtMixin):
                 return False
             new_post.reshared_from = sharing_from
 
-            reshare_notification = Notification()
-            reshare_notification.owner = sharing_from.author
-            reshare_notification.notifier = self
-            reshare_notification.notifying_action = NotifyingAction.Reshare
-            reshare_notification.notified_location = sharing_from
-            reshare_notification.save()
+            self.create_notification(
+                notifying_action=NotifyingAction.Reshare,
+                notified_location=sharing_from,
+                owner=sharing_from.author
+            )
 
         new_post.save()
         return str(new_post.id)
@@ -222,12 +221,11 @@ class User(Document, CreatedAtMixin):
             parent_post.comments.append(new_comment)
             parent_post.save()
 
-            new_notification = Notification()
-            new_notification.owner = parent_post.author
-            new_notification.notifier = self
-            new_notification.notifying_action = NotifyingAction.Comment
-            new_notification.notified_location = parent_post
-            new_notification.save()
+            self.create_notification(
+                notifying_action=NotifyingAction.Comment,
+                notified_location=parent_post,
+                owner=parent_post.author
+            )
 
             return str(new_comment.id)
         else:
@@ -252,12 +250,11 @@ class User(Document, CreatedAtMixin):
             parent_comment.comments.append(new_comment)
             parent_comment.save()
 
-            new_notification = Notification()
-            new_notification.owner = parent_comment.author
-            new_notification.notifier = self
-            new_notification.notifying_action = NotifyingAction.Comment
-            new_notification.notified_location = parent_comment
-            new_notification.save()
+            self.create_notification(
+                notifying_action=NotifyingAction.Comment,
+                notified_location=parent_comment,
+                owner=parent_comment.author
+            )
 
             return str(new_comment.id)
         else:
@@ -343,12 +340,11 @@ class User(Document, CreatedAtMixin):
             parent_post.reactions.append(new_reaction)
             parent_post.save()
 
-            new_notification = Notification()
-            new_notification.owner = parent_post.author
-            new_notification.notifier = self
-            new_notification.notifying_action = NotifyingAction.Reaction
-            new_notification.notified_location = parent_post
-            new_notification.save()
+            self.create_notification(
+                notifying_action=NotifyingAction.Reaction,
+                notified_location=parent_post,
+                owner=parent_post.author
+            )
 
             return str(new_reaction.id)
         else:
@@ -477,6 +473,19 @@ class User(Document, CreatedAtMixin):
         :return (List[User]): List of following users.
         """
         return list(self.followings)
+
+    ################
+    # Notification #
+    ################
+    def create_notification(self, notifying_action, notified_location, owner):
+        if self.id == owner.id:
+            return
+        new_notification = Notification()
+        new_notification.notifier = self
+        new_notification.notifying_action = notifying_action
+        new_notification.notified_location = notified_location
+        new_notification.owner = owner
+        new_notification.save()
 
 
 class Circle(Document, CreatedAtMixin):

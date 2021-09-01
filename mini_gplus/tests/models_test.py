@@ -148,6 +148,12 @@ class TestModels(TestCase):
         self.assertEqual([], user1.get_followings())
         self.assertFalse(user1.remove_following(user2))
 
+    #################
+    # Notifications #
+    #################
+    def test_notifications_from_post_comment(self):
+        pass
+
     ###############################################################################
     # Posts, comments, nested-comments, reacts and reshares + circles + following #
     ###############################################################################
