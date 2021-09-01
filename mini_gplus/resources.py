@@ -505,41 +505,13 @@ class NotifyingAction(fields.Raw):
         return notifying_action.value
 
 
-class NotificationLocation(fields.Raw):
-    def format(self, location):
-        cls = location._cls
-        _id = location.id
-        if cls == 'Post':
-            location_type = 'post'
-            location_summary = Post.objects.get(id=_id).content
-        elif cls == 'Comment':
-            location_type = 'comment'
-            location_summary = Comment.objects.get(id=_id).content
-        elif cls == 'NestedComment':
-            location_type = 'nested_comment'
-            location_summary = NestedComments.objects.get(id=_id).content
-        elif cls == 'Reaction':
-            location_type = 'reaction'
-            location_summary = ReactionModel.objects.get(id=_id).emoji
-        else:
-            return {
-                'error': f'unknown notification location type {cls}'
-            }
-
-        return {
-            'id': str(_id),
-            'type': location_type,
-            'summary': location_summary
-        }
-
-
 notification_fields = {
     'id': fields.String,
     'created_at_seconds': fields.Integer(attribute='created_at'),
     'notifier': fields.Nested(user_fields),
-    'notifying_location': NotificationLocation,
+    'notifying_href': fields.String,
     'notifying_action': NotifyingAction,
-    'notified_location': NotificationLocation
+    'notified_href': fields.String
 }
 
 
