@@ -33,6 +33,11 @@ export default class Post extends Component {
   }
 
   render() {
+    let highlightCommentId
+    if (this.props.location.hash) {
+      highlightCommentId = this.props.location.hash.split('#comment-id-')[1]
+    }
+    console.log(highlightCommentId)
     if (this.state.loading) {
       return (
         <Loader size='massive'/>
@@ -45,7 +50,7 @@ export default class Post extends Component {
     }
     return (
       <div className='post-wrapper-page'>
-        <PostComponent data={this.state.data} me={this.state.me} api={this.props.api}/>
+        <PostComponent data={this.state.data} highlightCommentId={highlightCommentId} me={this.state.me} api={this.props.api}/>
       </div>
     )
   }

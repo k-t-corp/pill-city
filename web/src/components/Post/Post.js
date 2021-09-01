@@ -166,6 +166,15 @@ export default (props) => {
   const emojiPickerRef = useRef(null);
   closePickerWhenClickOutside(emojiPickerRef);
 
+  const highlightCommentId = props.highlightCommentId
+  const highlightCommentRef = useRef(null)
+  useEffect(() => {
+    if (highlightCommentId) {
+      console.log(highlightCommentRef)
+      highlightCommentRef.current.scrollIntoView({behavior: 'smooth'})
+    }
+  }, [highlightCommentRef])
+
   reactions.push(
     <div key={'add-reaction'}>
       <div className="post-reaction" onClick={addNewReactionOnClick}>
@@ -192,7 +201,7 @@ export default (props) => {
     for (let i = 0; i < comment.comments.length; i++) {
       const nestedComment = comment.comments[i]
       nestedComments.push(
-        <div key={i} className="post-nested-comment">
+        <div id={nestedComment.id} ref={highlightCommentId === nestedComment.id ? highlightCommentRef : null} key={i} className="post-nested-comment">
           <div className="post-avatar post-nested-comment-avatar">
             <img
               className="post-avatar-img"
@@ -212,7 +221,7 @@ export default (props) => {
       )
     }
     comments.push(
-      <div className="post-comment" key={i}>
+      <div className="post-comment" id={comment.id} ref={highlightCommentId === comment.id ? highlightCommentRef : null} key={i}>
         <div className="post-avatar post-comment-avatar">
           <img
             className="post-avatar-img"
