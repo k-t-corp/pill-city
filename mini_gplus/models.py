@@ -1,8 +1,8 @@
 import bleach
 from enum import Enum
-from typing import List
-from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, GenericReferenceField, \
-    EnumField, PULL, CASCADE, NULLIFY, NotUniqueError
+from typing import List, Optional
+from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, EnumField, PULL, CASCADE, \
+    NULLIFY, NotUniqueError
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import generate_password_hash, check_password_hash
 import emoji as emoji_lib
@@ -114,7 +114,7 @@ class User(Document, CreatedAtMixin):
         new_post.circles = circles
         new_post.reshareable = reshareable
 
-        sharing_from = None
+        sharing_from = None  # type: Optional[Post]
         if reshared_from:
             if reshared_from.reshared_from:
                 # if reshared_from itself is a reshared post, reshare reshared_from's original post
@@ -131,9 +131,9 @@ class User(Document, CreatedAtMixin):
 
         if sharing_from:
             self.create_notification(
-                notifying_location=new_post,
+                notifying_href=new_post.make_href(),
                 notifying_action=NotifyingAction.Reshare,
-                notified_location=sharing_from,
+                notified_href=sharing_from.make_href(),
                 owner=sharing_from.author
             )
 
@@ -226,9 +226,9 @@ class User(Document, CreatedAtMixin):
             parent_post.save()
 
             self.create_notification(
-                notifying_location=new_comment,
+                notifying_href=new_comment.make_href(parent_post),
                 notifying_action=NotifyingAction.Comment,
-                notified_location=parent_post,
+                notified_href=parent_post.make_href(),
                 owner=parent_post.author
             )
 
@@ -256,9 +256,9 @@ class User(Document, CreatedAtMixin):
             parent_comment.save()
 
             self.create_notification(
-                notifying_location=new_comment,
+                notifying_href=new_comment.make_href(parent_post),
                 notifying_action=NotifyingAction.Comment,
-                notified_location=parent_comment,
+                notified_href=parent_comment.make_href(parent_post),
                 owner=parent_comment.author
             )
 
@@ -347,9 +347,9 @@ class User(Document, CreatedAtMixin):
             parent_post.save()
 
             self.create_notification(
-                notifying_location=new_reaction,
+                notifying_href=new_reaction.make_href(parent_post),
                 notifying_action=NotifyingAction.Reaction,
-                notified_location=parent_post,
+                notified_href=parent_post.make_href(),
                 owner=parent_post.author
             )
 
@@ -484,23 +484,29 @@ class User(Document, CreatedAtMixin):
     ################
     # Notification #
     ################
-    def create_notification(self, notifying_location, notifying_action, notified_location, owner):
+    def create_notification(self, notifying_href, notifying_action, notified_href, owner):
         """
         Create a notification where the notifier is the user. If the user is the owner, then do nothing
-        :param (Any) notifying_location: the mongoengine object that triggers this notification
-                                            e.g. if the user creates a comment A on post B, then notifying_location is A
+        Hrefs can be
+            1) Link to post, e.g. /post/post-id
+            2) Link to comment or nested comment, e.g. /post/post-id#comment-comment-id
+            3) Link to reaction, e.g. /post/post-id#reaction-reaction-id
+        :param (str) notifying_href: href for the object that triggers this notification
+                                        e.g. if the user creates a comment A on post B,
+                                        then notifying_href is /post/B#comment-A
         :param (NotifyingAction) notifying_action: the specific action for the notification
-        :param (Any) notified_location: the mongoengine object that this notification is triggered on
-                                            e.g. if the user creates a comment A on post B, then notified_location is B
+        :param (str) notified_href: href for the object that triggers this notification
+                                        e.g. if the user creates a comment A on post B,
+                                        then notifying_href is /post/A
         :param (User) owner: The user who is notified
         """
         if self.id == owner.id:
             return
         new_notification = Notification()
         new_notification.notifier = self
-        new_notification.notifying_location = notifying_location
+        new_notification.notifying_location = notifying_href
         new_notification.notifying_action = notifying_action
-        new_notification.notified_location = notified_location
+        new_notification.notified_location = notified_href
         new_notification.owner = owner
         new_notification.save()
 
@@ -535,10 +541,16 @@ class Comment(Document, CreatedAtMixin):
     content = StringField(required=True)
     comments = ListField(ReferenceField('Comment', reverse_delete_rule=PULL), default=[])  # type: List[Comment]
 
+    def make_href(self, parent_post):
+        return f"/post/{parent_post.eid}#comment-{self.eid}"
+
 
 class Reaction(Document, CreatedAtMixin):
     author = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
     emoji = StringField(required=True)
+
+    def make_href(self, parent_post):
+        return f"/post/{parent_post.eid}#reaction-{self.eid}"
 
 
 class Post(Document, CreatedAtMixin):
@@ -551,6 +563,9 @@ class Post(Document, CreatedAtMixin):
     reshareable = BooleanField(required=False, default=False)
     reshared_from = ReferenceField('Post', required=False, reverse_delete_rule=NULLIFY, default=None)  # type: Post
 
+    def make_href(self):
+        return f"/post/{self.eid}"
+
 
 class NotifyingAction(Enum):
     Comment = "comment"
@@ -561,7 +576,7 @@ class NotifyingAction(Enum):
 
 class Notification(Document, CreatedAtMixin):
     notifier = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
-    notifying_location = GenericReferenceField(required=True)
+    notifying_href = StringField(required=True)
     notifying_action = EnumField(NotifyingAction, required=True)  # type: NotifyingAction
-    notified_location = GenericReferenceField(required=True)
+    notified_href = StringField(required=True)
     owner = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
