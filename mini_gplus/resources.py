@@ -7,7 +7,7 @@ import werkzeug
 import tempfile
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from .models import User, Post, Comment, Media, Reaction as ReactionModel
+from .models import User, Post, Comment, Media, Reaction as ReactionModel, Notification
 
 ALLOWED_IMAGE_TYPES = ['gif', 'jpeg', 'bmp', 'png']
 
@@ -465,3 +465,60 @@ class Reaction(Resource):
         if reaction_to_delete not in post.reactions:
             return {'msg': f'Reaction {reaction_to_delete} is already not in post {post_id}'}, 409
         user.delete_reaction(reaction_to_delete, post)
+
+
+#################
+# Notifications #
+#################
+
+class NotifyingAction(fields.Raw):
+    def format(self, notifying_action):
+        return notifying_action.value
+
+
+class NotificationLocation(fields.Raw):
+    def format(self, location):
+        cls = location._cls
+        _id = location.id
+        if cls == 'Post':
+            location_type = 'post'
+            location_summary = Post.objects.get(id=_id).content
+        elif cls == 'Comment':
+            location_type = 'comment'
+            location_summary = Comment.objects.get(id=_id).content
+        elif cls == 'NestedComment':
+            location_type = 'nested_comment'
+            location_summary = NestedComments.objects.get(id=_id).content
+        elif cls == 'Reaction':
+            location_type = 'reaction'
+            location_summary = Reaction.objects.get(id=_id).emoji
+        else:
+            return {
+                'error': f'unknown notification location type {cls}'
+            }
+
+        return {
+            'id': str(_id),
+            'type': location_type,
+            'summary': location_summary
+        }
+
+
+notification_fields = {
+    'notifier': fields.Nested(user_fields),
+    'notifying_location': NotificationLocation,
+    'notifying_action': NotifyingAction,
+    'notified_location': NotificationLocation
+}
+
+
+class Notifications(Resource):
+    @jwt_required()
+    @marshal_with(notification_fields)
+    def get(self):
+        """
+        Get all of a user's notifications
+        """
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+        return user.get_notifications()

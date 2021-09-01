@@ -485,6 +485,15 @@ class User(Document, CreatedAtMixin):
     # Notification #
     ################
     def create_notification(self, notifying_location, notifying_action, notified_location, owner):
+        """
+        Create a notification where the notifier is the user. If the user is the owner, then do nothing
+        :param (Any) notifying_location: the mongoengine object that triggers this notification
+                                            e.g. if the user creates a comment A on post B, then notifying_location is A
+        :param (NotifyingAction) notifying_action: the specific action for the notification
+        :param (Any) notified_location: the mongoengine object that this notification is triggered on
+                                            e.g. if the user creates a comment A on post B, then notified_location is B
+        :param (User) owner: The user who is notified
+        """
         if self.id == owner.id:
             return
         new_notification = Notification()
@@ -494,6 +503,12 @@ class User(Document, CreatedAtMixin):
         new_notification.notified_location = notified_location
         new_notification.owner = owner
         new_notification.save()
+
+    def get_notifications(self):
+        """
+        Get all of a user's notifications in reverse chronological order, e.g. latest to earliest
+        """
+        return list(reversed(sorted(Notification.objects(owner=self), key=lambda n: n.created_at)))
 
 
 class Circle(Document, CreatedAtMixin):
