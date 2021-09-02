@@ -72,7 +72,7 @@ resource "aws_iam_role" "media-reader" {
     ]
   })
 
-  inline_policy = {
+  inline_policy {
     name = "media-reader-policy"
     policy = <<EOF
 {
