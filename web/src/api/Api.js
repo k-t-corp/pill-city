@@ -116,8 +116,10 @@ export default class Api {
 
   async postPost(content, isPublic, circlesNames, reshareable, resharedFrom, mediaData) {
     Api.throwOnUnauthorized()
-    const mediaObjName = await this.postMedia(mediaData)
-    console.log("media name", mediaObjName)
+    let mediaObjName = []
+    if (mediaData.length !== 0) {
+      mediaObjName = await this.postMedia(mediaData)
+    }
     const res = await this.axiosInstance.post(
       `/posts`,
       {

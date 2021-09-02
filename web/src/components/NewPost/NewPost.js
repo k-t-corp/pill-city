@@ -22,7 +22,7 @@ export default (props) => {
     const isPublic = circleNames.filter(cn => cn === true).length !== 0
     let mediaData = new FormData()
     for (let i = 0; i < medias.length; i++) {
-      const blob = new Blob([medias[i]],{type: 'image/png'})
+      const blob = new Blob([medias[i]], {type: 'image/*'})
       mediaData.append(`media${i}`, blob, blob.name)
     }
     await props.api.postPost(
@@ -31,7 +31,7 @@ export default (props) => {
       actualCircleNames,
       props.resharePostData === null ? resharableToggleChecked : true,
       props.resharePostData === null ? null : props.resharePostData.id,
-      mediaData
+      props.resharePostData === null ? mediaData : []
     );
     window.location.reload();
   }
@@ -99,21 +99,24 @@ export default (props) => {
           </div>
         </div>
       }
-      <MediaPreview mediaUrls={medias.map(m => URL.createObjectURL(m))} threeRowHeight="80px" twoRowHeight="100px" oneRowHeight="140px"/>
+      {props.resharePostData === null ?
+        <MediaPreview mediaUrls={medias.map(m => URL.createObjectURL(m))} threeRowHeight="80px" twoRowHeight="100px"
+                      oneRowHeight="140px"/>
+        : null}
       <div className="new-post-text-box-container">
-        <label className="new-post-attachment-button">
-          <input id="new-post-change-medias-button"
-                 accept="image/*"
-                 type="file"
-                 onChange={changeMediasOnClick}
-                 multiple={true}/>
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd"
-                  d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                  clipRule="evenodd"/>
-          </svg>
-
-        </label>
+        {props.resharePostData === null ?
+          <label className="new-post-attachment-button">
+            <input id="new-post-change-medias-button"
+                   accept="image/*"
+                   type="file"
+                   onChange={changeMediasOnClick}
+                   multiple={true}/>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd"
+                    d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                    clipRule="evenodd"/>
+            </svg>
+          </label> : null}
         <textarea
           className="new-post-text-box"
           value={content}

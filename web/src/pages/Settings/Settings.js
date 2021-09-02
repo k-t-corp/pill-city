@@ -199,8 +199,6 @@ export default (props) => {
                          const croppedImg = await getCroppedImg(avatarImageRef.current, crop, "new-avatar");
                          updateAvatarImageUrl(URL.createObjectURL(croppedImg))
                          let data = new FormData();
-                         console.log("log avatar data", data)
-                         console.log("log image data", croppedImg)
                          data.append('file', croppedImg, croppedImg.name);
 
                          try {

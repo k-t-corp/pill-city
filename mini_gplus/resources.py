@@ -403,6 +403,7 @@ post_fields = {
         'created_at_seconds': fields.Integer(attribute='created_at'),
         'author': fields.Nested(user_fields),
         'content': fields.String,
+        'media_urls': MediaUrls(attribute='media_list'),
     }),
     'media_urls': MediaUrls(attribute='media_list'),
     'reactions': fields.List(fields.Nested({

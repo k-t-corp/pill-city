@@ -48,6 +48,10 @@ export default (props) => {
         </div>
         <div className="post-content">
           {parseContent(resharedFrom.content, "")}
+          {resharedFrom.media_urls.length === 0 ? null :
+            <MediaPreview mediaUrls={resharedFrom.media_urls} threeRowHeight="80px" twoRowHeight="100px"
+                          oneRowHeight="140px"/>
+            }
         </div>
       </div>)
   }
