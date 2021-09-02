@@ -364,7 +364,7 @@ class MediaUrls(fields.Raw):
                 #    would still be minimal privilege
                 RoleArn=os.environ['MEDIA_READER_ROLE_ARN'],
                 RoleSessionName='read-media-' + object_name.replace('/', '-'),
-                Policy=json.dumps(read_media_policy),
+                # Policy=json.dumps(read_media_policy),
                 DurationSeconds=PostMediaUrlExpireSeconds,
             )
             temp_s3_client = boto3.client(
