@@ -4,6 +4,7 @@ import "./NewPost.css"
 import getAvatarUrl from "../../api/getAvatarUrl";
 import parseContent from "../../parseContent";
 import FormData from "form-data";
+import MediaPreview from "../MediaPreview/MediaPreview";
 
 export default (props) => {
   const [content, updateContent] = useState("")
@@ -19,13 +20,21 @@ export default (props) => {
     updatePosting(true);
     const actualCircleNames = circleNames.filter(cn => cn !== true)
     const isPublic = circleNames.filter(cn => cn === true).length !== 0
+    let mediaData = new FormData()
+    for (let i = 0; i < medias.length; i++) {
+      const blob = new Blob([medias[i]],{type: 'image/png'})
+      mediaData.append(`media${i}`, blob, blob.name)
+    }
     await props.api.postPost(
       content,
       isPublic,
       actualCircleNames,
       props.resharePostData === null ? resharableToggleChecked : true,
-      props.resharePostData === null ? null : props.resharePostData.id);
-    window.location.reload();
+      props.resharePostData === null ? null : props.resharePostData.id,
+      mediaData
+    );
+    console.log("log media data", mediaData)
+    // window.location.reload();
   }
 
   const submitButtonClass = () => {
@@ -39,50 +48,6 @@ export default (props) => {
     return className.join(" ")
   }
 
-  const mediasPreviewElem = () => {
-    const mediaCount = medias.length
-    if (mediaCount === 0) return null
-    let mediaPreview = []
-    let col = 3
-    let widthOfPreview = "32%"
-    if (mediaCount === 2 || mediaCount === 4) {
-      col = 2
-      widthOfPreview = "48%"
-    } else if (mediaCount === 1) {
-      col = 1
-      widthOfPreview = "100%"
-    }
-
-    let row
-    let height = "90px"
-    if (mediaCount <= 3) {
-      row = 1
-      height = "130px"
-    } else if (mediaCount <= 6) {
-      row = 2
-    } else if (mediaCount <= 9) {
-      row = 3
-    }
-
-    for (let i = 0; i < mediaCount; i++) {
-      let marginBottom = "10px"
-      if (Math.ceil((i + 1) / col) === row) marginBottom = "0"
-      mediaPreview.push(
-        <div className="new-post-media-preview" key={i}
-             style={{
-               width: widthOfPreview,
-               height: height,
-               marginBottom: marginBottom
-             }}>
-          <img className="new-post-media-preview-img" src={medias[i]} alt=""/>
-        </div>)
-    }
-    return (
-      <div className="new-post-media-preview-container">
-        {mediaPreview}
-      </div>)
-  }
-
   const changeMediasOnClick = (event) => {
     console.log("length", event.target.files.length)
     if (event.target.files && event.target.files[0]) {
@@ -91,7 +56,7 @@ export default (props) => {
       } else {
         let selectedMedias = []
         for (let i = 0; i < event.target.files.length; i++) {
-          selectedMedias.push(URL.createObjectURL(event.target.files[i]))
+          selectedMedias.push(event.target.files[i])
         }
         console.log("selected media", selectedMedias)
 
@@ -141,7 +106,7 @@ export default (props) => {
           </div>
         </div>
       }
-      {mediasPreviewElem()}
+      <MediaPreview mediaUrls={medias.map(m => URL.createObjectURL(m))} threeRowHeight="80px" twoRowHeight="100px" oneRowHeight="140px"/>
       <div className="new-post-text-box-container">
         <label className="new-post-attachment-button">
           <input id="new-post-change-medias-button"

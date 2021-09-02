@@ -116,6 +116,8 @@ export default class Api {
 
   async postPost(content, isPublic, circlesNames, reshareable, resharedFrom, mediaData) {
     Api.throwOnUnauthorized()
+    const mediaObjName = await this.postMedia(mediaData)
+    console.log("media name", mediaObjName)
     const res = await this.axiosInstance.post(
       `/posts`,
       {
@@ -123,13 +125,33 @@ export default class Api {
         is_public: isPublic,
         circle_names: circlesNames,
         reshareable: reshareable,
-        reshared_from: resharedFrom
+        reshared_from: resharedFrom,
+        media_object_names: mediaObjName
       }
     )
     if (res.status !== 201) {
       throw new ApiError(res.status)
     }
     return null
+  }
+
+  async postMedia(mediaData) {
+    const res = await this.axiosInstance.post(
+      `/posts/media`,
+      mediaData,
+      {
+        headers: {
+          'accept': 'application/json',
+          'Accept-Language': 'en-US,en;q=0.8',
+          'Content-Type': `multipart/form-data;`,
+        }
+      }
+    )
+    if (res.status !== 201) {
+      throw new ApiError(res.status)
+    }
+    console.log("res", res)
+    return res.data
   }
 
   async getHome() {

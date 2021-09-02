@@ -3,6 +3,7 @@ import Picker from 'emoji-picker-react';
 import "./Post.css"
 import getAvatarUrl from "../../api/getAvatarUrl";
 import parseContent from "../../parseContent";
+import MediaPreview from "../MediaPreview/MediaPreview";
 
 export default (props) => {
   const [addComment, updateAddComment] = useState(false)
@@ -10,6 +11,7 @@ export default (props) => {
   const [showEmojiPicker, updateShowEmojiPicker] = useState(false)
   const [reactionData, setReactionData] = useState(parseReactionData(props.data.reactions))
   const timePosted = (postedAtSeconds) => {
+    console.log(props.data)
     const currentTimeAtSeconds = new Date().getTime() / 1000;
     const deltaAtSeconds = currentTimeAtSeconds - postedAtSeconds
     if (deltaAtSeconds < 60) {
@@ -319,6 +321,7 @@ export default (props) => {
         </div>
         {parseContent(props.data.content, "post-content")}
         {resharedElem(props.data.reshared_from)}
+        <MediaPreview mediaUrls={props.data.media_urls} threeRowHeight="130px" twoRowHeight="150px"  oneRowHeight="180px"/>
         <div className="post-interactions-wrapper">
           <div className="post-reactions-wrapper">
             {reactions}

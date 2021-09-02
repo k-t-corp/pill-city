@@ -48,6 +48,7 @@ def upload_to_s3(file, object_name_stem) -> Optional[Media]:
     file.save(temp_fp)
 
     # check upload format
+    print(temp_fp)
     try:
         img_type = Image.open(temp_fp).format.lower()
     except UnidentifiedImageError:
@@ -121,6 +122,7 @@ class MyAvatar(Resource):
         if not user:
             return {'msg': f'User {user_id} is not found'}, 404
         args = user_avatar_parser.parse_args()
+        print(args)
         file = args['file']
 
         # the resulting object name looks like avatars/kt-1627815711477.jpeg
@@ -491,16 +493,17 @@ class PostMedia(Resource):
     @jwt_required()
     def post(self):
         args = post_media_parser.parse_args()
-
+        print(args)
         media_files = []
         for i in range(MaxPostMediaCount):
             media_file = args['media' + str(i)]
             if media_file:
                 media_files.append(media_file)
-
+        print(media_files)
         media_object_names = []
         for media_file in media_files:
             object_name_stem = f"media/{uuid.uuid4()}"
+            print(object_name_stem)
             media_object = upload_to_s3(media_file, object_name_stem)
             if not media_object:
                 return {'msg': f"Blacklisted image type"}, 400
