@@ -363,7 +363,8 @@ class MediaUrls(fields.Raw):
                 # for s3 this role allows all media read, but intersects with the inline policy, the temp role
                 #    would still be minimal privilege
                 RoleArn=os.environ['MEDIA_READER_ROLE_ARN'],
-                RoleSessionName='read-media-' + object_name.replace('/', '-'),
+                # media-reader is the only principal who can assume the role so this can be fixed
+                RoleSessionName='media-reader',
                 # Policy=json.dumps(read_media_policy),
                 DurationSeconds=PostMediaUrlExpireSeconds,
             )
