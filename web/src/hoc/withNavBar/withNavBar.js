@@ -13,7 +13,7 @@ export default (WrappedComponent, path) => {
     constructor(props) {
       super(props)
       this.state = {
-        'redirectTo': undefined
+        'redirectTo': undefined,
       }
     }
 
@@ -80,9 +80,13 @@ export default (WrappedComponent, path) => {
               <span role="img" aria-label="profile">🐒</span>&nbsp;Profile
             </MenuItem>
             <Menu.Menu position='right'>
-              <MenuItem as='a' size='large'>
-                &nbsp;&nbsp;&nbsp;<Icon name='bell outline'/>
-              </MenuItem>
+              {/* can use this later*/}
+              {/*<MenuItem as='a'*/}
+              {/*          size='large'*/}
+              {/*          // onClick={() => this.state.openNotificationDropdown = ! this.state.openNotificationDropdown}*/}
+              {/*>*/}
+              {/*  &nbsp;&nbsp;&nbsp;<Icon name='bell outline'/>*/}
+              {/*</MenuItem>*/}
               <MenuItem
                 as='a'
                 onClick={() => {

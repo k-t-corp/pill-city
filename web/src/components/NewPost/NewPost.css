@@ -1,13 +1,12 @@
 .new-post {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 5em;
     padding: 13px;
     background-color: #ffffff;
     max-width: 700px;
     border-radius: 5px;
     box-shadow: 2px 2px 1px 1px #e0e0e0;
     resize: none;
+    margin-bottom: 20px;
+    max-height: 70vh;
 }
 
 .new-post-avatar {
@@ -37,6 +36,7 @@
     margin: 10px 0;
     width: 100%;
     min-height: 200px;
+    max-height: 50vh;
     border-radius: 5px;
     border: 1px #f0f0f0 solid;
     resize: vertical;

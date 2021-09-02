@@ -1,0 +1,7 @@
+.notification-container {
+    width: 100%;
+    border-radius: 5px;
+    background-color: #ffffff;
+    box-shadow: 2px 2px 1px 1px #e0e0e0;
+    flex-grow: 1;
+}

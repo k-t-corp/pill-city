@@ -284,7 +284,7 @@ export default class Api {
     return res.data
   }
 
-  async deleteReaction(postId, reactionId){
+  async deleteReaction(postId, reactionId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.delete(
       `/posts/${postId}/reaction/${reactionId}`,
@@ -311,5 +311,16 @@ export default class Api {
     if (res.status !== 200) {
       throw new ApiError(res.status)
     }
+  }
+
+  async getNotifications() {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.get(
+      `/notifications`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
   }
 }
