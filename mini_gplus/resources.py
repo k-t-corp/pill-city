@@ -505,13 +505,39 @@ class NotifyingAction(fields.Raw):
         return notifying_action.value
 
 
+class NotificationLocation(fields.Raw):
+    def format(self, href):
+        if '#reaction-' in href:
+            reaction_id = href.split('#reaction-')[1]
+            return {
+                'href': href,
+                'summary': User.get_reaction(reaction_id).emoji
+            }
+        elif '#comment-' in href:
+            comment_id = href.split('#comment-')[1]
+            return {
+                'href': href,
+                'summary': User.get_comment(comment_id).content
+            }
+        elif '/post/' in href:
+            post_id = href.split('/post/')[1]
+            return {
+                'href': href,
+                'summary': User.get_post(post_id).content
+            }
+        else:
+            return {
+                'error': f'Unknown href type for {href}'
+            }
+
+
 notification_fields = {
     'id': fields.String,
     'created_at_seconds': fields.Integer(attribute='created_at'),
     'notifier': fields.Nested(user_fields),
-    'notifying_href': fields.String,
+    'notifying_location': NotificationLocation(attribute='notifying_href'),
     'notifying_action': NotifyingAction,
-    'notified_href': fields.String
+    'notified_location': NotificationLocation(attribute='notified_href')
 }
 
 
