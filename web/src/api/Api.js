@@ -143,6 +143,17 @@ export default class Api {
     return res.data
   }
 
+  async getPost(postId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.get(
+      `/post/${postId}`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
+
   async postComment(content, postId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.post(

@@ -1,6 +1,6 @@
 from unittest import TestCase
 from mongoengine import connect, disconnect
-from mini_gplus.models import User, Post, Comment, UnauthorizedAccess, Reaction, NotFound, BadRequest
+from mini_gplus.models import User, Post, UnauthorizedAccess, Reaction, NotFound, BadRequest
 
 
 class TestModels(TestCase):
@@ -181,9 +181,7 @@ class TestModels(TestCase):
         comment1 = None
         if comments:
             comment_id = acting_user.create_comment('comment1', post)
-            comment1 = list(Comment.objects(id=comment_id))
-            self.assertEqual(1, len(comment1))
-            comment1 = comment1[0]
+            comment1 = acting_user.get_comment(comment_id)
             self.assertIn(comment1.id, list(map(lambda c: c.id, post.comments)))
         else:
             def op1():
@@ -191,15 +189,11 @@ class TestModels(TestCase):
 
             self.assertRaises(UnauthorizedAccess, op1)
             comment_id = post.author.create_comment('comment1', post)
-            comment1 = list(Comment.objects(id=comment_id))
-            self.assertEqual(1, len(comment1))
-            comment1 = comment1[0]
+            comment1 = acting_user.get_comment(comment_id)
 
         if nested_comments:
             nested_comment_id = acting_user.create_nested_comment('nested_comment1', comment1, post)
-            nested_comment1 = list(Comment.objects(id=nested_comment_id))
-            self.assertEqual(1, len(nested_comment1))
-            nested_comment1 = nested_comment1[0]
+            nested_comment1 = acting_user.get_comment(nested_comment_id)
             self.assertIn(nested_comment1.id, list(map(lambda c: c.id, comment1.comments)))
         else:
             def op2():
@@ -208,12 +202,10 @@ class TestModels(TestCase):
             self.assertRaises(UnauthorizedAccess, op2)
 
         # has to re-query post object because author in reactions won't be filled as an actual User object
-        post = Post.objects(id=post.id)[0]
+        post = acting_user.get_post(post.eid)
         if react_once:
             reaction_id = acting_user.create_reaction("💩", post)
-            reaction1 = list(Reaction.objects(id=reaction_id))
-            self.assertEqual(1, len(reaction1))
-            reaction1 = reaction1[0]
+            reaction1 = acting_user.get_reaction(reaction_id)
             self.assertIn(reaction1.id, list(map(lambda c: c.id, post.reactions)))
         else:
             def op3():
@@ -221,12 +213,12 @@ class TestModels(TestCase):
 
             self.assertRaises(UnauthorizedAccess, op3)
 
-        post = Post.objects(id=post.id)[0]
+        post = acting_user.get_post(post.eid)
         if reshare:
             new_post_id = acting_user.create_post('resharing', is_public=True, circles=[], reshareable=True,
                                                   reshared_from=post, media_list=[])
-            self.assertEqual(1, len(Post.objects(id=new_post_id)))
-            new_post = Post.objects(id=new_post_id)[0]
+            self.assertEqual(1, len(Post.objects(eid=new_post_id)))
+            new_post = acting_user.get_post(new_post_id)
             self.assertEqual(post.id, new_post.reshared_from.id)
         else:
             self.assertFalse(acting_user.create_post('resharing', is_public=True, circles=[], reshareable=True,
@@ -261,9 +253,9 @@ class TestModels(TestCase):
         post1 = post1[0]
 
         post2_id = user1.create_post('resharing post1', True, [], True, post1, [])
-        post2 = Post.objects.get(id=post2_id)
+        post2 = user1.get_post(post2_id)
         post3_id = user1.create_post('resharing post2', True, [], True, post2, [])
-        post3 = Post.objects.get(id=post3_id)
+        post3 = user1.get_post(post3_id)
         self.assertEqual(post1.id, post2.reshared_from.id)
         self.assertEqual(post1.id, post3.reshared_from.id)
 
@@ -278,15 +270,11 @@ class TestModels(TestCase):
 
         # Create reshareable public post1 from user1
         post1_id = user1.create_post('post1', True, [], True, None, [])
-        post1 = Post.objects(id=post1_id)
-        self.assertTrue(1, len(post1))
-        post1 = post1[0]
+        post1 = user1.get_post(post1_id)
 
         # Create non-reshareable public post2 from user1
         post2_id = user1.create_post('post2', True, [], False, None, [])
-        post2 = Post.objects(id=post2_id)
-        self.assertTrue(1, len(post2))
-        post2 = post2[0]
+        post2 = user1.get_post(post2_id)
 
         # user2 follows user1
         user2.add_following(user1)
@@ -358,15 +346,11 @@ class TestModels(TestCase):
 
         # Create reshareable post1 by user1 into circle1
         post1_id = user1.create_post('post1', False, [circle1], True, None, [])
-        post1 = Post.objects(id=post1_id)
-        self.assertTrue(1, len(post1))
-        post1 = post1[0]
+        post1 = user1.get_post(post1_id)
 
         # Create non-reshareable post2 by user1 into circle1
         post2_id = user1.create_post('post2', False, [circle1], False, None, [])
-        post2 = Post.objects(id=post2_id)
-        self.assertTrue(1, len(post2))
-        post2 = post2[0]
+        post2 = user1.get_post(post2_id)
 
         # User2 not owns but sees, sees on profile, comments, nested-comments, reacts and reshares on post1
         self._assert_user_to_post_privilege(

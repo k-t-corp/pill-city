@@ -33,6 +33,7 @@
 
 .post-op-info-time {
     color: #767676;
+    cursor: pointer;
 }
 
 .post-name {
@@ -53,6 +54,9 @@
 }
 
 /*Post Content*/
+.post-content-wrapper {
+    cursor: pointer;
+}
 
 .post-content {
     overflow-wrap: break-word;
@@ -141,6 +145,12 @@
 .post-comment {
     display: flex;
     padding: 3px 0;
+}
+
+.highlight-comment {
+    background: #f0f0f0;
+    border: 2px solid #f0f0f0;
+    border-radius: 2px;
 }
 
 .post-comment-name {
@@ -271,6 +281,7 @@
     margin: -10px 0 10px 10px;
     padding: 10px;
     border-radius: 4px;
+    cursor: pointer;
 }
 
 .post-reshared-info {
