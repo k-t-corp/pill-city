@@ -114,7 +114,7 @@ export default class Api {
     return res.data
   }
 
-  async postPost(content, isPublic, circlesNames, reshareable, resharedFrom) {
+  async postPost(content, isPublic, circlesNames, reshareable, resharedFrom, mediaData) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.post(
       `/posts`,
