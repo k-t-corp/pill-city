@@ -326,9 +326,7 @@ post_parser.add_argument('is_public', type=bool, required=True)
 post_parser.add_argument('circle_names', type=str, action="append", default=[])
 post_parser.add_argument('reshareable', type=bool, required=True)
 post_parser.add_argument('reshared_from', type=str, required=False)
-for i in range(MaxPostMediaCount):
-    post_parser.add_argument('media' + str(i), type=werkzeug.datastructures.FileStorage, location='files',
-                             required=False, default=None)
+post_parser.add_argument('media_object_names', type=str, action="append", default=[])
 
 # stores media object name -> (media url, media url generation time in ms epoch)
 MediaUrlCache = {}  # type: Dict[str, Tuple[str, int]]
@@ -459,20 +457,15 @@ class Posts(Resource):
             if not reshared_from_post:
                 return {"msg": f"Post {reshared_from} is not found"}, 404
 
-        # upload media
-        media_files = []
-        for i in range(MaxPostMediaCount):
-            media_file = args['media' + str(i)]
-            if media_file:
-                media_files.append(media_file)
-        if reshared_from and media_files:
+        # check media
+        media_object_names = args['media_object_names']
+        if reshared_from and media_object_names:
             return {'msg': "Reshared post is not allowed to have media"}, 400
         media_objects = []
-        for media_file in media_files:
-            object_name_stem = f"media/{uuid.uuid4()}"
-            media_object = upload_to_s3(media_file, object_name_stem)
+        for media_object_name in media_object_names:
+            media_object = Media.objects.get(object_name=media_object_name)
             if not media_object:
-                return {'msg': f"Blacklisted image type"}, 400
+                return {"msg": f"Media {media_object_name} is not found"}, 404
             media_objects.append(media_object)
 
         post_id = user.create_post(
@@ -486,6 +479,34 @@ class Posts(Resource):
         if not post_id:
             return {"msg": f"Not allowed to reshare post {reshared_from}"}, 403
         return {'id': post_id}, 201
+
+
+post_media_parser = reqparse.RequestParser()
+for i in range(MaxPostMediaCount):
+    post_media_parser.add_argument('media' + str(i), type=werkzeug.datastructures.FileStorage, location='files',
+                                   required=False, default=None)
+
+
+class PostMedia(Resource):
+    @jwt_required()
+    def post(self):
+        args = post_media_parser.parse_args()
+
+        media_files = []
+        for i in range(MaxPostMediaCount):
+            media_file = args['media' + str(i)]
+            if media_file:
+                media_files.append(media_file)
+
+        media_object_names = []
+        for media_file in media_files:
+            object_name_stem = f"media/{uuid.uuid4()}"
+            media_object = upload_to_s3(media_file, object_name_stem)
+            if not media_object:
+                return {'msg': f"Blacklisted image type"}, 400
+            media_object_names.append(media_object.object_name)
+
+        return media_object_names, 201
 
 
 class Home(Resource):

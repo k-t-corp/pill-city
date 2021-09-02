@@ -57,25 +57,34 @@ class User(object):
 
     def create_post(self, content: str, is_public: bool, circle_names=None, reshareable: bool = False,
                     reshared_from: Optional[str] = None, media_filenames: List[str] = None):
-        if circle_names is None:
-            circle_names = []
+        self._raise_on_unauthenticated()
+
+        # upload media first
         if media_filenames is None:
             media_filenames = []
-        media_filepaths = list(map(lambda fn: os.path.join('scripts', 'dev_mock_data_media', fn), media_filenames))
-        files = {}
-        for i, fp in enumerate(media_filepaths):
-            if i < 9:
-                files['media' + str(i)] = open(fp, 'rb')
-        self._raise_on_unauthenticated()
+        media_object_names = []
+        if media_filenames:
+            media_filepaths = list(map(lambda fn: os.path.join('scripts', 'dev_mock_data_media', fn), media_filenames))
+            files = {}
+            for i, fp in enumerate(media_filepaths):
+                if i < 9:
+                    files['media' + str(i)] = open(fp, 'rb')
+            media_object_names = self.sess.post(f'/api/posts/media', files=files).json()
+            for _, f in files.items():
+                f.close()
+
+        # post
+        if circle_names is None:
+            circle_names = []
         post_id = self.sess.post(f'/api/posts', data={
             'content': content,
             'is_public': is_public,
             'circle_names': circle_names,
             'reshareable': reshareable,
-            'reshared_from': reshared_from
-        }, files=files).json()['id']
-        for _, f in files.items():
-            f.close()
+            'reshared_from': reshared_from,
+            'media_object_names': media_object_names
+        }).json()['id']
+
         return post_id
 
     def create_comment(self, post_id: str, content: str):
