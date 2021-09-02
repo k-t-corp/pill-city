@@ -205,9 +205,10 @@ class User(Document, CreatedAtMixin):
         :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
         """
         # todo: pagination
-        posts = Post.objects(author=profile_user)
+        # ordering by id descending is equivalent to ordering by created_at descending
+        posts = Post.objects(author=profile_user).order_by('-id')
         posts = filter(lambda post: self.sees_post(post, context_home_or_profile=False), posts)
-        return list(reversed(sorted(posts, key=lambda post: post.created_at)))
+        return list(posts)
 
     def delete_post(self, post):
         """
