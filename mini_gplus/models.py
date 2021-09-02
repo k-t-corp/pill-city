@@ -1,11 +1,12 @@
 import uuid
 import bleach
+import emoji as emoji_lib
 from typing import List
 from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, PULL, CASCADE, NULLIFY, \
     NotUniqueError
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import generate_password_hash, check_password_hash
-import emoji as emoji_lib
+from .timer import Timer
 
 
 def make_uuid():
@@ -182,7 +183,9 @@ class User(Document, CreatedAtMixin):
         :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
         """
         # todo: pagination
-        posts = Post.objects()
+        with Timer() as t:
+            posts = Post.objects()
+        print("Post.objects() took %.03f seconds" % t.interval)
         posts = filter(lambda post: self.sees_post(post, context_home_or_profile=True), posts)
         return list(reversed(sorted(posts, key=lambda post: post.created_at)))
 
