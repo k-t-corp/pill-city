@@ -9,11 +9,21 @@
     max-width: 1000px;
 }
 
-.home-new-post-wrapper {
+.home-right-column-container {
     margin-left: 20px;
     flex: 1;
     min-width: 200px;
     max-width: 400px;
+}
+
+.home-right-column-container {
+    position: -webkit-sticky;
+    position: sticky;
+    background-color: #0d71bb;
+    top: 5em;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .home-status {
