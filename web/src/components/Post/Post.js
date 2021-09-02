@@ -30,7 +30,10 @@ export default (props) => {
       return null
     }
     return (
-      <div className="post-reshared-wrapper">
+      <div className="post-reshared-wrapper" onClick={e => {
+        e.preventDefault()
+        window.location.href = `/post/${resharedFrom.id}`
+      }}>
         <div className="post-reshared-info">
           <div className="post-avatar post-reshared-avatar">
             <img
@@ -184,6 +187,17 @@ export default (props) => {
   const emojiPickerRef = useRef(null);
   closePickerWhenClickOutside(emojiPickerRef);
 
+  const highlightCommentId = props.highlightCommentId
+  const isHighlightComment = (commentId) => {
+    return highlightCommentId === commentId
+  }
+  const highlightCommentRef = useRef(null)
+  useEffect(() => {
+    if (highlightCommentId) {
+      highlightCommentRef.current.scrollIntoView({behavior: 'smooth'})
+    }
+  }, [highlightCommentRef])
+
   reactions.push(
     <div key={'add-reaction'}>
       <div className="post-reaction" onClick={addNewReactionOnClick}>
@@ -210,7 +224,12 @@ export default (props) => {
     for (let i = 0; i < comment.comments.length; i++) {
       const nestedComment = comment.comments[i]
       nestedComments.push(
-        <div key={i} className="post-nested-comment">
+        <div
+          id={nestedComment.id}
+          ref={isHighlightComment(nestedComment.id) ? highlightCommentRef : null}
+          key={i}
+          className={`post-nested-comment ${isHighlightComment(nestedComment.id) ? "highlight-comment" : ""}`}
+        >
           <div className="post-avatar post-nested-comment-avatar">
             <img
               className="post-avatar-img"
@@ -230,7 +249,12 @@ export default (props) => {
       )
     }
     comments.push(
-      <div className="post-comment" key={i}>
+      <div
+        id={comment.id}
+        ref={isHighlightComment(comment.id) ? highlightCommentRef : null}
+        key={i}
+        className={`post-comment ${isHighlightComment(comment.id) ? "highlight-comment" : ""}`}
+      >
         <div className="post-avatar post-comment-avatar">
           <img
             className="post-avatar-img"
@@ -276,6 +300,7 @@ export default (props) => {
     }
     window.location.reload()
   }
+
   const reshareButtonOnClick = () => {
     if (props.data.reshared_from.id === null) {
       props.updateResharePostData(props.data)
@@ -291,6 +316,11 @@ export default (props) => {
     sharingScope = props.data.circles.map(c => c.name).join(', ')
   } else {
     sharingScope = 'Only you'
+  }
+
+  const navigateToPostPage = e => {
+    e.preventDefault();
+    window.location.href = `/post/${props.data.id}`
   }
 
   return (
@@ -313,12 +343,14 @@ export default (props) => {
             </div>
           </div>
           <div className="post-op-info-right">
-            <div className="post-op-info-time">
+            <div className="post-op-info-time" onClick={navigateToPostPage}>
               {timePosted(props.data.created_at_seconds)}
             </div>
           </div>
         </div>
-        {parseContent(props.data.content, "post-content")}
+        <div className='post-content-wrapper' onClick={navigateToPostPage}>
+          {parseContent(props.data.content, "post-content")}
+        </div>
         {resharedElem(props.data.reshared_from)}
         <MediaPreview mediaUrls={props.data.media_urls} threeRowHeight="130px" twoRowHeight="150px"  oneRowHeight="180px"/>
         <div className="post-interactions-wrapper">
@@ -376,7 +408,8 @@ export default (props) => {
             </div>
           </div>
         </div> : null}
-    </div>)
+    </div>
+  )
 }
 
 
