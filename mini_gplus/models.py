@@ -183,11 +183,19 @@ class User(Document, CreatedAtMixin):
         :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
         """
         # todo: pagination
-        with Timer() as t:
+        with Timer() as t1:
             posts = Post.objects()
-        print("Post.objects() took %.03f seconds" % t.interval)
-        posts = filter(lambda post: self.sees_post(post, context_home_or_profile=True), posts)
-        return list(reversed(sorted(posts, key=lambda post: post.created_at)))
+        print(f"Post.objects() took {t1.interval} ms")
+
+        with Timer() as t2:
+            posts = filter(lambda post: self.sees_post(post, context_home_or_profile=True), posts)
+        print(f"Filtering took {t2.interval} ms")
+
+        with Timer() as t3:
+            posts = list(reversed(sorted(posts, key=lambda post: post.created_at)))
+        print(f"Sorting took {t3.interval} ms")
+
+        return posts
 
     def retrieves_posts_on_profile(self, profile_user):
         """
