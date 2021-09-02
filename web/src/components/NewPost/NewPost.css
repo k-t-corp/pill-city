@@ -33,6 +33,12 @@
     font-weight: bold;
 }
 
+/* Text Area */
+
+.new-post-text-box-container {
+    position: relative;
+}
+
 .new-post-text-box {
     margin-top: 10px;
     margin-bottom: 6px;
@@ -41,11 +47,20 @@
     border-radius: 5px;
     border: 1px #e0e0e0 solid;
     resize: vertical;
+    padding: 10px 20px 10px 10px;
 }
 
 .new-post-text-box:focus {
     outline: none !important;
     border: 1px #b4b4b4 solid;
+}
+
+.new-post-attachment-button {
+    position: absolute;
+    top: 15px;
+    right: 5px;
+    width: 20px;
+    cursor: pointer;
 }
 
 .new-post-circles-dropdown-wrapper {
@@ -115,6 +130,7 @@
 .new-post-resharable {
     margin-top: 10px;
 }
+
 
 
 

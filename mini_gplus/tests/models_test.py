@@ -1,6 +1,6 @@
 from unittest import TestCase
 from mongoengine import connect, disconnect
-from mini_gplus.models import User, Post, Comment, UnauthorizedAccess, Reaction, NotFound, BadRequest
+from mini_gplus.models import User, Post, UnauthorizedAccess, Reaction, NotFound, BadRequest
 
 
 class TestModels(TestCase):
@@ -216,13 +216,13 @@ class TestModels(TestCase):
         post = acting_user.get_post(post.eid)
         if reshare:
             new_post_id = acting_user.create_post('resharing', is_public=True, circles=[], reshareable=True,
-                                                  reshared_from=post)
+                                                  reshared_from=post, media_list=[])
             self.assertEqual(1, len(Post.objects(eid=new_post_id)))
             new_post = acting_user.get_post(new_post_id)
             self.assertEqual(post.id, new_post.reshared_from.id)
         else:
             self.assertFalse(acting_user.create_post('resharing', is_public=True, circles=[], reshareable=True,
-                                                     reshared_from=post))
+                                                     reshared_from=post, media_list=[]))
 
     def test_can_act_on_my_own_public_post(self):
         # Create user1
@@ -230,7 +230,7 @@ class TestModels(TestCase):
         user1 = User.find('user1')
 
         # Post reshareable post1 by user1
-        user1.create_post('post1', True, [], True, None)
+        user1.create_post('post1', True, [], True, None, [])
         post1 = Post.objects(author=user1)
         self.assertTrue(1, len(post1))
         post1 = post1[0]
@@ -247,14 +247,14 @@ class TestModels(TestCase):
         user1 = User.find('user1')
 
         # Post reshareable post1 by user1
-        user1.create_post('post1', True, [], True, None)
+        user1.create_post('post1', True, [], True, None, [])
         post1 = Post.objects(author=user1)
         self.assertTrue(1, len(post1))
         post1 = post1[0]
 
-        post2_id = user1.create_post('resharing post1', True, [], True, post1)
+        post2_id = user1.create_post('resharing post1', True, [], True, post1, [])
         post2 = user1.get_post(post2_id)
-        post3_id = user1.create_post('resharing post2', True, [], True, post2)
+        post3_id = user1.create_post('resharing post2', True, [], True, post2, [])
         post3 = user1.get_post(post3_id)
         self.assertEqual(post1.id, post2.reshared_from.id)
         self.assertEqual(post1.id, post3.reshared_from.id)
@@ -269,11 +269,11 @@ class TestModels(TestCase):
         user3 = User.find('user3')
 
         # Create reshareable public post1 from user1
-        post1_id = user1.create_post('post1', True, [], True, None)
+        post1_id = user1.create_post('post1', True, [], True, None, [])
         post1 = user1.get_post(post1_id)
 
         # Create non-reshareable public post2 from user1
-        post2_id = user1.create_post('post2', True, [], False, None)
+        post2_id = user1.create_post('post2', True, [], False, None, [])
         post2 = user1.get_post(post2_id)
 
         # user2 follows user1
@@ -313,7 +313,7 @@ class TestModels(TestCase):
         circle1 = user1.find_circle('circle1')
 
         # Create post1 into circle1
-        user1.create_post('post1', False, [circle1], True, None)
+        user1.create_post('post1', False, [circle1], True, None, [])
         post1 = Post.objects(author=user1)
         self.assertTrue(1, len(post1))
         post1 = post1[0]
@@ -345,11 +345,11 @@ class TestModels(TestCase):
         user2.add_following(user1)
 
         # Create reshareable post1 by user1 into circle1
-        post1_id = user1.create_post('post1', False, [circle1], True, None)
+        post1_id = user1.create_post('post1', False, [circle1], True, None, [])
         post1 = user1.get_post(post1_id)
 
         # Create non-reshareable post2 by user1 into circle1
-        post2_id = user1.create_post('post2', False, [circle1], False, None)
+        post2_id = user1.create_post('post2', False, [circle1], False, None, [])
         post2 = user1.get_post(post2_id)
 
         # User2 not owns but sees, sees on profile, comments, nested-comments, reacts and reshares on post1
@@ -409,13 +409,13 @@ class TestModels(TestCase):
         user2.add_following(user1)
 
         # Create post1 by user1 into circle1
-        user1.create_post('post1', False, [circle1], False, None)
+        user1.create_post('post1', False, [circle1], False, None, [])
         post1 = Post.objects(author=user1)
         self.assertTrue(1, len(post1))
         post1 = post1[0]
 
         # Create public post2 by user1
-        user1.create_post('post2', True, [], False, None)
+        user1.create_post('post2', True, [], False, None, [])
         post2 = Post.objects(content='post2')
         self.assertTrue(1, len(post2))
         post2 = post2[0]
@@ -445,7 +445,7 @@ class TestModels(TestCase):
         user1 = User.find('user1')
 
         # Create post
-        user1.create_post('post1', True, [], False, None)
+        user1.create_post('post1', True, [], False, None, [])
         post1 = Post.objects(author=user1)
         self.assertTrue(1, len(post1))
         post1 = post1[0]
@@ -467,7 +467,7 @@ class TestModels(TestCase):
         user2 = User.find('user2')
 
         # Create post
-        user1.create_post('post1', True, [], False, None)
+        user1.create_post('post1', True, [], False, None, [])
         post1 = Post.objects(author=user1)
         self.assertTrue(1, len(post1))
         post1 = post1[0]
@@ -499,7 +499,7 @@ class TestModels(TestCase):
         user1 = User.find('user1')
 
         # Create post
-        user1.create_post('post1', True, [], False, None)
+        user1.create_post('post1', True, [], False, None, [])
         post1 = Post.objects(author=user1)
         self.assertTrue(1, len(post1))
         post1 = post1[0]

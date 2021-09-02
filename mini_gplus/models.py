@@ -101,7 +101,7 @@ class User(Document, CreatedAtMixin):
     ########
     # Post #
     ########
-    def create_post(self, content, is_public, circles, reshareable, reshared_from):
+    def create_post(self, content, is_public, circles, reshareable, reshared_from, media_list):
         """
         Create a post for the user
         :param (str) content: the content
@@ -109,16 +109,20 @@ class User(Document, CreatedAtMixin):
         :param (List[Circle]) circles: circles to share with
         :param (bool) reshareable: whether the post is reshareable
         :param (Optional[Post]) reshared_from: Post object for the resharing post
+        :param (List[Media]) media_list: list of media's
         :return (str) ID of the new post
         """
-        # TODO: when resharing, only allow content (text), e.g. no media
         new_post = Post()
         new_post.eid = make_uuid()
         new_post.author = self.id
         new_post.content = bleach.clean(content)
         new_post.is_public = is_public
         new_post.circles = circles
+        new_post.media_list = media_list
         if reshared_from:
+            if media_list:
+                # when resharing, only allow content (text), e.g. no media
+                return False
             if reshared_from.reshared_from:
                 # if reshared_from itself is a reshared post, reshare reshared_from's original post
                 sharing_from = reshared_from.reshared_from
@@ -530,3 +534,4 @@ class Post(Document, CreatedAtMixin):
     comments = ListField(ReferenceField(Comment, reverse_delete_rule=PULL), default=[])  # type: List[Comment]
     reshareable = BooleanField(required=False, default=False)
     reshared_from = ReferenceField('Post', required=False, reverse_delete_rule=NULLIFY, default=None)  # type: Post
+    media_list = ListField(ReferenceField(Media, reverse_delete_rule=PULL), default=[])  # type: List[Media]
