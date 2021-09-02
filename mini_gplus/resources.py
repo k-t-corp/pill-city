@@ -352,7 +352,6 @@ class MediaUrls(fields.Raw):
                 "Version": "2012-10-17",
                 "Statement": [
                     {
-                        "Sid": "GetObject",
                         "Effect": "Allow",
                         "Action": "s3:GetObject",
                         "Resource": [f"arn:aws:s3:::{s3_bucket_name}/{object_name}"],
@@ -364,7 +363,7 @@ class MediaUrls(fields.Raw):
                 # for s3 this role allows all media read, but intersects with the inline policy, the temp role
                 #    would still be minimal privilege
                 RoleArn=os.environ['MEDIA_READER_ROLE_ARN'],
-                RoleSessionName='read-media-' + object_name,
+                RoleSessionName='read-media-' + object_name.replace('/', '-'),
                 Policy=json.dumps(read_media_policy),
                 DurationSeconds=PostMediaUrlExpireSeconds,
             )
