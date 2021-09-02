@@ -80,7 +80,7 @@ resource "aws_iam_role" "media-reader" {
     "Statement": [
         {
             "Action": [
-                "s3:GetObject",
+                "s3:GetObject"
             ],
             "Effect": "Allow",
             "Resource": [
