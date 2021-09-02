@@ -506,7 +506,6 @@ class NotifyingAction(fields.Raw):
 
 
 notification_fields = {
-    'id': fields.String,
     'created_at_seconds': fields.Integer(attribute='created_at'),
     'notifier': fields.Nested(user_fields),
     'notifying_href': fields.String,
