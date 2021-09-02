@@ -20,19 +20,19 @@ PostMediaUrlExpireSeconds = 900
 # Upload to S3 #
 ################
 
-sts_admin_s3 = boto3.client(
+s3_client = boto3.client(
     's3',
     endpoint_url=os.environ['S3_ENDPOINT_URL'],
-    region_name=os.environ.get('S3_REGION', ''),
-    aws_access_key_id=os.environ['S3_ACCESS_KEY'],
-    aws_secret_access_key=os.environ['S3_SECRET_KEY']
+    region_name=os.environ.get('AWS_REGION', ''),
+    aws_access_key_id=os.environ['AWS_ACCESS_KEY'],
+    aws_secret_access_key=os.environ['AWS_SECRET_KEY']
 )
-sts_admin = boto3.client(
+sts_client = boto3.client(
     'sts',
-    endpoint_url=os.environ['S3_ENDPOINT_URL'],
-    region_name=os.environ.get('S3_REGION', ''),
-    aws_access_key_id=os.environ['S3_ACCESS_KEY'],
-    aws_secret_access_key=os.environ['S3_SECRET_KEY']
+    endpoint_url=os.environ['STS_ENDPOINT_URL'],
+    region_name=os.environ.get('AWS_REGION', ''),
+    aws_access_key_id=os.environ['AWS_ACCESS_KEY'],
+    aws_secret_access_key=os.environ['AWS_SECRET_KEY']
 )
 
 s3_bucket_name = os.environ['S3_BUCKET_NAME']
@@ -58,7 +58,7 @@ def upload_to_s3(file, object_name_stem) -> Optional[Media]:
     object_name = f"{object_name_stem}.{img_type}"
 
     # upload avatar
-    sts_admin_s3.upload_file(
+    s3_client.upload_file(
         Filename=temp_fp,
         Bucket=s3_bucket_name,
         Key=object_name,
@@ -358,20 +358,20 @@ class MediaUrls(fields.Raw):
                     },
                 ],
             }
-            assume_role_response = sts_admin.assume_role(
+            assume_role_response = sts_client.assume_role(
                 # for minio this is moot
                 # for s3 this role allows all media read, but intersects with the inline policy, the temp role
                 #    would still be minimal privilege
                 RoleArn=os.environ['MEDIA_READER_ROLE_ARN'],
                 # media-reader is the only principal who can assume the role so this can be fixed
                 RoleSessionName='media-reader',
-                # Policy=json.dumps(read_media_policy),
+                Policy=json.dumps(read_media_policy),
                 DurationSeconds=PostMediaUrlExpireSeconds,
             )
             temp_s3_client = boto3.client(
                 's3',
                 endpoint_url=os.environ['S3_ENDPOINT_URL'],
-                region_name=os.environ.get('S3_REGION', ''),
+                region_name=os.environ.get('AWS_REGION', ''),
                 aws_access_key_id=assume_role_response['Credentials']['AccessKeyId'],
                 aws_secret_access_key=assume_role_response['Credentials']['SecretAccessKey'],
                 aws_session_token=assume_role_response['Credentials']['SessionToken'],
