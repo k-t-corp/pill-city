@@ -184,18 +184,19 @@ class User(Document, CreatedAtMixin):
         """
         # todo: pagination
         with Timer() as t1:
-            posts = Post.objects()
+            # ordering by id descending is equivalent to ordering by created_at descending
+            posts = list(Post.objects().order_by('-id'))
         print(f"Post.objects() took {t1.interval} ms")
 
         with Timer() as t2:
             posts = filter(lambda post: self.sees_post(post, context_home_or_profile=True), posts)
         print(f"Filtering took {t2.interval} ms")
 
-        with Timer() as t3:
-            posts = list(reversed(sorted(posts, key=lambda post: post.created_at)))
-        print(f"Sorting took {t3.interval} ms")
+        # with Timer() as t3:
+        #     posts = list(reversed(sorted(posts, key=lambda post: post.created_at)))
+        # print(f"Sorting took {t3.interval} ms")
 
-        return posts
+        return list(posts)
 
     def retrieves_posts_on_profile(self, profile_user):
         """
