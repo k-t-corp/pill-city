@@ -9,6 +9,7 @@ export default (props) => {
   const [posts, updatePosts] = useState([])
   const [circles, updateCircles] = useState([])
   const [me, updateMe] = useState(null)
+  const [resharePostData, updateResharePostData] = useState(null)
   const [notifications, updateNotifications] = useState(null)
 
   useEffect(async ()=>{
@@ -28,7 +29,7 @@ export default (props) => {
     } else {
       let postElements = []
       for (let i = 0; i < posts.length; i++) {
-        postElements.push(<Post key={i} data={posts[i]} me={me} api={props.api}/>)
+        postElements.push(<Post key={i} data={posts[i]} me={me} api={props.api} updateResharePostData={updateResharePostData}/>)
       }
       return postElements
     }
@@ -40,7 +41,11 @@ export default (props) => {
           {homePostElement()}
         </div>
         <div className="home-right-column-container">
-          <NewPost circles={circles} me={me} api={props.api}/>
+          <NewPost circles={circles}
+                   me={me}
+                   api={props.api}
+                   resharePostData={resharePostData}
+                   updateResharePostData={updateResharePostData}/>
           <NotificationDropdown notifications={notifications}/>
         </div>
       </div>

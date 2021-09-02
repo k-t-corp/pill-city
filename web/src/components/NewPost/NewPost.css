@@ -33,18 +33,19 @@
 }
 
 .new-post-text-box {
-    margin: 10px 0;
+    margin-top: 10px;
+    margin-bottom: 6px;
     width: 100%;
     min-height: 200px;
     max-height: 50vh;
     border-radius: 5px;
-    border: 1px #f0f0f0 solid;
+    border: 1px #e0e0e0 solid;
     resize: vertical;
 }
 
 .new-post-text-box:focus {
     outline: none !important;
-    border: 2px #e2e2e2 solid;
+    border: 1px #b4b4b4 solid;
 }
 
 .new-post-circles-dropdown-wrapper {
@@ -83,6 +84,36 @@
 
 .new-post-post-btn-loading {
     cursor: wait;
+}
+
+/* Reshare Preview */
+
+.new-post-reshared-info-wrapper {
+    display: flex;
+}
+
+.new-post-reshared-info {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.new-post-reshare-delete {
+    font-size: x-large;
+    cursor: pointer;
+}
+
+.new-post-reshare-preview {
+    border: #f0f0f0 solid 1px;
+    background-color: #f0f0f0;
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.new-post-resharable {
+    margin-top: 10px;
 }
 
 

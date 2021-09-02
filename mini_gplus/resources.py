@@ -7,7 +7,7 @@ import werkzeug
 import tempfile
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from .models import User, Post, Comment, Media, Reaction as ReactionModel
+from .models import User, Media
 
 ALLOWED_IMAGE_TYPES = ['gif', 'jpeg', 'bmp', 'png']
 
@@ -40,7 +40,8 @@ user_parser.add_argument('password', type=str, required=True)
 user_fields = {
     'id': fields.String(attribute='user_id'),
     'created_at_seconds': fields.Integer(attribute='created_at'),
-    'avatar_url': AvatarUrl(attribute='avatar')
+    'avatar_url': AvatarUrl(attribute='avatar'),
+    'profile_pic': fields.String
 }
 
 user_avatar_parser = reqparse.RequestParser()
@@ -103,6 +104,21 @@ class MyAvatar(Resource):
 
         # TODO: remove previous avatar
         os.remove(temp_fp)
+
+
+class MyProfilePic(Resource):
+    @jwt_required()
+    def patch(self, user_profile_pic):
+        """
+        Update User profile pic
+        """
+        # check user
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+        if not user:
+            return {'msg': f'User {user_id} is not found'}, 404
+
+        user.update_profile_pic(user_profile_pic)
 
 
 #########
@@ -283,7 +299,7 @@ post_parser.add_argument('reshareable', type=bool, required=True)
 post_parser.add_argument('reshared_from', type=str, required=False)
 
 post_fields = {
-    'id': fields.String,
+    'id': fields.String(attribute='eid'),
     'created_at_seconds': fields.Integer(attribute='created_at'),
     'author': fields.Nested(user_fields),
     'content': fields.String,
@@ -291,15 +307,15 @@ post_fields = {
     'reshareable': fields.Boolean,
     'reshared_from': fields.Nested({
         # this is a trimmed down version of post_fields
-        'id': fields.String,
+        'id': fields.String(attribute='eid'),
         'created_at_seconds': fields.Integer(attribute='created_at'),
         'author': fields.Nested(user_fields),
         'content': fields.String,
     }),
     'reactions': fields.List(fields.Nested({
+        'id': fields.String(attribute='eid'),
         'emoji': fields.String,
         'author': fields.Nested(user_fields),
-        'id': fields.String,
     })),
     # TODO: only return the circles that the seeing user is in
     'circles': fields.List(fields.Nested({
@@ -307,13 +323,13 @@ post_fields = {
         'name': fields.String,
     })),
     'comments': fields.List(fields.Nested({
-        'id': fields.String,
+        'id': fields.String(attribute='eid'),
         'created_at_seconds': fields.Integer(attribute='created_at'),
         'author': fields.Nested(user_fields),
         'content': fields.String,
         # we only assume two-levels of nesting for comments, so no need to recursively define comments fields
         'comments': fields.List(fields.Nested({
-            'id': fields.String,
+            'id': fields.String(attribute='eid'),
             'created_at_seconds': fields.Integer(attribute='created_at'),
             'author': fields.Nested(user_fields),
             'content': fields.String,
@@ -341,7 +357,7 @@ class Posts(Resource):
         reshared_from = args['reshared_from']
         reshared_from_post = None
         if reshared_from:
-            reshared_from_post = Post.objects.get(id=reshared_from)
+            reshared_from_post = user.get_post(reshared_from)
             if not reshared_from_post:
                 return {"msg": f"Post {reshared_from} is not found"}, 404
         post_id = user.create_post(
@@ -366,6 +382,19 @@ class Posts(Resource):
 
         posts = user.retrieves_posts_on_home()
         return posts, 200
+
+
+class Post(Resource):
+    @jwt_required()
+    @marshal_with(post_fields)
+    def get(self, post_id: str):
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+
+        post = user.get_post(post_id)
+        if not user.sees_post(post, context_home_or_profile=False):
+            return {'msg': 'Do not have permission to see the post'}, 403
+        return post
 
 
 class Profile(Resource):
@@ -399,10 +428,10 @@ class Comments(Resource):
         """
         user_id = get_jwt_identity()
         user = User.find(user_id)
-        post = Post.objects.get(id=post_id)
+        post = user.get_post(post_id)
         comment_args = comment_parser.parse_args()
         comment_id = user.create_comment(comment_args['content'], post)
-        return {"id": comment_id}, 201
+        return {'id': comment_id}, 201
 
 
 ###################
@@ -418,8 +447,8 @@ class NestedComments(Resource):
         """
         user_id = get_jwt_identity()
         user = User.find(user_id)
-        post = Post.objects.get(id=post_id)
-        comment = Comment.objects.get(id=comment_id)
+        post = user.get_post(post_id)
+        comment = user.get_comment(comment_id)
         if comment not in post.comments:
             return {'msg': 'Cannot nest more than two levels of comment'}, 403
         nested_comment_args = comment_parser.parse_args()
@@ -442,12 +471,12 @@ class Reactions(Resource):
         """
         user_id = get_jwt_identity()
         user = User.find(user_id)
-        post = Post.objects.get(id=post_id)
+        post = user.get_post(post_id)
         if not post:
             return {"msg": "post is not found"}, 404
         reaction_args = reaction_parser.parse_args()
         reaction_id = user.create_reaction(reaction_args['emoji'], post)
-        return {"id": reaction_id}, 201
+        return {'id': reaction_id}, 201
 
 
 class Reaction(Resource):
@@ -458,10 +487,10 @@ class Reaction(Resource):
         """
         user_id = get_jwt_identity()
         user = User.find(user_id)
-        post = Post.objects.get(id=post_id)
+        post = user.get_post(post_id)
         if not post:
             return {"msg": "post is not found"}, 404
-        reaction_to_delete = ReactionModel.objects.get(id=reaction_id)
+        reaction_to_delete = user.get_reaction(reaction_id)
         if reaction_to_delete not in post.reactions:
             return {'msg': f'Reaction {reaction_to_delete} is already not in post {post_id}'}, 409
         user.delete_reaction(reaction_to_delete, post)
@@ -476,41 +505,13 @@ class NotifyingAction(fields.Raw):
         return notifying_action.value
 
 
-class NotificationLocation(fields.Raw):
-    def format(self, location):
-        cls = location._cls
-        _id = location.id
-        if cls == 'Post':
-            location_type = 'post'
-            location_summary = Post.objects.get(id=_id).content
-        elif cls == 'Comment':
-            location_type = 'comment'
-            location_summary = Comment.objects.get(id=_id).content
-        elif cls == 'NestedComment':
-            location_type = 'nested_comment'
-            location_summary = NestedComments.objects.get(id=_id).content
-        elif cls == 'Reaction':
-            location_type = 'reaction'
-            location_summary = ReactionModel.objects.get(id=_id).emoji
-        else:
-            return {
-                'error': f'unknown notification location type {cls}'
-            }
-
-        return {
-            'id': str(_id),
-            'type': location_type,
-            'summary': location_summary
-        }
-
-
 notification_fields = {
     'id': fields.String,
     'created_at_seconds': fields.Integer(attribute='created_at'),
     'notifier': fields.Nested(user_fields),
-    'notifying_location': NotificationLocation,
+    'notifying_href': fields.String,
     'notifying_action': NotifyingAction,
-    'notified_location': NotificationLocation
+    'notified_href': fields.String
 }
 
 

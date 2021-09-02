@@ -1,3 +1,4 @@
+import uuid
 import bleach
 from enum import Enum
 from typing import List, Optional
@@ -6,6 +7,10 @@ from mongoengine import Document, ListField, BooleanField, ReferenceField, Strin
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import generate_password_hash, check_password_hash
 import emoji as emoji_lib
+
+
+def make_uuid():
+    return str(uuid.uuid4())
 
 
 class UnauthorizedAccess(HTTPException):
@@ -35,6 +40,7 @@ class User(Document, CreatedAtMixin):
     password = StringField(required=True)
     followings = ListField(ReferenceField('User', reverse_delete_rule=PULL), default=[])  # type: List[User]
     avatar = ReferenceField(Media, reverse_delete_rule=NULLIFY)
+    profile_pic = StringField(required=False, default="pill1.png")
 
     ########
     # User #
@@ -103,16 +109,16 @@ class User(Document, CreatedAtMixin):
         :param (bool) is_public: whether the post is public
         :param (List[Circle]) circles: circles to share with
         :param (bool) reshareable: whether the post is reshareable
-        :param (Optional[Post]) reshared_from: Post object for the resharing post
+        :param (Post) reshared_from: Post object for the resharing post
         :return (str) ID of the new post
         """
         # TODO: when resharing, only allow content (text), e.g. no media
         new_post = Post()
+        new_post.eid = make_uuid()
         new_post.author = self.id
         new_post.content = bleach.clean(content)
         new_post.is_public = is_public
         new_post.circles = circles
-        new_post.reshareable = reshareable
 
         sharing_from = None  # type: Optional[Post]
         if reshared_from:
@@ -127,6 +133,10 @@ class User(Document, CreatedAtMixin):
             if not sharing_from.reshareable:
                 return False
             new_post.reshared_from = sharing_from
+        if reshared_from and not reshareable:
+            # if resharing from a post, this post must also be reshareable, otherwise it's logically wrong
+            return False
+        new_post.reshareable = reshareable
         new_post.save()
 
         if sharing_from:
@@ -137,7 +147,14 @@ class User(Document, CreatedAtMixin):
                 owner=sharing_from.author
             )
 
-        return str(new_post.id)
+        return str(new_post.eid)
+
+    @staticmethod
+    def get_post(post_id):
+        """
+        Get a post by its ID
+        """
+        return Post.objects.get(eid=post_id)
 
     def owns_post(self, post):
         """
@@ -218,6 +235,7 @@ class User(Document, CreatedAtMixin):
         # public posts
         if self.sees_post(parent_post, context_home_or_profile=False):
             new_comment = Comment()
+            new_comment.eid = make_uuid()
             new_comment.author = self.id
             new_comment.content = bleach.clean(content)
             new_comment.save()
@@ -232,7 +250,7 @@ class User(Document, CreatedAtMixin):
                 owner=parent_post.author
             )
 
-            return str(new_comment.id)
+            return str(new_comment.eid)
         else:
             raise UnauthorizedAccess()
 
@@ -248,6 +266,7 @@ class User(Document, CreatedAtMixin):
         # same explanation for context_home_or_profile=False
         if self.sees_post(parent_post, context_home_or_profile=False):
             new_comment = Comment()
+            new_comment.eid = make_uuid()
             new_comment.author = self.id
             new_comment.content = bleach.clean(content)
             new_comment.save()
@@ -262,9 +281,16 @@ class User(Document, CreatedAtMixin):
                 owner=parent_comment.author
             )
 
-            return str(new_comment.id)
+            return str(new_comment.eid)
         else:
             raise UnauthorizedAccess()
+
+    @staticmethod
+    def get_comment(comment_id):
+        """
+        Get a Comment by its ID
+        """
+        return Comment.objects.get(eid=comment_id)
 
     def owns_comment(self, comment, parent_post):
         """
@@ -321,7 +347,6 @@ class User(Document, CreatedAtMixin):
     ############
     # Reaction #
     ############
-
     def create_reaction(self, emoji, parent_post):
         """
         Create a reaction for the user
@@ -339,6 +364,7 @@ class User(Document, CreatedAtMixin):
                 raise BadRequest()
 
             new_reaction = Reaction()
+            new_reaction.eid = make_uuid()
             new_reaction.author = self.id
             new_reaction.emoji = emoji
             new_reaction.save()
@@ -353,9 +379,13 @@ class User(Document, CreatedAtMixin):
                 owner=parent_post.author
             )
 
-            return str(new_reaction.id)
+            return str(new_reaction.eid)
         else:
             raise UnauthorizedAccess()
+
+    @staticmethod
+    def get_reaction(reaction_id):
+        return Reaction.objects.get(eid=reaction_id)
 
     def owns_reaction(self, reaction):
         """
@@ -481,6 +511,21 @@ class User(Document, CreatedAtMixin):
         """
         return list(self.followings)
 
+    ###############
+    # Profile Pic #
+    ###############
+
+    def update_profile_pic(self, profile_pic):
+        """
+        update users profile picture
+        """
+        available_profile_pic = ["pill1.png", "pill2.png", "pill3.png", "pill4.png", "pill5.png", "pill6.png"]
+        if profile_pic in available_profile_pic:
+            self.profile_pic = profile_pic
+            self.save()
+        else:
+            raise UnauthorizedAccess()
+
     ################
     # Notification #
     ################
@@ -504,9 +549,9 @@ class User(Document, CreatedAtMixin):
             return
         new_notification = Notification()
         new_notification.notifier = self
-        new_notification.notifying_location = notifying_href
+        new_notification.notifying_href = notifying_href
         new_notification.notifying_action = notifying_action
-        new_notification.notified_location = notified_href
+        new_notification.notified_href = notified_href
         new_notification.owner = owner
         new_notification.save()
 
@@ -537,6 +582,7 @@ class Circle(Document, CreatedAtMixin):
 
 
 class Comment(Document, CreatedAtMixin):
+    eid = StringField(required=True)
     author = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
     content = StringField(required=True)
     comments = ListField(ReferenceField('Comment', reverse_delete_rule=PULL), default=[])  # type: List[Comment]
@@ -546,6 +592,7 @@ class Comment(Document, CreatedAtMixin):
 
 
 class Reaction(Document, CreatedAtMixin):
+    eid = StringField(required=True)
     author = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
     emoji = StringField(required=True)
 
@@ -554,6 +601,7 @@ class Reaction(Document, CreatedAtMixin):
 
 
 class Post(Document, CreatedAtMixin):
+    eid = StringField(required=True)
     author = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
     content = StringField(required=True)
     is_public = BooleanField(required=True)
