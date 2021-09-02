@@ -33,8 +33,7 @@ export default (props) => {
       props.resharePostData === null ? null : props.resharePostData.id,
       mediaData
     );
-    console.log("log media data", mediaData)
-    // window.location.reload();
+    window.location.reload();
   }
 
   const submitButtonClass = () => {
@@ -49,7 +48,6 @@ export default (props) => {
   }
 
   const changeMediasOnClick = (event) => {
-    console.log("length", event.target.files.length)
     if (event.target.files && event.target.files[0]) {
       if (event.target.files.length > 9) {
         alert(`Only 9 files are allowed to upload.`);
@@ -58,13 +56,8 @@ export default (props) => {
         for (let i = 0; i < event.target.files.length; i++) {
           selectedMedias.push(event.target.files[i])
         }
-        console.log("selected media", selectedMedias)
-
         updateMedias(selectedMedias)
       }
-      // let img = event.target.files[0];
-      // updateUploadedAvatarImage(URL.createObjectURL(img))
-      console.log("medias", medias)
     }
   }
 
@@ -114,10 +107,10 @@ export default (props) => {
                  type="file"
                  onChange={changeMediasOnClick}
                  multiple={true}/>
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24"
-               stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                  d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd"
+                  d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                  clipRule="evenodd"/>
           </svg>
 
         </label>

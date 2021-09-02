@@ -11,7 +11,6 @@ export default (props) => {
   const [showEmojiPicker, updateShowEmojiPicker] = useState(false)
   const [reactionData, setReactionData] = useState(parseReactionData(props.data.reactions))
   const timePosted = (postedAtSeconds) => {
-    console.log(props.data)
     const currentTimeAtSeconds = new Date().getTime() / 1000;
     const deltaAtSeconds = currentTimeAtSeconds - postedAtSeconds
     if (deltaAtSeconds < 60) {
