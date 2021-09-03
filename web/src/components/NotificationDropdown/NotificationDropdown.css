@@ -3,12 +3,29 @@
     border-radius: 5px;
     background-color: #ffffff;
     box-shadow: 2px 2px 1px 1px #e0e0e0;
+    max-height: 40vh;
     flex-grow: 1;
+    overflow-y: scroll;
+
+}
+
+.notification-header-wrapper {
+    position: -webkit-sticky;
+    position: sticky;
+    background-color: white;
+    top: 0;
+}
+
+.notification-header {
+
+    font-size: large;
+    padding: 10px 5px;
+    border-bottom: 3px solid #f1f1f1;
 }
 
 .notification-wrapper {
     padding: 5px;
-    border-bottom: 3px solid #e0e0e0;
+    border-bottom: 2px solid #f1f1f1;
 }
 
 .notification-first-row {
@@ -27,6 +44,7 @@
     margin-left: 35px;
     color: #767676;
     cursor: pointer;
+    margin-top: 5px;
 }
 
 .notification-avatar {

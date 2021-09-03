@@ -18,7 +18,7 @@ export default (props) => {
     if (notification.notifying_action === "reaction") action =  "reacted"
 
     return (<div className="notification-wrapper" key={i}>
-      <div className="notification-first-row">
+      <div className="notification-first-row" onClick={() => window.location.href = notification.notifying_location.href}>
         <div className="notification-info">
           <div className="post-avatar notification-avatar">
             <img
@@ -38,7 +38,7 @@ export default (props) => {
         </div>
       </div>
 
-      <div className="notification-second-row">
+      <div className="notification-second-row" onClick={() => window.location.href = notification.notified_location.href}>
         {notification.notified_location.summary}
       </div>
     </div>)
@@ -52,7 +52,12 @@ export default (props) => {
 
   return (
     <div className="notification-container">
-      notif!
+      <div className="notification-header-wrapper">
+        <div className="notification-header">
+          Notifications
+        </div>
+      </div>
+
       {notificationElems}
     </div>
   )

@@ -36,8 +36,8 @@
     margin-top: 10px;
     margin-bottom: 6px;
     width: 100%;
-    min-height: 200px;
-    max-height: 50vh;
+    min-height: 20vh;
+    max-height: 40vh;
     border-radius: 5px;
     border: 1px #e0e0e0 solid;
     resize: vertical;
