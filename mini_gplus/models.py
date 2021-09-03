@@ -185,7 +185,7 @@ class User(Document, CreatedAtMixin):
         # todo: pagination
         before_db_ms = time.time_ns() // 1_000_000
         # ordering by id descending is equivalent to ordering by created_at descending
-        posts = list(Post.objects().order_by('-id'))
+        posts = Post.objects().order_by('-id')
         print(f"Post.objects() took {time.time_ns() // 1_000_000 - before_db_ms} ms")
 
         before_filter_ms = time.time_ns() // 1_000_000
