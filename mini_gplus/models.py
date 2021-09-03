@@ -1,4 +1,5 @@
 import uuid
+import time
 import bleach
 import emoji as emoji_lib
 from typing import List
@@ -6,7 +7,6 @@ from mongoengine import Document, ListField, BooleanField, ReferenceField, Strin
     NotUniqueError
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import generate_password_hash, check_password_hash
-from .timer import Timer
 
 
 def make_uuid():
@@ -183,19 +183,13 @@ class User(Document, CreatedAtMixin):
         :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
         """
         # todo: pagination
-        with Timer() as t1:
-            # ordering by id descending is equivalent to ordering by created_at descending
-            posts = list(Post.objects().order_by('-id'))
-        print(f"Post.objects() took {t1.interval} ms")
-
-        with Timer() as t2:
-            posts = filter(lambda post: self.sees_post(post, context_home_or_profile=True), posts)
-        print(f"Filtering took {t2.interval} ms")
-
-        # with Timer() as t3:
-        #     posts = list(reversed(sorted(posts, key=lambda post: post.created_at)))
-        # print(f"Sorting took {t3.interval} ms")
-
+        before_db_ms = time.time_ns() // 1_000_000
+        # ordering by id descending is equivalent to ordering by created_at descending
+        posts = list(Post.objects().order_by('-id'))
+        before_filter_ns = time.time_ns() // 1_000_000
+        print(f"Post.objects() took {before_filter_ns - before_db_ms} ms")
+        posts = filter(lambda post: self.sees_post(post, context_home_or_profile=True), posts)
+        print(f"Filtering took {time.time_ns() // 1_000_000 - before_filter_ns} ms")
         return list(posts)
 
     def retrieves_posts_on_profile(self, profile_user):

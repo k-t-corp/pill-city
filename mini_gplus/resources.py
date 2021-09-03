@@ -515,10 +515,13 @@ class Home(Resource):
         """
         Get posts that are visible to the current user
         """
+        before_user_ms = time.time_ns() // 1_000_000
         user_id = get_jwt_identity()
         user = User.find(user_id)
-
+        before_retrieve_ms = time.time_ns() // 1_000_000
+        print(f"User took {before_retrieve_ms - before_user_ms} ms")
         posts = user.retrieves_posts_on_home()
+        print(f"Retrieving took {time.time_ns() // 1_000_000 - before_retrieve_ms} ms")
         return posts, 200
 
 
