@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import {Redirect} from 'react-router-dom'
 import {
   Menu,
-  Icon,
   MenuItem
 } from 'semantic-ui-react'
 import {removeAccessToken} from "../../api/AuthStorage";

@@ -4,7 +4,6 @@ import getAvatarUrl from "../../api/getAvatarUrl";
 import timePosted from "../../timePosted";
 
 export default (props) => {
-  console.log(props.notifications)
   let notificationElems = []
   const notificationSummary = (summary) => {
     const summaryLength = 100
