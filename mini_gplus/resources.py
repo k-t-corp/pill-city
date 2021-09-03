@@ -343,8 +343,13 @@ class MediaUrls(fields.Raw):
             # subtract expiry by 10 seconds for some network overhead
             if object_name in MediaUrlCache and now_ms < MediaUrlCache[object_name][1] + \
                     (PostMediaUrlExpireSeconds - 10) * 1000:
+                print(f"found cached url for object {object_name}")
                 return MediaUrlCache[object_name][0]
 
+            print(f"not finding cached url for object {object_name}",
+                  object_name in MediaUrlCache,
+                  MediaUrlCache.get(object_name, ('', -1))[1]
+                  )
             # TODO: how would this work with an actual CDN e.g. cloudfront?
 
             # obtain temp token
