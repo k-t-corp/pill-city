@@ -186,11 +186,17 @@ class User(Document, CreatedAtMixin):
         before_db_ms = time.time_ns() // 1_000_000
         # ordering by id descending is equivalent to ordering by created_at descending
         posts = list(Post.objects().order_by('-id'))
-        before_filter_ns = time.time_ns() // 1_000_000
-        print(f"Post.objects() took {before_filter_ns - before_db_ms} ms")
+        print(f"Post.objects() took {time.time_ns() // 1_000_000 - before_db_ms} ms")
+
+        before_filter_ms = time.time_ns() // 1_000_000
         posts = filter(lambda post: self.sees_post(post, context_home_or_profile=True), posts)
-        print(f"Filtering took {time.time_ns() // 1_000_000 - before_filter_ns} ms")
-        return list(posts)
+        print(f"Filter took {time.time_ns() // 1_000_000 - before_filter_ms} ms")
+
+        before_list_ms = time.time_ns() // 1_000_000
+        posts = list(posts)
+        print(f"List took {time.time_ns() // 1_000_000 - before_list_ms} ms")
+
+        return posts
 
     def retrieves_posts_on_profile(self, profile_user):
         """
