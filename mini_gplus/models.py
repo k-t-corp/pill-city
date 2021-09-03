@@ -165,11 +165,25 @@ class User(Document, CreatedAtMixin):
                         True for home, and False for profile
         :return (bool): whether the user sees the post
         """
-        if self.owns_post(post):
+        before_owns_ms = time.time_ns() // 1_000_000
+        owns = self.owns_post(post)
+        print(f"    owns took {time.time_ns() // 1_000_000 - before_owns_ms} ms")
+
+        if owns:
             return True
-        if context_home_or_profile and post.author not in self.followings:
+
+        before_not_following_ms = time.time_ns() // 1_000_000
+        not_following = context_home_or_profile and post.author not in self.followings
+        print(f"    not following took {time.time_ns() // 1_000_000 - before_not_following_ms} ms")
+
+        if not_following:
             return False
-        if post.is_public:
+
+        before_is_public_ms = time.time_ns() // 1_000_000
+        is_public = post.is_public
+        print(f"    is public took {time.time_ns() // 1_000_000 - before_is_public_ms} ms")
+
+        if is_public:
             return True
         else:
             for circle in post.circles:
@@ -186,18 +200,18 @@ class User(Document, CreatedAtMixin):
         before_db_ms = time.time_ns() // 1_000_000
         # ordering by id descending is equivalent to ordering by created_at descending
         posts = Post.objects().order_by('-id')
-        print(f"db took {time.time_ns() // 1_000_000 - before_db_ms} ms")
+        print(f"  db took {time.time_ns() // 1_000_000 - before_db_ms} ms")
 
         res = []
         for post in posts:
             before_sees_ms = time.time_ns() // 1_000_000
             sees_post = self.sees_post(post, context_home_or_profile=True)
-            print(f"sees took {time.time_ns() // 1_000_000 - before_sees_ms} ms")
+            print(f"  sees took {time.time_ns() // 1_000_000 - before_sees_ms} ms")
 
             if sees_post:
                 before_append_ms = time.time_ns() // 1_000_000
                 res.append(post)
-                print(f"append took {time.time_ns() // 1_000_000 - before_append_ms} ms")
+                print(f"  append took {time.time_ns() // 1_000_000 - before_append_ms} ms")
 
         return res
 
