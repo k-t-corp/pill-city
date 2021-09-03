@@ -327,6 +327,7 @@ post_parser.add_argument('circle_names', type=str, action="append", default=[])
 post_parser.add_argument('reshareable', type=bool, required=True)
 post_parser.add_argument('reshared_from', type=str, required=False)
 post_parser.add_argument('media_object_names', type=str, action="append", default=[])
+post_parser.add_argument('mentioned_user_ids', type=str, action="append", default=[])
 
 # stores media object name -> (media url, media url generation time in ms epoch)
 MediaUrlCache = {}  # type: Dict[str, Tuple[str, int]]
@@ -474,13 +475,21 @@ class Posts(Resource):
                 return {"msg": f"Media {media_object_name} is not found"}, 404
             media_objects.append(media_object)
 
+        # check mentioned users
+        mentioned_user_ids = []
+        for mentioned_user_id in args['mentioned_user_ids']:
+            if not User.find(mentioned_user_id):
+                return {"msg": f"User {mentioned_user_id} is not found"}, 404
+            mentioned_user_ids.append(mentioned_user_id)
+
         post_id = user.create_post(
             content=args['content'],
             is_public=args['is_public'],
             circles=circles,
             reshareable=args['reshareable'],
             reshared_from=reshared_from_post,
-            media_list=media_objects
+            media_list=media_objects,
+            mentioned_user_ids=mentioned_user_ids
         )
         if not post_id:
             return {"msg": f"Not allowed to reshare post {reshared_from}"}, 403
@@ -569,6 +578,7 @@ class Profile(Resource):
 
 comment_parser = reqparse.RequestParser()
 comment_parser.add_argument('content', type=str, required=True)
+comment_parser.add_argument('mentioned_user_ids', type=str, action="append", default=[])
 
 
 class Comments(Resource):
@@ -579,9 +589,19 @@ class Comments(Resource):
         """
         user_id = get_jwt_identity()
         user = User.find(user_id)
+
         post = user.get_post(post_id)
-        comment_args = comment_parser.parse_args()
-        comment_id = user.create_comment(comment_args['content'], post)
+        args = comment_parser.parse_args()
+
+        # check mentioned users
+        mentioned_user_ids = []
+        for mentioned_user_id in args['mentioned_user_ids']:
+            if not User.find(mentioned_user_id):
+                return {"msg": f"User {mentioned_user_id} is not found"}, 404
+            mentioned_user_ids.append(mentioned_user_id)
+
+        comment_id = user.create_comment(args['content'], post, mentioned_user_ids)
+
         return {'id': comment_id}, 201
 
 
@@ -598,12 +618,22 @@ class NestedComments(Resource):
         """
         user_id = get_jwt_identity()
         user = User.find(user_id)
+
         post = user.get_post(post_id)
         comment = user.get_comment(comment_id)
         if comment not in post.comments:
             return {'msg': 'Cannot nest more than two levels of comment'}, 403
-        nested_comment_args = comment_parser.parse_args()
-        user.create_nested_comment(nested_comment_args['content'], comment, post)
+
+        args = comment_parser.parse_args()
+
+        # check mentioned users
+        mentioned_user_ids = []
+        for mentioned_user_id in args['mentioned_user_ids']:
+            if not User.find(mentioned_user_id):
+                return {"msg": f"User {mentioned_user_id} is not found"}, 404
+            mentioned_user_ids.append(mentioned_user_id)
+
+        user.create_nested_comment(args['content'], comment, post, mentioned_user_ids)
 
 
 #############
@@ -658,7 +688,9 @@ class NotifyingAction(fields.Raw):
 
 class NotificationLocation(fields.Raw):
     def format(self, href):
-        if '#reaction-' in href:
+        if not href:
+            return None
+        elif '#reaction-' in href:
             reaction_id = href.split('#reaction-')[1]
             return {
                 'href': href,

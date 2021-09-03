@@ -93,10 +93,13 @@ class User(object):
             'content': content,
         }).json()['id']
 
-    def create_nested_comment(self, post_id: str, comment_id: str, content: str):
+    def create_nested_comment(self, post_id: str, comment_id: str, content: str, mentioned_user_ids: List[str] = None):
         self._raise_on_unauthenticated()
+        if not mentioned_user_ids:
+            mentioned_user_ids = []
         return self.sess.post(f"/api/posts/{post_id}/comment/{comment_id}/comment", json={
-            'content': content
+            'content': content,
+            'mentioned_user_ids': mentioned_user_ids
         })
 
     def follow(self, following_user_id: str):
@@ -219,7 +222,12 @@ def main():
     innkuika.create_comment(kt_ika_post, 'twitter.com/realInnkuIka')
     innkuika.create_nested_comment(kt_ika_post, ika_kt_ika_comment, '')
     ikayaki.create_comment(kt_ika_post, ' _twitter.com/realIkaYaki_ ')
-    ikayaki.create_nested_comment(kt_ika_post, ika_kt_ika_comment, 'Innkuika is crokked!!!! Make Ika Great Again!!!!!!')
+    ikayaki.create_nested_comment(
+        kt_ika_post,
+        ika_kt_ika_comment,
+        '@ika Innkuika is crokked!!!! Make Ika Great Again!!!!!!',
+        ['ika']
+    )
     ikayaro.create_comment(kt_ika_post, 'twitter.com/realIkaYaro')
     ikayaki.create_nested_comment(kt_ika_post, ika_kt_ika_comment, 'twitter.com/realIkaYaro twitter.com/realIkaYaro twi'
                                                                    'tter.com/realIkaYaro twitter.com/realIkaYaro twitte'

@@ -103,7 +103,7 @@ class User(Document, CreatedAtMixin):
     ########
     # Post #
     ########
-    def create_post(self, content, is_public, circles, reshareable, reshared_from, media_list):
+    def create_post(self, content, is_public, circles, reshareable, reshared_from, media_list, mentioned_user_ids):
         """
         Create a post for the user
         :param (str) content: the content
@@ -112,6 +112,7 @@ class User(Document, CreatedAtMixin):
         :param (bool) reshareable: whether the post is reshareable
         :param (Post) reshared_from: Post object for the resharing post
         :param (List[Media]) media_list: list of media's
+        :param (List[str]) mentioned_user_ids: list of mentioned user IDs
         :return (str) ID of the new post
         """
         new_post = Post()
@@ -149,6 +150,14 @@ class User(Document, CreatedAtMixin):
                 notifying_action=NotifyingAction.Reshare,
                 notified_href=sharing_from.make_href(),
                 owner=sharing_from.author
+            )
+
+        for mentioned_user_id in mentioned_user_ids:
+            self.create_notification(
+                notifying_href=new_post.make_href(),
+                notifying_action=NotifyingAction.Mention,
+                notified_href='',
+                owner=User.find(mentioned_user_id)
             )
 
         return str(new_post.eid)
@@ -253,11 +262,12 @@ class User(Document, CreatedAtMixin):
     ###########
     # Comment #
     ###########
-    def create_comment(self, content, parent_post):
+    def create_comment(self, content, parent_post, mentioned_user_ids):
         """
         Create a comment for the user
         :param (str) content: the content
         :param (Post) parent_post: the post that this comment is attached to
+        :param (List[str]) mentioned_user_ids: list of mentioned user IDs
         :return (str) ID of the new comment
         :raise (UnauthorizedAccess) when access is unauthorized
         """
@@ -283,16 +293,25 @@ class User(Document, CreatedAtMixin):
                 owner=parent_post.author
             )
 
+            for mentioned_user_id in mentioned_user_ids:
+                self.create_notification(
+                    notifying_href=new_comment.make_href(parent_post),
+                    notifying_action=NotifyingAction.Mention,
+                    notified_href='',
+                    owner=User.find(mentioned_user_id)
+                )
+
             return str(new_comment.eid)
         else:
             raise UnauthorizedAccess()
 
-    def create_nested_comment(self, content, parent_comment, parent_post):
+    def create_nested_comment(self, content, parent_comment, parent_post, mentioned_user_ids):
         """
         Create a nested comment for the user
         :param (str) content: the content
         :param (Comment) parent_comment: the comment that this nested comment is attached to
         :param (Post) parent_post: the post that this comment is attached to
+        :param (List[str]) mentioned_user_ids: list of mentioned user IDs
         :return (str) ID of the new comment
         :raise (UnauthorizedAccess) when access is unauthorized
         """
@@ -313,6 +332,14 @@ class User(Document, CreatedAtMixin):
                 notified_href=parent_comment.make_href(parent_post),
                 owner=parent_comment.author
             )
+
+            for mentioned_user_id in mentioned_user_ids:
+                self.create_notification(
+                    notifying_href=new_comment.make_href(parent_post),
+                    notifying_action=NotifyingAction.Mention,
+                    notified_href='',
+                    owner=User.find(mentioned_user_id)
+                )
 
             return str(new_comment.eid)
         else:
