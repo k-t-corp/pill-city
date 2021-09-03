@@ -238,18 +238,6 @@ class User(Document, CreatedAtMixin):
         posts = filter(lambda post: self.sees_post(post, context_home_or_profile=False), posts)
         return list(posts)
 
-    def delete_post(self, post):
-        """
-        Delete a post
-        TODO: do not use, no test yet
-        :param (Post) post: the post
-        :raise (UnauthorizedAccess) when access is unauthorized
-        """
-        if post.author.id == self.id:
-            post.delete()
-        else:
-            raise UnauthorizedAccess()
-
     ###########
     # Comment #
     ###########
@@ -324,58 +312,6 @@ class User(Document, CreatedAtMixin):
         Get a Comment by its ID
         """
         return Comment.objects.get(eid=comment_id)
-
-    def owns_comment(self, comment, parent_post):
-        """
-        Whether the user owns a comment
-        TODO: do not use, no test yet
-        :param (Comment) comment: the comment
-        :param (Post) parent_post: its parent post
-        :return (bool): whether the user owns a comment
-        """
-        return self.owns_post(parent_post) or self.id == comment.author.id
-
-    def owns_nested_comment(self, comment, parent_comment, parent_post):
-        """
-        Whether the user owns a nested comment
-        TODO: do not use, no test yet
-        :param (Comment) comment: the comment
-        :param (Comment) parent_comment: comment's parent comment
-        :param (Post) parent_post: parent comment's parent post
-        :return (bool): whether the user owns the nested comment
-        """
-        return self.owns_post(parent_post) \
-               or self.owns_comment(parent_comment, parent_post) \
-               or self.id == comment.author.id
-
-    def delete_comment(self, comment, parent_post):
-        """
-        Delete a comment
-        TODO: do not use, no test yet
-        :param (Comment) comment: the comment
-        :param (Post) parent_post: comment's parent post
-        :raise (UnauthorizedAccess) when access is unauthorized
-        """
-        if self.owns_comment(comment, parent_post):
-            parent_post.comments.remove(comment)
-            comment.delete()
-        else:
-            raise UnauthorizedAccess()
-
-    def delete_nested_comment(self, comment, parent_comment, parent_post):
-        """
-        Delete a nested comment
-        TODO: do not use, no test yet
-        :param (Comment) comment: the comment
-        :param (Comment) parent_comment: comment's parent comment
-        :param (Post) parent_post: parent comment's parent post
-        :raise (UnauthorizedAccess) when access is unauthorized
-        """
-        if self.owns_comment(parent_comment, parent_post):
-            parent_comment.comments.remove(comment)
-            comment.delete()
-        else:
-            raise UnauthorizedAccess()
 
     ############
     # Reaction #
