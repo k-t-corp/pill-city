@@ -19,7 +19,6 @@
 .home-right-column-container {
     position: -webkit-sticky;
     position: sticky;
-    background-color: #0d71bb;
     top: 5em;
     height: 90vh;
     display: flex;

@@ -3,27 +3,13 @@ import Picker from 'emoji-picker-react';
 import "./Post.css"
 import getAvatarUrl from "../../api/getAvatarUrl";
 import parseContent from "../../parseContent";
+import timePosted from "../../timePosted";
 
 export default (props) => {
   const [addComment, updateAddComment] = useState(false)
   const [replyNestedCommentId, updateReplayNestedCommentId] = useState("")
   const [showEmojiPicker, updateShowEmojiPicker] = useState(false)
   const [reactionData, setReactionData] = useState(parseReactionData(props.data.reactions))
-  const timePosted = (postedAtSeconds) => {
-    const currentTimeAtSeconds = new Date().getTime() / 1000;
-    const deltaAtSeconds = currentTimeAtSeconds - postedAtSeconds
-    if (deltaAtSeconds < 60) {
-      return `${Math.floor(deltaAtSeconds)}s`
-    } else if (deltaAtSeconds < 3600) {
-      return `${Math.floor(deltaAtSeconds / 60)}m`
-    } else if (deltaAtSeconds < 3600 * 24) {
-      return `${Math.floor(deltaAtSeconds / 3600)}h`
-    } else if (deltaAtSeconds < 3600 * 24 * 7) {
-      return `${Math.floor(deltaAtSeconds / (3600 * 24))}d`
-    } else {
-      return new Date(postedAtSeconds).toISOString().split('T')[0];
-    }
-  }
   const resharedElem = (resharedFrom) => {
     if (resharedFrom.id === null) {
       return null
