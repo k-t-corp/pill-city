@@ -2,44 +2,38 @@
 An one-of-a-kind social network
 
 ## Development
+The project consists of an API server written in Python/Flask, and a web frontend written in JavaScript/React
+The API server stores information in a MongoDB database, and it uses S3 additionally to store images and other types of media
 
 ### Prerequisites
 * Python 3.7+
 * Node.js v14 and Yarn
 * Docker and docker-compose
 
-### Install dependencies
+### Start API and web development
 ```
-python3 -m venv venv
-./venv/bin/pip install -r requirements.txt
+make
 ```
+You will see the web frontend at [localhost:3000](http://localhost:3000)
+The API will be running at `localhost:5000`
 
-### Prepare .env files
-* Copy `.example.env` to `.env`
-* Copy `./web/.example.env` to `./web/.env`
-
-### Run API
-```bash
-./scripts/dev.sh
+### Dump dummy data into API
+Make sure you have the API running
+```
+make dev-dump
 ```
 
-### Run web frontend
-In another terminal
-```bash
-cd web
-yarn install
-yarn start
+### Start API development alone
+```
+make dev-api
 ```
 
-View web frontend at [`http://localhost:3000`](http://localhost:3000/)
-
-### Dump some mock data into API
-**WARNING: all data on the development database will be wiped**
-```bash
-./venv/bin/python ./scripts/dev_dump_mock_data.py
+### Start web development alone
+```
+make dev-web
 ```
 
 ### Run API unit tests
-```bash
-nosetests
+```
+make test
 ```
