@@ -645,3 +645,59 @@ class Reaction(Resource):
         if reaction_to_delete not in post.reactions:
             return {'msg': f'Reaction {reaction_to_delete} is already not in post {post_id}'}, 409
         user.delete_reaction(reaction_to_delete, post)
+
+
+#################
+# Notifications #
+#################
+
+class NotifyingAction(fields.Raw):
+    def format(self, notifying_action):
+        return notifying_action.value
+
+
+class NotificationLocation(fields.Raw):
+    def format(self, href):
+        if '#reaction-' in href:
+            reaction_id = href.split('#reaction-')[1]
+            return {
+                'href': href,
+                'summary': User.get_reaction(reaction_id).emoji
+            }
+        elif '#comment-' in href:
+            comment_id = href.split('#comment-')[1]
+            return {
+                'href': href,
+                'summary': User.get_comment(comment_id).content
+            }
+        elif '/post/' in href:
+            post_id = href.split('/post/')[1]
+            return {
+                'href': href,
+                'summary': User.get_post(post_id).content
+            }
+        else:
+            return {
+                'error': f'Unknown href type for {href}'
+            }
+
+
+notification_fields = {
+    'created_at_seconds': fields.Integer(attribute='created_at'),
+    'notifier': fields.Nested(user_fields),
+    'notifying_location': NotificationLocation(attribute='notifying_href'),
+    'notifying_action': NotifyingAction,
+    'notified_location': NotificationLocation(attribute='notified_href')
+}
+
+
+class Notifications(Resource):
+    @jwt_required()
+    @marshal_with(notification_fields)
+    def get(self):
+        """
+        Get all of a user's notifications
+        """
+        user_id = get_jwt_identity()
+        user = User.find(user_id)
+        return user.get_notifications()

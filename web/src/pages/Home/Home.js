@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import Post from "../../components/Post/Post";
 import "./Home.css"
 import NewPost from "../../components/NewPost/NewPost";
+import NotificationDropdown from "../../components/NotificationDropdown/NotificationDropdown";
 
 export default (props) => {
   const [loading, updateLoading] = useState(true)
@@ -9,12 +10,13 @@ export default (props) => {
   const [circles, updateCircles] = useState([])
   const [me, updateMe] = useState(null)
   const [resharePostData, updateResharePostData] = useState(null)
+  const [notifications, updateNotifications] = useState(null)
 
   useEffect(async ()=>{
     updatePosts(await props.api.getHome())
     updateCircles(await props.api.getCircles())
     updateMe(await props.api.getMe())
-
+    updateNotifications(await props.api.getNotifications())
     updateLoading(false)
   }, [])
 
@@ -38,12 +40,13 @@ export default (props) => {
         <div className="home-posts-wrapper">
           {homePostElement()}
         </div>
-        <div className="home-new-post-wrapper">
+        <div className="home-right-column-container">
           <NewPost circles={circles}
                    me={me}
                    api={props.api}
                    resharePostData={resharePostData}
                    updateResharePostData={updateResharePostData}/>
+          <NotificationDropdown notifications={notifications}/>
         </div>
       </div>
     )

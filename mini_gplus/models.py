@@ -1,10 +1,11 @@
 import uuid
 import time
 import bleach
+from typing import List, Optional
 import emoji as emoji_lib
-from typing import List
+from enum import Enum
 from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, PULL, CASCADE, NULLIFY, \
-    NotUniqueError
+    NotUniqueError, EnumField
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -109,7 +110,7 @@ class User(Document, CreatedAtMixin):
         :param (bool) is_public: whether the post is public
         :param (List[Circle]) circles: circles to share with
         :param (bool) reshareable: whether the post is reshareable
-        :param (Optional[Post]) reshared_from: Post object for the resharing post
+        :param (Post) reshared_from: Post object for the resharing post
         :param (List[Media]) media_list: list of media's
         :return (str) ID of the new post
         """
@@ -120,6 +121,7 @@ class User(Document, CreatedAtMixin):
         new_post.is_public = is_public
         new_post.circles = circles
         new_post.media_list = media_list
+        sharing_from = None  # type: Optional[Post]
         if reshared_from:
             if media_list:
                 # when resharing, only allow content (text), e.g. no media
@@ -140,6 +142,15 @@ class User(Document, CreatedAtMixin):
             return False
         new_post.reshareable = reshareable
         new_post.save()
+
+        if sharing_from:
+            self.create_notification(
+                notifying_href=new_post.make_href(),
+                notifying_action=NotifyingAction.Reshare,
+                notified_href=sharing_from.make_href(),
+                owner=sharing_from.author
+            )
+
         return str(new_post.eid)
 
     @staticmethod
@@ -261,8 +272,17 @@ class User(Document, CreatedAtMixin):
             new_comment.author = self.id
             new_comment.content = bleach.clean(content)
             new_comment.save()
+
             parent_post.comments.append(new_comment)
             parent_post.save()
+
+            self.create_notification(
+                notifying_href=new_comment.make_href(parent_post),
+                notifying_action=NotifyingAction.Comment,
+                notified_href=parent_post.make_href(),
+                owner=parent_post.author
+            )
+
             return str(new_comment.eid)
         else:
             raise UnauthorizedAccess()
@@ -283,8 +303,17 @@ class User(Document, CreatedAtMixin):
             new_comment.author = self.id
             new_comment.content = bleach.clean(content)
             new_comment.save()
+
             parent_comment.comments.append(new_comment)
             parent_comment.save()
+
+            self.create_notification(
+                notifying_href=new_comment.make_href(parent_post),
+                notifying_action=NotifyingAction.Comment,
+                notified_href=parent_comment.make_href(parent_post),
+                owner=parent_comment.author
+            )
+
             return str(new_comment.eid)
         else:
             raise UnauthorizedAccess()
@@ -372,8 +401,17 @@ class User(Document, CreatedAtMixin):
             new_reaction.author = self.id
             new_reaction.emoji = emoji
             new_reaction.save()
+
             parent_post.reactions.append(new_reaction)
             parent_post.save()
+
+            self.create_notification(
+                notifying_href=new_reaction.make_href(parent_post),
+                notifying_action=NotifyingAction.Reaction,
+                notified_href=parent_post.make_href(),
+                owner=parent_post.author
+            )
+
             return str(new_reaction.eid)
         else:
             raise UnauthorizedAccess()
@@ -521,6 +559,41 @@ class User(Document, CreatedAtMixin):
         else:
             raise UnauthorizedAccess()
 
+    ################
+    # Notification #
+    ################
+    def create_notification(self, notifying_href, notifying_action, notified_href, owner):
+        """
+        Create a notification where the notifier is the user. If the user is the owner, then do nothing
+        Hrefs can be
+            1) Link to post, e.g. /post/post-id
+            2) Link to comment or nested comment, e.g. /post/post-id#comment-comment-id
+            3) Link to reaction, e.g. /post/post-id#reaction-reaction-id
+        :param (str) notifying_href: href for the object that triggers this notification
+                                        e.g. if the user creates a comment A on post B,
+                                        then notifying_href is /post/B#comment-A
+        :param (NotifyingAction) notifying_action: the specific action for the notification
+        :param (str) notified_href: href for the object that triggers this notification
+                                        e.g. if the user creates a comment A on post B,
+                                        then notifying_href is /post/A
+        :param (User) owner: The user who is notified
+        """
+        if self.id == owner.id:
+            return
+        new_notification = Notification()
+        new_notification.notifier = self
+        new_notification.notifying_href = notifying_href
+        new_notification.notifying_action = notifying_action
+        new_notification.notified_href = notified_href
+        new_notification.owner = owner
+        new_notification.save()
+
+    def get_notifications(self):
+        """
+        Get all of a user's notifications in reverse chronological order, e.g. latest to earliest
+        """
+        return list(reversed(sorted(Notification.objects(owner=self), key=lambda n: n.created_at)))
+
 
 class Circle(Document, CreatedAtMixin):
     owner = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
@@ -547,11 +620,17 @@ class Comment(Document, CreatedAtMixin):
     content = StringField(required=True)
     comments = ListField(ReferenceField('Comment', reverse_delete_rule=PULL), default=[])  # type: List[Comment]
 
+    def make_href(self, parent_post):
+        return f"/post/{parent_post.eid}#comment-{self.eid}"
+
 
 class Reaction(Document, CreatedAtMixin):
     eid = StringField(required=True)
     author = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
     emoji = StringField(required=True)
+
+    def make_href(self, parent_post):
+        return f"/post/{parent_post.eid}#reaction-{self.eid}"
 
 
 class Post(Document, CreatedAtMixin):
@@ -565,3 +644,21 @@ class Post(Document, CreatedAtMixin):
     reshareable = BooleanField(required=False, default=False)
     reshared_from = ReferenceField('Post', required=False, reverse_delete_rule=NULLIFY, default=None)  # type: Post
     media_list = ListField(ReferenceField(Media, reverse_delete_rule=PULL), default=[])  # type: List[Media]
+
+    def make_href(self):
+        return f"/post/{self.eid}"
+
+
+class NotifyingAction(Enum):
+    Comment = "comment"
+    Mention = "mention"
+    Reaction = "reaction"
+    Reshare = "reshare"
+
+
+class Notification(Document, CreatedAtMixin):
+    notifier = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
+    notifying_href = StringField(required=True)
+    notifying_action = EnumField(NotifyingAction, required=True)  # type: NotifyingAction
+    notified_href = StringField(required=True)
+    owner = ReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User

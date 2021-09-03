@@ -357,4 +357,15 @@ export default class Api {
       throw new ApiError(res.status)
     }
   }
+
+  async getNotifications() {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.get(
+      `/notifications`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
 }

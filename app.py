@@ -7,7 +7,8 @@ from flask_restful import Api
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token
 from mini_gplus.resources import Users, Posts, Comments, NestedComments, Circles, Circle, CircleMember, \
-    Followings, Following, Profile, UserResource, Reactions, Reaction, MyAvatar, Me, MyProfilePic, Home, Post, PostMedia
+    Followings, Following, Profile, UserResource, Reactions, Reaction, MyAvatar, Me, MyProfilePic, Post, \
+    Notifications, Home, PostMedia
 from mini_gplus.models import User
 
 
@@ -114,6 +115,8 @@ api.add_resource(Circle, '/api/circle/<string:circle_name>')
 
 api.add_resource(Followings, '/api/followings')
 api.add_resource(Following, '/api/following/<string:following_user_id>')
+
+api.add_resource(Notifications, '/api/notifications')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
