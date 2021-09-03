@@ -9,8 +9,14 @@ class User(object):
     def __init__(self, user_id):
         self.user_id = user_id
         self.sess = BaseUrlSession(base_url='http://localhost:5000')
+
+        def res_hook(r, *args, **kwargs):
+            sc = r.status_code
+            if str(sc).startswith('4') or str(sc).startswith('5'):
+                print(r.text)
+            r.raise_for_status()
         self.sess.hooks = {
-            'response': lambda r, *args, **kwargs: r.raise_for_status()
+            'response': res_hook
         }
         self.access_token = None
 
@@ -50,17 +56,36 @@ class User(object):
         self.sess.post(f'/api/circle/{circle_name}/membership/{member_user_id}')
 
     def create_post(self, content: str, is_public: bool, circle_names=None, reshareable: bool = False,
-                    reshared_from: Optional[str] = None):
+                    reshared_from: Optional[str] = None, media_filenames: List[str] = None):
+        self._raise_on_unauthenticated()
+
+        # upload media first
+        if media_filenames is None:
+            media_filenames = []
+        media_object_names = []
+        if media_filenames:
+            media_filepaths = list(map(lambda fn: os.path.join('scripts', 'dev_mock_data_media', fn), media_filenames))
+            files = {}
+            for i, fp in enumerate(media_filepaths):
+                if i < 9:
+                    files['media' + str(i)] = open(fp, 'rb')
+            media_object_names = self.sess.post(f'/api/posts/media', files=files).json()
+            for _, f in files.items():
+                f.close()
+
+        # post
         if circle_names is None:
             circle_names = []
-        self._raise_on_unauthenticated()
-        return self.sess.post(f'/api/posts', json={
+        post_id = self.sess.post(f'/api/posts', data={
             'content': content,
             'is_public': is_public,
             'circle_names': circle_names,
             'reshareable': reshareable,
-            'reshared_from': reshared_from
+            'reshared_from': reshared_from,
+            'media_object_names': media_object_names
         }).json()['id']
+
+        return post_id
 
     def create_comment(self, post_id: str, content: str):
         self._raise_on_unauthenticated()
@@ -157,10 +182,10 @@ def main():
     kt.create_post('rua', is_public=True)
     kt.create_post(' _Hello, World!_ ', is_public=True)
     kt_ika_post = kt.create_post('Ika!1!!!!', is_public=False, circle_names=['ika'])
-    ika.create_post('iPhone', is_public=True)
-    ika.create_post(' *iPad* ', is_public=True)
-    ika.create_post('MacBook Pro', is_public=True)
-    ika.create_post('MacBook Air', is_public=True)
+    ika.create_post('iPhone', is_public=True, media_filenames=['iphone.jpeg'])
+    ika.create_post(' *iPad* ', is_public=True, media_filenames=['ipad.jpeg'])
+    ika.create_post('MacBook Pro', is_public=True, media_filenames=['mbp.jpeg'])
+    ika.create_post('MacBook Air', is_public=True, media_filenames=['mba.jpeg'])
     kt.create_post('BOY NEXT DOOR. SLABU GET UR AS BACK HERE. HENG HENG HENG AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
                    'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
                    'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', is_public=False,
@@ -168,12 +193,14 @@ def main():
     kt.create_post('鬼城！！！', is_public=False, circle_names=['g+'])
     with open('./scripts/xss.txt') as f:
         kt.create_post(f.read(), is_public=True, circle_names=['g+'])
-    ika.create_post('iMac', is_public=True)
-    ika.create_post('AirPod Pro', is_public=True)
+    ika.create_post('iMac', is_public=True, media_filenames=['imac.jpg'])
+    ika.create_post('AirPods Pro', is_public=True, media_filenames=['app.jpeg'])
 
     senpai.create_post('henghenghengaaaa', is_public=True)
     senpai.create_post('kouchaiidesuka', is_public=True)
-    sirjie_post_id = sirjie.create_post('我家呢還 *蠻大* 的', is_public=True, reshareable=True)
+    sirjie_post_id = sirjie.create_post('我家呢還 *蠻大* 的', is_public=True, reshareable=True, media_filenames=[
+        'jie1.png', 'jie2.jpg', 'jie3.jpg'
+    ])
     sirjie.create_post('拿都可以拿', is_public=True)
     sirjie.create_post('你看這個彬彬才喝幾罐就醉了', is_public=True)
     senpai.create_post('114514', is_public=True)

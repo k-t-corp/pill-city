@@ -4,6 +4,7 @@ import "./Post.css"
 import getAvatarUrl from "../../api/getAvatarUrl";
 import parseContent from "../../parseContent";
 import timePosted from "../../timePosted";
+import MediaPreview from "../MediaPreview/MediaPreview";
 
 export default (props) => {
   const [addComment, updateAddComment] = useState(false)
@@ -33,6 +34,10 @@ export default (props) => {
         </div>
         <div className="post-content">
           {parseContent(resharedFrom.content, "")}
+          {resharedFrom.media_urls.length === 0 ? null :
+            <MediaPreview mediaUrls={resharedFrom.media_urls} threeRowHeight="80px" twoRowHeight="100px"
+                          oneRowHeight="140px"/>
+            }
         </div>
       </div>)
   }
@@ -337,6 +342,7 @@ export default (props) => {
           {parseContent(props.data.content, "post-content")}
         </div>
         {resharedElem(props.data.reshared_from)}
+        <MediaPreview mediaUrls={props.data.media_urls} threeRowHeight="130px" twoRowHeight="150px"  oneRowHeight="180px"/>
         <div className="post-interactions-wrapper">
           <div className="post-reactions-wrapper">
             {reactions}

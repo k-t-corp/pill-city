@@ -3,12 +3,15 @@ import {Dropdown, Popup, Icon, Checkbox} from 'semantic-ui-react'
 import "./NewPost.css"
 import getAvatarUrl from "../../api/getAvatarUrl";
 import parseContent from "../../parseContent";
+import FormData from "form-data";
+import MediaPreview from "../MediaPreview/MediaPreview";
 
 export default (props) => {
   const [content, updateContent] = useState("")
   const [circleNames, updateCircleNames] = useState([])
   const [posting, updatePosting] = useState(false)
   const [resharableToggleChecked, updateResharableToggleChecked] = useState(true)
+  const [medias, updateMedias] = useState([])
 
   const isValid = () => {
     return content.trim().length !== 0 && circleNames.length !== 0
@@ -17,12 +20,19 @@ export default (props) => {
     updatePosting(true);
     const actualCircleNames = circleNames.filter(cn => cn !== true)
     const isPublic = circleNames.filter(cn => cn === true).length !== 0
+    let mediaData = new FormData()
+    for (let i = 0; i < medias.length; i++) {
+      const blob = new Blob([medias[i]], {type: 'image/*'})
+      mediaData.append(`media${i}`, blob, blob.name)
+    }
     await props.api.postPost(
       content,
       isPublic,
       actualCircleNames,
       props.resharePostData === null ? resharableToggleChecked : true,
-      props.resharePostData === null ? null : props.resharePostData.id);
+      props.resharePostData === null ? null : props.resharePostData.id,
+      props.resharePostData === null ? mediaData : []
+    );
     window.location.reload();
   }
 
@@ -35,6 +45,20 @@ export default (props) => {
       className.push("new-post-post-btn-loading ")
     }
     return className.join(" ")
+  }
+
+  const changeMediasOnClick = (event) => {
+    if (event.target.files && event.target.files[0]) {
+      if (event.target.files.length > 9) {
+        alert(`Only 9 files are allowed to upload.`);
+      } else {
+        let selectedMedias = []
+        for (let i = 0; i < event.target.files.length; i++) {
+          selectedMedias.push(event.target.files[i])
+        }
+        updateMedias(selectedMedias)
+      }
+    }
   }
 
   return (
@@ -75,14 +99,34 @@ export default (props) => {
           </div>
         </div>
       }
-      <textarea
-        className="new-post-text-box"
-        value={content}
-        onChange={e => {
-          e.preventDefault();
-          updateContent(e.target.value)
-        }}
-      />
+      {props.resharePostData === null ?
+        <MediaPreview mediaUrls={medias.map(m => URL.createObjectURL(m))} threeRowHeight="80px" twoRowHeight="100px"
+                      oneRowHeight="140px"/>
+        : null}
+      <div className="new-post-text-box-container">
+        {props.resharePostData === null ?
+          <label className="new-post-attachment-button">
+            <input id="new-post-change-medias-button"
+                   accept="image/*"
+                   type="file"
+                   onChange={changeMediasOnClick}
+                   multiple={true}/>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd"
+                    d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                    clipRule="evenodd"/>
+            </svg>
+          </label> : null}
+        <textarea
+          className="new-post-text-box"
+          value={content}
+          onChange={e => {
+            e.preventDefault();
+            updateContent(e.target.value)
+          }}
+        />
+      </div>
+
       <div className='new-post-circles-dropdown-wrapper'>
         <Dropdown
           placeholder='Who can see it'
@@ -134,8 +178,10 @@ export default (props) => {
             position='top right'
             basic
           >
-            <p>If you enable resharing, other users can potentially reshare the post to "public" (anyone on this site)</p>
-            <p>All interactions such as comments and reactions belong to the resharing post unless users explicitly click into your original post and interact with it</p>
+            <p>If you enable resharing, other users can potentially reshare the post to "public" (anyone on this
+              site)</p>
+            <p>All interactions such as comments and reactions belong to the resharing post unless users explicitly
+              click into your original post and interact with it</p>
           </Popup>
         </div> : null
       }
@@ -153,7 +199,8 @@ export default (props) => {
             position='top right'
             basic
           >
-            <p>If you reshare a resharing post, you will be resharing the original post instead of the resharing post</p>
+            <p>If you reshare a resharing post, you will be resharing the original post instead of the resharing
+              post</p>
             <p>You post is reshareable by default</p>
           </Popup>
         }

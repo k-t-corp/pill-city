@@ -1,12 +1,13 @@
 import uuid
+import time
 import bleach
-from enum import Enum
 from typing import List, Optional
-from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, EnumField, PULL, CASCADE, \
-    NULLIFY, NotUniqueError
+import emoji as emoji_lib
+from enum import Enum
+from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, PULL, CASCADE, NULLIFY, \
+    NotUniqueError, EnumField
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import generate_password_hash, check_password_hash
-import emoji as emoji_lib
 
 
 def make_uuid():
@@ -102,7 +103,7 @@ class User(Document, CreatedAtMixin):
     ########
     # Post #
     ########
-    def create_post(self, content, is_public, circles, reshareable, reshared_from):
+    def create_post(self, content, is_public, circles, reshareable, reshared_from, media_list):
         """
         Create a post for the user
         :param (str) content: the content
@@ -110,18 +111,21 @@ class User(Document, CreatedAtMixin):
         :param (List[Circle]) circles: circles to share with
         :param (bool) reshareable: whether the post is reshareable
         :param (Post) reshared_from: Post object for the resharing post
+        :param (List[Media]) media_list: list of media's
         :return (str) ID of the new post
         """
-        # TODO: when resharing, only allow content (text), e.g. no media
         new_post = Post()
         new_post.eid = make_uuid()
         new_post.author = self.id
         new_post.content = bleach.clean(content)
         new_post.is_public = is_public
         new_post.circles = circles
-
+        new_post.media_list = media_list
         sharing_from = None  # type: Optional[Post]
         if reshared_from:
+            if media_list:
+                # when resharing, only allow content (text), e.g. no media
+                return False
             if reshared_from.reshared_from:
                 # if reshared_from itself is a reshared post, reshare reshared_from's original post
                 sharing_from = reshared_from.reshared_from
@@ -172,11 +176,25 @@ class User(Document, CreatedAtMixin):
                         True for home, and False for profile
         :return (bool): whether the user sees the post
         """
-        if self.owns_post(post):
+        before_owns_ms = time.time_ns() // 1_000_000
+        owns = self.owns_post(post)
+        print(f"    owns took {time.time_ns() // 1_000_000 - before_owns_ms} ms")
+
+        if owns:
             return True
-        if context_home_or_profile and post.author not in self.followings:
+
+        before_not_following_ms = time.time_ns() // 1_000_000
+        not_following = context_home_or_profile and post.author not in self.followings
+        print(f"    not following took {time.time_ns() // 1_000_000 - before_not_following_ms} ms")
+
+        if not_following:
             return False
-        if post.is_public:
+
+        before_is_public_ms = time.time_ns() // 1_000_000
+        is_public = post.is_public
+        print(f"    is public took {time.time_ns() // 1_000_000 - before_is_public_ms} ms")
+
+        if is_public:
             return True
         else:
             for circle in post.circles:
@@ -190,9 +208,23 @@ class User(Document, CreatedAtMixin):
         :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
         """
         # todo: pagination
-        posts = Post.objects()
-        posts = filter(lambda post: self.sees_post(post, context_home_or_profile=True), posts)
-        return list(reversed(sorted(posts, key=lambda post: post.created_at)))
+        before_db_ms = time.time_ns() // 1_000_000
+        # ordering by id descending is equivalent to ordering by created_at descending
+        posts = Post.objects().order_by('-id')
+        print(f"  db took {time.time_ns() // 1_000_000 - before_db_ms} ms")
+
+        res = []
+        for post in posts:
+            before_sees_ms = time.time_ns() // 1_000_000
+            sees_post = self.sees_post(post, context_home_or_profile=True)
+            print(f"  sees took {time.time_ns() // 1_000_000 - before_sees_ms} ms")
+
+            if sees_post:
+                before_append_ms = time.time_ns() // 1_000_000
+                res.append(post)
+                print(f"  append took {time.time_ns() // 1_000_000 - before_append_ms} ms")
+
+        return res
 
     def retrieves_posts_on_profile(self, profile_user):
         """
@@ -201,9 +233,10 @@ class User(Document, CreatedAtMixin):
         :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
         """
         # todo: pagination
-        posts = Post.objects(author=profile_user)
+        # ordering by id descending is equivalent to ordering by created_at descending
+        posts = Post.objects(author=profile_user).order_by('-id')
         posts = filter(lambda post: self.sees_post(post, context_home_or_profile=False), posts)
-        return list(reversed(sorted(posts, key=lambda post: post.created_at)))
+        return list(posts)
 
     def delete_post(self, post):
         """
@@ -610,6 +643,7 @@ class Post(Document, CreatedAtMixin):
     comments = ListField(ReferenceField(Comment, reverse_delete_rule=PULL), default=[])  # type: List[Comment]
     reshareable = BooleanField(required=False, default=False)
     reshared_from = ReferenceField('Post', required=False, reverse_delete_rule=NULLIFY, default=None)  # type: Post
+    media_list = ListField(ReferenceField(Media, reverse_delete_rule=PULL), default=[])  # type: List[Media]
 
     def make_href(self):
         return f"/post/{self.eid}"

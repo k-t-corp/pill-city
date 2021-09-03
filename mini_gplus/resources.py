@@ -1,30 +1,85 @@
 import os
-import uuid
 import time
-import imghdr
 import boto3
 import werkzeug
 import tempfile
+import uuid
+import json
+from typing import Optional, Dict, Tuple
+from PIL import Image, UnidentifiedImageError
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from .models import User, Media
 
-ALLOWED_IMAGE_TYPES = ['gif', 'jpeg', 'bmp', 'png']
+WhitelistedImageTypes = ['gif', 'jpeg', 'bmp', 'png']
+MaxPostMediaCount = 9
+PostMediaUrlExpireSeconds = 900
+
+
+################
+# Upload to S3 #
+################
 
 s3_client = boto3.client(
     's3',
     endpoint_url=os.environ['S3_ENDPOINT_URL'],
-    region_name=os.environ.get('S3_REGION', ''),
-    aws_access_key_id=os.environ['S3_ACCESS_KEY'],
-    aws_secret_access_key=os.environ['S3_SECRET_KEY']
+    region_name=os.environ.get('AWS_REGION', ''),
+    aws_access_key_id=os.environ['AWS_ACCESS_KEY'],
+    aws_secret_access_key=os.environ['AWS_SECRET_KEY']
+)
+sts_client = boto3.client(
+    'sts',
+    endpoint_url=os.environ['STS_ENDPOINT_URL'],
+    region_name=os.environ.get('AWS_REGION', ''),
+    aws_access_key_id=os.environ['AWS_ACCESS_KEY'],
+    aws_secret_access_key=os.environ['AWS_SECRET_KEY']
 )
 
 s3_bucket_name = os.environ['S3_BUCKET_NAME']
 
 
+def upload_to_s3(file, object_name_stem) -> Optional[Media]:
+    # check file size
+    # flask will limit upload size for us :)
+    # would return 413 if file is too large
+
+    # save the file
+    temp_fp = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
+    file.save(temp_fp)
+
+    # check upload format
+    try:
+        img_type = Image.open(temp_fp).format.lower()
+    except UnidentifiedImageError:
+        return None
+    if img_type not in WhitelistedImageTypes:
+        return None
+
+    object_name = f"{object_name_stem}.{img_type}"
+
+    # upload avatar
+    s3_client.upload_file(
+        Filename=temp_fp,
+        Bucket=s3_bucket_name,
+        Key=object_name,
+        ExtraArgs={
+            'ContentType': f"image/{img_type}",
+        }
+    )
+
+    # update user model
+    avatar_media = Media()
+    avatar_media.object_name = object_name
+    avatar_media.save()
+    os.remove(temp_fp)
+
+    return avatar_media
+
+
 ######
 # Me #
 ######
+
 
 class AvatarUrl(fields.Raw):
     def format(self, avatar):
@@ -68,42 +123,16 @@ class MyAvatar(Resource):
         args = user_avatar_parser.parse_args()
         file = args['file']
 
-        # check file size
-        # flask will limit upload size for us :)
-        # would return 413 if file is too large
-
-        # save the file
-        temp_fp = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
-        file.save(temp_fp)
-
-        # check upload format
-        img_type = imghdr.what(temp_fp)
-        if img_type not in ALLOWED_IMAGE_TYPES:
-            return {'msg': f"Blacklisted image type {img_type}"}, 400
         # the resulting object name looks like avatars/kt-1627815711477.jpeg
         # avatars prefix is made explicitly public readable
         # because it's faster to read a user's metadata, and we are fine with all avatars being public
-        object_name = f"avatars/{user_id}-{str(time.time_ns() // 1_000_000)}.{img_type}"
+        object_name_stem = f"avatars/{user_id}-{str(time.time_ns() // 1_000_000)}"
+        avatar_media = upload_to_s3(file, object_name_stem)
+        if not avatar_media:
+            return {'msg': f"Blacklisted image type"}, 400
 
-        # upload avatar
-        s3_client.upload_file(
-            Filename=temp_fp,
-            Bucket=s3_bucket_name,
-            Key=object_name,
-            ExtraArgs={
-                'ContentType': f"image/{img_type}",
-            }
-        )
-
-        # update user model
-        avatar_media = Media()
-        avatar_media.object_name = object_name
-        avatar_media.save()
         user.avatar = avatar_media
         user.save()
-
-        # TODO: remove previous avatar
-        os.remove(temp_fp)
 
 
 class MyProfilePic(Resource):
@@ -297,6 +326,74 @@ post_parser.add_argument('is_public', type=bool, required=True)
 post_parser.add_argument('circle_names', type=str, action="append", default=[])
 post_parser.add_argument('reshareable', type=bool, required=True)
 post_parser.add_argument('reshared_from', type=str, required=False)
+post_parser.add_argument('media_object_names', type=str, action="append", default=[])
+
+# stores media object name -> (media url, media url generation time in ms epoch)
+MediaUrlCache = {}  # type: Dict[str, Tuple[str, int]]
+
+
+class MediaUrls(fields.Raw):
+    def format(self, media_list):
+        if not media_list:
+            return []
+
+        def get_media_url(media):
+            object_name = media.object_name
+            now_ms = time.time_ns() // 1_000_000
+            # subtract expiry by 10 seconds for some network overhead
+            if object_name in MediaUrlCache and now_ms < MediaUrlCache[object_name][1] + \
+                    (PostMediaUrlExpireSeconds - 10) * 1000:
+                print(f"found cached url for object {object_name}")
+                return MediaUrlCache[object_name][0]
+
+            print(f"not finding cached url for object {object_name}",
+                  object_name in MediaUrlCache,
+                  MediaUrlCache.get(object_name, ('', -1))[1]
+                  )
+            # TODO: how would this work with an actual CDN e.g. cloudfront?
+
+            # obtain temp token
+            read_media_policy = {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Action": "s3:GetObject",
+                        "Resource": [f"arn:aws:s3:::{s3_bucket_name}/{object_name}"],
+                    },
+                ],
+            }
+            assume_role_response = sts_client.assume_role(
+                # for minio this is moot
+                # for s3 this role allows all media read, but intersects with the inline policy, the temp role
+                #    would still be minimal privilege
+                RoleArn=os.environ['MEDIA_READER_ROLE_ARN'],
+                # media-reader is the only principal who can assume the role so this can be fixed
+                RoleSessionName='media-reader',
+                Policy=json.dumps(read_media_policy),
+                DurationSeconds=PostMediaUrlExpireSeconds,
+            )
+            temp_s3_client = boto3.client(
+                's3',
+                endpoint_url=os.environ['S3_ENDPOINT_URL'],
+                region_name=os.environ.get('AWS_REGION', ''),
+                aws_access_key_id=assume_role_response['Credentials']['AccessKeyId'],
+                aws_secret_access_key=assume_role_response['Credentials']['SecretAccessKey'],
+                aws_session_token=assume_role_response['Credentials']['SessionToken'],
+            )
+
+            # get pre-signed url
+            media_url = temp_s3_client.generate_presigned_url(
+                ClientMethod='get_object',
+                Params={'Bucket': s3_bucket_name, 'Key': media.object_name},
+                ExpiresIn=PostMediaUrlExpireSeconds
+            )
+
+            MediaUrlCache[object_name] = (media_url, now_ms)
+            return media_url
+
+        return list(map(get_media_url, media_list))
+
 
 post_fields = {
     'id': fields.String(attribute='eid'),
@@ -311,7 +408,9 @@ post_fields = {
         'created_at_seconds': fields.Integer(attribute='created_at'),
         'author': fields.Nested(user_fields),
         'content': fields.String,
+        'media_urls': MediaUrls(attribute='media_list'),
     }),
+    'media_urls': MediaUrls(attribute='media_list'),
     'reactions': fields.List(fields.Nested({
         'id': fields.String(attribute='eid'),
         'emoji': fields.String,
@@ -346,41 +445,93 @@ class Posts(Resource):
         """
         user_id = get_jwt_identity()
         user = User.find(user_id)
-
         args = post_parser.parse_args()
+
+        # check circles
         circles = []
         for circle_name in args['circle_names']:
             found_circle = user.find_circle(circle_name)
             if not found_circle:
                 return {'msg': f'Circle {circle_name} is not found'}, 404
             circles.append(found_circle)
+
+        # check reshare
         reshared_from = args['reshared_from']
         reshared_from_post = None
         if reshared_from:
             reshared_from_post = user.get_post(reshared_from)
             if not reshared_from_post:
                 return {"msg": f"Post {reshared_from} is not found"}, 404
+
+        # check media
+        media_object_names = args['media_object_names']
+        if reshared_from and media_object_names:
+            return {'msg': "Reshared post is not allowed to have media"}, 400
+        media_objects = []
+        for media_object_name in media_object_names:
+            media_object = Media.objects.get(object_name=media_object_name)
+            if not media_object:
+                return {"msg": f"Media {media_object_name} is not found"}, 404
+            media_objects.append(media_object)
+
         post_id = user.create_post(
             content=args['content'],
             is_public=args['is_public'],
             circles=circles,
             reshareable=args['reshareable'],
-            reshared_from=reshared_from_post
+            reshared_from=reshared_from_post,
+            media_list=media_objects
         )
         if not post_id:
             return {"msg": f"Not allowed to reshare post {reshared_from}"}, 403
         return {'id': post_id}, 201
 
+
+post_media_parser = reqparse.RequestParser()
+for i in range(MaxPostMediaCount):
+    post_media_parser.add_argument('media' + str(i), type=werkzeug.datastructures.FileStorage, location='files',
+                                   required=False, default=None)
+
+
+class PostMedia(Resource):
+    @jwt_required()
+    def post(self):
+        args = post_media_parser.parse_args()
+        media_files = []
+        for i in range(MaxPostMediaCount):
+            media_file = args['media' + str(i)]
+            if media_file:
+                media_files.append(media_file)
+        media_object_names = []
+        for media_file in media_files:
+            object_name_stem = f"media/{uuid.uuid4()}"
+            media_object = upload_to_s3(media_file, object_name_stem)
+            if not media_object:
+                return {'msg': f"Blacklisted image type"}, 400
+            media_object_names.append(media_object.object_name)
+
+        return media_object_names, 201
+
+
+class Home(Resource):
     @jwt_required()
     @marshal_with(post_fields)
     def get(self):
         """
         Get posts that are visible to the current user
         """
+        before_identity_ms = time.time_ns() // 1_000_000
         user_id = get_jwt_identity()
-        user = User.find(user_id)
+        print(f"identity took {time.time_ns() // 1_000_000 - before_identity_ms} ms")
 
+        before_user_ms = time.time_ns() // 1_000_000
+        user = User.find(user_id)
+        print(f"user took {time.time_ns() // 1_000_000 - before_user_ms} ms")
+
+        before_retrieve_ms = time.time_ns() // 1_000_000
         posts = user.retrieves_posts_on_home()
+        print(f"retrieve took {time.time_ns() // 1_000_000 - before_retrieve_ms} ms")
+
         return posts, 200
 
 
