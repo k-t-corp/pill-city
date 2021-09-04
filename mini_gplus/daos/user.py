@@ -1,0 +1,115 @@
+from mongoengine import NotUniqueError
+from werkzeug.security import generate_password_hash, check_password_hash
+from mini_gplus.models import User
+from .exceptions import UnauthorizedAccess
+
+AvailableProfilePics = ["pill1.png", "pill2.png", "pill3.png", "pill4.png", "pill5.png", "pill6.png"]
+
+
+def create_user(user_id, password):
+    """
+    Create a user
+
+    :param (str) user_id: user id
+    :param (str) password: password
+    :return (bool): Whether creation is successful.
+        If False, id is already taken
+    """
+    new_user = User()
+    new_user.user_id = user_id
+    new_user.password = generate_password_hash(password)
+    try:
+        new_user.save()
+    except NotUniqueError:
+        return False
+    return True
+
+
+def check_user(user_id, password):
+    """
+    Check whether the user exists
+
+    :param (str) user_id: user id
+    :param (str) password: password
+    :return (User|bool): Whether the user exists
+    :exception (RuntimeError): If more than one user for the user id is found
+    """
+    users = User.objects(user_id=user_id)
+    found_users = []
+    for user in users:
+        if check_password_hash(user.password, password):
+            found_users.append(user)
+    if not found_users:
+        return False
+    elif len(found_users) == 1:
+        return found_users[0]
+    else:
+        raise RuntimeError('More than one user for user id {} found!'.format(user_id))
+
+
+def find_user(user_id):
+    """
+    Finds the user
+
+    :param (str) user_id: user id
+    :return (User|bool): Whether the user exists
+    """
+    found_users = User.objects(user_id=user_id)
+    if not found_users:
+        return False
+    elif len(found_users) == 1:
+        return found_users[0]
+    else:
+        raise RuntimeError('More than one user for user id {} found!'.format(user_id))
+
+
+def add_following(self, user):
+    """
+    Add a following
+
+    :param (User) self: The acting user
+    :param (User) user: the added user
+    :return (bool): Whether adding is successful.
+    """
+    if user in self.followings:
+        return False
+    self.followings.append(user)
+    self.save()
+    return True
+
+
+def remove_following(self, user):
+    """
+    Remove a following
+
+    :param (User) self: The acting user
+    :param (User) user: the removed user
+    :return (bool): Whether removing is successful.
+    """
+    if user not in self.followings:
+        return False
+    self.followings = list(filter(lambda u: u.user_id != user.user_id, self.followings))
+    self.save()
+    return True
+
+
+def get_followings(self):
+    """
+    Get all followings
+    :return (List[User]): List of following users.
+    """
+    return list(self.followings)
+
+
+def update_profile_pic(self, profile_pic):
+    """
+    Update a user's profile picture
+
+    :param (User) self: The acting user
+    :param (str) profile_pic: The picked profile picture
+    """
+    if profile_pic in AvailableProfilePics:
+        self.profile_pic = profile_pic
+        self.save()
+    else:
+        raise UnauthorizedAccess()
