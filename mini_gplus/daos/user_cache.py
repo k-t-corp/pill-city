@@ -1,13 +1,14 @@
+from bson import ObjectId
 from typing import Dict
 from mini_gplus.models import User
 
 UserCacheByUserId = {}  # type: Dict[str, User]
-UserCacheByOid = {}  # type: Dict[str, User]
+UserCacheByOid = {}  # type: Dict[ObjectId, User]
 
 
 def set_in_user_cache(user: User):
     UserCacheByUserId[user.user_id] = user
-    UserCacheByOid[str(user.id)] = user
+    UserCacheByOid[user.id] = user
 
 
 def get_in_user_cache_by_user_id(user_id: str):
@@ -16,7 +17,7 @@ def get_in_user_cache_by_user_id(user_id: str):
     return False
 
 
-def get_in_user_cache_by_oid(oid: str):
+def get_in_user_cache_by_oid(oid: ObjectId):
     if oid in UserCacheByOid:
         return UserCacheByOid[oid]
     return False

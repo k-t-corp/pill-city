@@ -4,21 +4,38 @@ import werkzeug
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from mini_gplus.daos.user import find_user, update_profile_pic, update_avatar
+from mini_gplus.daos.user_cache import get_in_user_cache_by_oid
 from .upload_to_s3 import upload_to_s3
 
 
-class AvatarUrl(fields.Raw):
-    def format(self, avatar):
-        if not avatar:
+class UserId(fields.Raw):
+    def format(self, value):
+        return get_in_user_cache_by_oid(value).user_id
+
+
+class UserCreatedAtSeconds(fields.Raw):
+    def format(self, value):
+        return get_in_user_cache_by_oid(value).created_at
+
+
+class UserAvatar(fields.Raw):
+    def format(self, value):
+        avatar_media = get_in_user_cache_by_oid(value).avatar
+        if not avatar_media:
             return None
-        return f"{os.environ['CDN_URL']}/{avatar.id}"
+        return f"{os.environ['CDN_URL']}/{avatar_media.id}"
+
+
+class UserProfilePic(fields.Raw):
+    def format(self, value):
+        return get_in_user_cache_by_oid(value).profile_pic
 
 
 user_fields = {
-    'id': fields.String(attribute='user_id'),
-    'created_at_seconds': fields.Integer(attribute='created_at'),
-    'avatar_url': AvatarUrl(attribute='avatar'),
-    'profile_pic': fields.String
+    'id': UserId(attribute='id'),
+    'created_at_seconds': UserCreatedAtSeconds(attribute='id'),
+    'avatar_url': UserAvatar(attribute='id'),
+    'profile_pic': UserProfilePic(attribute='id')
 }
 
 
