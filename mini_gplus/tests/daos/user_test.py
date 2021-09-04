@@ -1,5 +1,5 @@
 from .base_test_case import BaseTestCase
-from mini_gplus.daos.user import sign_up, sign_in, find_user, get_followings, add_following, remove_following
+from mini_gplus.daos.user import sign_up, sign_in, find_user, is_following, add_following, remove_following
 
 
 class TestUserDao(BaseTestCase):
@@ -28,12 +28,11 @@ class TestUserDao(BaseTestCase):
         self.assertTrue(sign_up('user2', '2345'))
         user1 = find_user('user1')
         user2 = find_user('user2')
-        self.assertEqual([], get_followings(user1))
 
         self.assertTrue(add_following(user1, user2))
-        self.assertEqual([user2.id], list(map(lambda u: u.id, get_followings(user1))))
+        self.assertTrue(is_following(user1, 'user2'))
         self.assertFalse(add_following(user1, user2))
 
         self.assertTrue(remove_following(user1, user2))
-        self.assertEqual([], get_followings(user1))
+        self.assertFalse(is_following(user1, 'user2'))
         self.assertFalse(remove_following(user1, user2))
