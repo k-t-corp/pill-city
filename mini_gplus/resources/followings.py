@@ -1,7 +1,6 @@
-from flask_restful import Resource, marshal_with
+from flask_restful import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from mini_gplus.daos.user import find_user, add_following, remove_following, get_followings
-from .me import user_fields
+from mini_gplus.daos.user import find_user, add_following, remove_following, is_following
 
 
 class Following(Resource):
@@ -31,11 +30,10 @@ class Following(Resource):
         if not remove_following(user, target_user):
             return {'msg': f"Already not following user {following_user_id}"}, 409
 
-
-class Followings(Resource):
     @jwt_required()
-    @marshal_with(user_fields)
-    def get(self):
+    def get(self, following_user_id):
         user_id = get_jwt_identity()
         user = find_user(user_id)
-        return get_followings(user)
+        return {
+            'is_following': is_following(user, following_user_id)
+        }, 200

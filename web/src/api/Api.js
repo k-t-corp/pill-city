@@ -294,10 +294,10 @@ export default class Api {
     return res.data
   }
 
-  async getFollowings() {
+  async isFollowing(followingUserId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
-      `/followings`
+      `/following/${followingUserId}`
     )
     if (res.status !== 200) {
       throw new ApiError(res.status)
