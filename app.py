@@ -1,4 +1,5 @@
 import os
+import sentry_sdk
 from os import urandom
 from pymongo.uri_parser import parse_uri
 from flask import Flask, jsonify, request
@@ -6,6 +7,7 @@ from flask_mongoengine import MongoEngine, MongoEngineSessionInterface
 from flask_restful import Api
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token
+from sentry_sdk.integrations.flask import FlaskIntegration
 from mini_gplus.daos.user import sign_in, sign_up
 from mini_gplus.daos.user_cache import populate_user_cache
 from mini_gplus.resources.me import MyAvatar, MyProfilePic, Me
@@ -17,6 +19,17 @@ from mini_gplus.resources.circles import Circles, CircleMember, Circle
 from mini_gplus.resources.followings import Following
 from mini_gplus.resources.notifications import Notifications
 
+# sentry
+if os.getenv('SENTRY_DSN'):
+    print('Enabling sentry')
+    sentry_sdk.init(
+        dsn=os.getenv('SENTRY_DSN'),
+        integrations=[FlaskIntegration()],
+        # no performance monitoring
+        traces_sample_rate=0
+    )
+else:
+    print('Not enabling sentry')
 
 app = Flask(__name__)
 
