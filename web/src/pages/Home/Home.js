@@ -12,11 +12,11 @@ export default (props) => {
   const [resharePostData, updateResharePostData] = useState(null)
   const [notifications, updateNotifications] = useState(null)
 
-  useEffect(async ()=>{
-    updatePosts(await props.api.getHome())
-    updateCircles(await props.api.getCircles())
+  useEffect(async () => {
     updateMe(await props.api.getMe())
+    updatePosts(await props.api.getHome())
     updateNotifications(await props.api.getNotifications())
+    updateCircles(await props.api.getCircles())
     updateLoading(false)
   }, [])
 
