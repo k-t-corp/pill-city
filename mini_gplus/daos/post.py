@@ -1,4 +1,3 @@
-import time
 import bleach
 from typing import Optional
 from mini_gplus.models import Post, NotifyingAction

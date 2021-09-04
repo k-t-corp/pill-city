@@ -14,7 +14,7 @@ from mini_gplus.daos.media import get_media
 from .me import user_fields
 from .upload_to_s3 import upload_to_s3
 
-MaxPostMediaCount = 9
+MaxPostMediaCount = 4
 PostMediaUrlExpireSeconds = 900
 
 
