@@ -31,7 +31,7 @@ class TestUserDao(BaseTestCase):
         self.assertEqual([], get_followings(user1))
 
         self.assertTrue(add_following(user1, user2))
-        self.assertEqual([user2.user_id], list(map(lambda u: u.user_id, get_followings(user1))))
+        self.assertEqual([user2.id], list(map(lambda u: u.id, get_followings(user1))))
         self.assertFalse(add_following(user1, user2))
 
         self.assertTrue(remove_following(user1, user2))

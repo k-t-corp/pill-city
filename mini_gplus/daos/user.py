@@ -92,7 +92,7 @@ def remove_following(self, user):
     """
     if user not in self.followings:
         return False
-    self.followings = list(filter(lambda u: u.user_id != user.user_id, self.followings))
+    self.followings = list(filter(lambda u: u.id != user.id, self.followings))
     self.save()
     return True
 
