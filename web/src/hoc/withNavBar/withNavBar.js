@@ -90,7 +90,7 @@ export default (WrappedComponent, path) => {
                 as='a'
                 onClick={() => {
                   throw new Error('catch me babe')
-                  this.handleSignOut()
+                  // this.handleSignOut()
                 }}
               >
                 Sign out
