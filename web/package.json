@@ -1,7 +1,7 @@
 {
-  "name": "web",
-  "version": "0.1.0",
-  "private": false,
+  "name": "pill-city-web",
+  "version": "0.0.1",
+  "license": "MIT",
   "dependencies": {
     "axios": "^0.21.1",
     "emoji-picker-react": "^3.4.8",
