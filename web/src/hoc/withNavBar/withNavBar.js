@@ -88,10 +88,10 @@ export default (WrappedComponent, path) => {
               {/*</MenuItem>*/}
               <MenuItem
                 as='a'
-                // onClick={() => {
-                //   this.handleSignOut()
-                // }}
-                onClick={breaktheworld}
+                onClick={() => {
+                  throw new Error('catch me babe')
+                  this.handleSignOut()
+                }}
               >
                 Sign out
               </MenuItem>
