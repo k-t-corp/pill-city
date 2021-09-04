@@ -71,7 +71,10 @@ export default (props) => {
   return (
     <div className="user-profile-wrapper">
       <div className="user-profile-user-info">
-        <div className="user-profile-banner-wrapper"/>
+        <div className="user-profile-banner-wrapper" style={{
+          backgroundColor: "#9dd0ff",
+          backgroundImage: `url(${process.env.PUBLIC_URL}/${props.userData.profile_pic})`
+        }}/>
         <div className="user-profile-avatar-wrapper">
           <img className="user-profile-avatar-img" src={getAvatarUrl(props.userData)} alt="user-avatar"/>
         </div>
