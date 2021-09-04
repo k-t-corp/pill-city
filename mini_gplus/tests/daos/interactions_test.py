@@ -1,6 +1,6 @@
 from .base_test_case import BaseTestCase
 from mini_gplus.models import Post, NotifyingAction, Notification
-from mini_gplus.daos.user import create_user, find_user, add_following
+from mini_gplus.daos.user import sign_up, find_user, add_following
 from mini_gplus.daos.circle import create_circle, find_circle, toggle_member
 from mini_gplus.daos.post import create_post, get_post, owns_post, sees_post, retrieves_posts_on_home, \
     retrieves_posts_on_profile
@@ -110,7 +110,7 @@ class InteractionsTest(BaseTestCase):
 
     def test_can_act_on_my_own_public_post(self):
         # Create user1
-        self.assertTrue(create_user('user1', '1234'))
+        self.assertTrue(sign_up('user1', '1234'))
         user1 = find_user('user1')
 
         # Post reshareable post1 by user1
@@ -127,7 +127,7 @@ class InteractionsTest(BaseTestCase):
 
     def test_chained_reshare_on_my_own_public_post(self):
         # Create user1
-        self.assertTrue(create_user('user1', '1234'))
+        self.assertTrue(sign_up('user1', '1234'))
         user1 = find_user('user1')
 
         # Post reshareable post1 by user1
@@ -145,9 +145,9 @@ class InteractionsTest(BaseTestCase):
 
     def test_can_act_on_others_public_post(self):
         # Create users
-        self.assertTrue(create_user('user1', '1234'))
-        self.assertTrue(create_user('user2', '2345'))
-        self.assertTrue(create_user('user3', '3456'))
+        self.assertTrue(sign_up('user1', '1234'))
+        self.assertTrue(sign_up('user2', '2345'))
+        self.assertTrue(sign_up('user3', '3456'))
         user1 = find_user('user1')
         user2 = find_user('user2')
         user3 = find_user('user3')
@@ -189,7 +189,7 @@ class InteractionsTest(BaseTestCase):
 
     def test_can_act_on_my_own_private_post(self):
         # Create user1
-        self.assertTrue(create_user('user1', '1234'))
+        self.assertTrue(sign_up('user1', '1234'))
         user1 = find_user('user1')
 
         # Create circle1
@@ -210,10 +210,10 @@ class InteractionsTest(BaseTestCase):
 
     def test_can_act_on_others_private_post(self):
         # Create users
-        self.assertTrue(create_user('user1', '1234'))
-        self.assertTrue(create_user('user2', '2345'))
-        self.assertTrue(create_user('user3', '3456'))
-        self.assertTrue(create_user('user4', '4567'))
+        self.assertTrue(sign_up('user1', '1234'))
+        self.assertTrue(sign_up('user2', '2345'))
+        self.assertTrue(sign_up('user3', '3456'))
+        self.assertTrue(sign_up('user4', '4567'))
         user1 = find_user('user1')
         user2 = find_user('user2')
         user3 = find_user('user3')
@@ -274,10 +274,10 @@ class InteractionsTest(BaseTestCase):
 
     def test_retrieves_posts(self):
         # Create users
-        self.assertTrue(create_user('user1', '1234'))
-        self.assertTrue(create_user('user2', '2345'))
-        self.assertTrue(create_user('user3', '3456'))
-        self.assertTrue(create_user('user4', '4567'))
+        self.assertTrue(sign_up('user1', '1234'))
+        self.assertTrue(sign_up('user2', '2345'))
+        self.assertTrue(sign_up('user3', '3456'))
+        self.assertTrue(sign_up('user4', '4567'))
         user1 = find_user('user1')
         user2 = find_user('user2')
         user3 = find_user('user3')

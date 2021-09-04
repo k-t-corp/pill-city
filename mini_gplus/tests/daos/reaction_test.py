@@ -1,6 +1,6 @@
 from .base_test_case import BaseTestCase
 from mini_gplus.models import Post, Reaction
-from mini_gplus.daos.user import create_user, find_user
+from mini_gplus.daos.user import sign_up, find_user
 from mini_gplus.daos.post import create_post
 from mini_gplus.daos.reaction import create_reaction, delete_reaction
 from mini_gplus.daos.exceptions import UnauthorizedAccess, NotFound, BadRequest
@@ -9,7 +9,7 @@ from mini_gplus.daos.exceptions import UnauthorizedAccess, NotFound, BadRequest
 class ReactionTest(BaseTestCase):
     def test_react_twice(self):
         # Create users
-        self.assertTrue(create_user('user1', '1234'))
+        self.assertTrue(sign_up('user1', '1234'))
         user1 = find_user('user1')
 
         # Create post
@@ -29,8 +29,8 @@ class ReactionTest(BaseTestCase):
 
     def test_delete_reaction(self):
         # Create users
-        self.assertTrue(create_user('user1', '1234'))
-        self.assertTrue(create_user('user2', '1234'))
+        self.assertTrue(sign_up('user1', '1234'))
+        self.assertTrue(sign_up('user2', '1234'))
         user1 = find_user('user1')
         user2 = find_user('user2')
 
@@ -63,7 +63,7 @@ class ReactionTest(BaseTestCase):
 
     def test_add_bad_reaction(self):
         # Create users
-        self.assertTrue(create_user('user1', '1234'))
+        self.assertTrue(sign_up('user1', '1234'))
         user1 = find_user('user1')
 
         # Create post

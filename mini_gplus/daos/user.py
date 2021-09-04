@@ -6,9 +6,9 @@ from .exceptions import UnauthorizedAccess
 AvailableProfilePics = ["pill1.png", "pill2.png", "pill3.png", "pill4.png", "pill5.png", "pill6.png"]
 
 
-def create_user(user_id, password):
+def sign_up(user_id, password):
     """
-    Create a user
+    Signs up a user
 
     :param (str) user_id: user id
     :param (str) password: password
@@ -25,9 +25,9 @@ def create_user(user_id, password):
     return True
 
 
-def check_user(user_id, password):
+def sign_in(user_id, password):
     """
-    Check whether the user exists
+    Attempts to sign in a user
 
     :param (str) user_id: user id
     :param (str) password: password
