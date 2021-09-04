@@ -2,14 +2,13 @@ import os
 import boto3
 import tempfile
 import uuid
-from typing import Optional
 from PIL import Image, UnidentifiedImageError
-from mini_gplus.models import Media
+from mini_gplus.daos.media import create_media
 
 AllowedImageTypes = ['gif', 'jpeg', 'bmp', 'png']
 
 
-def upload_to_s3(file, object_name_stem) -> Optional[Media]:
+def upload_to_s3(file, object_name_stem):
     s3_client = boto3.client(
         's3',
         endpoint_url=os.environ['S3_ENDPOINT_URL'],
@@ -49,9 +48,7 @@ def upload_to_s3(file, object_name_stem) -> Optional[Media]:
     )
 
     # update user model
-    media = Media()
-    media.object_name = object_name
-    media.save()
+    media = create_media(object_name)
     os.remove(temp_fp)
 
     return media

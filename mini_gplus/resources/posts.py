@@ -7,10 +7,10 @@ import json
 from typing import Dict, Tuple
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from mini_gplus.models import Media
 from mini_gplus.daos.user import find_user
 from mini_gplus.daos.circle import find_circle
 from mini_gplus.daos.post import get_post, create_post, sees_post, retrieves_posts_on_home, retrieves_posts_on_profile
+from mini_gplus.daos.media import get_media
 from .me import user_fields
 from .upload_to_s3 import upload_to_s3
 
@@ -168,7 +168,7 @@ class Posts(Resource):
             return {'msg': "Reshared post is not allowed to have media"}, 400
         media_objects = []
         for media_object_name in media_object_names:
-            media_object = Media.objects.get(object_name=media_object_name)
+            media_object = get_media(media_object_name)
             if not media_object:
                 return {"msg": f"Media {media_object_name} is not found"}, 404
             media_objects.append(media_object)
