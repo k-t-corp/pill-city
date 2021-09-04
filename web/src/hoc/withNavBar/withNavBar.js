@@ -89,8 +89,7 @@ export default (WrappedComponent, path) => {
               <MenuItem
                 as='a'
                 onClick={() => {
-                  throw new Error('catch me babe')
-                  // this.handleSignOut()
+                  this.handleSignOut()
                 }}
               >
                 Sign out
