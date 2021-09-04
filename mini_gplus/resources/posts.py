@@ -42,13 +42,13 @@ class MediaUrls(fields.Raw):
             # subtract expiry by 10 seconds for some network overhead
             if object_name in MediaUrlCache and now_ms < MediaUrlCache[object_name][1] + \
                     (PostMediaUrlExpireSeconds - 10) * 1000:
-                print(f"found cached url for object {object_name}")
+                # print(f"found cached url for object {object_name}")
                 return MediaUrlCache[object_name][0]
 
-            print(f"not finding cached url for object {object_name}",
-                  object_name in MediaUrlCache,
-                  MediaUrlCache.get(object_name, ('', -1))[1]
-                  )
+            # print(f"not finding cached url for object {object_name}",
+            #       object_name in MediaUrlCache,
+            #       MediaUrlCache.get(object_name, ('', -1))[1]
+            #       )
             # TODO: how would this work with an actual CDN e.g. cloudfront?
 
             # obtain temp token
@@ -229,17 +229,9 @@ class Home(Resource):
         """
         Get posts that are visible to the current user
         """
-        before_identity_ms = time.time_ns() // 1_000_000
         user_id = get_jwt_identity()
-        print(f"identity took {time.time_ns() // 1_000_000 - before_identity_ms} ms")
-
-        before_user_ms = time.time_ns() // 1_000_000
         user = find_user(user_id)
-        print(f"user took {time.time_ns() // 1_000_000 - before_user_ms} ms")
-
-        before_retrieve_ms = time.time_ns() // 1_000_000
         posts = retrieves_posts_on_home(user)
-        print(f"retrieve took {time.time_ns() // 1_000_000 - before_retrieve_ms} ms")
 
         return posts, 200
 

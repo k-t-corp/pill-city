@@ -2,6 +2,7 @@ import time
 import bleach
 from typing import Optional
 from mini_gplus.models import Post, NotifyingAction
+from mini_gplus.utils.profiling import timer
 from .make_uuid import make_uuid
 from .circle import check_member
 from .notification import create_notification
@@ -68,6 +69,7 @@ def get_post(post_id):
     return Post.objects.get(eid=post_id)
 
 
+@timer
 def owns_post(self, post):
     """
     Whether the user owns a post
@@ -79,6 +81,7 @@ def owns_post(self, post):
     return self.id == post.author.id
 
 
+@timer
 def sees_post(self, post, context_home_or_profile):
     """
     Whether the user can see a post
@@ -89,25 +92,11 @@ def sees_post(self, post, context_home_or_profile):
                     True for home, and False for profile
     :return (bool): whether the user sees the post
     """
-    before_owns_ms = time.time_ns() // 1_000_000
-    owns = owns_post(self, post)
-    print(f"    owns took {time.time_ns() // 1_000_000 - before_owns_ms} ms")
-
-    if owns:
+    if owns_post(self, post):
         return True
-
-    before_not_following_ms = time.time_ns() // 1_000_000
-    not_following = context_home_or_profile and post.author not in self.followings
-    print(f"    not following took {time.time_ns() // 1_000_000 - before_not_following_ms} ms")
-
-    if not_following:
+    if context_home_or_profile and post.author not in self.followings:
         return False
-
-    before_is_public_ms = time.time_ns() // 1_000_000
-    is_public = post.is_public
-    print(f"    is public took {time.time_ns() // 1_000_000 - before_is_public_ms} ms")
-
-    if is_public:
+    if post.is_public:
         return True
     else:
         for circle in post.circles:
@@ -124,21 +113,13 @@ def retrieves_posts_on_home(self):
     :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
     """
     # todo: pagination
-    before_db_ms = time.time_ns() // 1_000_000
     # ordering by id descending is equivalent to ordering by created_at descending
     posts = Post.objects().order_by('-id')
-    print(f"  db took {time.time_ns() // 1_000_000 - before_db_ms} ms")
 
     res = []
     for post in posts:
-        before_sees_ms = time.time_ns() // 1_000_000
-        _sees_post = sees_post(self, post, context_home_or_profile=True)
-        print(f"  sees took {time.time_ns() // 1_000_000 - before_sees_ms} ms")
-
-        if _sees_post:
-            before_append_ms = time.time_ns() // 1_000_000
+        if sees_post(self, post, context_home_or_profile=True):
             res.append(post)
-            print(f"  append took {time.time_ns() // 1_000_000 - before_append_ms} ms")
 
     return res
 
