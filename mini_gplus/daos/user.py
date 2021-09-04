@@ -34,15 +34,14 @@ def sign_in(user_id, password):
     :return (User|bool): Whether the user exists
     :exception (RuntimeError): If more than one user for the user id is found
     """
-    users = User.objects(user_id=user_id)
-    found_users = []
-    for user in users:
+    users = []
+    for user in User.objects(user_id=user_id):
         if check_password_hash(user.password, password):
-            found_users.append(user)
-    if not found_users:
+            users.append(user)
+    if not users:
         return False
-    elif len(found_users) == 1:
-        return found_users[0]
+    elif len(users) == 1:
+        return users[0]
     else:
         raise RuntimeError('More than one user for user id {} found!'.format(user_id))
 
@@ -54,11 +53,11 @@ def find_user(user_id):
     :param (str) user_id: user id
     :return (User|bool): Whether the user exists
     """
-    found_users = User.objects(user_id=user_id)
-    if not found_users:
+    users = User.objects(user_id=user_id)
+    if not users:
         return False
-    elif len(found_users) == 1:
-        return found_users[0]
+    elif len(users) == 1:
+        return users[0]
     else:
         raise RuntimeError('More than one user for user id {} found!'.format(user_id))
 
