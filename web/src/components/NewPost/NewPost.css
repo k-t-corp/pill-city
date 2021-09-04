@@ -1,6 +1,7 @@
 .new-post {
     padding: 13px;
     background-color: #ffffff;
+    width: 100%;
     max-width: 700px;
     border-radius: 5px;
     box-shadow: 2px 2px 1px 1px #e0e0e0;
