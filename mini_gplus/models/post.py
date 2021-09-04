@@ -19,7 +19,7 @@ class Post(Document, CreatedAtMixin):
     comments = ListField(ReferenceField(Comment, reverse_delete_rule=PULL), default=[])  # type: List[Comment]
     reshareable = BooleanField(required=False, default=False)
     reshared_from = ReferenceField('Post', required=False, reverse_delete_rule=NULLIFY, default=None)  # type: Post
-    media_list = ListField(ReferenceField(Media, reverse_delete_rule=PULL), default=[])  # type: List[Media]
+    media_list = ListField(LazyReferenceField(Media, reverse_delete_rule=PULL), default=[])  # type: List[Media]
 
     def make_href(self):
         return f"/post/{self.eid}"

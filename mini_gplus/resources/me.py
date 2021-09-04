@@ -11,7 +11,7 @@ class AvatarUrl(fields.Raw):
     def format(self, avatar):
         if not avatar:
             return None
-        return f"{os.environ['CDN_URL']}/{avatar.object_name}"
+        return f"{os.environ['CDN_URL']}/{avatar.id}"
 
 
 user_fields = {
