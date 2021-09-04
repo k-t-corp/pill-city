@@ -1,6 +1,6 @@
 from mongoengine import NotUniqueError
 from werkzeug.security import generate_password_hash, check_password_hash
-from mini_gplus.models import User
+from mini_gplus.models import User, Media
 from .exceptions import UnauthorizedAccess
 
 AvailableProfilePics = ["pill1.png", "pill2.png", "pill3.png", "pill4.png", "pill5.png", "pill6.png"]
@@ -63,6 +63,10 @@ def find_user(user_id):
         raise RuntimeError('More than one user for user id {} found!'.format(user_id))
 
 
+def get_users(user_id):
+    return list(User.objects(user_id__ne=user_id))
+
+
 def add_following(self, user):
     """
     Add a following
@@ -113,3 +117,14 @@ def update_profile_pic(self, profile_pic):
         self.save()
     else:
         raise UnauthorizedAccess()
+
+
+def update_avatar(self, avatar_media):
+    """
+    Update a user's avatar
+
+    :param (User) self: The acting user
+    :param (Media) avatar_media: The new avatar
+    """
+    self.avatar = avatar_media
+    self.save()
