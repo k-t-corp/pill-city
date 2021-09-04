@@ -1,5 +1,5 @@
 from .base_test_case import BaseTestCase
-from mini_gplus.daos.user import create_user, find_user
+from mini_gplus.daos.user import sign_up, find_user
 from mini_gplus.daos.circle import get_circles, create_circle, find_circle, toggle_member, delete_circle
 from mini_gplus.daos.exceptions import UnauthorizedAccess
 
@@ -7,8 +7,8 @@ from mini_gplus.daos.exceptions import UnauthorizedAccess
 class TestCircleDao(BaseTestCase):
     def test_circle_successful_toggle_after_create_and_find(self):
         # Create user1 and user2
-        self.assertTrue(create_user('user1', '1234'))
-        self.assertTrue(create_user('user2', '2345'))
+        self.assertTrue(sign_up('user1', '1234'))
+        self.assertTrue(sign_up('user2', '2345'))
         user1 = find_user('user1')
         user2 = find_user('user2')
 
@@ -24,14 +24,14 @@ class TestCircleDao(BaseTestCase):
         self.assertNotIn(user2, circle1.members)
 
     def test_circle_failure_create_duplicate(self):
-        self.assertTrue(create_user('user1', '1234'))
+        self.assertTrue(sign_up('user1', '1234'))
         user1 = find_user('user1')
         self.assertTrue(create_circle(user1, 'circle1'))
         self.assertFalse(create_circle(user1, 'circle1'))
 
     def test_circle_success_create_duplicate_for_distinct_users(self):
-        self.assertTrue(create_user('user1', '1234'))
-        self.assertTrue(create_user('user2', '1234'))
+        self.assertTrue(sign_up('user1', '1234'))
+        self.assertTrue(sign_up('user2', '1234'))
         user1 = find_user('user1')
         user2 = find_user('user2')
         self.assertTrue(create_circle(user1, 'circle'))
@@ -42,13 +42,13 @@ class TestCircleDao(BaseTestCase):
         self.assertEqual([user2_circle.id], list(map(lambda c: c.id, get_circles(user2))))
 
     def test_circle_failure_find_not_found(self):
-        self.assertTrue(create_user('user1', '1234'))
+        self.assertTrue(sign_up('user1', '1234'))
         user1 = find_user('user1')
         self.assertFalse(find_circle(user1, 'circle1'))
 
     def test_circle_failure_find_not_found_another_user(self):
-        self.assertTrue(create_user('user1', '1234'))
-        self.assertTrue(create_user('user2', '2345'))
+        self.assertTrue(sign_up('user1', '1234'))
+        self.assertTrue(sign_up('user2', '2345'))
         user1 = find_user('user1')
         user2 = find_user('user2')
         self.assertTrue(create_circle(user1, 'secret_circle'))
@@ -56,8 +56,8 @@ class TestCircleDao(BaseTestCase):
 
     def test_circle_failure_toggle_unauthorized(self):
         # Create user1 and user2
-        self.assertTrue(create_user('user1', '1234'))
-        self.assertTrue(create_user('user2', '2345'))
+        self.assertTrue(sign_up('user1', '1234'))
+        self.assertTrue(sign_up('user2', '2345'))
         user1 = find_user('user1')
         user2 = find_user('user2')
 
@@ -71,8 +71,8 @@ class TestCircleDao(BaseTestCase):
         self.assertRaises(UnauthorizedAccess, op)
 
     def test_circle_successful_delete_circle(self):
-        self.assertTrue(create_user('user1', '1234'))
-        self.assertTrue(create_user('user2', '2345'))
+        self.assertTrue(sign_up('user1', '1234'))
+        self.assertTrue(sign_up('user2', '2345'))
         user1 = find_user('user1')
         user2 = find_user('user2')
         self.assertTrue(create_circle(user1, 'circle1'))
@@ -83,8 +83,8 @@ class TestCircleDao(BaseTestCase):
 
     def test_circle_failure_delete_circle_unauthorized(self):
         # Create user1 and user2
-        self.assertTrue(create_user('user1', '1234'))
-        self.assertTrue(create_user('user2', '2345'))
+        self.assertTrue(sign_up('user1', '1234'))
+        self.assertTrue(sign_up('user2', '2345'))
         user1 = find_user('user1')
         user2 = find_user('user2')
 

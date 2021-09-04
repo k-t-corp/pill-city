@@ -37,7 +37,7 @@ class MediaUrls(fields.Raw):
             )
             s3_bucket_name = os.environ['S3_BUCKET_NAME']
 
-            object_name = media.object_name
+            object_name = media.id
             now_ms = time.time_ns() // 1_000_000
             # subtract expiry by 10 seconds for some network overhead
             if object_name in MediaUrlCache and now_ms < MediaUrlCache[object_name][1] + \
@@ -84,7 +84,7 @@ class MediaUrls(fields.Raw):
             # get pre-signed url
             media_url = temp_s3_client.generate_presigned_url(
                 ClientMethod='get_object',
-                Params={'Bucket': s3_bucket_name, 'Key': media.object_name},
+                Params={'Bucket': s3_bucket_name, 'Key': media.id},
                 ExpiresIn=PostMediaUrlExpireSeconds
             )
 
@@ -208,7 +208,7 @@ class PostMedia(Resource):
             media_object = upload_to_s3(media_file, object_name_stem)
             if not media_object:
                 return {'msg': f"Disallowed image type"}, 400
-            media_object_names.append(media_object.object_name)
+            media_object_names.append(media_object.id)
 
         return media_object_names, 201
 

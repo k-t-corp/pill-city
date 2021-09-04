@@ -15,13 +15,8 @@ export default (props) => {
   }, [])
   useEffect(async () => {
     if (!props.me) {
-      const myFollowing = await props.api.getFollowings()
-      for (let i = 0; i < myFollowing.length; i++) {
-        if (myFollowing[i].id === props.userData.id) {
-          updateFollowing(true)
-          break
-        }
-      }
+      const isFollowing = (await props.api.isFollowing(props.userData.id)).is_following
+      updateFollowing(isFollowing)
     }
     updateFollowingLoading(false)
   }, [])

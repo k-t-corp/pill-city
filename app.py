@@ -6,14 +6,15 @@ from flask_mongoengine import MongoEngine, MongoEngineSessionInterface
 from flask_restful import Api
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token
-from mini_gplus.daos.user import check_user, create_user
+from mini_gplus.daos.user import sign_in, sign_up
+from mini_gplus.daos.user_cache import populate_user_cache
 from mini_gplus.resources.me import MyAvatar, MyProfilePic, Me
 from mini_gplus.resources.users import Users, User
 from mini_gplus.resources.posts import Profile, Home, PostMedia, Posts, Post
 from mini_gplus.resources.comments import NestedComments, Comments
 from mini_gplus.resources.reactions import Reactions, Reaction
 from mini_gplus.resources.circles import Circles, CircleMember, Circle
-from mini_gplus.resources.followings import Followings, Following
+from mini_gplus.resources.followings import Following
 from mini_gplus.resources.notifications import Notifications
 
 
@@ -43,10 +44,12 @@ app.config['BUNDLE_ERRORS'] = True
 # cors
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
+populate_user_cache()
+
 
 # auth
 @app.route('/api/signIn', methods=['POST'])
-def sign_in():
+def _sign_in():
     """
     Signs in a user by giving out access token
     """
@@ -58,15 +61,15 @@ def sign_in():
         return jsonify({"message": {"id": "id is required"}}), 400
     if not password:
         return jsonify({"message": {"password": "password is required"}}), 400
-    user_checked = check_user(user_id, password)
-    if not user_checked:
+    user = sign_in(user_id, password)
+    if not user:
         return jsonify({"message": "invalid id or password"}), 401
     access_token = create_access_token(identity=user_id)
     return jsonify(access_token=access_token), 200
 
 
 @app.route('/api/signUp', methods=['POST'])
-def sign_up():
+def _sign_up():
     """
     Signs up a new user
     """
@@ -78,7 +81,7 @@ def sign_up():
         return jsonify({"message": {"id": "id is required"}}), 400
     if not password:
         return jsonify({"message": {"password": "password is required"}}), 400
-    successful = create_user(user_id, password)
+    successful = sign_up(user_id, password)
     if successful:
         return {'id': user_id}, 201
     else:
@@ -120,7 +123,6 @@ api.add_resource(Circles, '/api/circles')
 api.add_resource(CircleMember, '/api/circle/<string:circle_name>/membership/<string:member_user_id>')
 api.add_resource(Circle, '/api/circle/<string:circle_name>')
 
-api.add_resource(Followings, '/api/followings')
 api.add_resource(Following, '/api/following/<string:following_user_id>')
 
 api.add_resource(Notifications, '/api/notifications')

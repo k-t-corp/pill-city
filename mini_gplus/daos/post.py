@@ -115,13 +115,8 @@ def retrieves_posts_on_home(self):
     # todo: pagination
     # ordering by id descending is equivalent to ordering by created_at descending
     posts = Post.objects().order_by('-id')
-
-    res = []
-    for post in posts:
-        if sees_post(self, post, context_home_or_profile=True):
-            res.append(post)
-
-    return res
+    posts = filter(lambda post: sees_post(self, post, context_home_or_profile=True), posts)
+    return list(posts)
 
 
 def retrieves_posts_on_profile(self, profile_user):

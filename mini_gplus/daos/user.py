@@ -2,13 +2,14 @@ from mongoengine import NotUniqueError
 from werkzeug.security import generate_password_hash, check_password_hash
 from mini_gplus.models import User, Media
 from .exceptions import UnauthorizedAccess
+from .user_cache import set_in_user_cache, get_users_in_user_cache, get_in_user_cache_by_user_id
 
 AvailableProfilePics = ["pill1.png", "pill2.png", "pill3.png", "pill4.png", "pill5.png", "pill6.png"]
 
 
-def create_user(user_id, password):
+def sign_up(user_id, password):
     """
-    Create a user
+    Signs up a user
 
     :param (str) user_id: user id
     :param (str) password: password
@@ -20,31 +21,27 @@ def create_user(user_id, password):
     new_user.password = generate_password_hash(password)
     try:
         new_user.save()
+        set_in_user_cache(new_user)
     except NotUniqueError:
         return False
     return True
 
 
-def check_user(user_id, password):
+def sign_in(user_id, password):
     """
-    Check whether the user exists
+    Attempts to sign in a user
 
     :param (str) user_id: user id
     :param (str) password: password
     :return (User|bool): Whether the user exists
     :exception (RuntimeError): If more than one user for the user id is found
     """
-    users = User.objects(user_id=user_id)
-    found_users = []
-    for user in users:
-        if check_password_hash(user.password, password):
-            found_users.append(user)
-    if not found_users:
+    user = get_in_user_cache_by_user_id(user_id)
+    if not user:
         return False
-    elif len(found_users) == 1:
-        return found_users[0]
-    else:
-        raise RuntimeError('More than one user for user id {} found!'.format(user_id))
+    if not check_password_hash(user.password, password):
+        return False
+    return user
 
 
 def find_user(user_id):
@@ -54,17 +51,17 @@ def find_user(user_id):
     :param (str) user_id: user id
     :return (User|bool): Whether the user exists
     """
-    found_users = User.objects(user_id=user_id)
-    if not found_users:
-        return False
-    elif len(found_users) == 1:
-        return found_users[0]
-    else:
-        raise RuntimeError('More than one user for user id {} found!'.format(user_id))
+    return get_in_user_cache_by_user_id(user_id)
 
 
 def get_users(user_id):
-    return list(User.objects(user_id__ne=user_id))
+    """
+    Get all other users besides the current user
+
+    :param (str) user_id: user id of the current user
+    :return (List[User]): All other users besides the current user
+    """
+    return list(filter(lambda u: u.user_id != user_id, get_users_in_user_cache()))
 
 
 def add_following(self, user):
@@ -79,6 +76,7 @@ def add_following(self, user):
         return False
     self.followings.append(user)
     self.save()
+    set_in_user_cache(self)
     return True
 
 
@@ -92,17 +90,22 @@ def remove_following(self, user):
     """
     if user not in self.followings:
         return False
-    self.followings = list(filter(lambda u: u.user_id != user.user_id, self.followings))
+    self.followings = list(filter(lambda u: u.id != user.id, self.followings))
     self.save()
+    set_in_user_cache(self)
     return True
 
 
-def get_followings(self):
+def is_following(self, user_id):
     """
-    Get all followings
-    :return (List[User]): List of following users.
+    Whether a user is following another user
+
+    :param (User) self: The acting user
+    :param (str) user_id: The another user id that needs to tell whether following or not
+    :return (bool): Whether a user is following another user
     """
-    return list(self.followings)
+    user = find_user(user_id)
+    return user.id in map(lambda u: u.id, self.followings)
 
 
 def update_profile_pic(self, profile_pic):
@@ -115,6 +118,7 @@ def update_profile_pic(self, profile_pic):
     if profile_pic in AvailableProfilePics:
         self.profile_pic = profile_pic
         self.save()
+        set_in_user_cache(self)
     else:
         raise UnauthorizedAccess()
 
@@ -128,3 +132,4 @@ def update_avatar(self, avatar_media):
     """
     self.avatar = avatar_media
     self.save()
+    set_in_user_cache(self)

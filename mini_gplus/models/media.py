@@ -3,4 +3,5 @@ from .created_at_mixin import CreatedAtMixin
 
 
 class Media(Document, CreatedAtMixin):
-    object_name = StringField(required=True, unique=True)
+    # this is the object name (obviously..)
+    id = StringField(primary_key=True)
