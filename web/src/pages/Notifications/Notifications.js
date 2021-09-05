@@ -18,7 +18,7 @@ export default (props) => {
 
   return (
     <div>
-      <NotificationDropdown notifications={notifications} api={props.api}/>
+      {!loading && <NotificationDropdown notifications={notifications} api={props.api}/>}
     </div>
   )
 }

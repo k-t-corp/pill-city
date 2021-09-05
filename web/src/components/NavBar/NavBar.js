@@ -1,6 +1,6 @@
-import React, {Component, useState} from 'react'
+import React from 'react'
 import "./NavBar.css"
-import {Divider, Menu, MenuItem} from "semantic-ui-react";
+import {Menu, MenuItem} from "semantic-ui-react";
 import {removeAccessToken} from "../../api/AuthStorage";
 
 export default (props) => {
