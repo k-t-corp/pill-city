@@ -380,7 +380,7 @@ export default (props) => {
               <div className="post-avatar post-comment-avatar">
                 <img
                   className="post-avatar-img"
-                  src={getAvatarUrl(props.data.author)}
+                  src={getAvatarUrl(props.me)}
                   alt=""
                 />
               </div>
