@@ -11,10 +11,10 @@
     position: fixed;
     background-color: #0c0c0c;
     height: 50px;
-    /*margin-top: -40px;*/
     width: 100%;
     bottom: 0;
     display: flex;
+    z-index: 3;
 }
 
 .mobile-nav-bar-button-container {

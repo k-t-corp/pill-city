@@ -333,3 +333,10 @@
         opacity: 1;
     }
 }
+
+@media only screen and (max-width: 750px) {
+    .post-wrapper {
+        border-radius: 0;
+        margin-bottom: 2px;
+    }
+}
