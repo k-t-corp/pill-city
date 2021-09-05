@@ -1,5 +1,4 @@
 import os
-import time
 import boto3
 import werkzeug
 import uuid
@@ -11,6 +10,7 @@ from mini_gplus.daos.user import find_user
 from mini_gplus.daos.circle import find_circle
 from mini_gplus.daos.post import get_post, create_post, sees_post, retrieves_posts_on_home, retrieves_posts_on_profile
 from mini_gplus.daos.media import get_media
+from mini_gplus.utils.now_ms import now_ms
 from .me import user_fields
 from .upload_to_s3 import upload_to_s3
 
@@ -38,9 +38,9 @@ class MediaUrls(fields.Raw):
             s3_bucket_name = os.environ['S3_BUCKET_NAME']
 
             object_name = media.id
-            now_ms = time.time_ns() // 1_000_000
+            _now_ms = now_ms()
             # subtract expiry by 10 seconds for some network overhead
-            if object_name in MediaUrlCache and now_ms < MediaUrlCache[object_name][1] + \
+            if object_name in MediaUrlCache and _now_ms < MediaUrlCache[object_name][1] + \
                     (PostMediaUrlExpireSeconds - 10) * 1000:
                 # print(f"found cached url for object {object_name}")
                 return MediaUrlCache[object_name][0]
@@ -88,7 +88,7 @@ class MediaUrls(fields.Raw):
                 ExpiresIn=PostMediaUrlExpireSeconds
             )
 
-            MediaUrlCache[object_name] = (media_url, now_ms)
+            MediaUrlCache[object_name] = (media_url, _now_ms)
             return media_url
 
         return list(map(get_media_url, media_list))
@@ -97,6 +97,7 @@ class MediaUrls(fields.Raw):
 post_fields = {
     'id': fields.String(attribute='eid'),
     'created_at_seconds': fields.Integer(attribute='created_at'),
+    'created_at_ms': fields.Integer(attribute='created_at_ms'),
     'author': fields.Nested(user_fields),
     'content': fields.String,
     'is_public': fields.Boolean,
@@ -105,6 +106,7 @@ post_fields = {
         # this is a trimmed down version of post_fields
         'id': fields.String(attribute='eid'),
         'created_at_seconds': fields.Integer(attribute='created_at'),
+        'created_at_ms': fields.Integer(attribute='created_at_ms'),
         'author': fields.Nested(user_fields),
         'content': fields.String,
         'media_urls': MediaUrls(attribute='media_list'),
@@ -123,12 +125,14 @@ post_fields = {
     'comments': fields.List(fields.Nested({
         'id': fields.String(attribute='eid'),
         'created_at_seconds': fields.Integer(attribute='created_at'),
+        'created_at_ms': fields.Integer(attribute='created_at_ms'),
         'author': fields.Nested(user_fields),
         'content': fields.String,
         # we only assume two-levels of nesting for comments, so no need to recursively define comments fields
         'comments': fields.List(fields.Nested({
             'id': fields.String(attribute='eid'),
             'created_at_seconds': fields.Integer(attribute='created_at'),
+            'created_at_ms': fields.Integer(attribute='created_at_ms'),
             'author': fields.Nested(user_fields),
             'content': fields.String,
         }))
@@ -222,6 +226,11 @@ post_parser.add_argument('reshared_from', type=str, required=False)
 post_parser.add_argument('media_object_names', type=str, action="append", default=[])
 
 
+home_parser = reqparse.RequestParser()
+home_parser.add_argument('from_created_at_ms', type=int, required=False, location='args')
+home_parser.add_argument('from_post_id', type=str, required=False, location='args')
+
+
 class Home(Resource):
     @jwt_required()
     @marshal_with(post_fields)
@@ -231,7 +240,9 @@ class Home(Resource):
         """
         user_id = get_jwt_identity()
         user = find_user(user_id)
-        posts = retrieves_posts_on_home(user)
+
+        args = home_parser.parse_args()
+        posts = retrieves_posts_on_home(user, args['from_created_at_ms'], args['from_post_id'])
 
         return posts, 200
 

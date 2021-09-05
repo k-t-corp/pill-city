@@ -10,6 +10,9 @@ dev-api: dev-deps
 		set -o allexport; source .env; FLASK_ENVIRONMENT=development ./venv/bin/python app.py
 		docker-compose down
 
+dev-release: dev-deps
+		set -o allexport; source .env; ./venv/bin/python release.py
+
 dev-web:
 		cd web; yarn install; yarn start
 

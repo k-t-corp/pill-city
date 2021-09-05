@@ -1,7 +1,7 @@
 import emoji as emoji_lib
 from mini_gplus.models import Reaction, NotifyingAction
 from .exceptions import UnauthorizedAccess, BadRequest, NotFound
-from .make_uuid import make_uuid
+from mini_gplus.utils.make_uuid import make_uuid
 from .post import sees_post
 from .notification import create_notification
 

@@ -1,5 +1,5 @@
 from mini_gplus.models import Notification
-from .make_uuid import make_uuid
+from mini_gplus.utils.make_uuid import make_uuid
 
 
 def create_notification(self, notifying_href, notifying_action, notified_href, owner):

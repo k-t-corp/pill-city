@@ -2,9 +2,12 @@ import bleach
 from typing import Optional
 from mini_gplus.models import Post, NotifyingAction
 from mini_gplus.utils.profiling import timer
-from .make_uuid import make_uuid
+from mini_gplus.utils.make_uuid import make_uuid
+from mini_gplus.utils.now_ms import now_ms
 from .circle import check_member
 from .notification import create_notification
+
+HomePostsPageSize = 5
 
 
 def create_post(self, content, is_public, circles, reshareable, reshared_from, media_list):
@@ -22,6 +25,7 @@ def create_post(self, content, is_public, circles, reshareable, reshared_from, m
     """
     new_post = Post()
     new_post.eid = make_uuid()
+    new_post.created_at_ms = now_ms()
     new_post.author = self.id
     new_post.content = bleach.clean(content)
     new_post.is_public = is_public
@@ -104,18 +108,42 @@ def sees_post(self, post, context_home_or_profile):
     return False
 
 
-def retrieves_posts_on_home(self):
+def retrieves_posts_on_home(self, from_created_at_ms, from_post_id):
     """
     All posts that are visible to the user on home
 
     :param (User) self: The acting user
+    :param (int|None) from_created_at_ms: Created_at timestamp from which home posts should be retrieved
+    :param (int|None) from_post_id: The acting Post_id from which home posts should be retrieved
     :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
     """
-    # todo: pagination
     # ordering by id descending is equivalent to ordering by created_at descending
-    posts = Post.objects().order_by('-id')
-    posts = filter(lambda post: sees_post(self, post, context_home_or_profile=True), posts)
-    return list(posts)
+    if from_created_at_ms:
+        # we do less than and equal to from_created_at
+        # so that all posts from the same time granularity of from_post_id are included
+        posts = Post.objects(created_at_ms__lte=from_created_at_ms).order_by('-id')
+    else:
+        posts = Post.objects().order_by('-id')
+
+    from_post_index = -1
+    if from_post_id:
+        # try to find the position of from_post_id so that we start from index of from_post_id + 1
+        for i, post in enumerate(posts):
+            if post.eid == from_post_id:
+                from_post_index = i
+                break
+
+    res = []
+    for i, post in enumerate(posts):
+        if from_post_id and i <= from_post_index:
+            continue
+        if not sees_post(self, post, context_home_or_profile=True):
+            continue
+        res.append(post)
+        if len(res) == HomePostsPageSize:
+            break
+
+    return res
 
 
 def retrieves_posts_on_profile(self, profile_user):
@@ -131,3 +159,16 @@ def retrieves_posts_on_profile(self, profile_user):
     posts = Post.objects(author=profile_user).order_by('-id')
     posts = filter(lambda post: sees_post(self, post, context_home_or_profile=False), posts)
     return list(posts)
+
+
+def backfill_post_created_at_ms():
+    backfill_count = 0
+    for post in Post.objects():
+        if not post.created_at_ms:
+            post.created_at_ms = int(post.created_at * 1000)
+            post.save()
+            backfill_count += 1
+    if backfill_count != 0:
+        print(f'Backfilled {backfill_count} Posts with created_at_ms')
+    else:
+        print("No Post was backfilled with created_at_ms. You can remove backfill code and required the field now!")
