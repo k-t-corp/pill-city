@@ -23,6 +23,6 @@
 
 @media only screen and (max-width: 750px) {
     .new-post-media-preview-container {
-        margin-bottom: -5px;
+        margin-bottom: 5px;
     }
 }
