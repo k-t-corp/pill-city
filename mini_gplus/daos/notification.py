@@ -59,6 +59,19 @@ def mark_notification_as_read(self, notification_id):
     n = Notification.objects.get(eid=notification_id)
     if self.id != n.owner.id:
         return False
+    if not n.unread:
+        return True
     n.unread = False
     n.save()
     return True
+
+
+def mark_all_notifications_as_read(self):
+    """
+    Mark all user's notifications as read
+
+    :param (User) self: The acting user.
+    """
+    for n in Notification.objects(owner=self, unread=True):
+        n.unread = False
+        n.save()

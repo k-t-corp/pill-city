@@ -71,7 +71,16 @@ export default (props) => {
     <div className="notification-container">
       <div className="notification-header-wrapper">
         <div className="notification-header">
-          Notifications
+          <span className="notification-title">Notifications</span>
+          <svg className="notification-mark-all-button" xmlns="http://www.w3.org/2000/svg"  fill="none" viewBox="0 0 24 24"
+               stroke="currentColor"
+               onClick={async (e) => {
+                 e.preventDefault()
+                 await props.api.markAllNotificationsAsRead()
+                 window.location.reload()
+               }}>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"/>
+          </svg>
         </div>
       </div>
       {notificationElems()}
