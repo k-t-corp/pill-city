@@ -1,4 +1,5 @@
 from mini_gplus.models import Notification
+from .make_uuid import make_uuid
 
 
 def create_notification(self, notifying_href, notifying_action, notified_href, owner):
@@ -22,6 +23,7 @@ def create_notification(self, notifying_href, notifying_action, notified_href, o
     if self.id == owner.id:
         return
     new_notification = Notification()
+    new_notification.eid = make_uuid()
     new_notification.notifier = self
     new_notification.notifying_href = notifying_href
     new_notification.notifying_action = notifying_action
@@ -36,4 +38,12 @@ def get_notifications(self):
 
     :param (User) self: The acting user
     """
-    return list(reversed(sorted(Notification.objects(owner=self), key=lambda n: n.created_at)))
+    res = []
+    # ordering by id descending is equivalent to ordering by created_at descending
+    for n in Notification.objects(owner=self).order_by('-id'):
+        if not n.eid:
+            # dynamically backfill eid for notifications
+            n.eid = make_uuid()
+            n.save()
+        res.append(n)
+    return res
