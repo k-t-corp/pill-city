@@ -36,6 +36,9 @@
 }
 
 @media only screen and (max-width: 750px) {
+    .home-wrapper {
+        padding: 0;
+    }
     .post-wrapper {
         width: 100%;
     }

@@ -132,6 +132,20 @@
     margin-top: 10px;
 }
 
+@media only screen and (max-width: 750px) {
+    .new-post {
+        width: 0;
+        padding: 0;
+        margin: 0;
+    }
+
+    .new-post-avatar {
+        width: 0;
+        height: 0;
+        flex-shrink: 1;
+    }
+}
+
 
 
 
