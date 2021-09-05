@@ -49,8 +49,8 @@ export default (props) => {
 
   const changeMediasOnClick = (event) => {
     if (event.target.files && event.target.files[0]) {
-      if (event.target.files.length > 9) {
-        alert(`Only 9 files are allowed to upload.`);
+      if (event.target.files.length > 4) {
+        alert(`Only allowed to upload 4 images`);
       } else {
         let selectedMedias = []
         for (let i = 0; i < event.target.files.length; i++) {

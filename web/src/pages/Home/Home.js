@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import { useInterval } from 'react-interval-hook';
 import Post from "../../components/Post/Post";
 import "./Home.css"
 import NewPost from "../../components/NewPost/NewPost";
@@ -13,12 +14,16 @@ export default (props) => {
   const [notifications, updateNotifications] = useState(null)
 
   useEffect(async () => {
-    updatePosts(await props.api.getHome())
-    updateCircles(await props.api.getCircles())
     updateMe(await props.api.getMe())
+    updatePosts(await props.api.getHome())
     updateNotifications(await props.api.getNotifications())
+    updateCircles(await props.api.getCircles())
     updateLoading(false)
   }, [])
+
+  useInterval(async () => {
+    updateNotifications(await props.api.getNotifications())
+  }, 5000)
 
   let homePostElement = () => {
     if (loading) {
@@ -35,20 +40,20 @@ export default (props) => {
     }
   }
 
-  return (
-    <div className="home-wrapper">
-      <div className="home-posts-wrapper">
-        {homePostElement()}
+    return (
+      <div className="home-wrapper">
+        <div className="home-posts-wrapper">
+          {homePostElement()}
+        </div>
+        <div className="home-right-column-container">
+          <NewPost circles={circles}
+                   me={me}
+                   api={props.api}
+                   resharePostData={resharePostData}
+                   updateResharePostData={updateResharePostData}/>
+          <NotificationDropdown notifications={notifications} api={props.api}/>
+        </div>
       </div>
-      <div className="home-right-column-container">
-        <NewPost circles={circles}
-                 me={me}
-                 api={props.api}
-                 resharePostData={resharePostData}
-                 updateResharePostData={updateResharePostData}/>
-        <NotificationDropdown notifications={notifications}/>
-      </div>
-    </div>
-  )
+    )
 
 }

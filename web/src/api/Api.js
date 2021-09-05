@@ -294,10 +294,10 @@ export default class Api {
     return res.data
   }
 
-  async getFollowings() {
+  async isFollowing(followingUserId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
-      `/followings`
+      `/following/${followingUserId}`
     )
     if (res.status !== 200) {
       throw new ApiError(res.status)
@@ -362,6 +362,28 @@ export default class Api {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
       `/notifications`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
+
+  async markNotificationAsRead(notificationId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.put(
+      `/notification/${notificationId}/read`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
+
+  async markAllNotificationsAsRead() {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.put(
+      `/notifications/read`
     )
     if (res.status !== 200) {
       throw new ApiError(res.status)

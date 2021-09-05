@@ -17,10 +17,41 @@
 }
 
 .notification-header {
-
-    font-size: large;
     padding: 10px 5px;
     border-bottom: 3px solid #f1f1f1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.notification-title {
+    font-size: large;
+}
+
+.notification-count {
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: medium;
+}
+
+.notification-count-grey {
+    background-color: #c7c7c7;
+    color: #505050;
+}
+
+.notification-count-red {
+    background-color: #E05140;
+    color: white;
+}
+
+.notification-mark-all-button {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.notification-mark-all-button:hover {
+    color: #0d71bb;
 }
 
 .notification-wrapper {
