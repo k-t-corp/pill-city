@@ -44,3 +44,24 @@
     color: #767676;
     font-size: small;
 }
+
+/* Mobile */
+@media only screen and (max-width: 750px) {
+    .users-grid-container {
+        padding: 15px;
+        top: 0;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        grid-column-gap: 5px;
+        grid-row-gap: 5px;
+    }
+
+    .users-user-card-wrapper {
+        height: 50px;
+    }
+
+    .users-user-card-avatar {
+        height: 50px;
+        width: 50px;
+    }
+
+}
