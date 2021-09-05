@@ -6,6 +6,7 @@ from mini_gplus.utils.make_uuid import make_uuid
 from mini_gplus.utils.now_ms import now_ms
 from .circle import check_member
 from .notification import create_notification
+from .pagination import get_page
 
 HomePostsPageSize = 5
 
@@ -117,33 +118,17 @@ def retrieves_posts_on_home(self, from_created_at_ms, from_post_id):
     :param (str|None) from_post_id: The acting Post_id from which home posts should be retrieved
     :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
     """
-    # ordering by id descending is equivalent to ordering by created_at descending
-    if from_created_at_ms:
-        # we do less than and equal to from_created_at
-        # so that all posts from the same time granularity of from_post_id are included
-        posts = Post.objects(created_at_ms__lte=from_created_at_ms).order_by('-id')
-    else:
-        posts = Post.objects().order_by('-id')
+    def _filter_post(p):
+        return sees_post(self, p, context_home_or_profile=True)
 
-    from_post_index = -1
-    if from_post_id:
-        # try to find the position of from_post_id so that we start from index of from_post_id + 1
-        for i, post in enumerate(posts):
-            if post.eid == from_post_id:
-                from_post_index = i
-                break
-
-    res = []
-    for i, post in enumerate(posts):
-        if from_post_id and i <= from_post_index:
-            continue
-        if not sees_post(self, post, context_home_or_profile=True):
-            continue
-        res.append(post)
-        if len(res) == HomePostsPageSize:
-            break
-
-    return res
+    return get_page(
+        mongoengine_model=Post,
+        extra_query_args={},
+        extra_filter_func=_filter_post,
+        from_created_at_ms=from_created_at_ms,
+        from_id=from_post_id,
+        page_count=HomePostsPageSize
+    )
 
 
 def retrieves_posts_on_profile(self, profile_user):
