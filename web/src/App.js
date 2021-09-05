@@ -20,6 +20,7 @@ import withUserId from "./hoc/withUserId";
 import withPostId from "./hoc/withPostId";
 import Settings from './pages/Settings/Settings'
 import Post from './pages/Post/Post'
+import Notifications from "./pages/Notifications/Notifications";
 
 const api = new Api(process.env.REACT_APP_API_ENDPOINT)
 
@@ -44,6 +45,10 @@ export default class App extends Component {
           <Route
             path="/profile"
             component={withApi(withAuthRedirect(withNavBar(Profile, '/profile')), api)}
+          />
+          <Route
+            path="/notifications"
+            component={withApi(withAuthRedirect(withNavBar(Notifications, '/notifications')), api)}
           />
           <Route
             path="/users"
