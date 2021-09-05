@@ -9,6 +9,7 @@ export default (props) => {
     if (summary.length > summaryLength) return `${summary.slice(0,summaryLength)}...`
     else return summary
   }
+
   const notificationElem = (notification, i) => {
     let action
     if (notification.notifying_action === "reshare") action = "reshared"
@@ -79,11 +80,13 @@ export default (props) => {
     }
   }
 
+  const unreadNotificationsCount = props.notifications !== null ? props.notifications.filter(n => n.unread).length : 0
+
   return (
     <div className="notification-container">
       <div className="notification-header-wrapper">
         <div className="notification-header">
-          <span className="notification-title">Notifications</span>
+          <span className="notification-title">Notifications <span className={`notification-count ${unreadNotificationsCount === 0 ? "notification-count-grey" : "notification-count-red"}`}>{unreadNotificationsCount}</span></span>
           <svg className="notification-mark-all-button" xmlns="http://www.w3.org/2000/svg"  fill="none" viewBox="0 0 24 24"
                stroke="currentColor"
                onClick={async (e) => {

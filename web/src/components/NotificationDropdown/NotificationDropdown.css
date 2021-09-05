@@ -28,6 +28,22 @@
     font-size: large;
 }
 
+.notification-count {
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: medium;
+}
+
+.notification-count-grey {
+    background-color: #c7c7c7;
+    color: #505050;
+}
+
+.notification-count-red {
+    background-color: #E05140;
+    color: white;
+}
+
 .notification-mark-all-button {
     width: 20px;
     height: 20px;
