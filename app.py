@@ -17,7 +17,7 @@ from mini_gplus.resources.comments import NestedComments, Comments
 from mini_gplus.resources.reactions import Reactions, Reaction
 from mini_gplus.resources.circles import Circles, CircleMember, Circle
 from mini_gplus.resources.followings import Following
-from mini_gplus.resources.notifications import Notifications
+from mini_gplus.resources.notifications import Notifications, NotificationRead
 
 # sentry
 if os.getenv('SENTRY_DSN'):
@@ -138,6 +138,7 @@ api.add_resource(Circle, '/api/circle/<string:circle_name>')
 
 api.add_resource(Following, '/api/following/<string:following_user_id>')
 
+api.add_resource(NotificationRead, '/api/notification/<string:notification_id>/read')
 api.add_resource(Notifications, '/api/notifications')
 
 if __name__ == '__main__':

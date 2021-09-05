@@ -15,9 +15,17 @@ export default (props) => {
     if (notification.notifying_action === "comment") action = "commented"
     if (notification.notifying_action === "reaction") action =  "reacted"
 
+    const notificationOnClick = async () => {
+      console.log(notification.id)
+      await props.api.markNotificationAsRead(notification.id)
+      window.location.href = notification.notified_location.href
+    }
+
     return (
-      <div className="notification-wrapper" key={i}>
-        <div className="notification-first-row" onClick={() => window.location.href = notification.notifying_location.href}>
+      <div className="notification-wrapper" key={i} style={{
+        backgroundColor: notification.unread ? 'white' : '#f0f0f0'
+      }}>
+        <div className="notification-first-row" onClick={notificationOnClick}>
           <div className="notification-info">
             <div className="post-avatar notification-avatar">
               <img
@@ -37,7 +45,7 @@ export default (props) => {
           </div>
         </div>
 
-        <div className="notification-second-row" onClick={() => window.location.href = notification.notified_location.href}>
+        <div className="notification-second-row" onClick={notificationOnClick}>
           {notification.notified_location.summary}
         </div>
       </div>

@@ -4,7 +4,7 @@ from mini_gplus.daos.reaction import get_reaction
 from mini_gplus.daos.comment import get_comment
 from mini_gplus.daos.post import get_post
 from mini_gplus.daos.user import find_user
-from mini_gplus.daos.notification import get_notifications
+from mini_gplus.daos.notification import get_notifications, mark_notification_as_read
 from .me import user_fields
 
 
@@ -40,7 +40,7 @@ class NotificationLocation(fields.Raw):
 
 
 notification_fields = {
-    'eid': fields.String,
+    'id': fields.String(attribute='eid'),
     'created_at_seconds': fields.Integer(attribute='created_at'),
     'notifier': fields.Nested(user_fields),
     'notifying_location': NotificationLocation(attribute='notifying_href'),
@@ -60,3 +60,12 @@ class Notifications(Resource):
         user_id = get_jwt_identity()
         user = find_user(user_id)
         return get_notifications(user)
+
+
+class NotificationRead(Resource):
+    @jwt_required()
+    def put(self, notification_id):
+        user_id = get_jwt_identity()
+        user = find_user(user_id)
+        if not mark_notification_as_read(user, notification_id):
+            return {'msg': "Not allowed to mark notification as read"}, 401

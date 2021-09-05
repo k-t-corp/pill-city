@@ -368,4 +368,15 @@ export default class Api {
     }
     return res.data
   }
+
+  async markNotificationAsRead(notificationId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.put(
+      `/notification/${notificationId}/read`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
 }

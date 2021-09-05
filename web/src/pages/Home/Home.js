@@ -46,7 +46,7 @@ export default (props) => {
                    api={props.api}
                    resharePostData={resharePostData}
                    updateResharePostData={updateResharePostData}/>
-          <NotificationDropdown notifications={notifications}/>
+          <NotificationDropdown notifications={notifications} api={props.api}/>
         </div>
       </div>
     )

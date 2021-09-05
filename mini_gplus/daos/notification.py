@@ -47,3 +47,18 @@ def get_notifications(self):
             n.save()
         res.append(n)
     return res
+
+
+def mark_notification_as_read(self, notification_id):
+    """
+    Mark a notification as read
+
+    :param (User) self: The acting user.
+    :param (str) notification_id: ID of the notification
+    """
+    n = Notification.objects.get(eid=notification_id)
+    if self.id != n.owner.id:
+        return False
+    n.unread = False
+    n.save()
+    return True
