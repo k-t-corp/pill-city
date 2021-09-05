@@ -10,8 +10,8 @@ def get_page(mongoengine_model, extra_query_args, extra_filter_func, from_create
     :param (Dict) extra_query_args: Extra query arguments for the desired objects
     :param extra_filter_func: An extra function that takes a queried object and
                                 returns whether it should be counted in the final result
-    :param (int) from_created_at_ms: Query from this specific creation time
-    :param (str) from_id: Query from this specific object ID
+    :param (int|None) from_created_at_ms: Query from this specific creation time. None means to query from latest.
+    :param (str|None) from_id: Query from this specific object ID. None means to query from latest.
     :param (int) page_count: Number of objects in a page
     """
     # ordering by id descending is equivalent to ordering by created_at descending
