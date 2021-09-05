@@ -2,10 +2,12 @@ import React, {useState} from 'react'
 import "./DroppableBoard.css"
 import UserProfileCard from "../UserProfileCard";
 import getAvatarUrl from "../../api/getAvatarUrl";
+import { useMediaQuery } from 'react-responsive'
 
 export default (props) => {
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 750px)' })
   const circleMargin = 2 // Margin between the edge of the card circle and inner/outer circles
-  const outerDiameter = 250; // Need to be equal to width and height in .droppable-board-wrapper
+  const outerDiameter = isTabletOrMobile ? 150 : 250; // Need to be equal to width and height in .droppable-board-wrapper
   const innerCirclePercentage = 0.7; // Update all numbers in Animation section
   const outerRadius = outerDiameter / 2;
   const innerRadius = outerDiameter * innerCirclePercentage / 2;

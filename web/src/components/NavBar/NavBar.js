@@ -5,7 +5,6 @@ import {removeAccessToken} from "../../api/AuthStorage";
 
 export default (props) => {
   const breakpoint = 750;
-  const activePage = useState(props.path)
   const WebNavBarElem = () => {
     return (
       <div>

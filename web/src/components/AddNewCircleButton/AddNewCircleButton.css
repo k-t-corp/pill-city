@@ -107,6 +107,24 @@
     margin-right: 30px;
 }
 
+/* Mobile */
+@media only screen and (max-width: 750px) {
+    .modal-content {
+        width: 80%;
+    }
+
+    #new-circle-name-input {
+        font-size: large;
+    }
+
+    .add-new-circle-button {
+        width: 150px;
+        height: 150px;
+        margin-bottom: 28px;
+        font-size: larger;
+    }
+
+}
 
 
 /*Animation*/

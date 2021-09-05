@@ -131,6 +131,25 @@
     background-color: #E05140;
 }
 
+/* Mobile */
+@media only screen and (max-width: 750px) {
+    .droppable-board  {
+        width: 150px;
+        height: 150px;
+        margin-bottom: 20px;
+        font-size: larger;
+    }
+
+    .droppable-board-inner-circle {
+        width: 150px;
+        height: 150px;
+    }
+
+    .droppable-board-inner-circle-name {
+        font-size: larger;
+    }
+}
+
 
 
 
