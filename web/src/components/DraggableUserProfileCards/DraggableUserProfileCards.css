@@ -12,3 +12,26 @@
     grid-column-gap: 30px;
     grid-row-gap: 30px;
 }
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.draggable-card-grid-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.draggable-card-grid-container {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Mobile */
+@media only screen and (max-width: 750px) {
+    .draggable-card-grid-container {
+        height: calc(100% - 220px);
+        padding: 5px;
+        top: 0;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        grid-column-gap: 5px;
+        grid-row-gap: 5px;
+    }
+}
