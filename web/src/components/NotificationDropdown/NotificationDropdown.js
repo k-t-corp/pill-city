@@ -15,6 +15,11 @@ export default (props) => {
     if (notification.notifying_action === "comment") action = "commented"
     if (notification.notifying_action === "reaction") action =  "reacted"
 
+    let notifiedType
+    if (notification.notified_location.href.indexOf("#reaction-") !== -1) notifiedType = 'reaction'
+    else if (notification.notified_location.href.indexOf("#comment-") !== -1) notifiedType = 'comment'
+    else if (notification.notified_location.href.indexOf("/post/") !== -1) notifiedType = 'post'
+
     const notificationOnClick = async () => {
       console.log(notification.id)
       await props.api.markNotificationAsRead(notification.id)
@@ -36,7 +41,14 @@ export default (props) => {
             </div>
             <div className="notification-notifier">
               <div className="notification-notifier-wrapper">
-                <b className="notification-notifier-id">{notification.notifier.id}</b> {action} <div className="notification-summary">"{notificationSummary(notification.notifying_location.summary)}"</div> on your post
+                <b className="notification-notifier-id">
+                  {notification.notifier.id}{' '}
+                </b>
+                {action}{' '}
+                <div className="notification-summary">
+                  "{notificationSummary(notification.notifying_location.summary)}"
+                </div>{' '}
+                on your {notifiedType}
               </div>
             </div>
           </div>
