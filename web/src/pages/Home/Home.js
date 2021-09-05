@@ -4,6 +4,8 @@ import Post from "../../components/Post/Post";
 import "./Home.css"
 import NewPost from "../../components/NewPost/NewPost";
 import NotificationDropdown from "../../components/NotificationDropdown/NotificationDropdown";
+import {useMediaQuery} from "react-responsive";
+import MobileNewPost from "../../components/MobileNewPost/MobileNewPost";
 
 export default (props) => {
   const [loading, updateLoading] = useState(true)
@@ -12,6 +14,8 @@ export default (props) => {
   const [me, updateMe] = useState(null)
   const [resharePostData, updateResharePostData] = useState(null)
   const [notifications, updateNotifications] = useState(null)
+
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 750px)' })
 
   useEffect(async () => {
     updateMe(await props.api.getMe())
@@ -45,14 +49,19 @@ export default (props) => {
         <div className="home-posts-wrapper">
           {homePostElement()}
         </div>
-        <div className="home-right-column-container">
+        {isTabletOrMobile && <MobileNewPost circles={circles}
+                                            me={me}
+                                            api={props.api}
+                                            resharePostData={resharePostData}
+                                            updateResharePostData={updateResharePostData}/>}
+        {!isTabletOrMobile && <div className="home-right-column-container">
           <NewPost circles={circles}
                    me={me}
                    api={props.api}
                    resharePostData={resharePostData}
                    updateResharePostData={updateResharePostData}/>
           <NotificationDropdown notifications={notifications} api={props.api}/>
-        </div>
+        </div>}
       </div>
     )
 
