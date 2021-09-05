@@ -15,15 +15,21 @@
     bottom: 0;
     display: flex;
     z-index: 3;
+    padding: 5px 5px;
 }
 
 .mobile-nav-bar-button-container {
     width: 25%;
-    height: 50px;
+    height: 40px;
     padding: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.mobile-nav-bar-button-active {
+    background-color: #262626;
+    border-radius: 20px;
 }
 
 .mobile-nav-bar-button-container>svg {
