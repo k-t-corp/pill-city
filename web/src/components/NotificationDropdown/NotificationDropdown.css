@@ -6,7 +6,6 @@
     max-height: 40vh;
     flex-grow: 1;
     overflow-y: scroll;
-
 }
 
 .notification-header-wrapper {
@@ -110,4 +109,24 @@
     inline-size: 100%;
     color: #767676;
 
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.notification-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.notification-container {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Mobile */
+/* Notifications will be shown as a page on mobile devices */
+@media only screen and (max-width: 750px) {
+    .notification-container {
+        max-height: calc(100vh - 50px);
+        overflow-y: scroll;
+    }
 }

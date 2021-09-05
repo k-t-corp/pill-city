@@ -13,6 +13,17 @@
     grid-row-gap: 30px;
 }
 
+/* Hide scrollbar for Chrome, Safari and Opera */
+.draggable-card-grid-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.draggable-card-grid-container {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
 /* Mobile */
 @media only screen and (max-width: 750px) {
     .draggable-card-grid-container {
@@ -23,4 +34,6 @@
         grid-column-gap: 5px;
         grid-row-gap: 5px;
     }
+
+
 }
