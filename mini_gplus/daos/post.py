@@ -114,7 +114,7 @@ def retrieves_posts_on_home(self, from_created_at_ms, from_post_id):
 
     :param (User) self: The acting user
     :param (int|None) from_created_at_ms: Created_at timestamp from which home posts should be retrieved
-    :param (int|None) from_post_id: The acting Post_id from which home posts should be retrieved
+    :param (str|None) from_post_id: The acting Post_id from which home posts should be retrieved
     :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
     """
     # ordering by id descending is equivalent to ordering by created_at descending

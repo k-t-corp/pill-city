@@ -35,3 +35,6 @@
     min-width: 500px;
 }
 
+.home-load-more {
+    cursor: pointer;
+}

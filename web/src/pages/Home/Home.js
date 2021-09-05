@@ -25,6 +25,19 @@ export default (props) => {
     updateNotifications(await props.api.getNotifications())
   }, 5000)
 
+  const loadMorePosts = async () => {
+    const lastPost = posts[posts.length - 1]
+    const newPosts = await props.api.getHome(
+      lastPost['created_at_ms'],
+      lastPost['id']
+    )
+    if (newPosts.length !== 0) {
+      updatePosts(posts.concat(newPosts))
+    } else {
+      alert('Go back to real life')
+    }
+  }
+
   let homePostElement = () => {
     if (loading) {
       return (<div className="home-status">Loading...</div>)
@@ -35,6 +48,13 @@ export default (props) => {
       for (let i = 0; i < posts.length; i++) {
         postElements.push(<Post key={i} data={posts[i]} me={me} api={props.api} updateResharePostData={updateResharePostData}/>)
       }
+      postElements.push(
+        <span
+          key={posts.length}
+          className='home-load-more'
+          onClick={loadMorePosts}
+        >Load more...</span>
+      )
       return postElements
     }
   }
@@ -54,5 +74,4 @@ export default (props) => {
         </div>
       </div>
     )
-
 }
