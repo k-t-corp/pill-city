@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import { useInterval } from 'react-interval-hook';
 import Post from "../../components/Post/Post";
 import "./Home.css"
 import NewPost from "../../components/NewPost/NewPost";
@@ -20,6 +21,9 @@ export default (props) => {
     updateLoading(false)
   }, [])
 
+  useInterval(async () => {
+    updateNotifications(await props.api.getNotifications())
+  }, 5000)
 
   let homePostElement = () => {
     if (loading) {
@@ -46,7 +50,7 @@ export default (props) => {
                    api={props.api}
                    resharePostData={resharePostData}
                    updateResharePostData={updateResharePostData}/>
-          <NotificationDropdown notifications={notifications}/>
+          <NotificationDropdown notifications={notifications} api={props.api}/>
         </div>
       </div>
     )

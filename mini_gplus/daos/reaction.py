@@ -47,7 +47,10 @@ def create_reaction(self, emoji, parent_post):
 
 
 def get_reaction(reaction_id):
-    return Reaction.objects.get(eid=reaction_id)
+    rs = Reaction.objects(eid=reaction_id)
+    if not rs:
+        return None
+    return rs[0]
 
 
 def owns_reaction(self, reaction):

@@ -1,4 +1,5 @@
 from mini_gplus.models import Notification
+from .make_uuid import make_uuid
 
 
 def create_notification(self, notifying_href, notifying_action, notified_href, owner):
@@ -22,6 +23,7 @@ def create_notification(self, notifying_href, notifying_action, notified_href, o
     if self.id == owner.id:
         return
     new_notification = Notification()
+    new_notification.eid = make_uuid()
     new_notification.notifier = self
     new_notification.notifying_href = notifying_href
     new_notification.notifying_action = notifying_action
@@ -36,4 +38,40 @@ def get_notifications(self):
 
     :param (User) self: The acting user
     """
-    return list(reversed(sorted(Notification.objects(owner=self), key=lambda n: n.created_at)))
+    res = []
+    # ordering by id descending is equivalent to ordering by created_at descending
+    for n in Notification.objects(owner=self).order_by('-id'):
+        if not n.eid:
+            # dynamically backfill eid for notifications
+            n.eid = make_uuid()
+            n.save()
+        res.append(n)
+    return res
+
+
+def mark_notification_as_read(self, notification_id):
+    """
+    Mark a notification as read
+
+    :param (User) self: The acting user.
+    :param (str) notification_id: ID of the notification
+    """
+    n = Notification.objects.get(eid=notification_id)
+    if self.id != n.owner.id:
+        return False
+    if not n.unread:
+        return True
+    n.unread = False
+    n.save()
+    return True
+
+
+def mark_all_notifications_as_read(self):
+    """
+    Mark all user's notifications as read
+
+    :param (User) self: The acting user.
+    """
+    for n in Notification.objects(owner=self, unread=True):
+        n.unread = False
+        n.save()
