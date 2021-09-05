@@ -3,6 +3,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    height: 100vh;
 }
 
 .settings-user-info {
@@ -15,8 +16,8 @@
     width: 60%;
     min-width: 600px;
     max-width: 1000px;
-    margin: 0 auto 30px auto;
-    padding-bottom: 20px;
+    margin: 0 auto 0 auto;
+    height: 100%;
 }
 
 .settings-banner-wrapper {
@@ -222,8 +223,30 @@ input[type="file"] {
     max-height: 100%;
 }
 
+/* Signout button */
+
+.settings-signout-button {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    color: #767676;
+}
+
+.settings-signout-button-label {
+    text-decoration: underline;
+}
+
+.settings-signout-button-svg {
+    width: 20px;
+    height: 20px;
+}
+
 /* Mobile */
 @media only screen and (max-width: 750px) {
+    .settings-wrapper {
+        height: 100vh;
+    }
+
     .settings-wrapper {
         margin-top: 0;
     }
