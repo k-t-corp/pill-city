@@ -13,6 +13,7 @@ from mini_gplus.daos.media import get_media
 from mini_gplus.utils.now_ms import now_ms
 from .me import user_fields
 from .upload_to_s3 import upload_to_s3
+from .pagination import pagination_parser
 
 MaxPostMediaCount = 4
 PostMediaUrlExpireSeconds = 900
@@ -226,11 +227,6 @@ post_parser.add_argument('reshared_from', type=str, required=False)
 post_parser.add_argument('media_object_names', type=str, action="append", default=[])
 
 
-pagination_parser = reqparse.RequestParser()
-pagination_parser.add_argument('from_created_at_ms', type=int, required=False, location='args')
-pagination_parser.add_argument('from_post_id', type=str, required=False, location='args')
-
-
 class Home(Resource):
     @jwt_required()
     @marshal_with(post_fields)
@@ -242,7 +238,7 @@ class Home(Resource):
         user = find_user(user_id)
 
         args = pagination_parser.parse_args()
-        posts = retrieves_posts_on_home(user, args['from_created_at_ms'], args['from_post_id'])
+        posts = retrieves_posts_on_home(user, args['from_created_at_ms'], args['from_id'])
 
         return posts, 200
 
@@ -275,4 +271,4 @@ class Profile(Resource):
             return {'msg': f'User {profile_user_id} is not found'}, 404
 
         args = pagination_parser.parse_args()
-        return retrieves_posts_on_profile(user, profile_user, args['from_created_at_ms'], args['from_post_id'])
+        return retrieves_posts_on_profile(user, profile_user, args['from_created_at_ms'], args['from_id'])

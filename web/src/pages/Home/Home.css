@@ -46,3 +46,7 @@
     text-align: center;
     color: cornflowerblue;
 }
+
+.home-load-more:hover {
+    color: #0d71bb;
+}

@@ -49,7 +49,7 @@ export default (props) => {
           key={postData.length}
           className='profile-load-more'
           onClick={loadMorePosts}
-        >Load more...</div>
+        >Load more</div>
       )
       return postElements
     }

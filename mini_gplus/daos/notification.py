@@ -1,5 +1,8 @@
 from mini_gplus.models import Notification
 from mini_gplus.utils.make_uuid import make_uuid
+from .pagination import get_page
+
+NotificationPageSize = 10
 
 
 def create_notification(self, notifying_href, notifying_action, notified_href, owner):
@@ -32,14 +35,27 @@ def create_notification(self, notifying_href, notifying_action, notified_href, o
     new_notification.save()
 
 
-def get_notifications(self):
+def get_notifications(self, from_created_at_ms, from_notification_id):
     """
     Get all of a user's notifications in reverse chronological order, e.g. latest to earliest
 
     :param (User) self: The acting user
+    :param (int|None) from_created_at_ms: Created_at timestamp from which home posts should be retrieved
+    :param (str|None) from_notification_id: The acting Post_id from which home posts should be retrieved
     """
-    # ordering by id descending is equivalent to ordering by created_at descending
-    return list(Notification.objects(owner=self).order_by('-id'))
+    def _filter_noop(_):
+        return True
+
+    return get_page(
+        mongoengine_model=Notification,
+        extra_query_args={
+            'owner': self
+        },
+        extra_filter_func=_filter_noop,
+        from_created_at_ms=from_created_at_ms,
+        from_id=from_notification_id,
+        page_count=NotificationPageSize
+    )
 
 
 def mark_notification_as_read(self, notification_id):

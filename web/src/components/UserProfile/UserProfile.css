@@ -75,3 +75,7 @@
     text-align: center;
     color: cornflowerblue;
 }
+
+.profile-load-more:hover {
+    color: #0d71bb;
+}

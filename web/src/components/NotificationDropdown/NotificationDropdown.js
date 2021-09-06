@@ -76,6 +76,13 @@ export default (props) => {
         const notification = props.notifications[i]
         res.push(notificationElem(notification, i))
       }
+      res.push(
+        <div
+          key={props.notifications.length}
+          className='notification-load-more'
+          onClick={props.loadMoreNotifications}
+        >Load more</div>
+      )
       return res
     }
   }

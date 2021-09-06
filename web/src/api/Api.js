@@ -93,7 +93,7 @@ export default class Api {
       {
         params: {
           'from_created_at_ms': fromCreatedAtMs,
-          'from_post_id': fromPostId
+          'from_id': fromPostId
         }
       }
     )
@@ -166,7 +166,7 @@ export default class Api {
       {
         params: {
           'from_created_at_ms': fromCreatedAtMs,
-          'from_post_id': fromPostId
+          'from_id': fromPostId
         }
       }
     )
@@ -367,10 +367,16 @@ export default class Api {
     }
   }
 
-  async getNotifications() {
+  async getNotifications(fromCreatedAtMs, fromNotificationId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
-      `/notifications`
+      `/notifications`,
+      {
+        params: {
+          'from_created_at_ms': fromCreatedAtMs,
+          'from_id': fromNotificationId
+        }
+      }
     )
     if (res.status !== 200) {
       throw new ApiError(res.status)
