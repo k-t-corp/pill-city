@@ -35,9 +35,13 @@ export default (props) => {
         <div className="post-content">
           {parseContent(resharedFrom.content, "")}
           {resharedFrom.media_urls.length === 0 ? null :
-            <MediaPreview mediaUrls={resharedFrom.media_urls} threeRowHeight="80px" twoRowHeight="100px"
-                          oneRowHeight="140px"/>
-            }
+            <MediaPreview
+              mediaUrls={resharedFrom.media_urls}
+              threeRowHeight="80px"
+              twoRowHeight="100px"
+              oneRowHeight="140px"
+            />
+          }
         </div>
       </div>)
   }
@@ -313,6 +317,11 @@ export default (props) => {
     window.location.href = `/post/${props.data.id}`
   }
 
+  const [mediaUrlOpened, updateMediaUrlOpened] = useState('')
+  const openMediaUrl = (mediaUrl) => {
+    updateMediaUrlOpened(mediaUrl)
+  }
+
   return (
     <div className="post-wrapper">
       <div className="post-op">
@@ -342,7 +351,13 @@ export default (props) => {
           {parseContent(props.data.content, "post-content")}
         </div>
         {resharedElem(props.data.reshared_from)}
-        <MediaPreview mediaUrls={props.data.media_urls} threeRowHeight="130px" twoRowHeight="150px"  oneRowHeight="180px"/>
+        <MediaPreview
+          mediaUrls={props.data.media_urls}
+          threeRowHeight="130px"
+          twoRowHeight="150px"
+          oneRowHeight="180px"
+          onMediaClicked={openMediaUrl}
+        />
         <div className="post-interactions-wrapper">
           <div className="post-reactions-wrapper">
             {reactions}
@@ -396,7 +411,15 @@ export default (props) => {
       {props.data.comments.length === 0 ? null :
         <div className="post-comments-wrapper">
           {comments}
-        </div>}
+        </div>
+      }
+      {
+        mediaUrlOpened !== '' ?
+          <div id='post-media' className='post-media'>
+            <img className="post-media-img" src={mediaUrlOpened} alt=""/>
+          </div> :
+          null
+      }
     </div>
   )
 }

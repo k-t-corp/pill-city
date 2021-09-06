@@ -23,13 +23,23 @@ export default (props) => {
   }
 
   for (let i = 0; i < mediaCount; i++) {
+    const mediaUrl = props.mediaUrls[i]
     mediaPreview.push(
-      <div className="new-post-media-preview" key={i}
-           style={{
-             width: widthOfPreview,
-             height: height,
-           }}>
-        <img className="new-post-media-preview-img" src={props.mediaUrls[i]} alt=""/>
+      <div
+        className="new-post-media-preview"
+        key={i}
+        style={{
+         width: widthOfPreview,
+         height: height,
+        }}
+        onClick={e => {
+          e.preventDefault()
+          if (props.onMediaClicked) {
+            props.onMediaClicked(mediaUrl)
+          }
+        }}
+      >
+        <img className="new-post-media-preview-img" src={mediaUrl} alt=""/>
       </div>)
   }
   return (
