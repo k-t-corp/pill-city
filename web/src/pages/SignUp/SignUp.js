@@ -5,8 +5,6 @@ import {Redirect} from "react-router-dom";
 import HomePage from "../../components/HomePage/HomePage";
 import "./SignUp.css";
 
-require('promise.prototype.finally').shim();
-
 export default class SignUp extends Component {
   constructor(props) {
     super(props)
@@ -14,21 +12,39 @@ export default class SignUp extends Component {
       'error': '',
       'buttonEnabled': false,
       'loading': false,
-      'redirectToSignIn': false
+      'redirectToSignIn': false,
+      'isOpenRegistration': true
     }
+  }
+
+  componentDidMount() {
+    this.props.api.isOpenRegistration()
+      .then(isOpenRegistration => {
+        this.setState({
+          isOpenRegistration
+        })
+      })
+      .catch(error => {
+        this.setState({
+          error: error.toString()
+        })
+      })
   }
 
   handleFormValid = () => {
     this.setState({'buttonEnabled': true})
   }
+
   handleFormInvalid = () => {
     this.setState({'buttonEnabled': false})
   }
+
   showError = (err) => {
     this.setState({'error': err.toString()})
   }
+
   handleSubmit = (inputForm) => {
-    const {id, password, confirmPassword} = inputForm
+    const {id, password, confirmPassword, invitationCode} = inputForm
     if (id === undefined || id.trim() === "") {
       this.refs.form.updateInputsWithError({
         'id': 'Please enter id',
@@ -45,24 +61,32 @@ export default class SignUp extends Component {
         'confirmPassword': 'Password does not match'
       })
       return
+    } else if (!this.state.isOpenRegistration && !invitationCode) {
+      this.refs.form.updateInputsWithError({
+        'invitationCode': 'Please enter invitation code'
+      })
+      return
     }
 
     this.setState({'loading': true})
-    this.props.api.signUp(
-      id, password
-    ).then(() => {
-      this.setState({'redirectToSignIn': true})
-    }).catch((e) => {
+    this.props.api.signUp(id, password, invitationCode)
+      .then(() => {
+        this.setState({'redirectToSignIn': true})
+      })
+      .catch((e) => {
         if (e.response.status === 409) {
           this.refs.form.updateInputsWithError({
             'id': 'This id has already been taken',
           })
-          return
+        } else if (e.response.status === 403) {
+          this.refs.form.updateInputsWithError({
+            'invitationCode': 'Invalid invitation code',
+          })
         }
-      }
-    ).finally(() => {
-      this.setState({'loading': false})
-    })
+      })
+      .finally(() => {
+        this.setState({'loading': false})
+      })
   }
 
   loginForm = () => {
@@ -96,7 +120,6 @@ export default class SignUp extends Component {
                   name='id'
                   placeholder='ID'
                   errorLabel={errorLabel}
-
                 />
                 <Input
                   fluid
@@ -112,6 +135,16 @@ export default class SignUp extends Component {
                   type='password'
                   errorLabel={errorLabel}
                 />
+                {
+                  this.state.isOpenRegistration ?
+                    null :
+                    <Input
+                      fluid
+                      name='invitationCode'
+                      placeholder='Invitation code'
+                      errorLabel={errorLabel}
+                    />
+                }
                 <Button
                   fluid
                   primary
