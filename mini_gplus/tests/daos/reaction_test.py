@@ -13,7 +13,7 @@ class ReactionTest(BaseTestCase):
         user1 = find_user('user1')
 
         # Create post
-        create_post(user1, 'post1', True, [], False, None, [])
+        create_post(user1, 'post1', True, [], False, None, [], [])
         post1 = Post.objects(author=user1)
         self.assertTrue(1, len(post1))
         post1 = post1[0]
@@ -35,7 +35,7 @@ class ReactionTest(BaseTestCase):
         user2 = find_user('user2')
 
         # Create post
-        create_post(user1, 'post1', True, [], False, None, [])
+        create_post(user1, 'post1', True, [], False, None, [], [])
         post1 = Post.objects(author=user1)
         self.assertTrue(1, len(post1))
         post1 = post1[0]
@@ -67,7 +67,7 @@ class ReactionTest(BaseTestCase):
         user1 = find_user('user1')
 
         # Create post
-        create_post(user1, 'post1', True, [], False, None, [])
+        create_post(user1, 'post1', True, [], False, None, [], [])
         post1 = Post.objects(author=user1)
         self.assertTrue(1, len(post1))
         post1 = post1[0]

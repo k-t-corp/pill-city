@@ -34,6 +34,8 @@ class NotificationLocation(fields.Raw):
                 'href': href,
                 'summary': get_post(post_id).content
             }
+        elif href == '':
+            return {}
         else:
             return {
                 'error': f'Unknown href type for {href}'

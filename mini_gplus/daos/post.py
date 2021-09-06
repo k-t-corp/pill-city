@@ -5,9 +5,10 @@ from mini_gplus.utils.profiling import timer
 from .make_uuid import make_uuid
 from .circle import check_member
 from .notification import create_notification
+from .mention import mention
 
 
-def create_post(self, content, is_public, circles, reshareable, reshared_from, media_list):
+def create_post(self, content, is_public, circles, reshareable, reshared_from, media_list, mentioned_user_ids):
     """
     Create a post for the user
 
@@ -18,6 +19,7 @@ def create_post(self, content, is_public, circles, reshareable, reshared_from, m
     :param (bool) reshareable: whether the post is reshareable
     :param (Post|None) reshared_from: Post object for the resharing post
     :param (List[Media]) media_list: list of media's
+    :param (List[str]) mentioned_user_ids: list of mentioned user IDs
     :return (str) ID of the new post
     """
     new_post = Post()
@@ -57,6 +59,12 @@ def create_post(self, content, is_public, circles, reshareable, reshared_from, m
             notified_href=sharing_from.make_href(),
             owner=sharing_from.author
         )
+
+    mention(
+        self,
+        post_or_comment=new_post,
+        mentioned_user_ids=mentioned_user_ids
+    )
 
     return str(new_post.eid)
 
