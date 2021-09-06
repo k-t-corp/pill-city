@@ -86,12 +86,14 @@ export default class Api {
     return res.data
   }
 
-  async getProfile(profileUserId) {
+  async getProfile(profileUserId, fromId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
       `/profile/${profileUserId}`,
       {
-        headers: Api.authorizedHeaders()
+        params: {
+          'from_id': fromId
+        }
       }
     )
     if (res.status !== 200) {
@@ -156,10 +158,15 @@ export default class Api {
     return res.data
   }
 
-  async getHome() {
+  async getHome(fromId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
-      `/home`
+      `/home`,
+      {
+        params: {
+          'from_id': fromId
+        }
+      }
     )
     if (res.status !== 200) {
       throw new ApiError(res.status)
@@ -358,10 +365,15 @@ export default class Api {
     }
   }
 
-  async getNotifications() {
+  async getNotifications(fromId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
-      `/notifications`
+      `/notifications`,
+      {
+        params: {
+          'from_id': fromId
+        }
+      }
     )
     if (res.status !== 200) {
       throw new ApiError(res.status)

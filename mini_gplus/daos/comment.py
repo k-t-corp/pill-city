@@ -1,6 +1,6 @@
 import bleach
 from mini_gplus.models import Comment, NotifyingAction
-from .make_uuid import make_uuid
+from mini_gplus.utils.make_uuid import make_uuid
 from .exceptions import UnauthorizedAccess
 from .post import sees_post
 from .notification import create_notification

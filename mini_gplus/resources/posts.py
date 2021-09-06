@@ -1,5 +1,4 @@
 import os
-import time
 import boto3
 import werkzeug
 import uuid
@@ -11,8 +10,10 @@ from mini_gplus.daos.user import find_user
 from mini_gplus.daos.circle import find_circle
 from mini_gplus.daos.post import get_post, create_post, sees_post, retrieves_posts_on_home, retrieves_posts_on_profile
 from mini_gplus.daos.media import get_media
+from mini_gplus.utils.now_ms import now_ms
 from .me import user_fields
 from .upload_to_s3 import upload_to_s3
+from .pagination import pagination_parser
 
 MaxPostMediaCount = 4
 PostMediaUrlExpireSeconds = 900
@@ -38,9 +39,9 @@ class MediaUrls(fields.Raw):
             s3_bucket_name = os.environ['S3_BUCKET_NAME']
 
             object_name = media.id
-            now_ms = time.time_ns() // 1_000_000
+            _now_ms = now_ms()
             # subtract expiry by 10 seconds for some network overhead
-            if object_name in MediaUrlCache and now_ms < MediaUrlCache[object_name][1] + \
+            if object_name in MediaUrlCache and _now_ms < MediaUrlCache[object_name][1] + \
                     (PostMediaUrlExpireSeconds - 10) * 1000:
                 # print(f"found cached url for object {object_name}")
                 return MediaUrlCache[object_name][0]
@@ -88,7 +89,7 @@ class MediaUrls(fields.Raw):
                 ExpiresIn=PostMediaUrlExpireSeconds
             )
 
-            MediaUrlCache[object_name] = (media_url, now_ms)
+            MediaUrlCache[object_name] = (media_url, _now_ms)
             return media_url
 
         return list(map(get_media_url, media_list))
@@ -231,7 +232,9 @@ class Home(Resource):
         """
         user_id = get_jwt_identity()
         user = find_user(user_id)
-        posts = retrieves_posts_on_home(user)
+
+        args = pagination_parser.parse_args()
+        posts = retrieves_posts_on_home(user, args['from_id'])
 
         return posts, 200
 
@@ -258,7 +261,10 @@ class Profile(Resource):
         """
         user_id = get_jwt_identity()
         user = find_user(user_id)
+
         profile_user = find_user(profile_user_id)
         if not profile_user:
             return {'msg': f'User {profile_user_id} is not found'}, 404
-        return retrieves_posts_on_profile(user, profile_user)
+
+        args = pagination_parser.parse_args()
+        return retrieves_posts_on_profile(user, profile_user, args['from_id'])

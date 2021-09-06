@@ -108,7 +108,18 @@
     display: inline;
     inline-size: 100%;
     color: #767676;
+}
 
+.notification-load-more {
+    padding: 6px;
+    width: 100%;
+    cursor: pointer;
+    text-align: center;
+    color: cornflowerblue;
+}
+
+.notification-load-more:hover {
+    color: #0d71bb;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

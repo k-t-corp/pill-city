@@ -39,8 +39,8 @@ app.secret_key = urandom(24)
 mongodb_uri = os.environ['MONGODB_URI']
 mongodb_db = parse_uri(mongodb_uri)['database']
 app.config['MONGODB_SETTINGS'] = {
+    'host': mongodb_uri,
     'db': mongodb_db,
-    'host': mongodb_uri
 }
 db = MongoEngine(app)
 app.session_interface = MongoEngineSessionInterface(db)
