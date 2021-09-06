@@ -38,15 +38,8 @@ def get_notifications(self):
 
     :param (User) self: The acting user
     """
-    res = []
     # ordering by id descending is equivalent to ordering by created_at descending
-    for n in Notification.objects(owner=self).order_by('-id'):
-        if not n.eid:
-            # dynamically backfill eid for notifications
-            n.eid = make_uuid()
-            n.save()
-        res.append(n)
-    return res
+    return list(Notification.objects(owner=self).order_by('-id'))
 
 
 def mark_notification_as_read(self, notification_id):
@@ -75,3 +68,30 @@ def mark_all_notifications_as_read(self):
     for n in Notification.objects(owner=self, unread=True):
         n.unread = False
         n.save()
+
+
+def backfill_notifications_eid():
+    backfill_count = 0
+    for n in Notification.objects():
+        if not n.eid:
+            n.eid = make_uuid()
+            n.save()
+            backfill_count += 1
+    if backfill_count != 0:
+        print(f'Backfilled {backfill_count} Notification with eid')
+    else:
+        print("No Post was backfilled with eid. You can remove backfill code and required the field now!")
+
+
+def backfill_notifications_created_at_ms():
+    backfill_count = 0
+    for n in Notification.objects():
+        if not n.created_at_ms:
+            n.created_at_ms = int(n.created_at * 1000)
+            n.save()
+            backfill_count += 1
+    if backfill_count != 0:
+        print(f'Backfilled {backfill_count} Notification with created_at_ms')
+    else:
+        print("No Notification was backfilled with created_at_ms. "
+              "You can remove backfill code and required the field now!")

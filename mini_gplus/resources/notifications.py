@@ -43,6 +43,7 @@ class NotificationLocation(fields.Raw):
 notification_fields = {
     'id': fields.String(attribute='eid'),
     'created_at_seconds': fields.Integer(attribute='created_at'),
+    'created_at_ms': fields.Integer(attribute='created_at_ms'),
     'notifier': fields.Nested(user_fields),
     'notifying_location': NotificationLocation(attribute='notifying_href'),
     'notifying_action': NotifyingAction,
