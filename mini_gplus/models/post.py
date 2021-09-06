@@ -1,6 +1,6 @@
 from typing import List
-from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, LazyReferenceField, LongField,\
-    PULL, CASCADE, NULLIFY
+from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, LazyReferenceField, PULL,\
+    CASCADE, NULLIFY
 from .created_at_mixin import CreatedAtMixin
 from .user import User
 from .comment import Comment

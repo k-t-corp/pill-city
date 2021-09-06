@@ -1,5 +1,5 @@
 from enum import Enum
-from mongoengine import Document, ReferenceField, StringField, EnumField, BooleanField, LongField, CASCADE
+from mongoengine import Document, ReferenceField, StringField, EnumField, BooleanField, CASCADE
 from .created_at_mixin import CreatedAtMixin
 from .user import User
 
