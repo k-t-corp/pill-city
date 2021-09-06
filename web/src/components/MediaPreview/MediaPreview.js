@@ -29,8 +29,9 @@ export default (props) => {
         className="new-post-media-preview"
         key={i}
         style={{
-         width: widthOfPreview,
-         height: height,
+          width: widthOfPreview,
+          height: height,
+          cursor: props.onMediaClicked ? 'pointer' : 'auto'
         }}
         onClick={e => {
           e.preventDefault()

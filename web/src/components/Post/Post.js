@@ -318,9 +318,6 @@ export default (props) => {
   }
 
   const [mediaUrlOpened, updateMediaUrlOpened] = useState('')
-  const openMediaUrl = (mediaUrl) => {
-    updateMediaUrlOpened(mediaUrl)
-  }
 
   return (
     <div className="post-wrapper">
@@ -356,7 +353,7 @@ export default (props) => {
           threeRowHeight="130px"
           twoRowHeight="150px"
           oneRowHeight="180px"
-          onMediaClicked={openMediaUrl}
+          onMediaClicked={updateMediaUrlOpened}
         />
         <div className="post-interactions-wrapper">
           <div className="post-reactions-wrapper">
@@ -414,11 +411,15 @@ export default (props) => {
         </div>
       }
       {
-        mediaUrlOpened !== '' ?
-          <div id='post-media' className='post-media'>
+        mediaUrlOpened &&
+          <div
+            className='post-media'
+            onClick={
+              () => updateMediaUrlOpened('')
+            }
+          >
             <img className="post-media-img" src={mediaUrlOpened} alt=""/>
-          </div> :
-          null
+          </div>
       }
     </div>
   )
