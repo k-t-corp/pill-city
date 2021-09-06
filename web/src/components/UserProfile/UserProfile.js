@@ -24,11 +24,7 @@ export default (props) => {
 
   const loadMorePosts = async () => {
     const lastPost = postData[postData.length - 1]
-    const newPosts = await props.api.getProfile(
-      props.userData.id,
-      lastPost['created_at_ms'],
-      lastPost['id']
-    )
+    const newPosts = await props.api.getProfile(props.userData.id, lastPost['id'])
     if (newPosts.length !== 0) {
       updatePostData(postData.concat(newPosts))
     } else {

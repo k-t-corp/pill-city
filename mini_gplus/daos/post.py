@@ -27,7 +27,6 @@ def create_post(self, content, is_public, circles, reshareable, reshared_from, m
     """
     new_post = Post()
     new_post.eid = make_uuid()
-    new_post.created_at_ms = now_ms()
     new_post.author = self.id
     new_post.content = bleach.clean(content)
     new_post.is_public = is_public
@@ -110,13 +109,12 @@ def sees_post(self, post, context_home_or_profile):
     return False
 
 
-def retrieves_posts_on_home(self, from_created_at_ms, from_post_id):
+def retrieves_posts_on_home(self, from_id):
     """
     All posts that are visible to the user on home
 
     :param (User) self: The acting user
-    :param (int|None) from_created_at_ms: Created_at timestamp from which home posts should be retrieved
-    :param (str|None) from_post_id: The acting Post_id from which home posts should be retrieved
+    :param (str|None) from_id: The acting Post_id from which home posts should be retrieved
     :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
     """
     def _filter_post(p):
@@ -126,20 +124,18 @@ def retrieves_posts_on_home(self, from_created_at_ms, from_post_id):
         mongoengine_model=Post,
         extra_query_args={},
         extra_filter_func=_filter_post,
-        from_created_at_ms=from_created_at_ms,
-        from_id=from_post_id,
+        from_id=from_id,
         page_count=HomePostsPageSize
     )
 
 
-def retrieves_posts_on_profile(self, profile_user, from_created_at_ms, from_post_id):
+def retrieves_posts_on_profile(self, profile_user, from_id):
     """
     All posts that are visible to the user on a certain user's profile
 
     :param (User) self: The acting user
     :param (User) profile_user: the user whose profile is being viewed
-    :param (int|None) from_created_at_ms: Created_at timestamp from which home posts should be retrieved
-    :param (str|None) from_post_id: The acting Post_id from which home posts should be retrieved
+    :param (str|None) from_id: The acting Post_id from which home posts should be retrieved
     :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
     """
     def _filter_post(p):
@@ -151,20 +147,6 @@ def retrieves_posts_on_profile(self, profile_user, from_created_at_ms, from_post
             'author': profile_user
         },
         extra_filter_func=_filter_post,
-        from_created_at_ms=from_created_at_ms,
-        from_id=from_post_id,
+        from_id=from_id,
         page_count=HomePostsPageSize
     )
-
-
-def backfill_post_created_at_ms():
-    backfill_count = 0
-    for post in Post.objects():
-        if not post.created_at_ms:
-            post.created_at_ms = int(post.created_at * 1000)
-            post.save()
-            backfill_count += 1
-    if backfill_count != 0:
-        print(f'Backfilled {backfill_count} Posts with created_at_ms')
-    else:
-        print("No Post was backfilled with created_at_ms. You can remove backfill code and required the field now!")

@@ -86,14 +86,13 @@ export default class Api {
     return res.data
   }
 
-  async getProfile(profileUserId, fromCreatedAtMs, fromPostId) {
+  async getProfile(profileUserId, fromId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
       `/profile/${profileUserId}`,
       {
         params: {
-          'from_created_at_ms': fromCreatedAtMs,
-          'from_id': fromPostId
+          'from_id': fromId
         }
       }
     )
@@ -159,14 +158,13 @@ export default class Api {
     return res.data
   }
 
-  async getHome(fromCreatedAtMs, fromPostId) {
+  async getHome(fromId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
       `/home`,
       {
         params: {
-          'from_created_at_ms': fromCreatedAtMs,
-          'from_id': fromPostId
+          'from_id': fromId
         }
       }
     )
@@ -367,14 +365,13 @@ export default class Api {
     }
   }
 
-  async getNotifications(fromCreatedAtMs, fromNotificationId) {
+  async getNotifications(fromId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
       `/notifications`,
       {
         params: {
-          'from_created_at_ms': fromCreatedAtMs,
-          'from_id': fromNotificationId
+          'from_id': fromId
         }
       }
     )

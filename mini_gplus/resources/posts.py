@@ -98,7 +98,6 @@ class MediaUrls(fields.Raw):
 post_fields = {
     'id': fields.String(attribute='eid'),
     'created_at_seconds': fields.Integer(attribute='created_at'),
-    'created_at_ms': fields.Integer(attribute='created_at_ms'),
     'author': fields.Nested(user_fields),
     'content': fields.String,
     'is_public': fields.Boolean,
@@ -107,7 +106,6 @@ post_fields = {
         # this is a trimmed down version of post_fields
         'id': fields.String(attribute='eid'),
         'created_at_seconds': fields.Integer(attribute='created_at'),
-        'created_at_ms': fields.Integer(attribute='created_at_ms'),
         'author': fields.Nested(user_fields),
         'content': fields.String,
         'media_urls': MediaUrls(attribute='media_list'),
@@ -126,14 +124,12 @@ post_fields = {
     'comments': fields.List(fields.Nested({
         'id': fields.String(attribute='eid'),
         'created_at_seconds': fields.Integer(attribute='created_at'),
-        'created_at_ms': fields.Integer(attribute='created_at_ms'),
         'author': fields.Nested(user_fields),
         'content': fields.String,
         # we only assume two-levels of nesting for comments, so no need to recursively define comments fields
         'comments': fields.List(fields.Nested({
             'id': fields.String(attribute='eid'),
             'created_at_seconds': fields.Integer(attribute='created_at'),
-            'created_at_ms': fields.Integer(attribute='created_at_ms'),
             'author': fields.Nested(user_fields),
             'content': fields.String,
         }))
@@ -238,7 +234,7 @@ class Home(Resource):
         user = find_user(user_id)
 
         args = pagination_parser.parse_args()
-        posts = retrieves_posts_on_home(user, args['from_created_at_ms'], args['from_id'])
+        posts = retrieves_posts_on_home(user, args['from_id'])
 
         return posts, 200
 
@@ -271,4 +267,4 @@ class Profile(Resource):
             return {'msg': f'User {profile_user_id} is not found'}, 404
 
         args = pagination_parser.parse_args()
-        return retrieves_posts_on_profile(user, profile_user, args['from_created_at_ms'], args['from_id'])
+        return retrieves_posts_on_profile(user, profile_user, args['from_id'])

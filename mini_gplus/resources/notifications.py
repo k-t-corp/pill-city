@@ -44,7 +44,6 @@ class NotificationLocation(fields.Raw):
 notification_fields = {
     'id': fields.String(attribute='eid'),
     'created_at_seconds': fields.Integer(attribute='created_at'),
-    'created_at_ms': fields.Integer(attribute='created_at_ms'),
     'notifier': fields.Nested(user_fields),
     'notifying_location': NotificationLocation(attribute='notifying_href'),
     'notifying_action': NotifyingAction,
@@ -64,7 +63,7 @@ class Notifications(Resource):
         user = find_user(user_id)
 
         args = pagination_parser.parse_args()
-        return get_notifications(user, args['from_created_at_ms'], args['from_id'])
+        return get_notifications(user, args['from_id'])
 
 
 class NotificationRead(Resource):

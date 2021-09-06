@@ -46,10 +46,7 @@ export default (props) => {
 
   const loadMorePosts = async () => {
     const lastPost = posts[posts.length - 1]
-    const newPosts = await props.api.getHome(
-      lastPost['created_at_ms'],
-      lastPost['id']
-    )
+    const newPosts = await props.api.getHome(lastPost['id'])
     if (newPosts.length !== 0) {
       updatePosts(posts.concat(newPosts))
     } else {
@@ -59,10 +56,7 @@ export default (props) => {
 
   const loadMoreNotifications = async () => {
     const lastNotification = notifications[notifications.length - 1]
-    const newNotifications = await props.api.getNotifications(
-      lastNotification['created_at_ms'],
-      lastNotification['id']
-    )
+    const newNotifications = await props.api.getNotifications(lastNotification['id'])
     if (newNotifications.length !== 0) {
       updateNotifications(notifications.concat(newNotifications))
     }

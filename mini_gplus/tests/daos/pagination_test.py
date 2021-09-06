@@ -8,7 +8,7 @@ from mini_gplus.daos.pagination import get_page
 
 class PaginationTest(BaseTestCase):
     def test_empty(self):
-        self.assertEqual([], get_page(Post, {}, self._post_filter_noop, None, None, 5))
+        self.assertEqual([], get_page(Post, {}, self._post_filter_noop, None, 5))
 
     @staticmethod
     def _post_filter_noop(_):
@@ -28,9 +28,9 @@ class PaginationTest(BaseTestCase):
             all_paged_posts.append(get_post(create_post(user1, str(i), True, [], False, None, [])))
         all_paged_posts = list(reversed(all_paged_posts))
 
-        self.assertEqual(all_paged_posts, get_page(Post, {}, self._post_filter_noop, None, None, 5))
+        self.assertEqual(all_paged_posts, get_page(Post, {}, self._post_filter_noop, None, 5))
         last_post = all_paged_posts[-1]
-        self.assertEqual([], get_page(Post, {}, self._post_filter_noop, last_post.created_at_ms, last_post.eid, 5))
+        self.assertEqual([], get_page(Post, {}, self._post_filter_noop, last_post.eid, 5))
 
     def test_one_page_no_time_collision_and_filter(self):
         self.assertTrue(sign_up('user1', '1234'))
@@ -45,10 +45,9 @@ class PaginationTest(BaseTestCase):
                 create_post(user2, str(i), True, [], False, None, [])
         all_paged_posts = list(reversed(all_paged_posts))
 
-        self.assertEqual(all_paged_posts, get_page(Post, {}, self._post_filter_sees_on_home(user1), None, None, 5))
+        self.assertEqual(all_paged_posts, get_page(Post, {}, self._post_filter_sees_on_home(user1), None, 5))
         last_post = all_paged_posts[-1]
-        self.assertEqual([], get_page(Post, {}, self._post_filter_sees_on_home(user1), last_post.created_at_ms,
-                                      last_post.eid, 5))
+        self.assertEqual([], get_page(Post, {}, self._post_filter_sees_on_home(user1), last_post.eid, 5))
 
     def test_multiple_pages_no_time_collision_no_filter(self):
         self.assertTrue(sign_up('user1', '1234'))
@@ -58,10 +57,9 @@ class PaginationTest(BaseTestCase):
             all_paged_posts.append(get_post(create_post(user1, str(i), True, [], False, None, [])))
         all_paged_posts = list(reversed(all_paged_posts))
 
-        self.assertEqual(all_paged_posts[: 5], get_page(Post, {}, self._post_filter_noop, None, None, 5))
+        self.assertEqual(all_paged_posts[: 5], get_page(Post, {}, self._post_filter_noop, None, 5))
         last_post = all_paged_posts[4]
-        self.assertEqual(all_paged_posts[5:], get_page(Post, {}, self._post_filter_noop, last_post.created_at_ms,
-                                                       last_post.eid, 5))
+        self.assertEqual(all_paged_posts[5:], get_page(Post, {}, self._post_filter_noop, last_post.eid, 5))
 
     def test_multiple_pages_no_time_collision_filter(self):
         self.assertTrue(sign_up('user1', '1234'))
@@ -76,10 +74,10 @@ class PaginationTest(BaseTestCase):
                 create_post(user2, str(i), True, [], False, None, [])
         all_paged_posts = list(reversed(all_paged_posts))
 
-        self.assertEqual(all_paged_posts[: 5], get_page(Post, {}, self._post_filter_sees_on_home(user1), None, None, 5))
+        self.assertEqual(all_paged_posts[: 5], get_page(Post, {}, self._post_filter_sees_on_home(user1), None, 5))
         last_post = all_paged_posts[4]
-        self.assertEqual(all_paged_posts[5:], get_page(Post, {}, self._post_filter_sees_on_home(user1),
-                                                       last_post.created_at_ms, last_post.eid, 5))
+        self.assertEqual(all_paged_posts[5:], get_page(Post, {}, self._post_filter_sees_on_home(user1), last_post.eid,
+                                                       5))
 
     def test_multiple_pages_time_collision_no_filter(self):
         self.assertTrue(sign_up('user1', '1234'))
@@ -89,12 +87,10 @@ class PaginationTest(BaseTestCase):
             for i in range(9):
                 all_paged_posts.append(get_post(create_post(user1, str(i), True, [], False, None, [])))
         all_paged_posts = list(reversed(all_paged_posts))
-        self.assertEqual(1, len(set(map(lambda p: p.created_at_ms, all_paged_posts))))
 
-        self.assertEqual(all_paged_posts[: 5], get_page(Post, {}, self._post_filter_noop, None, None, 5))
+        self.assertEqual(all_paged_posts[: 5], get_page(Post, {}, self._post_filter_noop, None, 5))
         last_post = all_paged_posts[4]
-        self.assertEqual(all_paged_posts[5:], get_page(Post, {}, self._post_filter_noop, last_post.created_at_ms,
-                                                       last_post.eid, 5))
+        self.assertEqual(all_paged_posts[5:], get_page(Post, {}, self._post_filter_noop, last_post.eid, 5))
 
     def test_multiple_pages_time_collision_filter(self):
         self.assertTrue(sign_up('user1', '1234'))
@@ -109,9 +105,8 @@ class PaginationTest(BaseTestCase):
                 else:
                     create_post(user2, str(i), True, [], False, None, [])
         all_paged_posts = list(reversed(all_paged_posts))
-        self.assertEqual(1, len(set(map(lambda p: p.created_at_ms, all_paged_posts))))
 
-        self.assertEqual(all_paged_posts[: 5], get_page(Post, {}, self._post_filter_sees_on_home(user1), None, None, 5))
+        self.assertEqual(all_paged_posts[: 5], get_page(Post, {}, self._post_filter_sees_on_home(user1), None, 5))
         last_post = all_paged_posts[4]
-        self.assertEqual(all_paged_posts[5:], get_page(Post, {}, self._post_filter_sees_on_home(user1),
-                                                       last_post.created_at_ms, last_post.eid, 5))
+        self.assertEqual(all_paged_posts[5:], get_page(Post, {}, self._post_filter_sees_on_home(user1), last_post.eid,
+                                                       5))

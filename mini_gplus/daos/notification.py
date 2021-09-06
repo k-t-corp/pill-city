@@ -35,13 +35,12 @@ def create_notification(self, notifying_href, notifying_action, notified_href, o
     new_notification.save()
 
 
-def get_notifications(self, from_created_at_ms, from_notification_id):
+def get_notifications(self, from_id):
     """
     Get all of a user's notifications in reverse chronological order, e.g. latest to earliest
 
     :param (User) self: The acting user
-    :param (int|None) from_created_at_ms: Created_at timestamp from which home posts should be retrieved
-    :param (str|None) from_notification_id: The acting Post_id from which home posts should be retrieved
+    :param (str|None) from_id: The acting Post_id from which home posts should be retrieved
     """
     def _filter_noop(_):
         return True
@@ -52,8 +51,7 @@ def get_notifications(self, from_created_at_ms, from_notification_id):
             'owner': self
         },
         extra_filter_func=_filter_noop,
-        from_created_at_ms=from_created_at_ms,
-        from_id=from_notification_id,
+        from_id=from_id,
         page_count=NotificationPageSize
     )
 
@@ -97,17 +95,3 @@ def backfill_notifications_eid():
         print(f'Backfilled {backfill_count} Notification with eid')
     else:
         print("No Post was backfilled with eid. You can remove backfill code and required the field now!")
-
-
-def backfill_notifications_created_at_ms():
-    backfill_count = 0
-    for n in Notification.objects():
-        if not n.created_at_ms:
-            n.created_at_ms = int(n.created_at * 1000)
-            n.save()
-            backfill_count += 1
-    if backfill_count != 0:
-        print(f'Backfilled {backfill_count} Notification with created_at_ms')
-    else:
-        print("No Notification was backfilled with created_at_ms. "
-              "You can remove backfill code and required the field now!")

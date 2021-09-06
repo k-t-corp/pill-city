@@ -11,7 +11,6 @@ from .media import Media
 
 class Post(Document, CreatedAtMixin):
     eid = StringField(required=True)
-    created_at_ms = LongField(required=False)  # backfilled by backfill_post_created_at_ms
     author = LazyReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
     content = StringField(required=True)
     is_public = BooleanField(required=True)
