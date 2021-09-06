@@ -226,9 +226,9 @@ post_parser.add_argument('reshared_from', type=str, required=False)
 post_parser.add_argument('media_object_names', type=str, action="append", default=[])
 
 
-home_parser = reqparse.RequestParser()
-home_parser.add_argument('from_created_at_ms', type=int, required=False, location='args')
-home_parser.add_argument('from_post_id', type=str, required=False, location='args')
+pagination_parser = reqparse.RequestParser()
+pagination_parser.add_argument('from_created_at_ms', type=int, required=False, location='args')
+pagination_parser.add_argument('from_post_id', type=str, required=False, location='args')
 
 
 class Home(Resource):
@@ -241,7 +241,7 @@ class Home(Resource):
         user_id = get_jwt_identity()
         user = find_user(user_id)
 
-        args = home_parser.parse_args()
+        args = pagination_parser.parse_args()
         posts = retrieves_posts_on_home(user, args['from_created_at_ms'], args['from_post_id'])
 
         return posts, 200
@@ -269,7 +269,10 @@ class Profile(Resource):
         """
         user_id = get_jwt_identity()
         user = find_user(user_id)
+
         profile_user = find_user(profile_user_id)
         if not profile_user:
             return {'msg': f'User {profile_user_id} is not found'}, 404
-        return retrieves_posts_on_profile(user, profile_user)
+
+        args = pagination_parser.parse_args()
+        return retrieves_posts_on_profile(user, profile_user, args['from_created_at_ms'], args['from_post_id'])

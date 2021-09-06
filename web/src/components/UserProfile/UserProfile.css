@@ -64,3 +64,14 @@
     max-width: 1000px;
 }
 
+.profile-load-more {
+    padding: 13px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 2px 2px 1px 1px #e0e0e0;
+    margin-bottom: 20px;
+    width: 100%;
+    cursor: pointer;
+    text-align: center;
+    color: cornflowerblue;
+}

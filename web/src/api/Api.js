@@ -86,12 +86,15 @@ export default class Api {
     return res.data
   }
 
-  async getProfile(profileUserId) {
+  async getProfile(profileUserId, fromCreatedAtMs, fromPostId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
       `/profile/${profileUserId}`,
       {
-        headers: Api.authorizedHeaders()
+        params: {
+          'from_created_at_ms': fromCreatedAtMs,
+          'from_post_id': fromPostId
+        }
       }
     )
     if (res.status !== 200) {
