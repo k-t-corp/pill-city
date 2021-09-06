@@ -276,7 +276,7 @@ export default (props) => {
   }
 
   const commentButtonOnClick = () => {
-    updateAddComment(true)
+    updateAddComment(!addComment)
   }
 
   const postCommentButtonOnClick = async () => {
@@ -374,30 +374,29 @@ export default (props) => {
             }
           </div>
         </div>
+        {addComment ?
+          <div className="post-comment-box-wrapper fade-in">
+            <div className="post-comment-box-input-area">
+              <div className="post-avatar post-comment-avatar">
+                <img
+                  className="post-avatar-img"
+                  src={getAvatarUrl(props.me)}
+                  alt=""
+                />
+              </div>
+              <textarea id="post-comment-box-input" placeholder="Add comment"/>
+            </div>
+            <div className="post-comment-box-buttons">
+              <div className="post-comment-box-post-button" onClick={postCommentButtonOnClick}>
+                Comment
+              </div>
+            </div>
+          </div> : null}
       </div>
       {props.data.comments.length === 0 ? null :
         <div className="post-comments-wrapper">
           {comments}
         </div>}
-
-      {addComment ?
-        <div className="post-comment-box-wrapper fade-in">
-          <div className="post-comment-box-input-area">
-            <div className="post-avatar post-comment-avatar">
-              <img
-                className="post-avatar-img"
-                src={getAvatarUrl(props.data.author)}
-                alt=""
-              />
-            </div>
-            <textarea id="post-comment-box-input" placeholder="Add comment"/>
-          </div>
-          <div className="post-comment-box-buttons">
-            <div className="post-comment-box-post-button" onClick={postCommentButtonOnClick}>
-              Comment
-            </div>
-          </div>
-        </div> : null}
     </div>
   )
 }

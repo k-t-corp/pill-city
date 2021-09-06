@@ -1,0 +1,48 @@
+.faq-semantic-container {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1200px;
+}
+
+.mobile-nav-bar-wrapper {
+}
+
+.mobile-nav-bar-container {
+    position: fixed;
+    background-color: #0c0c0c;
+    height: 50px;
+    width: 100%;
+    bottom: 0;
+    display: flex;
+    z-index: 3;
+    padding: 5px 5px;
+}
+
+.mobile-nav-bar-button-container {
+    width: 25%;
+    height: 40px;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mobile-nav-bar-button-active {
+    background-color: #262626;
+    border-radius: 20px;
+}
+
+.mobile-nav-bar-button-container>svg {
+    width: 22px;
+    height: 22px;
+    color: white;
+}
+
+
+@media only screen and (max-width: 750px) {
+    .faq-semantic-container {
+        width: 100%;
+    }
+}
+
+

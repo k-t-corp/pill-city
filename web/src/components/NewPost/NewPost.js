@@ -5,6 +5,7 @@ import getAvatarUrl from "../../api/getAvatarUrl";
 import parseContent from "../../parseContent";
 import FormData from "form-data";
 import MediaPreview from "../MediaPreview/MediaPreview";
+import {useMediaQuery} from "react-responsive";
 
 export default (props) => {
   const [content, updateContent] = useState("")
@@ -12,6 +13,7 @@ export default (props) => {
   const [posting, updatePosting] = useState(false)
   const [resharableToggleChecked, updateResharableToggleChecked] = useState(true)
   const [medias, updateMedias] = useState([])
+  const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
 
   const isValid = () => {
     return content.trim().length !== 0 && circleNames.length !== 0
@@ -100,8 +102,10 @@ export default (props) => {
         </div>
       }
       {props.resharePostData === null ?
-        <MediaPreview mediaUrls={medias.map(m => URL.createObjectURL(m))} threeRowHeight="80px" twoRowHeight="100px"
-                      oneRowHeight="140px"/>
+        <MediaPreview mediaUrls={medias.map(m => URL.createObjectURL(m))}
+                      threeRowHeight={isTabletOrMobile ? "30px" : "80px"}
+                      twoRowHeight={isTabletOrMobile ? "50px" : "100px"}
+                      oneRowHeight={isTabletOrMobile ? "80px" : "140px"}/>
         : null}
       <div className="new-post-text-box-container">
         {props.resharePostData === null ?

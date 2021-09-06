@@ -2,6 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react'
 import './Settings.css'
 import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
+import {removeAccessToken} from "../../api/AuthStorage";
 
 const FormData = require('form-data');
 
@@ -96,6 +97,11 @@ export default (props) => {
 
   const inputAvatarElement = document.getElementById("settings-change-avatar-button")
 
+  const handleSignOut = () => {
+    removeAccessToken()
+    window.location.href = "/signin"
+  }
+
   if (loading) {
     return (
       <div>
@@ -141,6 +147,17 @@ export default (props) => {
           </div>
           <div className="settings-user-name">
             {me.id}
+          </div>
+          <div className="settings-signout-button" onClick={() => {handleSignOut()}}>
+            <div className="settings-signout-button-label">
+              Sign out
+            </div>
+             &nbsp;
+            <svg className="settings-signout-button-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+            </svg>
           </div>
           {profileModalOpened ?
             <div className="settings-profile-pic-modal">

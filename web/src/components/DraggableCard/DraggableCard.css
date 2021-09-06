@@ -27,3 +27,15 @@
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+
+/* Mobile */
+@media only screen and (max-width: 750px) {
+    .draggable-card-wrapper {
+        height: 50px;
+    }
+
+    .draggable-card-avatar {
+        height: 50px;
+        width: 50px;
+    }
+}
