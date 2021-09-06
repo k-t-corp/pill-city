@@ -3,6 +3,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    height: 100vh;
 }
 
 .settings-user-info {
@@ -15,8 +16,8 @@
     width: 60%;
     min-width: 600px;
     max-width: 1000px;
-    margin: 0 auto 30px auto;
-    padding-bottom: 20px;
+    margin: 0 auto 0 auto;
+    height: 100%;
 }
 
 .settings-banner-wrapper {
@@ -25,13 +26,13 @@
     background-color: #9dd0ff;
     /*background-image: url("../../../public/pill2.png") ;*/
     background-size: 100px;
-    position:relative;
+    position: relative;
 }
 
 .settings-change-profile-pic-button-wrapper {
     width: 100%;
     height: 100%;
-    position:relative;
+    position: relative;
 }
 
 .settings-change-profile-pic-button {
@@ -43,9 +44,9 @@
     justify-content: center;
     align-items: center;
     background-color: black;
-    position:absolute;
-    bottom:10px;
-    right:10px;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
 }
 
 .settings-avatar-wrapper {
@@ -187,17 +188,19 @@ input[type="file"] {
     width: 100%;
     height: 250px;
     background-size: 100px;
-    position:relative;
+    position: relative;
 }
 
 
 .settings-profile-pic-modal-selections {
     display: flex;
-    margin-top: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .settings-profile-selection-option {
     margin-right: 20px;
+    margin-top: 20px;
     width: 50px;
     height: 50px;
     border: 2px solid #e0e0e0;
@@ -218,5 +221,40 @@ input[type="file"] {
 .settings-profile-selection-option-img {
     max-width: 100%;
     max-height: 100%;
+}
+
+/* Signout button */
+
+.settings-signout-button {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    color: #767676;
+}
+
+.settings-signout-button-label {
+    text-decoration: underline;
+}
+
+.settings-signout-button-svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Mobile */
+@media only screen and (max-width: 750px) {
+    .settings-wrapper {
+        height: 100vh;
+    }
+
+    .settings-wrapper {
+        margin-top: 0;
+    }
+
+    .settings-user-info {
+        min-width: 0;
+        width: 100%;
+        height: calc(100vh - 50px);
+    }
 }
 

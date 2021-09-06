@@ -14,7 +14,7 @@
     width: 60%;
     min-width: 600px;
     max-width: 1000px;
-    margin: 3em auto 30px auto;
+    margin: 3em auto 20px auto;
     padding-bottom: 20px;
 }
 
@@ -22,7 +22,7 @@
     width: 100%;
     height: 250px;
     background-color: #9dd0ff;
-    background-image: url("../../img/favicon.png") ;
+    /*background-image: url("../../img/favicon.png") ;*/
     background-size: 100px;
 }
 
@@ -62,5 +62,20 @@
     width: 60%;
     min-width: 600px;
     max-width: 1000px;
+}
+
+@media only screen and (max-width: 750px) {
+    .user-profile-user-info {
+        min-width: 0;
+        width: 100%;
+        margin: 0 0 2px;
+    }
+
+    .user-profile-posts {
+        min-width: 0;
+        width: 100%;
+        margin-bottom: 50px;
+    }
+
 }
 

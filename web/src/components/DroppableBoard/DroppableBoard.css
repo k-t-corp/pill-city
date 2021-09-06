@@ -131,6 +131,70 @@
     background-color: #E05140;
 }
 
+/* Hide scrollbar for Chrome, Safari and Opera */
+.droppable-board-modal-circle-members::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.droppable-board-modal-circle-members {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Mobile */
+@media only screen and (max-width: 750px) {
+    .droppable-board  {
+        width: 150px;
+        height: 150px;
+        margin-bottom: 20px;
+        font-size: larger;
+    }
+
+    .droppable-board-inner-circle {
+        width: 150px;
+        height: 150px;
+    }
+
+    .droppable-board-inner-circle-name {
+        font-size: larger;
+    }
+}
+
+/* Mobile Modal */
+@media only screen and (max-width: 750px) {
+    .droppable-board-modal-content {
+        min-width: 0;
+        padding: 20px;
+    }
+
+    .droppable-board-modal-buttons {
+        justify-content: space-between;
+    }
+
+    .droppable-board-modal-buttons>div {
+        padding: 6px 10px;
+        font-size: medium;
+    }
+
+    .droppable-board-modal-circle-name {
+        font-size: large;
+        margin-bottom: 20px;
+    }
+
+    .droppable-board-modal-content {
+        max-height: calc(100vh - 100px);
+    }
+
+    .droppable-board-modal-circle-members {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        grid-column-gap: 5px;
+        grid-row-gap: 5px;
+        padding: 5px;
+    }
+}
+
+
 
 
 
