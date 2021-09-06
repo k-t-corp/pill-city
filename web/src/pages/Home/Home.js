@@ -49,11 +49,11 @@ export default (props) => {
         postElements.push(<Post key={i} data={posts[i]} me={me} api={props.api} updateResharePostData={updateResharePostData}/>)
       }
       postElements.push(
-        <span
+        <div
           key={posts.length}
           className='home-load-more'
           onClick={loadMorePosts}
-        >Load more...</span>
+        >Load more...</div>
       )
       return postElements
     }
