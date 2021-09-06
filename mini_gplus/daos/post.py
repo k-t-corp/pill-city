@@ -3,7 +3,6 @@ from typing import Optional
 from mini_gplus.models import Post, NotifyingAction
 from mini_gplus.utils.profiling import timer
 from mini_gplus.utils.make_uuid import make_uuid
-from mini_gplus.utils.now_ms import now_ms
 from .circle import check_member
 from .notification import create_notification
 from .pagination import get_page
@@ -148,5 +147,5 @@ def retrieves_posts_on_profile(self, profile_user, from_id):
         },
         extra_filter_func=_filter_post,
         from_id=from_id,
-        page_count=HomePostsPageSize
+        page_count=ProfilePostsPageSize
     )
