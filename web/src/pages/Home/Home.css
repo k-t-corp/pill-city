@@ -57,6 +57,7 @@
     .home-posts-wrapper {
         width: 100%;
         min-width: 200px;
+        margin-bottom: 50px;
     }
 }
 
