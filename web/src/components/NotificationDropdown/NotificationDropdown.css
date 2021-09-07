@@ -53,6 +53,10 @@
     color: #0d71bb;
 }
 
+.notification-noop-wrapper {
+    padding: 5px;
+}
+
 .notification-wrapper {
     padding: 5px;
     border-bottom: 2px solid #f1f1f1;

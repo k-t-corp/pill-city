@@ -67,9 +67,9 @@ export default (props) => {
 
   const notificationElems = () => {
     if (props.notifications === null) {
-      return <p>Loading...</p>
+      return <div className="notification-noop-wrapper">Loading...</div>
     } else if (props.notifications.length === 0) {
-      return <p>No notifications.</p>
+      return <div className="notification-noop-wrapper">No notifiations.</div>
     } else {
       const res = []
       for (let i = 0; i < props.notifications.length; i++) {
