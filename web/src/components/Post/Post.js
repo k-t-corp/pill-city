@@ -211,9 +211,15 @@ export default (props) => {
   let comments = []
   for (let i = 0; i < props.data.comments.length; i++) {
     const comment = props.data.comments[i]
-    const replyButtonOnclick = () => {
+    const replyCommentButtonOnclick = () => {
       updateAddComment(true)
       updateReplayNestedCommentId(comment.id)
+    }
+    const replyNestedCommentOnClick = () => {
+      // reply nested comment
+      updateAddComment(true)
+      updateReplayNestedCommentId(comment.id)
+      updatePostCommentContent(`@${comment.author.id} `)
     }
     let nestedComments = []
     for (let i = 0; i < comment.comments.length; i++) {
@@ -236,7 +242,7 @@ export default (props) => {
           <div className="post-nested-comment-content">
             {parseContent(nestedComment.content, "")}
             <span className="post-time post-nested-comment-time">{timePosted(nestedComment.created_at_seconds)}</span>
-            <span className="post-comment-reply-btn" onClick={replyButtonOnclick}>
+            <span className="post-comment-reply-btn" onClick={replyNestedCommentOnClick}>
               Reply
             </span>
           </div>
@@ -268,7 +274,7 @@ export default (props) => {
           </div>
           <div className="post-content comment-content">
             {parseContent(comment.content, "")}
-            <span className="post-comment-reply-btn" onClick={replyButtonOnclick}>
+            <span className="post-comment-reply-btn" onClick={replyCommentButtonOnclick}>
               Reply
             </span>
           </div>
@@ -285,9 +291,9 @@ export default (props) => {
   }
 
   const postCommentButtonOnClick = async () => {
-    const content = document.getElementById("post-comment-box-input").value
+    const content = postCommentContent
     if (replyNestedCommentId !== "") {
-      // reply rested comment
+      // reply nested comment
       await props.api.postNestedComment(content, props.data.id, replyNestedCommentId, parseMentioned(content))
       updateReplayNestedCommentId("")
     } else {
@@ -322,6 +328,8 @@ export default (props) => {
   }
 
   const [mediaUrlOpened, updateMediaUrlOpened] = useState('')
+
+  const [postCommentContent, updatePostCommentContent] = useState('')
 
   return (
     <div className="post-wrapper">
@@ -404,7 +412,15 @@ export default (props) => {
                   alt=""
                 />
               </div>
-              <textarea id="post-comment-box-input" placeholder="Add comment"/>
+              <textarea
+                id="post-comment-box-input"
+                placeholder="Add comment"
+                value={postCommentContent}
+                onChange={e => {
+                  e.preventDefault()
+                  updatePostCommentContent(e.target.value)
+                }}
+              />
             </div>
             <div className="post-comment-box-buttons">
               <div className="post-comment-box-post-button" onClick={postCommentButtonOnClick}>
