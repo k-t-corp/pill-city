@@ -137,7 +137,7 @@ def main():
     innkuika = User('innkuika'); innkuika.sign_up(); innkuika.sign_in(); innkuika.update_avatar('innkuika.jpg')
     ikayaki = User('ikayaki'); ikayaki.sign_up(); ikayaki.sign_in(); ikayaki.update_avatar('ikayaki.jpg')
     ikayaro = User('ikayaro'); ikayaro.sign_up(); ikayaro.sign_in(); ikayaro.update_avatar('ikayaro.png')
-    ika2 = User('ikaaaaaaaaaaaaaaaaaa'); ika2.sign_up(); ika2.sign_in(); ika2.update_avatar('ika2.png')
+    ika2 = User('ika-a_a-a__a'); ika2.sign_up(); ika2.sign_in(); ika2.update_avatar('ika2.png')
     billy = User('billy'); billy.sign_up(); billy.sign_in(); billy.update_avatar('billy.jpeg')
     van = User('van'); van.sign_up(); van.sign_in(); van.update_avatar('van.png')
     xiaolaba = User('xiaolaba'); xiaolaba.sign_up(); xiaolaba.sign_in(); xiaolaba.update_avatar('xiaolaba.png')
@@ -159,7 +159,7 @@ def main():
     kt.add_user_to_circle(kt_ika_circle_id, 'innkuika')
     kt.add_user_to_circle(kt_ika_circle_id, 'ikayaki')
     kt.add_user_to_circle(kt_ika_circle_id, 'ikayaro')
-    kt.add_user_to_circle(kt_ika_circle_id, 'ikaaaaaaaaaaaaaaaaaa')
+    kt.add_user_to_circle(kt_ika_circle_id, 'ika-a_a-a__a')
     kt.add_user_to_circle(kt_gachi_circle_id, 'billy')
     kt.add_user_to_circle(kt_gplus_circle_id, 'billy')
     kt.add_user_to_circle(kt_gachi_circle_id, 'van')
@@ -231,7 +231,7 @@ def main():
                                                                    'realIkaYaro twitter.com/realIkaYaro twitter.com/rea'
                                                                    'lIkaYaro')
     ika2.create_comment(kt_ika_post, " -I'm 混亂邪惡- ")
-    ika2.create_nested_comment(kt_ika_post, ika_kt_ika_comment, '/profile/ikaaaaaaaaaaaaaaaaaa')
+    ika2.create_nested_comment(kt_ika_post, ika_kt_ika_comment, '/profile/ika-a_a-a__a')
 
 
 if __name__ == '__main__':
