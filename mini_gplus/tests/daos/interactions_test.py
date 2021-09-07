@@ -94,7 +94,7 @@ class InteractionsTest(BaseTestCase):
         post = get_post(post.eid)
         if reshare:
             new_post_id = create_post(acting_user, 'resharing', is_public=True, circles=[], reshareable=True,
-                                      reshared_from=post, media_list=[], mentioned_user_ids=[])
+                                      reshared_from=post, media_list=[], mentioned_users=[])
             self.assertEqual(1, len(Post.objects(eid=new_post_id)))
             new_post = get_post(new_post_id)
             self.assertEqual(post.id, new_post.reshared_from.id)
@@ -106,7 +106,7 @@ class InteractionsTest(BaseTestCase):
                                                              owner=post.author.id)))
         else:
             self.assertFalse(create_post(acting_user, 'resharing', is_public=True, circles=[], reshareable=True,
-                                         reshared_from=post, media_list=[], mentioned_user_ids=[]))
+                                         reshared_from=post, media_list=[], mentioned_users=[]))
 
     def test_can_act_on_my_own_public_post(self):
         # Create user1
