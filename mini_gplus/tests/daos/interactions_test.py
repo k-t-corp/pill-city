@@ -193,8 +193,8 @@ class InteractionsTest(BaseTestCase):
         user1 = find_user('user1')
 
         # Create circle1
-        self.assertTrue(create_circle(user1, 'circle1'))
-        circle1 = find_circle(user1, 'circle1')
+        circle1_id = create_circle(user1, 'circle1')
+        circle1 = find_circle(user1, circle1_id)
 
         # Create post1 into circle1
         create_post(user1, 'post1', False, [circle1], True, None, [])
@@ -220,8 +220,8 @@ class InteractionsTest(BaseTestCase):
         user4 = find_user('user4')
 
         # Create circle1 by user1 and add user2 and user3 into circle1
-        self.assertTrue(create_circle(user1, 'circle1'))
-        circle1 = find_circle(user1, 'circle1')
+        circle1_id = create_circle(user1, 'circle1')
+        circle1 = find_circle(user1, circle1_id)
         toggle_member(user1, circle1, user2)
         toggle_member(user1, circle1, user3)
 
@@ -284,8 +284,8 @@ class InteractionsTest(BaseTestCase):
         user4 = find_user('user4')
 
         # Create circle1 by user1 and add user2 and user3 into circle1
-        self.assertTrue(create_circle(user1, 'circle1'))
-        circle1 = find_circle(user1, 'circle1')
+        circle1_id = create_circle(user1, 'circle1')
+        circle1 = find_circle(user1, circle1_id)
         toggle_member(user1, circle1, user2)
         toggle_member(user1, circle1, user3)
 

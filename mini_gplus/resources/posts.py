@@ -119,6 +119,7 @@ post_fields = {
     # TODO: only return the circles that the seeing user is in
     'circles': fields.List(fields.Nested({
         # not using circle_fields because not exposing what members a circle has
+        'id': fields.String(attribute='eid'),
         'name': fields.String,
     })),
     'comments': fields.List(fields.Nested({
@@ -149,10 +150,10 @@ class Posts(Resource):
 
         # check circles
         circles = []
-        for circle_name in args['circle_names']:
-            found_circle = find_circle(user, circle_name)
+        for circle_id in args['circle_ids']:
+            found_circle = find_circle(user, circle_id)
             if not found_circle:
-                return {'msg': f'Circle {circle_name} is not found'}, 404
+                return {'msg': f'Circle {circle_id} is not found'}, 404
             circles.append(found_circle)
 
         # check reshare
@@ -217,7 +218,7 @@ class PostMedia(Resource):
 post_parser = reqparse.RequestParser()
 post_parser.add_argument('content', type=str, required=True)
 post_parser.add_argument('is_public', type=bool, required=True)
-post_parser.add_argument('circle_names', type=str, action="append", default=[])
+post_parser.add_argument('circle_ids', type=str, action="append", default=[])
 post_parser.add_argument('reshareable', type=bool, required=True)
 post_parser.add_argument('reshared_from', type=str, required=False)
 post_parser.add_argument('media_object_names', type=str, action="append", default=[])
