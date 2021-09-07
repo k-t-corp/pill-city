@@ -179,7 +179,7 @@ export default (props) => {
                   <div className="settings-modal-update-button"
                        onClick={async () => {
                          try {
-                           await props.api.updateProfilePic(profileModalSelectedPic, me.id)
+                           await props.api.updateProfilePic(profileModalSelectedPic)
                            updateProfileModalOpened(false)
                            updateProfilePic(profileModalSelectedPic)
                          } catch (e) {
