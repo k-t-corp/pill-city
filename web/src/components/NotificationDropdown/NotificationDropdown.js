@@ -4,7 +4,11 @@ import getAvatarUrl from "../../api/getAvatarUrl";
 import timePosted from "../../timePosted";
 
 export default (props) => {
-  const notificationSummary = (summary) => {
+  const notificationSummary = (notification) => {
+    if (notification.notifying_action === "mention") {
+      return "you"
+    }
+    const summary = notification.notifying_location.summary
     const summaryLength = 100
     if (summary.length > summaryLength) return `${summary.slice(0,summaryLength)}...`
     else return summary
@@ -12,14 +16,18 @@ export default (props) => {
 
   const notificationElem = (notification, i) => {
     let action
+    if (notification.notifying_action === "mention") action = "mentioned"
     if (notification.notifying_action === "reshare") action = "reshared"
     if (notification.notifying_action === "comment") action = "commented"
     if (notification.notifying_action === "reaction") action =  "reacted"
 
-    let notifiedType
-    if (notification.notified_location.href.indexOf("#reaction-") !== -1) notifiedType = 'reaction'
-    else if (notification.notified_location.href.indexOf("#comment-") !== -1) notifiedType = 'comment'
-    else if (notification.notified_location.href.indexOf("/post/") !== -1) notifiedType = 'post'
+    let notifiedLocationPronoun
+    if (notification.notifying_action === "mention") notifiedLocationPronoun = "their"
+    else notifiedLocationPronoun = "your"
+
+    let notifiedLocationType
+    if (notification.notified_location.href.indexOf("#comment-") !== -1) notifiedLocationType = 'comment'
+    else if (notification.notified_location.href.indexOf("/post/") !== -1) notifiedLocationType = 'post'
 
     const notificationOnClick = async () => {
       console.log(notification.id)
@@ -45,11 +53,21 @@ export default (props) => {
                 <b className="notification-notifier-id">
                   {notification.notifier.id}{' '}
                 </b>
-                {action}{' '}
-                <div className="notification-summary">
-                  "{notificationSummary(notification.notifying_location.summary)}"
-                </div>{' '}
-                on your {notifiedType}
+                {action}
+                {' '}
+                {
+                  notification.notifying_action === "mention" ?
+                    "you" :
+                    <div className="notification-summary">
+                      "{notificationSummary(notification)}"
+                    </div>
+                }
+                {' '}
+                on
+                {' '}
+                {notifiedLocationPronoun}
+                {' '}
+                {notifiedLocationType}
               </div>
             </div>
           </div>

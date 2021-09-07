@@ -56,7 +56,8 @@ class User(object):
         self.sess.post(f'/api/circle/{circle_name}/membership/{member_user_id}')
 
     def create_post(self, content: str, is_public: bool, circle_names=None, reshareable: bool = False,
-                    reshared_from: Optional[str] = None, media_filenames: List[str] = None):
+                    reshared_from: Optional[str] = None, media_filenames: List[str] = None,
+                    mentioned_user_ids: List[str] = None):
         self._raise_on_unauthenticated()
 
         # upload media first
@@ -76,21 +77,27 @@ class User(object):
         # post
         if circle_names is None:
             circle_names = []
+        if not mentioned_user_ids:
+            mentioned_user_ids = []
         post_id = self.sess.post(f'/api/posts', data={
             'content': content,
             'is_public': is_public,
             'circle_names': circle_names,
             'reshareable': reshareable,
             'reshared_from': reshared_from,
-            'media_object_names': media_object_names
+            'media_object_names': media_object_names,
+            'mentioned_user_ids': mentioned_user_ids
         }).json()['id']
 
         return post_id
 
-    def create_comment(self, post_id: str, content: str):
+    def create_comment(self, post_id: str, content: str, mentioned_user_ids: List[str] = None):
         self._raise_on_unauthenticated()
+        if not mentioned_user_ids:
+            mentioned_user_ids = []
         return self.sess.post(f'/api/posts/{post_id}/comment', json={
             'content': content,
+            'mentioned_user_ids': mentioned_user_ids
         }).json()['id']
 
     def create_nested_comment(self, post_id: str, comment_id: str, content: str, mentioned_user_ids: List[str] = None):
@@ -184,7 +191,7 @@ def main():
     # Create some posts
     kt.create_post('rua', is_public=True)
     kt.create_post(' _Hello, World!_ ', is_public=True)
-    kt_ika_post = kt.create_post('Ika!1!!!!', is_public=False, circle_names=['ika'])
+    kt_ika_post = kt.create_post('Ika!1!!!! @ika', is_public=False, circle_names=['ika'], mentioned_user_ids=['ika'])
     ika.create_post('iPhone', is_public=True, media_filenames=['iphone.jpeg'])
     ika.create_post(' *iPad* ', is_public=True, media_filenames=['ipad.jpeg'])
     ika.create_post('MacBook Pro', is_public=True, media_filenames=['mbp.jpeg'])
@@ -218,7 +225,7 @@ def main():
     kt.create_reaction(sirjie_post_id, '👦')
 
     # Create some comments
-    ika_kt_ika_comment = ika.create_comment(kt_ika_post, 'rua')
+    ika_kt_ika_comment = ika.create_comment(kt_ika_post, 'rua @kt', ['kt'])
     innkuika.create_comment(kt_ika_post, 'twitter.com/realInnkuIka')
     innkuika.create_nested_comment(kt_ika_post, ika_kt_ika_comment, '')
     ikayaki.create_comment(kt_ika_post, ' _twitter.com/realIkaYaki_ ')

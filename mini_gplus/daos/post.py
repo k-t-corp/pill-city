@@ -8,7 +8,7 @@ from .notification import create_notification
 from .mention import mention
 
 
-def create_post(self, content, is_public, circles, reshareable, reshared_from, media_list, mentioned_user_ids):
+def create_post(self, content, is_public, circles, reshareable, reshared_from, media_list, mentioned_users):
     """
     Create a post for the user
 
@@ -19,7 +19,7 @@ def create_post(self, content, is_public, circles, reshareable, reshared_from, m
     :param (bool) reshareable: whether the post is reshareable
     :param (Post|None) reshared_from: Post object for the resharing post
     :param (List[Media]) media_list: list of media's
-    :param (List[str]) mentioned_user_ids: list of mentioned user IDs
+    :param (List[User]) mentioned_users: list of mentioned users
     :return (str) ID of the new post
     """
     new_post = Post()
@@ -62,8 +62,8 @@ def create_post(self, content, is_public, circles, reshareable, reshared_from, m
 
     mention(
         self,
-        post_or_comment=new_post,
-        mentioned_user_ids=mentioned_user_ids
+        notified_href=new_post.make_href(),
+        mentioned_users=mentioned_users
     )
 
     return str(new_post.eid)

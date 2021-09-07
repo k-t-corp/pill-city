@@ -7,14 +7,14 @@ from .notification import create_notification
 from .mention import mention
 
 
-def create_comment(self, content, parent_post, mentioned_user_ids):
+def create_comment(self, content, parent_post, mentioned_users):
     """
     Create a comment for the user
 
     :param (User) self: The acting user
     :param (str) content: the content
     :param (Post) parent_post: the post that this comment is attached to
-    :param (List[str]) mentioned_user_ids: list of mentioned user IDs
+    :param (List[User]) mentioned_users: list of mentioned users
     :return (str) ID of the new comment
     :raise (UnauthorizedAccess) when access is unauthorized
     """
@@ -43,8 +43,8 @@ def create_comment(self, content, parent_post, mentioned_user_ids):
 
         mention(
             self,
-            post_or_comment=new_comment,
-            mentioned_user_ids=mentioned_user_ids
+            notified_href=new_comment.make_href(parent_post),
+            mentioned_users=mentioned_users
         )
 
         return str(new_comment.eid)
@@ -52,7 +52,7 @@ def create_comment(self, content, parent_post, mentioned_user_ids):
         raise UnauthorizedAccess()
 
 
-def create_nested_comment(self, content, parent_comment, parent_post, mentioned_user_ids):
+def create_nested_comment(self, content, parent_comment, parent_post, mentioned_users):
     """
     Create a nested comment for the user
 
@@ -60,7 +60,7 @@ def create_nested_comment(self, content, parent_comment, parent_post, mentioned_
     :param (str) content: the content
     :param (Comment) parent_comment: the comment that this nested comment is attached to
     :param (Post) parent_post: the post that this comment is attached to
-    :param (List[str]) mentioned_user_ids: list of mentioned user IDs
+    :param (List[User]) mentioned_users: list of mentioned users
     :return (str) ID of the new comment
     :raise (UnauthorizedAccess) when access is unauthorized
     """
@@ -85,8 +85,8 @@ def create_nested_comment(self, content, parent_comment, parent_post, mentioned_
 
         mention(
             self,
-            post_or_comment=new_comment,
-            mentioned_user_ids=mentioned_user_ids
+            notified_href=new_comment.make_href(parent_post),
+            mentioned_users=mentioned_users
         )
 
         return str(new_comment.eid)
