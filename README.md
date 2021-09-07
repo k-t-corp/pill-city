@@ -39,3 +39,6 @@ make dev-web
 ```
 make test
 ```
+
+## Security
+Please send security findings to [`security@ktachibana.party`](mailto:security@ktachibana.party). I'll personally give you a some dollars.
