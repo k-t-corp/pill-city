@@ -47,8 +47,8 @@ def claim_invitation_code(code: str) -> bool:
 
 def get_invitation_codes() -> List[InvitationCode]:
     """
-    Get all invitation codes
+    Get all invitation codes, reverse chronologically ordered
 
     :return: All invitation codes
     """
-    return list(InvitationCode.objects())
+    return list(InvitationCode.objects().order_by('-id'))

@@ -62,7 +62,10 @@ CORS(app, resources={r"/api/*": {"origins": "*"}})
 populate_user_cache()
 
 isOpenRegistration = os.environ.get('OPEN_REGISTRATION', 'false') == 'true'
-print(f"isOpenRegistration={isOpenRegistration}")
+if isOpenRegistration:
+    print('Open registration')
+else:
+    print("Invite-only")
 
 
 @app.route('/', methods=['GET'])

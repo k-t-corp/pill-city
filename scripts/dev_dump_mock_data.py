@@ -128,6 +128,7 @@ def main():
     print("Vacuuming mongodb")
     client.drop_database("minigplus")
 
+    print("Dumping dummy data")
     # Sign up some users
     kt = User('kt'); kt.sign_up(); kt.sign_in(); kt.update_avatar('kt.jpeg')
     ika = User('ika'); ika.sign_up(); ika.sign_in(); ika.update_avatar('ika.jpeg')

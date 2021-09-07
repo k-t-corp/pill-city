@@ -422,6 +422,7 @@ export default class Api {
     if (res.status !== 200) {
       throw new ApiError(res.status)
     }
+    return res.data
   }
 
   async getInvitationCodes() {
