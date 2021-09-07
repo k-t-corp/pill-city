@@ -1,4 +1,5 @@
 import os
+import re
 import sentry_sdk
 from os import urandom
 from pymongo.uri_parser import parse_uri
@@ -10,6 +11,7 @@ from flask_jwt_extended import JWTManager, create_access_token
 from sentry_sdk.integrations.flask import FlaskIntegration
 from mini_gplus.daos.user import sign_in, sign_up
 from mini_gplus.daos.user_cache import populate_user_cache
+from mini_gplus.daos.invitation_code import check_invitation_code, claim_invitation_code
 from mini_gplus.resources.me import MyAvatar, MyProfilePic, Me
 from mini_gplus.resources.users import Users, User
 from mini_gplus.resources.posts import Profile, Home, PostMedia, Posts, Post
@@ -18,6 +20,7 @@ from mini_gplus.resources.reactions import Reactions, Reaction
 from mini_gplus.resources.circles import Circles, CircleMember, Circle
 from mini_gplus.resources.followings import Following
 from mini_gplus.resources.notifications import Notifications, NotificationRead, NotificationsAllRead
+from mini_gplus.resources.admin import InvitationCode, InvitationCodes
 
 # sentry
 if os.getenv('SENTRY_DSN'):
@@ -39,8 +42,8 @@ app.secret_key = urandom(24)
 mongodb_uri = os.environ['MONGODB_URI']
 mongodb_db = parse_uri(mongodb_uri)['database']
 app.config['MONGODB_SETTINGS'] = {
+    'host': mongodb_uri,
     'db': mongodb_db,
-    'host': mongodb_uri
 }
 db = MongoEngine(app)
 app.session_interface = MongoEngineSessionInterface(db)
@@ -58,6 +61,17 @@ app.config['BUNDLE_ERRORS'] = True
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 populate_user_cache()
+
+isOpenRegistration = os.environ.get('OPEN_REGISTRATION', 'false') == 'true'
+if isOpenRegistration:
+    print('Open registration')
+else:
+    print("Invite-only")
+
+
+@app.route('/', methods=['GET'])
+def _root():
+    return 'pill.city api'
 
 
 # auth
@@ -81,24 +95,47 @@ def _sign_in():
     return jsonify(access_token=access_token), 200
 
 
+def check_user_id(user_id):
+    if len(user_id) > 15:
+        return False
+    if not re.match("^[A-Za-z0-9_-]*$", user_id):
+        return False
+    return True
+
+
 @app.route('/api/signUp', methods=['POST'])
 def _sign_up():
     """
     Signs up a new user
     """
-    if os.environ.get('ALLOW_SIGNUP', 'true') != 'true':
-        return {'msg': 'Sign up is not open at this moment'}, 403
     user_id = request.json.get('id', None)
     password = request.json.get('password', None)
     if not user_id:
         return jsonify({"message": {"id": "id is required"}}), 400
+    if not check_user_id(user_id):
+        return jsonify({"message": {"id": "illegal id"}}), 400
     if not password:
         return jsonify({"message": {"password": "password is required"}}), 400
+    if not isOpenRegistration:
+        invitation_code = request.json.get('invitation_code', None)
+        if not invitation_code:
+            return jsonify({"message": {"invitation_code": "invitation code is required"}}), 403
+        if not check_invitation_code(invitation_code):
+            return jsonify({"message": {"invitation_code": "invalid invitation code"}}), 403
+        if not claim_invitation_code(invitation_code):
+            return jsonify({"message": {"invitation_code": "failed to claim invitation code"}}), 500
     successful = sign_up(user_id, password)
     if successful:
         return {'id': user_id}, 201
     else:
         return {'msg': f'ID {user_id} is already taken'}, 409
+
+
+@app.route('/api/isOpenRegistration', methods=['GET'])
+def _is_open_registration():
+    return {
+        "is_open_registration": isOpenRegistration
+    }
 
 
 # api
@@ -133,14 +170,17 @@ api.add_resource(Posts, '/api/posts')
 api.add_resource(Post, '/api/post/<string:post_id>')
 
 api.add_resource(Circles, '/api/circles')
-api.add_resource(CircleMember, '/api/circle/<string:circle_name>/membership/<string:member_user_id>')
-api.add_resource(Circle, '/api/circle/<string:circle_name>')
+api.add_resource(CircleMember, '/api/circle/<string:circle_id>/membership/<string:member_user_id>')
+api.add_resource(Circle, '/api/circle/<string:circle_id>')
 
 api.add_resource(Following, '/api/following/<string:following_user_id>')
 
 api.add_resource(NotificationRead, '/api/notification/<string:notification_id>/read')
 api.add_resource(NotificationsAllRead, '/api/notifications/read')
 api.add_resource(Notifications, '/api/notifications')
+
+api.add_resource(InvitationCodes, '/api/invitationCodes')
+api.add_resource(InvitationCode, '/api/invitationCode')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

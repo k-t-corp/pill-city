@@ -193,8 +193,8 @@ class InteractionsTest(BaseTestCase):
         user1 = find_user('user1')
 
         # Create circle1
-        self.assertTrue(create_circle(user1, 'circle1'))
-        circle1 = find_circle(user1, 'circle1')
+        circle1_id = create_circle(user1, 'circle1')
+        circle1 = find_circle(user1, circle1_id)
 
         # Create post1 into circle1
         create_post(user1, 'post1', False, [circle1], True, None, [], [])
@@ -220,8 +220,8 @@ class InteractionsTest(BaseTestCase):
         user4 = find_user('user4')
 
         # Create circle1 by user1 and add user2 and user3 into circle1
-        self.assertTrue(create_circle(user1, 'circle1'))
-        circle1 = find_circle(user1, 'circle1')
+        circle1_id = create_circle(user1, 'circle1')
+        circle1 = find_circle(user1, circle1_id)
         toggle_member(user1, circle1, user2)
         toggle_member(user1, circle1, user3)
 
@@ -284,8 +284,8 @@ class InteractionsTest(BaseTestCase):
         user4 = find_user('user4')
 
         # Create circle1 by user1 and add user2 and user3 into circle1
-        self.assertTrue(create_circle(user1, 'circle1'))
-        circle1 = find_circle(user1, 'circle1')
+        circle1_id = create_circle(user1, 'circle1')
+        circle1 = find_circle(user1, circle1_id)
         toggle_member(user1, circle1, user2)
         toggle_member(user1, circle1, user3)
 
@@ -305,17 +305,17 @@ class InteractionsTest(BaseTestCase):
         post2 = post2[0]
 
         # User1 sees post2 and post1 on home and user1's profile
-        self.assertEqual([post2, post1], retrieves_posts_on_home(user1))
-        self.assertEqual([post2, post1], retrieves_posts_on_profile(user1, user1))
+        self.assertEqual([post2, post1], retrieves_posts_on_home(user1, None))
+        self.assertEqual([post2, post1], retrieves_posts_on_profile(user1, user1, None))
 
         # User2 sees post2 and post1 on home and user1's profile
-        self.assertEqual([post2, post1], retrieves_posts_on_home(user2))
-        self.assertEqual([post2, post1], retrieves_posts_on_profile(user2, user1))
+        self.assertEqual([post2, post1], retrieves_posts_on_home(user2, None))
+        self.assertEqual([post2, post1], retrieves_posts_on_profile(user2, user1, None))
 
         # User3 sees nothing on home and post2 and post1 on user1's profile
-        self.assertEqual([], retrieves_posts_on_home(user3))
-        self.assertEqual([post2, post1], retrieves_posts_on_profile(user3, user1))
+        self.assertEqual([], retrieves_posts_on_home(user3, None))
+        self.assertEqual([post2, post1], retrieves_posts_on_profile(user3, user1, None))
 
         # User4 sees nothing on home and post2 on user1's profile
-        self.assertEqual([], retrieves_posts_on_home(user4))
-        self.assertEqual([post2], retrieves_posts_on_profile(user4, user1))
+        self.assertEqual([], retrieves_posts_on_home(user4, None))
+        self.assertEqual([post2], retrieves_posts_on_profile(user4, user1, None))

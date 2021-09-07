@@ -35,9 +35,13 @@ export default (props) => {
         <div className="post-content">
           {parseContent(resharedFrom.content, "")}
           {resharedFrom.media_urls.length === 0 ? null :
-            <MediaPreview mediaUrls={resharedFrom.media_urls} threeRowHeight="80px" twoRowHeight="100px"
-                          oneRowHeight="140px"/>
-            }
+            <MediaPreview
+              mediaUrls={resharedFrom.media_urls}
+              threeRowHeight="80px"
+              twoRowHeight="100px"
+              oneRowHeight="140px"
+            />
+          }
         </div>
       </div>)
   }
@@ -308,10 +312,15 @@ export default (props) => {
     sharingScope = 'Only you'
   }
 
+  const disableNavigateToPostPage = props.disableNavigateToPostPage === true
   const navigateToPostPage = e => {
     e.preventDefault();
-    window.location.href = `/post/${props.data.id}`
+    if (!disableNavigateToPostPage) {
+      window.location.href = `/post/${props.data.id}`
+    }
   }
+
+  const [mediaUrlOpened, updateMediaUrlOpened] = useState('')
 
   return (
     <div className="post-wrapper">
@@ -333,16 +342,26 @@ export default (props) => {
             </div>
           </div>
           <div className="post-op-info-right">
-            <div className="post-op-info-time" onClick={navigateToPostPage}>
+            <div className="post-op-info-time" onClick={navigateToPostPage} style={{
+              cursor: disableNavigateToPostPage ? 'auto' : 'pointer'
+            }}>
               {timePosted(props.data.created_at_seconds)}
             </div>
           </div>
         </div>
-        <div className='post-content-wrapper' onClick={navigateToPostPage}>
+        <div className='post-content-wrapper' onClick={navigateToPostPage} style={{
+          cursor: disableNavigateToPostPage ? 'auto' : 'pointer'
+        }}>
           {parseContent(props.data.content, "post-content")}
         </div>
         {resharedElem(props.data.reshared_from)}
-        <MediaPreview mediaUrls={props.data.media_urls} threeRowHeight="130px" twoRowHeight="150px"  oneRowHeight="180px"/>
+        <MediaPreview
+          mediaUrls={props.data.media_urls}
+          threeRowHeight="130px"
+          twoRowHeight="150px"
+          oneRowHeight="180px"
+          onMediaClicked={updateMediaUrlOpened}
+        />
         <div className="post-interactions-wrapper">
           <div className="post-reactions-wrapper">
             {reactions}
@@ -396,7 +415,19 @@ export default (props) => {
       {props.data.comments.length === 0 ? null :
         <div className="post-comments-wrapper">
           {comments}
-        </div>}
+        </div>
+      }
+      {
+        mediaUrlOpened &&
+          <div
+            className='post-media'
+            onClick={
+              () => updateMediaUrlOpened('')
+            }
+          >
+            <img className="post-media-img" src={mediaUrlOpened} alt=""/>
+          </div>
+      }
     </div>
   )
 }

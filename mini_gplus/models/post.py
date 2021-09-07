@@ -1,5 +1,5 @@
 from typing import List
-from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, LazyReferenceField, PULL, \
+from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, LazyReferenceField, PULL,\
     CASCADE, NULLIFY
 from .created_at_mixin import CreatedAtMixin
 from .user import User

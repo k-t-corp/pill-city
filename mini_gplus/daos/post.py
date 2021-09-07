@@ -2,10 +2,14 @@ import bleach
 from typing import Optional
 from mini_gplus.models import Post, NotifyingAction
 from mini_gplus.utils.profiling import timer
-from .make_uuid import make_uuid
+from mini_gplus.utils.make_uuid import make_uuid
 from .circle import check_member
 from .notification import create_notification
 from .mention import mention
+from .pagination import get_page
+
+HomePostsPageSize = 5
+ProfilePostsPageSize = 10
 
 
 def create_post(self, content, is_public, circles, reshareable, reshared_from, media_list, mentioned_users):
@@ -112,30 +116,44 @@ def sees_post(self, post, context_home_or_profile):
     return False
 
 
-def retrieves_posts_on_home(self):
+def retrieves_posts_on_home(self, from_id):
     """
     All posts that are visible to the user on home
 
     :param (User) self: The acting user
+    :param (str|None) from_id: The acting Post_id from which home posts should be retrieved
     :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
     """
-    # todo: pagination
-    # ordering by id descending is equivalent to ordering by created_at descending
-    posts = Post.objects().order_by('-id')
-    posts = filter(lambda post: sees_post(self, post, context_home_or_profile=True), posts)
-    return list(posts)
+    def _filter_post(p):
+        return sees_post(self, p, context_home_or_profile=True)
+
+    return get_page(
+        mongoengine_model=Post,
+        extra_query_args={},
+        extra_filter_func=_filter_post,
+        from_id=from_id,
+        page_count=HomePostsPageSize
+    )
 
 
-def retrieves_posts_on_profile(self, profile_user):
+def retrieves_posts_on_profile(self, profile_user, from_id):
     """
     All posts that are visible to the user on a certain user's profile
 
     :param (User) self: The acting user
     :param (User) profile_user: the user whose profile is being viewed
+    :param (str|None) from_id: The acting Post_id from which home posts should be retrieved
     :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
     """
-    # todo: pagination
-    # ordering by id descending is equivalent to ordering by created_at descending
-    posts = Post.objects(author=profile_user).order_by('-id')
-    posts = filter(lambda post: sees_post(self, post, context_home_or_profile=False), posts)
-    return list(posts)
+    def _filter_post(p):
+        return sees_post(self, p, context_home_or_profile=False)
+
+    return get_page(
+        mongoengine_model=Post,
+        extra_query_args={
+            'author': profile_user
+        },
+        extra_filter_func=_filter_post,
+        from_id=from_id,
+        page_count=ProfilePostsPageSize
+    )

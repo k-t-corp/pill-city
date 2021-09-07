@@ -49,7 +49,13 @@ export default class Post extends Component {
     }
     return (
       <div className='post-wrapper-page'>
-        <PostComponent data={this.state.data} highlightCommentId={highlightCommentId} me={this.state.me} api={this.props.api}/>
+        <PostComponent
+          data={this.state.data}
+          highlightCommentId={highlightCommentId}
+          me={this.state.me}
+          api={this.props.api}
+          disableNavigateToPostPage={true}
+        />
       </div>
     )
   }

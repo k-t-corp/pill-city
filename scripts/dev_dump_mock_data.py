@@ -47,15 +47,17 @@ class User(object):
                 'file': f
             })
 
-    def create_circle(self, circle_name: str):
+    def create_circle(self, name: str):
         self._raise_on_unauthenticated()
-        self.sess.post(f'/api/circle/{circle_name}')
+        return self.sess.post(f'/api/circles', data={
+            'name': name
+        }).json()['id']
 
-    def add_user_to_circle(self, circle_name: str, member_user_id: str):
+    def add_user_to_circle(self, circle_id: str, member_user_id: str):
         self._raise_on_unauthenticated()
-        self.sess.post(f'/api/circle/{circle_name}/membership/{member_user_id}')
+        self.sess.post(f'/api/circle/{circle_id}/membership/{member_user_id}')
 
-    def create_post(self, content: str, is_public: bool, circle_names=None, reshareable: bool = False,
+    def create_post(self, content: str, is_public: bool, circle_ids=None, reshareable: bool = False,
                     reshared_from: Optional[str] = None, media_filenames: List[str] = None,
                     mentioned_user_ids: List[str] = None):
         self._raise_on_unauthenticated()
@@ -75,14 +77,14 @@ class User(object):
                 f.close()
 
         # post
-        if circle_names is None:
-            circle_names = []
-        if not mentioned_user_ids:
+        if circle_ids is None:
+            circle_ids = []
+        if mentioned_user_ids is None:
             mentioned_user_ids = []
         post_id = self.sess.post(f'/api/posts', data={
             'content': content,
             'is_public': is_public,
-            'circle_names': circle_names,
+            'circle_ids': circle_ids,
             'reshareable': reshareable,
             'reshared_from': reshared_from,
             'media_object_names': media_object_names,
@@ -138,13 +140,14 @@ def main():
     print("Vacuuming mongodb")
     client.drop_database("minigplus")
 
+    print("Dumping dummy data")
     # Sign up some users
     kt = User('kt'); kt.sign_up(); kt.sign_in(); kt.update_avatar('kt.jpeg')
     ika = User('ika'); ika.sign_up(); ika.sign_in(); ika.update_avatar('ika.jpeg')
     innkuika = User('innkuika'); innkuika.sign_up(); innkuika.sign_in(); innkuika.update_avatar('innkuika.jpg')
     ikayaki = User('ikayaki'); ikayaki.sign_up(); ikayaki.sign_in(); ikayaki.update_avatar('ikayaki.jpg')
     ikayaro = User('ikayaro'); ikayaro.sign_up(); ikayaro.sign_in(); ikayaro.update_avatar('ikayaro.png')
-    ika2 = User('ikaaaaaaaaaaaaaaaaaa'); ika2.sign_up(); ika2.sign_in(); ika2.update_avatar('ika2.png')
+    ika2 = User('ika-a_a-a__a'); ika2.sign_up(); ika2.sign_in(); ika2.update_avatar('ika2.png')
     billy = User('billy'); billy.sign_up(); billy.sign_in(); billy.update_avatar('billy.jpeg')
     van = User('van'); van.sign_up(); van.sign_in(); van.update_avatar('van.png')
     xiaolaba = User('xiaolaba'); xiaolaba.sign_up(); xiaolaba.sign_in(); xiaolaba.update_avatar('xiaolaba.png')
@@ -157,26 +160,26 @@ def main():
     sirjie = User('sirjie'); sirjie.sign_up(); sirjie.sign_in(); sirjie.update_avatar('sirjie.bmp')
 
     # Create some circles
-    kt.create_circle('ika')
-    kt.create_circle('gachi')
-    kt.create_circle('g+')
+    kt_ika_circle_id = kt.create_circle('ika')
+    kt_gachi_circle_id = kt.create_circle('gachi')
+    kt_gplus_circle_id = kt.create_circle('g+')
 
     # Add people to circles
-    kt.add_user_to_circle('ika', 'ika')
-    kt.add_user_to_circle('ika', 'innkuika')
-    kt.add_user_to_circle('ika', 'ikayaki')
-    kt.add_user_to_circle('ika', 'ikayaro')
-    kt.add_user_to_circle('ika', 'ikaaaaaaaaaaaaaaaaaa')
-    kt.add_user_to_circle('gachi', 'billy')
-    kt.add_user_to_circle('g+', 'billy')
-    kt.add_user_to_circle('gachi', 'van')
-    kt.add_user_to_circle('ika', 'van')
-    kt.add_user_to_circle('g+', 'xiaolaba')
-    kt.add_user_to_circle('g+', 'buki')
-    kt.add_user_to_circle('g+', 'mawei')
-    kt.add_user_to_circle('g+', 'duff')
-    kt.add_user_to_circle('g+', 'kele')
-    kt.add_user_to_circle('g+', 'ahuhu')
+    kt.add_user_to_circle(kt_ika_circle_id, 'ika')
+    kt.add_user_to_circle(kt_ika_circle_id, 'innkuika')
+    kt.add_user_to_circle(kt_ika_circle_id, 'ikayaki')
+    kt.add_user_to_circle(kt_ika_circle_id, 'ikayaro')
+    kt.add_user_to_circle(kt_ika_circle_id, 'ika-a_a-a__a')
+    kt.add_user_to_circle(kt_gachi_circle_id, 'billy')
+    kt.add_user_to_circle(kt_gplus_circle_id, 'billy')
+    kt.add_user_to_circle(kt_gachi_circle_id, 'van')
+    kt.add_user_to_circle(kt_ika_circle_id, 'van')
+    kt.add_user_to_circle(kt_gplus_circle_id, 'xiaolaba')
+    kt.add_user_to_circle(kt_gplus_circle_id, 'buki')
+    kt.add_user_to_circle(kt_gplus_circle_id, 'mawei')
+    kt.add_user_to_circle(kt_gplus_circle_id, 'duff')
+    kt.add_user_to_circle(kt_gplus_circle_id, 'kele')
+    kt.add_user_to_circle(kt_gplus_circle_id, 'ahuhu')
 
     # Add some followings
     ika.follow('kt')
@@ -191,7 +194,7 @@ def main():
     # Create some posts
     kt.create_post('rua', is_public=True)
     kt.create_post(' _Hello, World!_ ', is_public=True)
-    kt_ika_post = kt.create_post('Ika!1!!!! @ika', is_public=False, circle_names=['ika'], mentioned_user_ids=['ika'])
+    kt_ika_post = kt.create_post('Ika!1!!!! @ika', is_public=False, circle_ids=[kt_ika_circle_id], mentioned_user_ids=['ika'])
     ika.create_post('iPhone', is_public=True, media_filenames=['iphone.jpeg'])
     ika.create_post(' *iPad* ', is_public=True, media_filenames=['ipad.jpeg'])
     ika.create_post('MacBook Pro', is_public=True, media_filenames=['mbp.jpeg'])
@@ -199,10 +202,10 @@ def main():
     kt.create_post('BOY NEXT DOOR. SLABU GET UR AS BACK HERE. HENG HENG HENG AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
                    'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
                    'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', is_public=False,
-                   circle_names=['gachi'])
-    kt.create_post('鬼城！！！', is_public=False, circle_names=['g+'])
+                   circle_ids=[kt_gachi_circle_id])
+    kt.create_post('鬼城！！！', is_public=False, circle_ids=[kt_gplus_circle_id])
     with open('./scripts/xss.txt') as f:
-        kt.create_post(f.read(), is_public=True, circle_names=['g+'])
+        kt.create_post(f.read(), is_public=True, circle_ids=[kt_gplus_circle_id])
     ika.create_post('iMac', is_public=True, media_filenames=['imac.jpg'])
     ika.create_post('AirPods Pro', is_public=True, media_filenames=['app.jpeg'])
 
@@ -243,7 +246,7 @@ def main():
                                                                    'realIkaYaro twitter.com/realIkaYaro twitter.com/rea'
                                                                    'lIkaYaro')
     ika2.create_comment(kt_ika_post, " -I'm 混亂邪惡- ")
-    ika2.create_nested_comment(kt_ika_post, ika_kt_ika_comment, '/profile/ikaaaaaaaaaaaaaaaaaa')
+    ika2.create_nested_comment(kt_ika_post, ika_kt_ika_comment, '/profile/ika-a_a-a__a')
 
 
 if __name__ == '__main__':

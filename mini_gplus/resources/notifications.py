@@ -6,6 +6,7 @@ from mini_gplus.daos.post import get_post
 from mini_gplus.daos.user import find_user
 from mini_gplus.daos.notification import get_notifications, mark_notification_as_read, mark_all_notifications_as_read
 from .me import user_fields
+from .pagination import pagination_parser
 
 
 class NotifyingAction(fields.Raw):
@@ -62,7 +63,9 @@ class Notifications(Resource):
         """
         user_id = get_jwt_identity()
         user = find_user(user_id)
-        return get_notifications(user)
+
+        args = pagination_parser.parse_args()
+        return get_notifications(user, args['from_id'])
 
 
 class NotificationRead(Resource):

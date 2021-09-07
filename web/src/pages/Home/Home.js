@@ -26,8 +26,41 @@ export default (props) => {
   }, [])
 
   useInterval(async () => {
-    updateNotifications(await props.api.getNotifications())
+    const lastNotification = notifications[0]
+    const fetchedNewNotifications = await props.api.getNotifications()
+    // find position of lastNotification in fetchedNewNotifications
+    // anything that comes "before" lastNotification are actual new notifications
+    // TODO: there is a subtle bug that
+    // TODO: if there are more than page size number of actual new notifications
+    // TODO: some of them won't be displayed until load more or manual refresh page
+    const newNotifications = []
+    for (const n of fetchedNewNotifications) {
+      if (n.id !== lastNotification.id) {
+        newNotifications.push(n)
+      } else {
+        break
+      }
+    }
+    updateNotifications([...newNotifications, ...notifications])
   }, 5000)
+
+  const loadMorePosts = async () => {
+    const lastPost = posts[posts.length - 1]
+    const newPosts = await props.api.getHome(lastPost['id'])
+    if (newPosts.length !== 0) {
+      updatePosts(posts.concat(newPosts))
+    } else {
+      alert('Go back to real life')
+    }
+  }
+
+  const loadMoreNotifications = async () => {
+    const lastNotification = notifications[notifications.length - 1]
+    const newNotifications = await props.api.getNotifications(lastNotification['id'])
+    if (newNotifications.length !== 0) {
+      updateNotifications(notifications.concat(newNotifications))
+    }
+  }
 
   let homePostElement = () => {
     if (loading) {
@@ -40,6 +73,13 @@ export default (props) => {
         postElements.push(<Post key={i} data={posts[i]} me={me} api={props.api}
                                 updateResharePostData={updateResharePostData}/>)
       }
+      postElements.push(
+        <div
+          key={posts.length}
+          className='home-load-more'
+          onClick={loadMorePosts}
+        >Load more</div>
+      )
       return postElements
     }
   }
@@ -60,9 +100,12 @@ export default (props) => {
                    api={props.api}
                    resharePostData={resharePostData}
                    updateResharePostData={updateResharePostData}/>
-          <NotificationDropdown notifications={notifications} api={props.api}/>
+          <NotificationDropdown
+            notifications={notifications}
+            api={props.api}
+            loadMoreNotifications={loadMoreNotifications}
+          />
         </div>}
       </div>
     )
-
 }

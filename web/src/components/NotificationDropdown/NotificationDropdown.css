@@ -53,6 +53,10 @@
     color: #0d71bb;
 }
 
+.notification-noop-wrapper {
+    padding: 5px;
+}
+
 .notification-wrapper {
     padding: 5px;
     border-bottom: 2px solid #f1f1f1;
@@ -108,7 +112,18 @@
     display: inline;
     inline-size: 100%;
     color: #767676;
+}
 
+.notification-load-more {
+    padding: 6px;
+    width: 100%;
+    cursor: pointer;
+    text-align: center;
+    color: cornflowerblue;
+}
+
+.notification-load-more:hover {
+    color: #0d71bb;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

@@ -13,6 +13,7 @@ export default (props) => {
     updatePostData(await props.api.getProfile(props.userData.id))
     updatePostLoading(false)
   }, [])
+
   useEffect(async () => {
     if (!props.me) {
       const isFollowing = (await props.api.isFollowing(props.userData.id)).is_following
@@ -20,7 +21,18 @@ export default (props) => {
     }
     updateFollowingLoading(false)
   }, [])
-  const posts = () => {
+
+  const loadMorePosts = async () => {
+    const lastPost = postData[postData.length - 1]
+    const newPosts = await props.api.getProfile(props.userData.id, lastPost['id'])
+    if (newPosts.length !== 0) {
+      updatePostData(postData.concat(newPosts))
+    } else {
+      alert('Go back to real life')
+    }
+  }
+
+  const profilePostElement = () => {
     if (postLoading) {
       return <div/>
     } else {
@@ -28,6 +40,13 @@ export default (props) => {
       for (let i = 0; i < postData.length; i++) {
         postElements.push(<Post key={i} data={postData[i]} api={props.api} me={props.userData}/>)
       }
+      postElements.push(
+        <div
+          key={postData.length}
+          className='profile-load-more'
+          onClick={loadMorePosts}
+        >Load more</div>
+      )
       return postElements
     }
   }
@@ -84,7 +103,7 @@ export default (props) => {
         {userInfoButton()}
       </div>
       <div className="user-profile-posts">
-        {posts()}
+        {profilePostElement()}
       </div>
     </div>
   )

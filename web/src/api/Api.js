@@ -25,18 +25,29 @@ export default class Api {
     }
   }
 
-  async signUp(id, password) {
+  async signUp(id, password, invitationCode) {
     const res = await this.axiosInstance.post(
       `/signUp`,
       {
         'id': id,
-        'password': password
+        'password': password,
+        'invitation_code': invitationCode
       }
     )
     if (res.status !== 201) {
       throw new ApiError(res.status)
     }
     return null
+  }
+
+  async isOpenRegistration() {
+    const res = await this.axiosInstance.get(
+      `/isOpenRegistration`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data.is_open_registration
   }
 
   async signIn(id, password) {
@@ -86,12 +97,14 @@ export default class Api {
     return res.data
   }
 
-  async getProfile(profileUserId) {
+  async getProfile(profileUserId, fromId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
       `/profile/${profileUserId}`,
       {
-        headers: Api.authorizedHeaders()
+        params: {
+          'from_id': fromId
+        }
       }
     )
     if (res.status !== 200) {
@@ -114,7 +127,7 @@ export default class Api {
     return res.data
   }
 
-  async postPost(content, isPublic, circlesNames, reshareable, resharedFrom, mediaData, mentionedUserIds) {
+  async postPost(content, isPublic, circleIds, reshareable, resharedFrom, mediaData, mentionedUserIds) {
     Api.throwOnUnauthorized()
     let mediaObjName = []
     if (mediaData.length !== 0) {
@@ -125,7 +138,7 @@ export default class Api {
       {
         content,
         is_public: isPublic,
-        circle_names: circlesNames,
+        circle_ids: circleIds,
         reshareable: reshareable,
         reshared_from: resharedFrom,
         media_object_names: mediaObjName,
@@ -157,10 +170,15 @@ export default class Api {
     return res.data
   }
 
-  async getHome() {
+  async getHome(fromId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
-      `/home`
+      `/home`,
+      {
+        params: {
+          'from_id': fromId
+        }
+      }
     )
     if (res.status !== 200) {
       throw new ApiError(res.status)
@@ -220,10 +238,10 @@ export default class Api {
     return res.data
   }
 
-  async getCircle(circleName) {
+  async getCircle(circleId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
-      `/circle/${circleName}`
+      `/circle/${circleId}`
     )
     if (res.status !== 200) {
       throw new ApiError(res.status)
@@ -234,7 +252,10 @@ export default class Api {
   async createCircle(name) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.post(
-      `/circle/${name}`
+      `/circles`,
+      {
+        name
+      }
     )
     if (res.status !== 201) {
       throw new ApiError(res.status)
@@ -242,10 +263,10 @@ export default class Api {
     return null
   }
 
-  async deleteCircle(name) {
+  async deleteCircle(circleId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.delete(
-      `/circle/${name}`
+      `/circle/${circleId}`
     )
     if (res.status !== 200) {
       throw new ApiError(res.status)
@@ -253,10 +274,10 @@ export default class Api {
     return null
   }
 
-  async addToCircle(circleName, memberUserId) {
+  async addToCircle(circleId, memberUserId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.post(
-      `/circle/${circleName}/membership/${memberUserId}`
+      `/circle/${circleId}/membership/${memberUserId}`
     )
     if (res.status !== 200) {
       throw new ApiError(res.status)
@@ -264,10 +285,10 @@ export default class Api {
     return res.data
   }
 
-  async removeFromCircle(circleName, memberUserId) {
+  async removeFromCircle(circleId, memberUserId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.delete(
-      `/circle/${circleName}/membership/${memberUserId}`
+      `/circle/${circleId}/membership/${memberUserId}`
     )
     if (res.status !== 200) {
       throw new ApiError(res.status)
@@ -361,10 +382,15 @@ export default class Api {
     }
   }
 
-  async getNotifications() {
+  async getNotifications(fromId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
-      `/notifications`
+      `/notifications`,
+      {
+        params: {
+          'from_id': fromId
+        }
+      }
     )
     if (res.status !== 200) {
       throw new ApiError(res.status)
@@ -387,6 +413,28 @@ export default class Api {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.put(
       `/notifications/read`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
+
+  async createInvitationCode() {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.post(
+      `/invitationCode`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
+
+  async getInvitationCodes() {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.get(
+      `/invitationCodes`
     )
     if (res.status !== 200) {
       throw new ApiError(res.status)
