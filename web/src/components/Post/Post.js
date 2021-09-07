@@ -5,6 +5,7 @@ import getAvatarUrl from "../../api/getAvatarUrl";
 import parseContent from "../../parseContent";
 import timePosted from "../../timePosted";
 import MediaPreview from "../MediaPreview/MediaPreview";
+import parseMentioned from "../../parseMentioned";
 
 export default (props) => {
   const [addComment, updateAddComment] = useState(false)
@@ -287,10 +288,10 @@ export default (props) => {
     const content = document.getElementById("post-comment-box-input").value
     if (replyNestedCommentId !== "") {
       // reply rested comment
-      await props.api.postNestedComment(content, props.data.id, replyNestedCommentId)
+      await props.api.postNestedComment(content, props.data.id, replyNestedCommentId, parseMentioned(content))
       updateReplayNestedCommentId("")
     } else {
-      await props.api.postComment(content, props.data.id)
+      await props.api.postComment(content, props.data.id, parseMentioned(content))
     }
     window.location.reload()
   }

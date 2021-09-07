@@ -44,7 +44,7 @@ export default class SignUp extends Component {
   }
 
   handleSubmit = (inputForm) => {
-    const idRegex = /^[a-z0-9_-]+$/i;
+    const idRegex = /^[A-Za-z0-9_-]+$/i;
     const {id, password, confirmPassword, invitationCode} = inputForm
     if (id === undefined || id.trim() === "" || id.trim().length > 15 || !id.trim().match(idRegex)) {
       this.refs.form.updateInputsWithError({
