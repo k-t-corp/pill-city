@@ -9,19 +9,20 @@ import {useMediaQuery} from "react-responsive";
 
 export default (props) => {
   const [content, updateContent] = useState("")
-  const [circleNames, updateCircleNames] = useState([])
+  const [circleIds, updateCircleIds] = useState([])
   const [posting, updatePosting] = useState(false)
   const [resharableToggleChecked, updateResharableToggleChecked] = useState(true)
   const [medias, updateMedias] = useState([])
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
 
   const isValid = () => {
-    return content.trim().length !== 0 && circleNames.length !== 0
+    return content.trim().length !== 0 && circleIds.length !== 0
   }
+
   const postButtonOnClick = async () => {
     updatePosting(true);
-    const actualCircleNames = circleNames.filter(cn => cn !== true)
-    const isPublic = circleNames.filter(cn => cn === true).length !== 0
+    const actualCircleIds = circleIds.filter(cn => cn !== true)
+    const isPublic = circleIds.filter(cn => cn === true).length !== 0
     let mediaData = new FormData()
     for (let i = 0; i < medias.length; i++) {
       const blob = new Blob([medias[i]], {type: 'image/*'})
@@ -30,7 +31,7 @@ export default (props) => {
     await props.api.postPost(
       content,
       isPublic,
-      actualCircleNames,
+      actualCircleIds,
       props.resharePostData === null ? resharableToggleChecked : true,
       props.resharePostData === null ? null : props.resharePostData.id,
       props.resharePostData === null ? mediaData : []
@@ -137,15 +138,15 @@ export default (props) => {
           options={
             [{key: 'public', text: '🌏 Public', value: true}].concat(
               props.circles.map(circle => {
-                const {name} = circle
-                return {key: name, text: `⭕ ${name}`, value: name}
+                const {name, id} = circle
+                return {key: name, text: `⭕ ${name}`, value: id}
               })
             )
           }
-          value={circleNames}
+          value={circleIds}
           onChange={(e, {value}) => {
             e.preventDefault();
-            updateCircleNames(value)
+            updateCircleIds(value)
           }}
           fluid multiple selection
         />

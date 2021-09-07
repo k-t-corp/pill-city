@@ -36,11 +36,11 @@ class Circles(Resource):
         user = find_user(user_id)
 
         args = circle_parser.parse_args()
-        circle_name = args['name']
+        name = args['name']
 
-        circle_id = create_circle(user, circle_name)
+        circle_id = create_circle(user, name)
         if not circle_id:
-            return {'msg': f'Circle name {circle_name} is already taken'}, 409
+            return {'msg': f'Circle name {name} is already taken'}, 409
         return {'id': circle_id}, 201
 
 

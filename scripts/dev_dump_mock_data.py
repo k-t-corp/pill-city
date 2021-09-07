@@ -47,10 +47,10 @@ class User(object):
                 'file': f
             })
 
-    def create_circle(self, circle_name: str):
+    def create_circle(self, name: str):
         self._raise_on_unauthenticated()
         return self.sess.post(f'/api/circles', data={
-            'name': circle_name
+            'name': name
         }).json()['id']
 
     def add_user_to_circle(self, circle_id: str, member_user_id: str):

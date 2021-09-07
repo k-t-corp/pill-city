@@ -9,11 +9,13 @@ export default (props) => {
     const circle = props.circleData[i]
     circles.push(
       <DroppableBoard
-      key={i}
-      circleName={circle.name}
-      members={circle.members}
-      api={props.api}
-      />)
+        key={i}
+        circleId={circle.id}
+        circleName={circle.name}
+        members={circle.members}
+        api={props.api}
+      />
+    )
   }
   return (
     <div className="circle-boards-wrapper">
