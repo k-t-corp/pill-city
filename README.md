@@ -41,4 +41,4 @@ make test
 ```
 
 ## Security
-Please send security findings to [`security@ktachibana.party`](mailto:security@ktachibana.party). I'll personally give you a some dollars.
+Please send security findings to [`security@ktachibana.party`](mailto:security@ktachibana.party). If verified I'll personally give you some dollars.
