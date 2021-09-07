@@ -14,6 +14,7 @@ from mini_gplus.utils.now_ms import now_ms
 from .me import user_fields
 from .upload_to_s3 import upload_to_s3
 from .pagination import pagination_parser
+from .mention import check_mentioned_user_ids
 
 MaxPostMediaCount = 4
 PostMediaUrlExpireSeconds = 900
@@ -138,6 +139,16 @@ post_fields = {
 }
 
 
+post_parser = reqparse.RequestParser()
+post_parser.add_argument('content', type=str, required=True)
+post_parser.add_argument('is_public', type=bool, required=True)
+post_parser.add_argument('circle_ids', type=str, action="append", default=[])
+post_parser.add_argument('reshareable', type=bool, required=True)
+post_parser.add_argument('reshared_from', type=str, required=False)
+post_parser.add_argument('media_object_names', type=str, action="append", default=[])
+post_parser.add_argument('mentioned_user_ids', type=str, action='append', default=[])
+
+
 class Posts(Resource):
     @jwt_required()
     def post(self):
@@ -182,7 +193,8 @@ class Posts(Resource):
             circles=circles,
             reshareable=args['reshareable'],
             reshared_from=reshared_from_post,
-            media_list=media_objects
+            media_list=media_objects,
+            mentioned_users=check_mentioned_user_ids(args['mentioned_user_ids'])
         )
         if not post_id:
             return {"msg": f"Not allowed to reshare post {reshared_from}"}, 403
@@ -213,15 +225,6 @@ class PostMedia(Resource):
             media_object_names.append(media_object.id)
 
         return media_object_names, 201
-
-
-post_parser = reqparse.RequestParser()
-post_parser.add_argument('content', type=str, required=True)
-post_parser.add_argument('is_public', type=bool, required=True)
-post_parser.add_argument('circle_ids', type=str, action="append", default=[])
-post_parser.add_argument('reshareable', type=bool, required=True)
-post_parser.add_argument('reshared_from', type=str, required=False)
-post_parser.add_argument('media_object_names', type=str, action="append", default=[])
 
 
 class Home(Resource):

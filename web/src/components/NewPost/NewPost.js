@@ -6,6 +6,7 @@ import parseContent from "../../parseContent";
 import FormData from "form-data";
 import MediaPreview from "../MediaPreview/MediaPreview";
 import {useMediaQuery} from "react-responsive";
+import parseMentioned from "../../parseMentioned";
 
 export default (props) => {
   const [content, updateContent] = useState("")
@@ -34,7 +35,8 @@ export default (props) => {
       actualCircleIds,
       props.resharePostData === null ? resharableToggleChecked : true,
       props.resharePostData === null ? null : props.resharePostData.id,
-      props.resharePostData === null ? mediaData : []
+      props.resharePostData === null ? mediaData : [],
+      parseMentioned(content)
     );
     window.location.reload();
   }

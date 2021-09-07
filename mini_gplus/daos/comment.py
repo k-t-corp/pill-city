@@ -4,15 +4,17 @@ from mini_gplus.utils.make_uuid import make_uuid
 from .exceptions import UnauthorizedAccess
 from .post import sees_post
 from .notification import create_notification
+from .mention import mention
 
 
-def create_comment(self, content, parent_post):
+def create_comment(self, content, parent_post, mentioned_users):
     """
     Create a comment for the user
 
     :param (User) self: The acting user
     :param (str) content: the content
     :param (Post) parent_post: the post that this comment is attached to
+    :param (List[User]) mentioned_users: list of mentioned users
     :return (str) ID of the new comment
     :raise (UnauthorizedAccess) when access is unauthorized
     """
@@ -39,12 +41,18 @@ def create_comment(self, content, parent_post):
             owner=parent_post.author
         )
 
+        mention(
+            self,
+            notified_href=new_comment.make_href(parent_post),
+            mentioned_users=mentioned_users
+        )
+
         return str(new_comment.eid)
     else:
         raise UnauthorizedAccess()
 
 
-def create_nested_comment(self, content, parent_comment, parent_post):
+def create_nested_comment(self, content, parent_comment, parent_post, mentioned_users):
     """
     Create a nested comment for the user
 
@@ -52,6 +60,7 @@ def create_nested_comment(self, content, parent_comment, parent_post):
     :param (str) content: the content
     :param (Comment) parent_comment: the comment that this nested comment is attached to
     :param (Post) parent_post: the post that this comment is attached to
+    :param (List[User]) mentioned_users: list of mentioned users
     :return (str) ID of the new comment
     :raise (UnauthorizedAccess) when access is unauthorized
     """
@@ -72,6 +81,12 @@ def create_nested_comment(self, content, parent_comment, parent_post):
             notifying_action=NotifyingAction.Comment,
             notified_href=parent_comment.make_href(parent_post),
             owner=parent_comment.author
+        )
+
+        mention(
+            self,
+            notified_href=new_comment.make_href(parent_post),
+            mentioned_users=mentioned_users
         )
 
         return str(new_comment.eid)

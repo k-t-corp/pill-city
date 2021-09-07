@@ -127,7 +127,7 @@ export default class Api {
     return res.data
   }
 
-  async postPost(content, isPublic, circleIds, reshareable, resharedFrom, mediaData) {
+  async postPost(content, isPublic, circleIds, reshareable, resharedFrom, mediaData, mentionedUserIds) {
     Api.throwOnUnauthorized()
     let mediaObjName = []
     if (mediaData.length !== 0) {
@@ -141,7 +141,8 @@ export default class Api {
         circle_ids: circleIds,
         reshareable: reshareable,
         reshared_from: resharedFrom,
-        media_object_names: mediaObjName
+        media_object_names: mediaObjName,
+        mentioned_user_ids: mentionedUserIds
       }
     )
     if (res.status !== 201) {
@@ -196,12 +197,13 @@ export default class Api {
     return res.data
   }
 
-  async postComment(content, postId) {
+  async postComment(content, postId, mentionedUserIds) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.post(
       `/posts/${postId}/comment`,
       {
-        content
+        content,
+        mentioned_user_ids: mentionedUserIds
       }
     )
     if (res.status !== 201) {
@@ -210,12 +212,13 @@ export default class Api {
     return null
   }
 
-  async postNestedComment(content, postId, commentId) {
+  async postNestedComment(content, postId, commentId, mentionedUserIds) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.post(
       `/posts/${postId}/comment/${commentId}/comment`,
       {
-        content
+        content,
+        mentioned_user_ids: mentionedUserIds
       }
     )
     if (res.status !== 200) {

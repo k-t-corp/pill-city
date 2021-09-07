@@ -98,7 +98,7 @@ def _sign_in():
 def check_user_id(user_id):
     if len(user_id) > 15:
         return False
-    if not re.match("^[A-Za-z0-9_-]*$", user_id):
+    if not re.match("^[A-Za-z0-9_-]+$", user_id):
         return False
     return True
 

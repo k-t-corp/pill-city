@@ -25,7 +25,7 @@ class PaginationTest(BaseTestCase):
         user1 = find_user('user1')
         all_paged_posts = []
         for i in range(4):
-            all_paged_posts.append(get_post(create_post(user1, str(i), True, [], False, None, [])))
+            all_paged_posts.append(get_post(create_post(user1, str(i), True, [], False, None, [], [])))
         all_paged_posts = list(reversed(all_paged_posts))
 
         self.assertEqual(all_paged_posts, get_page(Post, {}, self._post_filter_noop, None, 5))
@@ -40,9 +40,9 @@ class PaginationTest(BaseTestCase):
         all_paged_posts = []
         for i in range(8):
             if i % 2 == 0:
-                all_paged_posts.append(get_post(create_post(user1, str(i), True, [], False, None, [])))
+                all_paged_posts.append(get_post(create_post(user1, str(i), True, [], False, None, [], [])))
             else:
-                create_post(user2, str(i), True, [], False, None, [])
+                create_post(user2, str(i), True, [], False, None, [], [])
         all_paged_posts = list(reversed(all_paged_posts))
 
         self.assertEqual(all_paged_posts, get_page(Post, {}, self._post_filter_sees_on_home(user1), None, 5))
@@ -54,7 +54,7 @@ class PaginationTest(BaseTestCase):
         user1 = find_user('user1')
         all_paged_posts = []
         for i in range(9):
-            all_paged_posts.append(get_post(create_post(user1, str(i), True, [], False, None, [])))
+            all_paged_posts.append(get_post(create_post(user1, str(i), True, [], False, None, [], [])))
         all_paged_posts = list(reversed(all_paged_posts))
 
         self.assertEqual(all_paged_posts[: 5], get_page(Post, {}, self._post_filter_noop, None, 5))
@@ -69,9 +69,9 @@ class PaginationTest(BaseTestCase):
         all_paged_posts = []
         for i in range(18):
             if i % 2 == 0:
-                all_paged_posts.append(get_post(create_post(user1, str(i), True, [], False, None, [])))
+                all_paged_posts.append(get_post(create_post(user1, str(i), True, [], False, None, [], [])))
             else:
-                create_post(user2, str(i), True, [], False, None, [])
+                create_post(user2, str(i), True, [], False, None, [], [])
         all_paged_posts = list(reversed(all_paged_posts))
 
         self.assertEqual(all_paged_posts[: 5], get_page(Post, {}, self._post_filter_sees_on_home(user1), None, 5))
@@ -85,7 +85,7 @@ class PaginationTest(BaseTestCase):
         all_paged_posts = []
         with freeze_time():
             for i in range(9):
-                all_paged_posts.append(get_post(create_post(user1, str(i), True, [], False, None, [])))
+                all_paged_posts.append(get_post(create_post(user1, str(i), True, [], False, None, [], [])))
         all_paged_posts = list(reversed(all_paged_posts))
 
         self.assertEqual(all_paged_posts[: 5], get_page(Post, {}, self._post_filter_noop, None, 5))
@@ -101,9 +101,9 @@ class PaginationTest(BaseTestCase):
         with freeze_time():
             for i in range(18):
                 if i % 2 == 0:
-                    all_paged_posts.append(get_post(create_post(user1, str(i), True, [], False, None, [])))
+                    all_paged_posts.append(get_post(create_post(user1, str(i), True, [], False, None, [], [])))
                 else:
-                    create_post(user2, str(i), True, [], False, None, [])
+                    create_post(user2, str(i), True, [], False, None, [], [])
         all_paged_posts = list(reversed(all_paged_posts))
 
         self.assertEqual(all_paged_posts[: 5], get_page(Post, {}, self._post_filter_sees_on_home(user1), None, 5))
