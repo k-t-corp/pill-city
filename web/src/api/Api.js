@@ -413,4 +413,25 @@ export default class Api {
     }
     return res.data
   }
+
+  async createInvitationCode() {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.post(
+      `/invitationCode`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+  }
+
+  async getInvitationCodes() {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.get(
+      `/invitationCodes`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
 }

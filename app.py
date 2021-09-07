@@ -19,6 +19,7 @@ from mini_gplus.resources.reactions import Reactions, Reaction
 from mini_gplus.resources.circles import Circles, CircleMember, Circle
 from mini_gplus.resources.followings import Following
 from mini_gplus.resources.notifications import Notifications, NotificationRead, NotificationsAllRead
+from mini_gplus.resources.admin import InvitationCode, InvitationCodes
 
 # sentry
 if os.getenv('SENTRY_DSN'):
@@ -61,6 +62,12 @@ CORS(app, resources={r"/api/*": {"origins": "*"}})
 populate_user_cache()
 
 isOpenRegistration = os.environ.get('OPEN_REGISTRATION', 'false') == 'true'
+print(f"isOpenRegistration={isOpenRegistration}")
+
+
+@app.route('/', methods=['GET'])
+def _root():
+    return 'pill.city api'
 
 
 # auth
@@ -157,6 +164,9 @@ api.add_resource(Following, '/api/following/<string:following_user_id>')
 api.add_resource(NotificationRead, '/api/notification/<string:notification_id>/read')
 api.add_resource(NotificationsAllRead, '/api/notifications/read')
 api.add_resource(Notifications, '/api/notifications')
+
+api.add_resource(InvitationCodes, '/api/invitationCodes')
+api.add_resource(InvitationCode, '/api/invitationCode')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
