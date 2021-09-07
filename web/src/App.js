@@ -21,6 +21,7 @@ import withPostId from "./hoc/withPostId";
 import Settings from './pages/Settings/Settings'
 import Post from './pages/Post/Post'
 import Notifications from "./pages/Notifications/Notifications";
+import Admin from "./pages/Admin/Admin";
 
 const api = new Api(process.env.REACT_APP_API_ENDPOINT)
 
@@ -69,6 +70,10 @@ export default class App extends Component {
           <Route
             path="/settings"
             component={withApi(withAuthRedirect(withNavBar(Settings, '/settings')), api)}
+          />
+          <Route
+            path="/admin"
+            component={withApi(withAuthRedirect(Admin, '/admin'), api)}
           />
           <Redirect to='/'/>
         </Switch>

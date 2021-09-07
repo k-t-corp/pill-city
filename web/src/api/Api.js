@@ -25,18 +25,29 @@ export default class Api {
     }
   }
 
-  async signUp(id, password) {
+  async signUp(id, password, invitationCode) {
     const res = await this.axiosInstance.post(
       `/signUp`,
       {
         'id': id,
-        'password': password
+        'password': password,
+        'invitation_code': invitationCode
       }
     )
     if (res.status !== 201) {
       throw new ApiError(res.status)
     }
     return null
+  }
+
+  async isOpenRegistration() {
+    const res = await this.axiosInstance.get(
+      `/isOpenRegistration`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data.is_open_registration
   }
 
   async signIn(id, password) {
@@ -396,6 +407,28 @@ export default class Api {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.put(
       `/notifications/read`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
+
+  async createInvitationCode() {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.post(
+      `/invitationCode`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
+
+  async getInvitationCodes() {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.get(
+      `/invitationCodes`
     )
     if (res.status !== 200) {
       throw new ApiError(res.status)
