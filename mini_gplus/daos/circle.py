@@ -1,5 +1,6 @@
 from mongoengine import NotUniqueError
 from mini_gplus.models import Circle
+from mini_gplus.utils.make_uuid import make_uuid
 from .user import User
 from .exceptions import UnauthorizedAccess
 
@@ -23,31 +24,29 @@ def create_circle(self, name):
         If False, name is already taken
     """
     new_circle = Circle()
+    new_circle.eid = make_uuid()
     new_circle.owner = self.id
     new_circle.name = name
     try:
         new_circle.save()
     except NotUniqueError:
         return False
-    return True
+    return new_circle.eid
 
 
-def find_circle(self, name):
+def find_circle(self, circle_id):
     """
     Find a user's circle
 
     :param (User) self: The acting user
-    :param (str) name: name of the circle
+    :param (str) circle_id: ID of the circle
     :return (Circle|bool): the circle object if the circle is found
         If not found, returns False
     """
-    circles = Circle.objects(owner=self, name=name)
+    circles = Circle.objects(owner=self, eid=circle_id)
     if not circles:
         return False
-    elif len(circles) == 1:
-        return circles[0]
-    else:
-        raise RuntimeError(f'More than one circle for circle {name} found!')
+    return circles[0]
 
 
 def toggle_member(self, circle, toggled_user):
@@ -92,3 +91,16 @@ def check_member(self, user):
     :return (bool): whether the user is in the circle
     """
     return len(list(filter(lambda member: member.id == user.id, self.members))) != 0
+
+
+def backfill_circles_eid():
+    backfill_count = 0
+    for n in Circle.objects():
+        if not n.eid:
+            n.eid = make_uuid()
+            n.save()
+            backfill_count += 1
+    if backfill_count != 0:
+        print(f'Backfilled {backfill_count} Circle with eid')
+    else:
+        print("No Circle was backfilled with eid. You can remove backfill code and required the field now!")

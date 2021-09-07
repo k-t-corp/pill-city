@@ -21,11 +21,11 @@ export default (props) => {
   const [deleteCircleClicked, updateDeleteCircleClicked] = useState(false)
 
   let animationIntervalId = null;
-  const circleAnimation = (circleName, card_id, avatar_url) => {
-    const avatar = document.getElementById(`${circleName}-temp-card-avatar`)
+  const circleAnimation = (circleId, card_id, avatar_url) => {
+    const avatar = document.getElementById(`${circleId}-temp-card-avatar`)
     avatar.src = avatar_url
 
-    let elem = document.getElementById(`${circleName}-temp-card`);
+    let elem = document.getElementById(`${circleId}-temp-card`);
     let degree = 1;
     let stepCount = 0;
     let finalDegree = 360 - finalAnglePerCardAsDegree * (members.length + 1)
@@ -61,27 +61,27 @@ export default (props) => {
     }
 
     if (scaleUp) {
-      document.getElementById(`${props.circleName}-inner-circle`).animate(
+      document.getElementById(`${props.circleId}-inner-circle`).animate(
         [
           {transform: `scale(${innerCirclePercentage})`},
           {transform: 'scale(1)'},
         ], options);
     } else {
-      document.getElementById(`${props.circleName}-inner-circle`).animate(
+      document.getElementById(`${props.circleId}-inner-circle`).animate(
         [
           {transform: 'scale(1)'},
           {transform: `scale(${innerCirclePercentage})`},
         ], options);
     }
   }
-  const tempCard = (circleName) => {
+  const tempCard = (circleId) => {
     const currentCardAngleAsDegree = 0
     const top = Math.abs((innerRadius + cardRadius) * Math.cos(currentCardAngleAsDegree * 3.14 / 180) - outerRadius + cardRadius)
     const left = Math.abs((innerRadius + cardRadius) * Math.sin(currentCardAngleAsDegree * 3.14 / 180) - outerRadius + cardRadius)
     return (
       <div
         key="temp-card"
-        id={`${circleName}-temp-card`}
+        id={`${circleId}-temp-card`}
         className="droppable-board-member-card-wrapper temp-card"
         style={{
           top: `${top + circleMargin}px`,
@@ -91,21 +91,21 @@ export default (props) => {
           visibility: "hidden",
         }}>
         <img
-          id={`${circleName}-temp-card-avatar`}
+          id={`${circleId}-temp-card-avatar`}
           className="droppable-board-member-card-avatar-img"
           alt=""
         />
       </div>
     )
   }
-  const circleColor = (circleName) => {
+  const circleColor = (circleId) => {
     const colorMap = [
       "rgb(133, 173, 255)", "rgb(255,133,133)", "rgb(190,133,255)", "rgb(255,186,133)",
       "rgb(255,227,97)", "rgb(133,201,188)", "rgb(158,238,158)", "rgb(77,170,255)",
     ] // Color for all inner circles
     const colorCount = colorMap.length
     let hashValue = 0
-    for (let i = 0; i < circleName.length; i++) hashValue += circleName.charCodeAt(i);
+    for (let i = 0; i < circleId.length; i++) hashValue += circleId.charCodeAt(i);
 
     return colorMap[hashValue % colorCount]
   }
@@ -114,9 +114,9 @@ export default (props) => {
     const card_id = e.dataTransfer.getData("card_id")
     const avatarUrl = e.dataTransfer.getData("avatar_url")
     try {
-      await props.api.addToCircle(props.circleName, card_id)
+      await props.api.addToCircle(props.circleId, card_id)
       innerCircleScale(false, 0)
-      circleAnimation(props.circleName, card_id, avatarUrl)
+      circleAnimation(props.circleId, card_id, avatarUrl)
       innerCircleScale(true, 900)
     } catch (e) {
       if (e.response.status === 409) {
@@ -184,7 +184,7 @@ export default (props) => {
         <UserProfileCard
           key={i}
           user={member}
-          circleName={props.circleName}
+          circleId={props.circleId}
           api={props.api}
         />)
     }
@@ -206,7 +206,7 @@ export default (props) => {
       updateDeleteCircleClicked(true)
     } else {
       // actually delete the circle
-      await props.api.deleteCircle(props.circleName)
+      await props.api.deleteCircle(props.circleId)
       window.location.reload()
     }
   }
@@ -243,12 +243,12 @@ export default (props) => {
         onClick={onClick}
       >
         <div className="droppable-board-member-cards-wrapper">
-          {tempCard(props.circleName)}
+          {tempCard(props.circleId)}
           {memberCards()}
         </div>
         <div className="droppable-board-inner-circle"
-             id={`${props.circleName}-inner-circle`}
-             style={{backgroundColor: circleColor(props.circleName)}}>
+             id={`${props.circleId}-inner-circle`}
+             style={{backgroundColor: circleColor(props.circleId)}}>
           <div className="droppable-board-inner-circle-name">
             {props.circleName}
           </div>
