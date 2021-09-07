@@ -44,10 +44,12 @@ export default class SignUp extends Component {
   }
 
   handleSubmit = (inputForm) => {
+    const idRegex = /^[a-z0-9_-]+$/i;
     const {id, password, confirmPassword, invitationCode} = inputForm
-    if (id === undefined || id.trim() === "") {
+    if (id === undefined || id.trim() === "" || id.trim().length > 15 || !id.trim().match(idRegex)) {
       this.refs.form.updateInputsWithError({
-        'id': 'Please enter id',
+        'id': 'Please enter a valid id. An valid id is max 15 characters long, and only consists of numbers, ' +
+          'English letters, underscores and dashes.',
       })
       return
     }
@@ -69,7 +71,7 @@ export default class SignUp extends Component {
     }
 
     this.setState({'loading': true})
-    this.props.api.signUp(id, password, invitationCode)
+    this.props.api.signUp(id.trim(), password, invitationCode)
       .then(() => {
         this.setState({'redirectToSignIn': true})
       })

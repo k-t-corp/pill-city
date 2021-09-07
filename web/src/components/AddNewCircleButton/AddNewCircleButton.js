@@ -21,11 +21,12 @@ export default (props) => {
   }
 
   const createCircleButtonOnClick = async () => {
-    const circleName = document.getElementById("new-circle-name-input").value
+    const circleId = document.getElementById("new-circle-name-input").value
     try {
-      await props.api.createCircle(circleName)
+      await props.api.createCircle(circleId)
       window.location.reload()
     } catch (e) {
+      console.error(e)
       let errorMessage = ""
       if (e.response.status === 409) {
         errorMessage = "You've used this name before. Please try another name >_<"

@@ -127,7 +127,7 @@ export default class Api {
     return res.data
   }
 
-  async postPost(content, isPublic, circlesNames, reshareable, resharedFrom, mediaData) {
+  async postPost(content, isPublic, circleIds, reshareable, resharedFrom, mediaData) {
     Api.throwOnUnauthorized()
     let mediaObjName = []
     if (mediaData.length !== 0) {
@@ -138,7 +138,7 @@ export default class Api {
       {
         content,
         is_public: isPublic,
-        circle_names: circlesNames,
+        circle_ids: circleIds,
         reshareable: reshareable,
         reshared_from: resharedFrom,
         media_object_names: mediaObjName
@@ -235,10 +235,10 @@ export default class Api {
     return res.data
   }
 
-  async getCircle(circleName) {
+  async getCircle(circleId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
-      `/circle/${circleName}`
+      `/circle/${circleId}`
     )
     if (res.status !== 200) {
       throw new ApiError(res.status)
@@ -249,7 +249,10 @@ export default class Api {
   async createCircle(name) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.post(
-      `/circle/${name}`
+      `/circles`,
+      {
+        name
+      }
     )
     if (res.status !== 201) {
       throw new ApiError(res.status)
@@ -257,10 +260,10 @@ export default class Api {
     return null
   }
 
-  async deleteCircle(name) {
+  async deleteCircle(circleId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.delete(
-      `/circle/${name}`
+      `/circle/${circleId}`
     )
     if (res.status !== 200) {
       throw new ApiError(res.status)
@@ -268,10 +271,10 @@ export default class Api {
     return null
   }
 
-  async addToCircle(circleName, memberUserId) {
+  async addToCircle(circleId, memberUserId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.post(
-      `/circle/${circleName}/membership/${memberUserId}`
+      `/circle/${circleId}/membership/${memberUserId}`
     )
     if (res.status !== 200) {
       throw new ApiError(res.status)
@@ -279,10 +282,10 @@ export default class Api {
     return res.data
   }
 
-  async removeFromCircle(circleName, memberUserId) {
+  async removeFromCircle(circleId, memberUserId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.delete(
-      `/circle/${circleName}/membership/${memberUserId}`
+      `/circle/${circleId}/membership/${memberUserId}`
     )
     if (res.status !== 200) {
       throw new ApiError(res.status)
@@ -366,7 +369,7 @@ export default class Api {
     }
   }
 
-  async updateProfilePic(newProfilePic, userId) {
+  async updateProfilePic(newProfilePic) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.patch(
       `/me/profilePic/${newProfilePic}`

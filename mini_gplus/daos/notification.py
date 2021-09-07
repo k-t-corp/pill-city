@@ -94,4 +94,4 @@ def backfill_notifications_eid():
     if backfill_count != 0:
         print(f'Backfilled {backfill_count} Notification with eid')
     else:
-        print("No Post was backfilled with eid. You can remove backfill code and required the field now!")
+        print("No Notification was backfilled with eid. You can remove backfill code and required the field now!")

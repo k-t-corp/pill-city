@@ -1,4 +1,5 @@
 import os
+import re
 import sentry_sdk
 from os import urandom
 from pymongo.uri_parser import parse_uri
@@ -94,6 +95,14 @@ def _sign_in():
     return jsonify(access_token=access_token), 200
 
 
+def check_user_id(user_id):
+    if len(user_id) > 15:
+        return False
+    if not re.match("^[A-Za-z0-9_-]*$", user_id):
+        return False
+    return True
+
+
 @app.route('/api/signUp', methods=['POST'])
 def _sign_up():
     """
@@ -103,6 +112,8 @@ def _sign_up():
     password = request.json.get('password', None)
     if not user_id:
         return jsonify({"message": {"id": "id is required"}}), 400
+    if not check_user_id(user_id):
+        return jsonify({"message": {"id": "illegal id"}}), 400
     if not password:
         return jsonify({"message": {"password": "password is required"}}), 400
     if not isOpenRegistration:
@@ -159,8 +170,8 @@ api.add_resource(Posts, '/api/posts')
 api.add_resource(Post, '/api/post/<string:post_id>')
 
 api.add_resource(Circles, '/api/circles')
-api.add_resource(CircleMember, '/api/circle/<string:circle_name>/membership/<string:member_user_id>')
-api.add_resource(Circle, '/api/circle/<string:circle_name>')
+api.add_resource(CircleMember, '/api/circle/<string:circle_id>/membership/<string:member_user_id>')
+api.add_resource(Circle, '/api/circle/<string:circle_id>')
 
 api.add_resource(Following, '/api/following/<string:following_user_id>')
 
