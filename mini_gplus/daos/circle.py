@@ -83,7 +83,6 @@ def delete_circle(self, circle):
         raise UnauthorizedAccess()
 
 
-@timer
 def check_member(self, user):
     """
     Check whether a user is in the circle

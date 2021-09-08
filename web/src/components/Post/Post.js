@@ -13,7 +13,7 @@ export default (props) => {
   const [showEmojiPicker, updateShowEmojiPicker] = useState(false)
   const [reactionData, setReactionData] = useState(parseReactionData(props.data.reactions))
   const resharedElem = (resharedFrom) => {
-    if (resharedFrom.id === null) {
+    if (resharedFrom === null) {
       return null
     }
     return (
@@ -303,7 +303,7 @@ export default (props) => {
   }
 
   const reshareButtonOnClick = () => {
-    if (props.data.reshared_from.id === null) {
+    if (props.data.reshared_from === null) {
       props.updateResharePostData(props.data)
     } else {
       props.updateResharePostData(props.data.reshared_from)

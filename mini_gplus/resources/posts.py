@@ -110,7 +110,7 @@ post_fields = {
         'author': fields.Nested(user_fields),
         'content': fields.String,
         'media_urls': MediaUrls(attribute='media_list'),
-    }),
+    }, allow_null=True),
     'media_urls': MediaUrls(attribute='media_list'),
     'reactions': fields.List(fields.Nested({
         'id': fields.String(attribute='eid'),

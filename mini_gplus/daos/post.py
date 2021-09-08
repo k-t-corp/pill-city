@@ -80,7 +80,6 @@ def get_post(post_id):
     return Post.objects.get(eid=post_id)
 
 
-@timer
 def owns_post(self, post):
     """
     Whether the user owns a post
@@ -92,7 +91,6 @@ def owns_post(self, post):
     return self.id == post.author.id
 
 
-@timer
 def sees_post(self, post, context_home_or_profile):
     """
     Whether the user can see a post
