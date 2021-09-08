@@ -15,6 +15,7 @@ class User(object):
             if str(sc).startswith('4') or str(sc).startswith('5'):
                 print(r.text)
             r.raise_for_status()
+
         self.sess.hooks = {
             'response': res_hook
         }
@@ -81,7 +82,7 @@ class User(object):
             circle_ids = []
         if mentioned_user_ids is None:
             mentioned_user_ids = []
-        post_id = self.sess.post(f'/api/posts', data={
+        post_id = self.sess.post(f'/api/posts', json={
             'content': content,
             'is_public': is_public,
             'circle_ids': circle_ids,
@@ -122,6 +123,14 @@ class User(object):
         })
 
 
+def signup_user(user_id, avatar):
+    user = User(user_id)
+    user.sign_up()
+    user.sign_in()
+    user.update_avatar(avatar)
+    return user
+
+
 def main():
     # Drop everything in mino
     s3 = boto3.resource(
@@ -142,111 +151,81 @@ def main():
 
     print("Dumping dummy data")
     # Sign up some users
-    kt = User('kt'); kt.sign_up(); kt.sign_in(); kt.update_avatar('kt.jpeg')
-    ika = User('ika'); ika.sign_up(); ika.sign_in(); ika.update_avatar('ika.jpeg')
-    innkuika = User('innkuika'); innkuika.sign_up(); innkuika.sign_in(); innkuika.update_avatar('innkuika.jpg')
-    ikayaki = User('ikayaki'); ikayaki.sign_up(); ikayaki.sign_in(); ikayaki.update_avatar('ikayaki.jpg')
-    ikayaro = User('ikayaro'); ikayaro.sign_up(); ikayaro.sign_in(); ikayaro.update_avatar('ikayaro.png')
-    ika2 = User('ika-a_a-a__a'); ika2.sign_up(); ika2.sign_in(); ika2.update_avatar('ika2.png')
-    billy = User('billy'); billy.sign_up(); billy.sign_in(); billy.update_avatar('billy.jpeg')
-    van = User('van'); van.sign_up(); van.sign_in(); van.update_avatar('van.png')
-    xiaolaba = User('xiaolaba'); xiaolaba.sign_up(); xiaolaba.sign_in(); xiaolaba.update_avatar('xiaolaba.png')
-    buki = User('buki'); buki.sign_up(); buki.sign_in(); buki.update_avatar('buki.jpg')
-    mawei = User('mawei'); mawei.sign_up(); mawei.sign_in(); mawei.update_avatar('mawei.jpg')
-    duff = User('duff'); duff.sign_up(); duff.sign_in(); duff.update_avatar('duff.jpeg')
-    kele = User('kele'); kele.sign_up(); kele.sign_in(); kele.update_avatar('kele.jpg')
-    ahuhu = User('ahuhu'); ahuhu.sign_up(); ahuhu.sign_in()
-    senpai = User('114514'); senpai.sign_up(); senpai.sign_in(); senpai.update_avatar('senpai.png')
-    sirjie = User('sirjie'); sirjie.sign_up(); sirjie.sign_in(); sirjie.update_avatar('sirjie.bmp')
+    kt = signup_user('kt', 'kt.jpeg')
+    ika = signup_user('ika', 'ika.jpeg')
+    soybean = signup_user('soybean', 'soybean.png')
+    xiaolaba = signup_user('xiaolaba', 'xiaolaba.png')
+    buki = signup_user('buki', 'buki.png')
+    kyo = signup_user('kyo', 'kyo.png')
+    duff = signup_user('duff', 'duff.jpg')
+    kele = signup_user('kele', 'kele.jpg')
+    ahuhu = signup_user('ahuhu', 'ahuhu.png')
+    luxiyuan = signup_user('luxiyuan', 'luxiyuan.jpeg')
+    roddyzhang = signup_user('roddyzhang', 'roddyzhang.png')
+    mawei = signup_user('mawei', 'mawei.jpg')
+    horo = signup_user('horo', 'horo.png')
+    everybody = ['kt', 'soybean', 'xiaolaba', 'buki', 'kyo', 'duff', 'kele', 'ahuhu', 'luxiyuan', 'roddyzhang', 'mawei',
+                 'horo']
+    everybody_obj = [kt, soybean, xiaolaba, buki, kyo, duff, kele, ahuhu, luxiyuan, roddyzhang, mawei, horo, ika]
 
     # Create some circles
-    kt_ika_circle_id = kt.create_circle('ika')
-    kt_gachi_circle_id = kt.create_circle('gachi')
     kt_gplus_circle_id = kt.create_circle('g+')
+    ahuhu_limited_circle_id = ahuhu.create_circle('limited')
 
     # Add people to circles
-    kt.add_user_to_circle(kt_ika_circle_id, 'ika')
-    kt.add_user_to_circle(kt_ika_circle_id, 'innkuika')
-    kt.add_user_to_circle(kt_ika_circle_id, 'ikayaki')
-    kt.add_user_to_circle(kt_ika_circle_id, 'ikayaro')
-    kt.add_user_to_circle(kt_ika_circle_id, 'ika-a_a-a__a')
-    kt.add_user_to_circle(kt_gachi_circle_id, 'billy')
-    kt.add_user_to_circle(kt_gplus_circle_id, 'billy')
-    kt.add_user_to_circle(kt_gachi_circle_id, 'van')
-    kt.add_user_to_circle(kt_ika_circle_id, 'van')
-    kt.add_user_to_circle(kt_gplus_circle_id, 'xiaolaba')
-    kt.add_user_to_circle(kt_gplus_circle_id, 'buki')
-    kt.add_user_to_circle(kt_gplus_circle_id, 'mawei')
-    kt.add_user_to_circle(kt_gplus_circle_id, 'duff')
-    kt.add_user_to_circle(kt_gplus_circle_id, 'kele')
-    kt.add_user_to_circle(kt_gplus_circle_id, 'ahuhu')
+    ahuhu.add_user_to_circle(ahuhu_limited_circle_id, 'ika')
+    ahuhu.add_user_to_circle(ahuhu_limited_circle_id, 'kele')
+    ahuhu.add_user_to_circle(ahuhu_limited_circle_id, 'duff')
 
     # Add some followings
-    ika.follow('kt')
-    kt.follow('ika')
-    van.follow('kt')
-    xiaolaba.follow('kt')
-    kt.follow('xiaolaba')
-    senpai.follow('kt')
-    sirjie.follow('kt')
-    kt.follow('sirjie')
+    for user in everybody:
+        ika.follow(user)
 
     # Create some posts
-    kt.create_post('rua', is_public=True)
-    kt.create_post(' _Hello, World!_ ', is_public=True)
-    kt_ika_post = kt.create_post('Ika!1!!!! @ika', is_public=False, circle_ids=[kt_ika_circle_id], mentioned_user_ids=['ika'])
-    ika.create_post('iPhone', is_public=True, media_filenames=['iphone.jpeg'])
-    ika.create_post(' *iPad* ', is_public=True, media_filenames=['ipad.jpeg'])
-    ika.create_post('MacBook Pro', is_public=True, media_filenames=['mbp.jpeg'])
-    ika.create_post('MacBook Air', is_public=True, media_filenames=['mba.jpeg'])
-    kt.create_post('BOY NEXT DOOR. SLABU GET UR AS BACK HERE. HENG HENG HENG AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
-                   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
-                   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', is_public=False,
-                   circle_ids=[kt_gachi_circle_id])
-    kt.create_post('鬼城！！！', is_public=False, circle_ids=[kt_gplus_circle_id])
     with open('./scripts/xss.txt') as f:
         kt.create_post(f.read(), is_public=True, circle_ids=[kt_gplus_circle_id])
-    ika.create_post('iMac', is_public=True, media_filenames=['imac.jpg'])
-    ika.create_post('AirPods Pro', is_public=True, media_filenames=['app.jpeg'])
-
-    senpai.create_post('henghenghengaaaa', is_public=True)
-    senpai.create_post('kouchaiidesuka', is_public=True)
-    sirjie_post_id = sirjie.create_post('我家呢還 *蠻大* 的', is_public=True, reshareable=True, media_filenames=[
-        'jie1.png', 'jie2.jpg', 'jie3.jpg'
-    ])
-    sirjie.create_post('拿都可以拿', is_public=True)
-    sirjie.create_post('你看這個彬彬才喝幾罐就醉了', is_public=True)
-    senpai.create_post('114514', is_public=True)
-    sirjie.create_post('這麼說你很勇ho', is_public=True)
-    sirjie.create_post('我房裡有好康的', is_public=True)
-    sirjie.create_post(' -聽話！讓我看看！- ', is_public=True)
+    kt.create_post(' _Hello, World!_ ', is_public=True)
+    xiaomoyu_id = ika.create_post('大家好我是小墨魚 qwq', is_public=True)
+    ika.create_post('@buki  -叔叔快看- ', is_public=True, media_filenames=['gaygineer.jpg'], mentioned_user_ids=['buki'])
+    sizhongfangshi_id = soybean.create_post('谁告诉你连着wifi就不会耗流量了？ ！ \n\nApp的网络访问方式起码在Android就有四种，其中一种是仅使用GSM网络',
+                                            is_public=True, reshareable=True)
+    huoguomei_id = roddyzhang.create_post("打个DOTA打到一般忽然壕语文的麦克风里出现妹子催促他快点打完吃火锅， -耿耿于怀啊- \n\n -JB文必须死- ", is_public=True,
+                                          media_filenames=['huoguomei.png'])
+    heisi_id = ahuhu.create_post("啊啊啊啊啊啊啊啊啊啊啊啊", is_public=False, circle_ids=[ahuhu_limited_circle_id],
+                                 reshareable=True,
+                                 media_filenames=['heisi1.jpeg', 'heisi2.jpeg', 'heisi3.jpeg', 'heisi4.jpeg'])
+    weiji_id = horo.create_post('你这种伪基佬真淫家早该B了！@mawei ', is_public=True, mentioned_user_ids=['mawei'])
 
     # Create some reshares
-    kt.create_post('是傑哥耶！！', is_public=True, reshareable=True, reshared_from=sirjie_post_id)
+    sizhongzhuanfa_id = luxiyuan.create_post(
+        '''有一回，骚豆菊苣对我说道：“你用过Android么？”我略略点一点头。
+他说：“用过……我便考你一考。AndroidApp的网络访问方式，是怎样的？”
+我懒懒地答他道：“谁要你教，不就是wifi之类的么？”
+骚豆菊苣显出极高兴的样子，将两个指头敲着柜台，点头说：“对呀对呀！App访问网络有四种方式，你知道么？”
+我愈不耐烦了，努着嘴走远。骚豆菊苣刚用指甲蘸了酒，想在柜上画图，见我毫不热心，便又叹一口气，显出极惋惜的样子。''',
+        is_public=True, reshareable=True, reshared_from=sizhongfangshi_id)
+    kele.create_post('啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊', is_public=True, reshareable=True, reshared_from=heisi_id)
 
     # Create some reactions
-    kt.create_reaction(sirjie_post_id, '👦')
+    # kt.create_reaction(sirjie_post_id, '👦')
+    for i, user in enumerate(everybody_obj):
+        user.create_reaction(sizhongzhuanfa_id, '➕')
+        if i < 6:
+            user.create_reaction(huoguomei_id, '🔥')
+        if i < 9:
+            user.create_reaction(huoguomei_id, '➕')
+        if i < 8:
+            user.create_reaction(xiaomoyu_id, '➕')
 
     # Create some comments
-    ika_kt_ika_comment = ika.create_comment(kt_ika_post, 'rua @kt', ['kt'])
-    innkuika.create_comment(kt_ika_post, 'twitter.com/realInnkuIka')
-    innkuika.create_nested_comment(kt_ika_post, ika_kt_ika_comment, '')
-    ikayaki.create_comment(kt_ika_post, ' _twitter.com/realIkaYaki_ ')
-    ikayaki.create_nested_comment(
-        kt_ika_post,
-        ika_kt_ika_comment,
-        '@ika Innkuika is crokked!!!! Make Ika Great Again!!!!!!',
-        ['ika']
-    )
-    ikayaro.create_comment(kt_ika_post, 'twitter.com/realIkaYaro')
-    ikayaki.create_nested_comment(kt_ika_post, ika_kt_ika_comment, 'twitter.com/realIkaYaro twitter.com/realIkaYaro twi'
-                                                                   'tter.com/realIkaYaro twitter.com/realIkaYaro twitte'
-                                                                   'r.com/realIkaYaro twitter.com/realIkaYaro twitter.c'
-                                                                   'om/realIkaYaro twitter.com/realIkaYaro twitter.com/'
-                                                                   'realIkaYaro twitter.com/realIkaYaro twitter.com/rea'
-                                                                   'lIkaYaro')
-    ika2.create_comment(kt_ika_post, " -I'm 混亂邪惡- ")
-    ika2.create_nested_comment(kt_ika_post, ika_kt_ika_comment, '/profile/ika-a_a-a__a')
+    duff.create_comment(heisi_id, '啊啊啊啊啊啊啊啊啊')
+    ika.create_comment(heisi_id, '四齋蒸鵝心')
+    mawei.create_comment(weiji_id, '毛的！！')
+    weiji_comment_id = mawei.create_comment(weiji_id, '过几天我就真的要搞基了好吧！！')
+    horo.create_nested_comment(weiji_id, weiji_comment_id, '。。。')
+    horo.create_nested_comment(weiji_id, weiji_comment_id, '为啥')
+    mawei.create_nested_comment(weiji_id, weiji_comment_id, '@horo 都把人家约到家里了好吧！！', ['horo'])
+    kt.create_comment(xiaomoyu_id, '你好我是 kt')
 
 
 if __name__ == '__main__':
