@@ -1,6 +1,7 @@
 from mongoengine import NotUniqueError
 from mini_gplus.models import Circle
 from mini_gplus.utils.make_uuid import make_uuid
+from mini_gplus.utils.profiling import timer
 from .user import User
 from .exceptions import UnauthorizedAccess
 
@@ -82,6 +83,7 @@ def delete_circle(self, circle):
         raise UnauthorizedAccess()
 
 
+@timer
 def check_member(self, user):
     """
     Check whether a user is in the circle

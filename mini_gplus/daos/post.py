@@ -116,6 +116,7 @@ def sees_post(self, post, context_home_or_profile):
     return False
 
 
+@timer
 def retrieves_posts_on_home(self, from_id):
     """
     All posts that are visible to the user on home
