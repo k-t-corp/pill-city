@@ -4,7 +4,7 @@ An one-of-a-kind social network
 ## Video demo
 Here is a video demo for some of its features such as circle management, emoji reactions and post formatting
 
-![](marketing/demo720.mp4)
+https://user-images.githubusercontent.com/3515852/132497391-32cb728b-ff70-478a-a0cd-e97aa57106f1.mp4
 
 ## Development
 The project consists of an API server written in Python/Flask, and a web frontend written in JavaScript/React
