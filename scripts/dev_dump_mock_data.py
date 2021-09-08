@@ -144,52 +144,25 @@ def main():
     # Sign up some users
     kt = User('kt'); kt.sign_up(); kt.sign_in(); kt.update_avatar('kt.jpeg')
     ika = User('ika'); ika.sign_up(); ika.sign_in(); ika.update_avatar('ika.jpeg')
-    innkuika = User('innkuika'); innkuika.sign_up(); innkuika.sign_in(); innkuika.update_avatar('innkuika.jpg')
-    ikayaki = User('ikayaki'); ikayaki.sign_up(); ikayaki.sign_in(); ikayaki.update_avatar('ikayaki.jpg')
-    ikayaro = User('ikayaro'); ikayaro.sign_up(); ikayaro.sign_in(); ikayaro.update_avatar('ikayaro.png')
-    ika2 = User('ika-a_a-a__a'); ika2.sign_up(); ika2.sign_in(); ika2.update_avatar('ika2.png')
-    billy = User('billy'); billy.sign_up(); billy.sign_in(); billy.update_avatar('billy.jpeg')
-    van = User('van'); van.sign_up(); van.sign_in(); van.update_avatar('van.png')
+    soybean = User('soybean'); soybean.sign_up(); soybean.sign_in(); soybean.update_avatar('soybean.png')
     xiaolaba = User('xiaolaba'); xiaolaba.sign_up(); xiaolaba.sign_in(); xiaolaba.update_avatar('xiaolaba.png')
-    buki = User('buki'); buki.sign_up(); buki.sign_in(); buki.update_avatar('buki.jpg')
-    mawei = User('mawei'); mawei.sign_up(); mawei.sign_in(); mawei.update_avatar('mawei.jpg')
-    duff = User('duff'); duff.sign_up(); duff.sign_in(); duff.update_avatar('duff.jpeg')
+    buki = User('buki'); buki.sign_up(); buki.sign_in(); buki.update_avatar('buki.png')
+    kyo = User('kyo'); kyo.sign_up(); kyo.sign_in(); kyo.update_avatar('kyo.png')
+    duff = User('duff'); duff.sign_up(); duff.sign_in(); duff.update_avatar('duff.jpg')
     kele = User('kele'); kele.sign_up(); kele.sign_in(); kele.update_avatar('kele.jpg')
-    ahuhu = User('ahuhu'); ahuhu.sign_up(); ahuhu.sign_in()
-    senpai = User('114514'); senpai.sign_up(); senpai.sign_in(); senpai.update_avatar('senpai.png')
-    sirjie = User('sirjie'); sirjie.sign_up(); sirjie.sign_in(); sirjie.update_avatar('sirjie.bmp')
+    ahuhu = User('ahuhu'); ahuhu.sign_up(); ahuhu.sign_in(); ahuhu.update_avatar('ahuhu.png')
 
     # Create some circles
     kt_ika_circle_id = kt.create_circle('ika')
-    kt_gachi_circle_id = kt.create_circle('gachi')
     kt_gplus_circle_id = kt.create_circle('g+')
 
     # Add people to circles
-    kt.add_user_to_circle(kt_ika_circle_id, 'ika')
-    kt.add_user_to_circle(kt_ika_circle_id, 'innkuika')
-    kt.add_user_to_circle(kt_ika_circle_id, 'ikayaki')
-    kt.add_user_to_circle(kt_ika_circle_id, 'ikayaro')
-    kt.add_user_to_circle(kt_ika_circle_id, 'ika-a_a-a__a')
-    kt.add_user_to_circle(kt_gachi_circle_id, 'billy')
-    kt.add_user_to_circle(kt_gplus_circle_id, 'billy')
-    kt.add_user_to_circle(kt_gachi_circle_id, 'van')
-    kt.add_user_to_circle(kt_ika_circle_id, 'van')
-    kt.add_user_to_circle(kt_gplus_circle_id, 'xiaolaba')
-    kt.add_user_to_circle(kt_gplus_circle_id, 'buki')
-    kt.add_user_to_circle(kt_gplus_circle_id, 'mawei')
-    kt.add_user_to_circle(kt_gplus_circle_id, 'duff')
-    kt.add_user_to_circle(kt_gplus_circle_id, 'kele')
-    kt.add_user_to_circle(kt_gplus_circle_id, 'ahuhu')
 
     # Add some followings
     ika.follow('kt')
     kt.follow('ika')
-    van.follow('kt')
     xiaolaba.follow('kt')
     kt.follow('xiaolaba')
-    senpai.follow('kt')
-    sirjie.follow('kt')
-    kt.follow('sirjie')
 
     # Create some posts
     kt.create_post('rua', is_public=True)
@@ -199,54 +172,19 @@ def main():
     ika.create_post(' *iPad* ', is_public=True, media_filenames=['ipad.jpeg'])
     ika.create_post('MacBook Pro', is_public=True, media_filenames=['mbp.jpeg'])
     ika.create_post('MacBook Air', is_public=True, media_filenames=['mba.jpeg'])
-    kt.create_post('BOY NEXT DOOR. SLABU GET UR AS BACK HERE. HENG HENG HENG AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
-                   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
-                   'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', is_public=False,
-                   circle_ids=[kt_gachi_circle_id])
     kt.create_post('鬼城！！！', is_public=False, circle_ids=[kt_gplus_circle_id])
     with open('./scripts/xss.txt') as f:
         kt.create_post(f.read(), is_public=True, circle_ids=[kt_gplus_circle_id])
     ika.create_post('iMac', is_public=True, media_filenames=['imac.jpg'])
     ika.create_post('AirPods Pro', is_public=True, media_filenames=['app.jpeg'])
 
-    senpai.create_post('henghenghengaaaa', is_public=True)
-    senpai.create_post('kouchaiidesuka', is_public=True)
-    sirjie_post_id = sirjie.create_post('我家呢還 *蠻大* 的', is_public=True, reshareable=True, media_filenames=[
-        'jie1.png', 'jie2.jpg', 'jie3.jpg'
-    ])
-    sirjie.create_post('拿都可以拿', is_public=True)
-    sirjie.create_post('你看這個彬彬才喝幾罐就醉了', is_public=True)
-    senpai.create_post('114514', is_public=True)
-    sirjie.create_post('這麼說你很勇ho', is_public=True)
-    sirjie.create_post('我房裡有好康的', is_public=True)
-    sirjie.create_post(' -聽話！讓我看看！- ', is_public=True)
-
     # Create some reshares
-    kt.create_post('是傑哥耶！！', is_public=True, reshareable=True, reshared_from=sirjie_post_id)
+    # kt.create_post('是傑哥耶！！', is_public=True, reshareable=True, reshared_from=sirjie_post_id)
 
     # Create some reactions
-    kt.create_reaction(sirjie_post_id, '👦')
+    # kt.create_reaction(sirjie_post_id, '👦')
 
     # Create some comments
-    ika_kt_ika_comment = ika.create_comment(kt_ika_post, 'rua @kt', ['kt'])
-    innkuika.create_comment(kt_ika_post, 'twitter.com/realInnkuIka')
-    innkuika.create_nested_comment(kt_ika_post, ika_kt_ika_comment, '')
-    ikayaki.create_comment(kt_ika_post, ' _twitter.com/realIkaYaki_ ')
-    ikayaki.create_nested_comment(
-        kt_ika_post,
-        ika_kt_ika_comment,
-        '@ika Innkuika is crokked!!!! Make Ika Great Again!!!!!!',
-        ['ika']
-    )
-    ikayaro.create_comment(kt_ika_post, 'twitter.com/realIkaYaro')
-    ikayaki.create_nested_comment(kt_ika_post, ika_kt_ika_comment, 'twitter.com/realIkaYaro twitter.com/realIkaYaro twi'
-                                                                   'tter.com/realIkaYaro twitter.com/realIkaYaro twitte'
-                                                                   'r.com/realIkaYaro twitter.com/realIkaYaro twitter.c'
-                                                                   'om/realIkaYaro twitter.com/realIkaYaro twitter.com/'
-                                                                   'realIkaYaro twitter.com/realIkaYaro twitter.com/rea'
-                                                                   'lIkaYaro')
-    ika2.create_comment(kt_ika_post, " -I'm 混亂邪惡- ")
-    ika2.create_nested_comment(kt_ika_post, ika_kt_ika_comment, '/profile/ika-a_a-a__a')
 
 
 if __name__ == '__main__':
