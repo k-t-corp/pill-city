@@ -1,6 +1,7 @@
 from mongoengine import NotUniqueError
 from werkzeug.security import generate_password_hash, check_password_hash
 from mini_gplus.models import User, Media
+from mini_gplus.utils.profiling import timer
 from .exceptions import UnauthorizedAccess
 from .user_cache import set_in_user_cache, get_users_in_user_cache, get_in_user_cache_by_user_id
 
@@ -44,6 +45,7 @@ def sign_in(user_id, password):
     return user
 
 
+@timer
 def find_user(user_id):
     """
     Finds the user
