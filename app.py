@@ -2,6 +2,7 @@ import os
 import re
 import sentry_sdk
 from os import urandom
+from pymongo import monitoring
 from pymongo.uri_parser import parse_uri
 from flask import Flask, jsonify, request
 from flask_mongoengine import MongoEngine, MongoEngineSessionInterface
@@ -37,6 +38,26 @@ else:
 app = Flask(__name__)
 
 app.secret_key = urandom(24)
+
+
+# database profiling
+class CommandLogger(monitoring.CommandListener):
+    def started(self, event):
+        pass
+
+    def succeeded(self, event):
+        print(f"pymongo event {event.request_id} with command {event.command_name} "
+              f"in ns {event.reply.get('cursor', {}).get('ns', '')} replied "
+              f"in {event.duration_micros // 1000} milliseconds")
+
+    def failed(self, event):
+        pass
+
+
+if os.getenv('PROFILE'):
+    print("Enabling pymongo profiling")
+    monitoring.register(CommandLogger())
+
 
 # database
 mongodb_uri = os.environ['MONGODB_URI']
