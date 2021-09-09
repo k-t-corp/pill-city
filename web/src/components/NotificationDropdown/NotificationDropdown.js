@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import "./NotificationDropdown.css"
 import getAvatarUrl from "../../api/getAvatarUrl";
 import timePosted from "../../timePosted";
-// import {useInterval} from "react-interval-hook";
+import {useInterval} from "react-interval-hook";
 
 export default (props) => {
   const [notifications, updateNotifications] = useState([])
@@ -11,24 +11,24 @@ export default (props) => {
     updateNotifications(await props.api.getNotifications())
   }, [])
 
-  // useInterval(async () => {
-  //   const lastNotification = notifications[0]
-  //   const fetchedNewNotifications = await props.api.getNotifications()
-  //   // find position of lastNotification in fetchedNewNotifications
-  //   // anything that comes "before" lastNotification are actual new notifications
-  //   // TODO: there is a subtle bug that
-  //   // TODO: if there are more than page size number of actual new notifications
-  //   // TODO: some of them won't be displayed until load more or manual refresh page
-  //   const newNotifications = []
-  //   for (const n of fetchedNewNotifications) {
-  //     if (n.id !== lastNotification.id) {
-  //       newNotifications.push(n)
-  //     } else {
-  //       break
-  //     }
-  //   }
-  //   updateNotifications([...newNotifications, ...notifications])
-  // }, 5000)
+  useInterval(async () => {
+    const lastNotification = notifications[0]
+    const fetchedNewNotifications = await props.api.getNotifications()
+    // find position of lastNotification in fetchedNewNotifications
+    // anything that comes "before" lastNotification are actual new notifications
+    // TODO: there is a subtle bug that
+    // TODO: if there are more than page size number of actual new notifications
+    // TODO: some of them won't be displayed until load more or manual refresh page
+    const newNotifications = []
+    for (const n of fetchedNewNotifications) {
+      if (n.id !== lastNotification.id) {
+        newNotifications.push(n)
+      } else {
+        break
+      }
+    }
+    updateNotifications([...newNotifications, ...notifications])
+  }, 5000)
 
   const loadMoreNotifications = async () => {
     const lastNotification = notifications[notifications.length - 1]
