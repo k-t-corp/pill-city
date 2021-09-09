@@ -1,9 +1,43 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import "./NotificationDropdown.css"
 import getAvatarUrl from "../../api/getAvatarUrl";
 import timePosted from "../../timePosted";
+import {useInterval} from "react-interval-hook";
 
 export default (props) => {
+  const [notifications, updateNotifications] = useState([])
+
+  useEffect(async () => {
+    updateNotifications(await props.api.getNotifications())
+  }, [])
+
+  useInterval(async () => {
+    const lastNotification = notifications[0]
+    const fetchedNewNotifications = await props.api.getNotifications()
+    // find position of lastNotification in fetchedNewNotifications
+    // anything that comes "before" lastNotification are actual new notifications
+    // TODO: there is a subtle bug that
+    // TODO: if there are more than page size number of actual new notifications
+    // TODO: some of them won't be displayed until load more or manual refresh page
+    const newNotifications = []
+    for (const n of fetchedNewNotifications) {
+      if (n.id !== lastNotification.id) {
+        newNotifications.push(n)
+      } else {
+        break
+      }
+    }
+    updateNotifications([...newNotifications, ...notifications])
+  }, 5000)
+
+  const loadMoreNotifications = async () => {
+    const lastNotification = notifications[notifications.length - 1]
+    const newNotifications = await props.api.getNotifications(lastNotification['id'])
+    if (newNotifications.length !== 0) {
+      updateNotifications(notifications.concat(newNotifications))
+    }
+  }
+
   const notificationSummary = (notification) => {
     if (notification.notifying_action === "mention") {
       return "you"
@@ -84,19 +118,19 @@ export default (props) => {
   }
 
   const notificationElems = () => {
-    if (props.notifications === null) {
+    if (notifications === null) {
       return <div className="notification-noop-wrapper">Loading...</div>
-    } else if (props.notifications.length === 0) {
+    } else if (notifications.length === 0) {
       return <div className="notification-noop-wrapper">No notifiations.</div>
     } else {
       const res = []
-      for (let i = 0; i < props.notifications.length; i++) {
-        const notification = props.notifications[i]
+      for (let i = 0; i < notifications.length; i++) {
+        const notification = notifications[i]
         res.push(notificationElem(notification, i))
       }
       res.push(
         <div
-          key={props.notifications.length}
+          key={notifications.length}
           className='notification-load-more'
           onClick={props.loadMoreNotifications}
         >Load more</div>
@@ -105,7 +139,7 @@ export default (props) => {
     }
   }
 
-  const unreadNotificationsCount = props.notifications !== null ? props.notifications.filter(n => n.unread).length : 0
+  const unreadNotificationsCount = notifications ? notifications.filter(n => n.unread).length : 0
 
   return (
     <div className="notification-container">
