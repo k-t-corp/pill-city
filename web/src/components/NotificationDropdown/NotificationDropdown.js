@@ -132,7 +132,7 @@ export default (props) => {
         <div
           key={notifications.length}
           className='notification-load-more'
-          onClick={props.loadMoreNotifications}
+          onClick={loadMoreNotifications}
         >Load more</div>
       )
       return res
