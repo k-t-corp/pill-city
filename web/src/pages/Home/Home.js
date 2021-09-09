@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { useInterval } from 'react-interval-hook';
+import {useInterval} from 'react-interval-hook';
 import Post from "../../components/Post/Post";
 import "./Home.css"
 import NewPost from "../../components/NewPost/NewPost";
@@ -14,8 +14,9 @@ export default (props) => {
   const [me, updateMe] = useState(null)
   const [resharePostData, updateResharePostData] = useState(null)
   const [notifications, updateNotifications] = useState(null)
+  const [mobileNewPostOpened, updateMobileNewPostOpened] = useState(false)
 
-  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 750px)' })
+  const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
 
   useEffect(async () => {
     updateMe(await props.api.getMe())
@@ -71,7 +72,9 @@ export default (props) => {
       let postElements = []
       for (let i = 0; i < posts.length; i++) {
         postElements.push(<Post key={i} data={posts[i]} me={me} api={props.api}
-                                updateResharePostData={updateResharePostData}/>)
+                                updateResharePostData={updateResharePostData}
+                                mobileNewPostOpened={mobileNewPostOpened}
+                                updateMobileNewPostOpened={updateMobileNewPostOpened}/>)
       }
       postElements.push(
         <div
@@ -84,28 +87,31 @@ export default (props) => {
     }
   }
 
-    return (
-      <div className="home-wrapper">
-        <div className="home-posts-wrapper">
-          {homePostElement()}
-        </div>
-        {isTabletOrMobile && <MobileNewPost circles={circles}
-                                            me={me}
-                                            api={props.api}
-                                            resharePostData={resharePostData}
-                                            updateResharePostData={updateResharePostData}/>}
-        {!isTabletOrMobile && <div className="home-right-column-container">
-          <NewPost circles={circles}
-                   me={me}
-                   api={props.api}
-                   resharePostData={resharePostData}
-                   updateResharePostData={updateResharePostData}/>
-          <NotificationDropdown
-            notifications={notifications}
-            api={props.api}
-            loadMoreNotifications={loadMoreNotifications}
-          />
-        </div>}
+  return (
+    <div className="home-wrapper">
+      <div className="home-posts-wrapper">
+        {homePostElement()}
       </div>
-    )
+      {isTabletOrMobile && <MobileNewPost circles={circles}
+                                          me={me}
+                                          api={props.api}
+                                          resharePostData={resharePostData}
+                                          updateResharePostData={updateResharePostData}
+                                          newPostOpened={mobileNewPostOpened}
+                                          updateNewPostOpened={updateMobileNewPostOpened}
+      />}
+      {!isTabletOrMobile && <div className="home-right-column-container">
+        <NewPost circles={circles}
+                 me={me}
+                 api={props.api}
+                 resharePostData={resharePostData}
+                 updateResharePostData={updateResharePostData}/>
+        <NotificationDropdown
+          notifications={notifications}
+          api={props.api}
+          loadMoreNotifications={loadMoreNotifications}
+        />
+      </div>}
+    </div>
+  )
 }

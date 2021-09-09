@@ -6,12 +6,14 @@ import parseContent from "../../parseContent";
 import timePosted from "../../timePosted";
 import MediaPreview from "../MediaPreview/MediaPreview";
 import parseMentioned from "../../parseMentioned";
+import {useMediaQuery} from "react-responsive";
 
 export default (props) => {
   const [addComment, updateAddComment] = useState(false)
   const [replyNestedCommentId, updateReplayNestedCommentId] = useState("")
   const [showEmojiPicker, updateShowEmojiPicker] = useState(false)
   const [reactionData, setReactionData] = useState(parseReactionData(props.data.reactions))
+  const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
   const resharedElem = (resharedFrom) => {
     if (resharedFrom === null) {
       return null
@@ -303,6 +305,9 @@ export default (props) => {
   }
 
   const reshareButtonOnClick = () => {
+    if (isTabletOrMobile) {
+      props.updateMobileNewPostOpened(true)
+    }
     if (props.data.reshared_from === null) {
       props.updateResharePostData(props.data)
     } else {
@@ -436,14 +441,14 @@ export default (props) => {
       }
       {
         mediaUrlOpened &&
-          <div
-            className='post-media'
-            onClick={
-              () => updateMediaUrlOpened('')
-            }
-          >
-            <img className="post-media-img" src={mediaUrlOpened} alt=""/>
-          </div>
+        <div
+          className='post-media'
+          onClick={
+            () => updateMediaUrlOpened('')
+          }
+        >
+          <img className="post-media-img" src={mediaUrlOpened} alt=""/>
+        </div>
       }
     </div>
   )
