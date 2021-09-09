@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import "./NotificationDropdown.css"
 import getAvatarUrl from "../../api/getAvatarUrl";
 import timePosted from "../../timePosted";
-import {useInterval} from "react-interval-hook";
+// import {useInterval} from "react-interval-hook";
 
 export default (props) => {
   const [notifications, updateNotifications] = useState([])
