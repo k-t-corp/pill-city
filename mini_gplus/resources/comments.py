@@ -35,9 +35,7 @@ class NestedComments(Resource):
         user_id = get_jwt_identity()
         user = find_user(user_id)
         post = get_post(post_id)
-        comment = get_comment(comment_id)
-        if comment not in post.comments:
-            return {'msg': 'Cannot nest more than two levels of comment'}, 403
+        comment = get_comment(comment_id, post)
 
         args = comment_parser.parse_args()
         create_nested_comment(user, args['content'], comment, post, check_mentioned_user_ids(args['mentioned_user_ids']))

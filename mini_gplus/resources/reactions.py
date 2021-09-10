@@ -36,6 +36,4 @@ class Reaction(Resource):
         if not post:
             return {"msg": "post is not found"}, 404
         reaction_to_delete = get_reaction(reaction_id, post)
-        if reaction_to_delete not in post.reactions:
-            return {'msg': f'Reaction {reaction_to_delete} is already not in post {post_id}'}, 409
         delete_reaction(user, reaction_to_delete, post)

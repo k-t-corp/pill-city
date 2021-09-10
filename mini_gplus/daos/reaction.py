@@ -17,9 +17,8 @@ def create_reaction(self: User, emoji: str, parent_post: Post) -> str:
     :return ID of the new reaction
     """
     if sees_post(self, parent_post, context_home_or_profile=False):
-        for r in parent_post.reactions:
-            if r.author.id == self.id and r.emoji == emoji:
-                raise UnauthorizedAccess()
+        if parent_post.reactions2.filter(author=self, emoji=emoji):
+            raise UnauthorizedAccess()
 
         if emoji_lib.emoji_count(emoji) != 1:
             raise BadRequest()
@@ -79,7 +78,7 @@ def delete_reaction(self: User, reaction: Reaction, parent_post: Post):
     :param parent_post: reaction's parent post
     """
     if owns_reaction(self, reaction):
-        if reaction not in parent_post.reactions:
+        if not parent_post.reactions2.filter(eid=reaction.eid):
             raise NotFound()
         parent_post.reactions2 = parent_post.reactions2.exclude(eid=reaction.eid)
         parent_post.save()
