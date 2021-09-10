@@ -12,13 +12,13 @@ def set_in_user_cache(user: User):
 
 
 def get_in_user_cache_by_user_id(user_id: str) -> Union[User, bool]:
-    if user_id in UserCacheByUserId:
+    if user_id in UserCacheByUserId and UserCacheByUserId[user_id] is not False:
         return User.from_json(UserCacheByUserId[user_id])
     return False
 
 
 def get_in_user_cache_by_oid(oid: ObjectId) -> Union[User, bool]:
-    if oid in UserCacheByOid:
+    if oid in UserCacheByOid and UserCacheByOid[oid] is not False:
         return User.from_json(UserCacheByOid[oid])
     return False
 
