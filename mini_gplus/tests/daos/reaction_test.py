@@ -1,8 +1,8 @@
 from .base_test_case import BaseTestCase
-from mini_gplus.models import Post
+from mini_gplus.models import Post, Reaction
 from mini_gplus.daos.user import sign_up, find_user
 from mini_gplus.daos.post import create_post
-from mini_gplus.daos.reaction import create_reaction, delete_reaction, get_reaction
+from mini_gplus.daos.reaction import create_reaction, delete_reaction
 from mini_gplus.daos.exceptions import UnauthorizedAccess, NotFound, BadRequest
 
 
@@ -41,8 +41,10 @@ class ReactionTest(BaseTestCase):
         post1 = post1[0]
 
         # User2 creates reaction
-        reaction1_id = create_reaction(user2, '💩', post1)
-        reaction1 = get_reaction(reaction1_id, post1)
+        create_reaction(user2, '💩', post1)
+        reaction1 = Reaction.objects(author=user2)
+        self.assertTrue(1, len(reaction1))
+        reaction1 = reaction1[0]
 
         # User2 creates reaction and user1 tries to delete it
         def op():

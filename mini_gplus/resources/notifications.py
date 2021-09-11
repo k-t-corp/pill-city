@@ -18,20 +18,16 @@ class NotificationLocation(fields.Raw):
     def format(self, href):
         if '#reaction-' in href:
             reaction_id = href.split('#reaction-')[1]
-            post_id = href.split("#reaction-")[0].split('/post/')[1]
-            post = get_post(post_id)
-            reaction = get_reaction(reaction_id, post)
+            reaction = get_reaction(reaction_id)
             return {
                 'href': href,
                 'summary': reaction.emoji if reaction else ''
             }
         elif '#comment-' in href:
             comment_id = href.split('#comment-')[1]
-            post_id = href.split("#comment-")[0].split('/post/')[1]
-            post = get_post(post_id)
             return {
                 'href': href,
-                'summary': get_comment(comment_id, post).content
+                'summary': get_comment(comment_id).content
             }
         elif '/post/' in href:
             post_id = href.split('/post/')[1]
