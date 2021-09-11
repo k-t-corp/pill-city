@@ -14,3 +14,4 @@ class Circle(Document, CreatedAtMixin):
             {'fields': ('owner', 'name'), 'unique': True}
         ]
     }
+
