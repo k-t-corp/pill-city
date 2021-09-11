@@ -72,9 +72,10 @@ export default (props) => {
       let postElements = []
       for (let i = 0; i < posts.length; i++) {
         postElements.push(<Post key={i} data={posts[i]} me={me} api={props.api}
+                                hasNewPostModal={isTabletOrMobile}
                                 updateResharePostData={updateResharePostData}
-                                mobileNewPostOpened={mobileNewPostOpened}
-                                updateMobileNewPostOpened={updateMobileNewPostOpened}/>)
+                                newPostOpened={mobileNewPostOpened}
+                                updateNewPostOpened={updateMobileNewPostOpened}/>)
       }
       postElements.push(
         <div

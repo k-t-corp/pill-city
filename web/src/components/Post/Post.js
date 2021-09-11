@@ -13,7 +13,6 @@ export default (props) => {
   const [replyNestedCommentId, updateReplayNestedCommentId] = useState("")
   const [showEmojiPicker, updateShowEmojiPicker] = useState(false)
   const [reactionData, setReactionData] = useState(parseReactionData(props.data.reactions))
-  const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
   const resharedElem = (resharedFrom) => {
     if (resharedFrom === null) {
       return null
@@ -305,8 +304,9 @@ export default (props) => {
   }
 
   const reshareButtonOnClick = () => {
-    if (isTabletOrMobile) {
-      props.updateMobileNewPostOpened(true)
+    console.log(props.hasNewPostModal)
+    if (props.hasNewPostModal) {
+      props.updateNewPostOpened(true)
     }
     if (props.data.reshared_from === null) {
       props.updateResharePostData(props.data)
