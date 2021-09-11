@@ -65,6 +65,7 @@ def create_nested_comment(self: User, content: str, parent_comment: Comment, par
     """
     # same explanation for context_home_or_profile=False
     if sees_post(self, parent_post, context_home_or_profile=False):
+
         new_comment = Comment()
         new_comment.eid = make_uuid()
         new_comment.author = self.id

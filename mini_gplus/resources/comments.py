@@ -36,6 +36,8 @@ class NestedComments(Resource):
         user = find_user(user_id)
         post = get_post(post_id)
         comment = get_comment(comment_id, post)
+        if not post.comments2.filter(eid=comment.eid):
+            return {'msg': 'Cannot nest more than two levels of comment'}, 403
 
         args = comment_parser.parse_args()
         create_nested_comment(user, args['content'], comment, post, check_mentioned_user_ids(args['mentioned_user_ids']))
