@@ -1,24 +1,25 @@
 import emoji as emoji_lib
-from typing import Optional
-from mini_gplus.models import Reaction, NotifyingAction, Post, User
-from mini_gplus.utils.make_uuid import make_uuid
+from mini_gplus.models import Reaction, NotifyingAction
 from .exceptions import UnauthorizedAccess, BadRequest, NotFound
+from mini_gplus.utils.make_uuid import make_uuid
 from .post import sees_post
 from .notification import create_notification
 
 
-def create_reaction(self: User, emoji: str, parent_post: Post) -> str:
+def create_reaction(self, emoji, parent_post):
     """
     Create a reaction for the user
 
-    :param self: The acting user
-    :param emoji: the emoji
-    :param parent_post: the post that this reaction is attached to
-    :return ID of the new reaction
+    :param (User) self: The acting user
+    :param (str) emoji: the emoji
+    :param (Post) parent_post: the post that this reaction is attached to
+    :return (str) ID of the new reaction
+    :raise (UnauthorizedAccess) when access is unauthorized
     """
     if sees_post(self, parent_post, context_home_or_profile=False):
-        if parent_post.reactions2.filter(author=self, emoji=emoji):
-            raise UnauthorizedAccess()
+        for r in parent_post.reactions:
+            if r.author.id == self.id and r.emoji == emoji:
+                raise UnauthorizedAccess()
 
         if emoji_lib.emoji_count(emoji) != 1:
             raise BadRequest()
@@ -27,8 +28,9 @@ def create_reaction(self: User, emoji: str, parent_post: Post) -> str:
         new_reaction.eid = make_uuid()
         new_reaction.author = self.id
         new_reaction.emoji = emoji
+        new_reaction.save()
 
-        parent_post.reactions2.append(new_reaction)
+        parent_post.reactions.append(new_reaction)
         parent_post.save()
 
         create_notification(
@@ -44,43 +46,37 @@ def create_reaction(self: User, emoji: str, parent_post: Post) -> str:
         raise UnauthorizedAccess()
 
 
-def get_reaction(reaction_id: str, parent_post: Post) -> Optional[Reaction]:
-    """
-    Get a reaction
-
-    :param reaction_id: ID of the reaction
-    :param parent_post: The parent post
-    :return: The reaction
-    """
-    rs = parent_post.reactions2.filter(eid=reaction_id)
-    if len(rs) != 1:
+def get_reaction(reaction_id):
+    rs = Reaction.objects(eid=reaction_id)
+    if not rs:
         return None
     return rs[0]
 
 
-def owns_reaction(self: User, reaction: Reaction) -> bool:
+def owns_reaction(self, reaction):
     """
     Whether the user owns a reaction
 
-    :param self: The acting user
-    :param reaction: the reaction
-    :return: whether the user owns a reaction
+    :param (User) self: The acting user
+    :param (Reaction) reaction: the reaction
+    :return (bool): whether the user owns a reaction
     """
     return self.id == reaction.author.id
 
 
-def delete_reaction(self: User, reaction: Reaction, parent_post: Post):
+def delete_reaction(self, reaction, parent_post):
     """
     Delete a reaction
 
-    :param self: The acting user
-    :param reaction: the comment
-    :param parent_post: reaction's parent post
+    :param (User) self: The acting user
+    :param (Reaction) reaction: the comment
+    :param (Post) parent_post: reaction's parent post
+    :raise (UnauthorizedAccess) when access is unauthorized
     """
     if owns_reaction(self, reaction):
-        if not parent_post.reactions2.filter(eid=reaction.eid):
+        if reaction not in parent_post.reactions:
             raise NotFound()
-        parent_post.reactions2 = parent_post.reactions2.exclude(eid=reaction.eid)
-        parent_post.save()
+        parent_post.reactions.remove(reaction)
+        reaction.delete()
     else:
         raise UnauthorizedAccess()

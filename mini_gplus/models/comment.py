@@ -4,13 +4,11 @@ from .created_at_mixin import CreatedAtMixin
 from .user import User
 
 
-# todo: pending remove
-class _Comment(Document, CreatedAtMixin):
+class Comment(Document, CreatedAtMixin):
     eid = StringField(required=True)
     author = LazyReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
     content = StringField(required=True)
-    comments = ListField(ReferenceField('_Comment', reverse_delete_rule=PULL), default=[])  # type: List[_Comment]
-    meta = {'collection': 'comment'}
+    comments = ListField(ReferenceField('Comment', reverse_delete_rule=PULL), default=[])  # type: List[Comment]
 
     def make_href(self, parent_post):
         return f"/post/{parent_post.eid}#comment-{self.eid}"

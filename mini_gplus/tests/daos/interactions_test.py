@@ -40,8 +40,8 @@ class InteractionsTest(BaseTestCase):
         comment1 = None
         if comments:
             comment_id = create_comment(acting_user, 'comment1', post, [])
-            comment1 = get_comment(comment_id, post)
-            self.assertIn(comment1.eid, list(map(lambda c: c.eid, post.comments2)))
+            comment1 = get_comment(comment_id)
+            self.assertIn(comment1.id, list(map(lambda c: c.id, post.comments)))
             if acting_user.id != post.author.id:
                 self.assertEqual(1, len(Notification.objects(notifier=acting_user,
                                                              notifying_href=f"/post/{post.eid}#comment-{comment_id}",
@@ -54,12 +54,12 @@ class InteractionsTest(BaseTestCase):
 
             self.assertRaises(UnauthorizedAccess, op1)
             comment_id = create_comment(post.author, 'comment1', post, [])
-            comment1 = get_comment(comment_id, post)
+            comment1 = get_comment(comment_id)
 
         if nested_comments:
             nested_comment_id = create_nested_comment(acting_user, 'nested_comment1', comment1, post, [])
-            nested_comment1 = get_comment(nested_comment_id, post)
-            self.assertIn(nested_comment1.eid, list(map(lambda c: c.eid, comment1.comments)))
+            nested_comment1 = get_comment(nested_comment_id)
+            self.assertIn(nested_comment1.id, list(map(lambda c: c.id, comment1.comments)))
             if acting_user.id != comment1.author.id:
                 self.assertEqual(1, len(Notification.objects(notifier=acting_user,
                                                              notifying_href=f"/post/{post.eid}"
@@ -77,8 +77,8 @@ class InteractionsTest(BaseTestCase):
         post = get_post(post.eid)
         if react_once:
             reaction_id = create_reaction(acting_user, "💩", post)
-            reaction1 = get_reaction(reaction_id, post)
-            self.assertIn(reaction1.eid, list(map(lambda r: r.eid, post.reactions2)))
+            reaction1 = get_reaction(reaction_id)
+            self.assertIn(reaction1.id, list(map(lambda c: c.id, post.reactions)))
             if acting_user.id != post.author.id:
                 self.assertEqual(1, len(Notification.objects(notifier=acting_user,
                                                              notifying_href=f"/post/{post.eid}#reaction-{reaction_id}",
