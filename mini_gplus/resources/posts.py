@@ -3,7 +3,7 @@ import boto3
 import werkzeug
 import uuid
 import json
-from typing import Dict, Tuple
+import redis
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from mini_gplus.daos.user import find_user
@@ -11,6 +11,7 @@ from mini_gplus.daos.circle import find_circle
 from mini_gplus.daos.post import get_post, create_post, sees_post, retrieves_posts_on_home, retrieves_posts_on_profile
 from mini_gplus.daos.media import get_media
 from mini_gplus.utils.now_ms import now_ms
+from mini_gplus.utils.profiling import timer
 from .me import user_fields
 from .upload_to_s3 import upload_to_s3
 from .pagination import pagination_parser
@@ -19,9 +20,10 @@ from .mention import check_mentioned_user_ids
 MaxPostMediaCount = 4
 PostMediaUrlExpireSeconds = 900
 
+r = redis.Redis.from_url(os.environ['REDIS_URL'])
 
 # stores media object name -> (media url, media url generation time in ms epoch)
-MediaUrlCache = {}  # type: Dict[str, Tuple[str, int]]
+# MediaUrlCache = {}  # type: Dict[str, Tuple[str, int]]
 
 
 class MediaUrls(fields.Raw):
@@ -29,7 +31,22 @@ class MediaUrls(fields.Raw):
         if not media_list:
             return []
 
+        @timer
         def get_media_url(media):
+            """
+            Cache structure within Redis
+            mediaUrl -> object_name -> "media url"(space)"media url generated time in ms"
+            """
+            object_name = media.id
+            # subtract expiry by 10 seconds for some network overhead
+            r_media_url = r.hget('mediaUrl', object_name)
+            if r_media_url:
+                r_media_url = r_media_url.decode('utf-8')
+                if now_ms() < int(r_media_url.split(" ")[1]) + (PostMediaUrlExpireSeconds - 10) * 1000:
+                    print(f"Found cached url for object {object_name}")
+                    return r_media_url.split(" ")[0]
+
+            print(f"Not finding cached url for object {object_name}")
             sts_client = boto3.client(
                 'sts',
                 endpoint_url=os.environ['STS_ENDPOINT_URL'],
@@ -38,20 +55,6 @@ class MediaUrls(fields.Raw):
                 aws_secret_access_key=os.environ['AWS_SECRET_KEY']
             )
             s3_bucket_name = os.environ['S3_BUCKET_NAME']
-
-            object_name = media.id
-            _now_ms = now_ms()
-            # subtract expiry by 10 seconds for some network overhead
-            if object_name in MediaUrlCache and _now_ms < MediaUrlCache[object_name][1] + \
-                    (PostMediaUrlExpireSeconds - 10) * 1000:
-                # print(f"found cached url for object {object_name}")
-                return MediaUrlCache[object_name][0]
-
-            # print(f"not finding cached url for object {object_name}",
-            #       object_name in MediaUrlCache,
-            #       MediaUrlCache.get(object_name, ('', -1))[1]
-            #       )
-            # TODO: how would this work with an actual CDN e.g. cloudfront?
 
             # obtain temp token
             read_media_policy = {
@@ -90,7 +93,7 @@ class MediaUrls(fields.Raw):
                 ExpiresIn=PostMediaUrlExpireSeconds
             )
 
-            MediaUrlCache[object_name] = (media_url, _now_ms)
+            r.hset('mediaUrl', object_name, f"{media_url} {now_ms()}")
             return media_url
 
         return list(map(get_media_url, media_list))
