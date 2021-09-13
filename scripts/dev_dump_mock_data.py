@@ -1,6 +1,7 @@
 import os
 import pymongo
 import boto3
+import redis
 from typing import List, Optional
 from requests_toolbelt.sessions import BaseUrlSession
 
@@ -145,9 +146,14 @@ def main():
     bucket.objects.all().delete()
 
     # Drop everything in mongodb
-    client = pymongo.MongoClient("mongodb://localhost:19023/minigplus")
+    mongodb = pymongo.MongoClient("mongodb://localhost:19023/minigplus")
     print("Vacuuming mongodb")
-    client.drop_database("minigplus")
+    mongodb.drop_database("minigplus")
+
+    # Drop everything in redis
+    r = redis.from_url("redis://localhost:19024")
+    print("Vacuuming redis")
+    r.flushall()
 
     print("Dumping dummy data")
     # Sign up some users

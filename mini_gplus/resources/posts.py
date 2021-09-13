@@ -21,9 +21,10 @@ MaxPostMediaCount = 4
 PostMediaUrlExpireSeconds = 900
 
 r = redis.Redis.from_url(os.environ['REDIS_URL'])
+RMediaUrlKey = "mediaUrl"
 
-# stores media object name -> (media url, media url generation time in ms epoch)
-# MediaUrlCache = {}  # type: Dict[str, Tuple[str, int]]
+# Cache structure within Redis
+# "mediaUrl" -> object_name -> "media url"(space)"media url generated time in ms"
 
 
 class MediaUrls(fields.Raw):
@@ -33,13 +34,9 @@ class MediaUrls(fields.Raw):
 
         @timer
         def get_media_url(media):
-            """
-            Cache structure within Redis
-            mediaUrl -> object_name -> "media url"(space)"media url generated time in ms"
-            """
             object_name = media.id
             # subtract expiry by 10 seconds for some network overhead
-            r_media_url = r.hget('mediaUrl', object_name)
+            r_media_url = r.hget(RMediaUrlKey, object_name)
             if r_media_url:
                 r_media_url = r_media_url.decode('utf-8')
                 if now_ms() < int(r_media_url.split(" ")[1]) + (PostMediaUrlExpireSeconds - 10) * 1000:
@@ -93,7 +90,7 @@ class MediaUrls(fields.Raw):
                 ExpiresIn=PostMediaUrlExpireSeconds
             )
 
-            r.hset('mediaUrl', object_name, f"{media_url} {now_ms()}")
+            r.hset(RMediaUrlKey, object_name, f"{media_url} {now_ms()}")
             return media_url
 
         return list(map(get_media_url, media_list))
