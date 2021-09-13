@@ -82,16 +82,3 @@ def mark_all_notifications_as_read(self):
     for n in Notification.objects(owner=self, unread=True):
         n.unread = False
         n.save()
-
-
-def backfill_notifications_eid():
-    backfill_count = 0
-    for n in Notification.objects():
-        if not n.eid:
-            n.eid = make_uuid()
-            n.save()
-            backfill_count += 1
-    if backfill_count != 0:
-        print(f'Backfilled {backfill_count} Notification with eid')
-    else:
-        print("No Notification was backfilled with eid. You can remove backfill code and required the field now!")
