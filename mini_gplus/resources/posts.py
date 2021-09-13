@@ -116,13 +116,7 @@ post_fields = {
         'id': fields.String(attribute='eid'),
         'emoji': fields.String,
         'author': fields.Nested(user_fields),
-    })),
-    # TODO: only return the circles that the seeing user is in
-    'circles': fields.List(fields.Nested({
-        # not using circle_fields because not exposing what members a circle has
-        'id': fields.String(attribute='eid'),
-        'name': fields.String,
-    })),
+    }), attribute='reactions2'),
     'comments': fields.List(fields.Nested({
         'id': fields.String(attribute='eid'),
         'created_at_seconds': fields.Integer(attribute='created_at'),
@@ -135,6 +129,12 @@ post_fields = {
             'author': fields.Nested(user_fields),
             'content': fields.String,
         }))
+    }), attribute='comments2'),
+    # TODO: only return the circles that the seeing user is in
+    'circles': fields.List(fields.Nested({
+        # not using circle_fields because not exposing what members a circle has
+        'id': fields.String(attribute='eid'),
+        'name': fields.String,
     }))
 }
 
