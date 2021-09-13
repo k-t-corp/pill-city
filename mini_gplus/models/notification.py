@@ -12,7 +12,7 @@ class NotifyingAction(Enum):
 
 
 class Notification(Document, CreatedAtMixin):
-    eid = StringField(required=False)  # backfilled by backfill_notifications_eid
+    eid = StringField(required=True)
     notifier = LazyReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
     notifying_href = StringField(required=True)
     notifying_action = EnumField(NotifyingAction, required=True)  # type: NotifyingAction
