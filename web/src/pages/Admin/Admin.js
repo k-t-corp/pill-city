@@ -36,7 +36,7 @@ export default (props) => {
   return (
     <div className='admin-page'>
       <h1>Invitation Codes</h1>
-      <div className="admin-page-new-code-button" onClick={async (e) => {
+      <div className="admin-page-button" onClick={async (e) => {
         e.preventDefault()
         const newCode = await props.api.createInvitationCode()
         updateInvitationCodes([
@@ -49,6 +49,11 @@ export default (props) => {
           codeElem(i, ic)
         )
       })}
+      <h2>Cache</h2>
+      <div className='admin-page-button' onClick={async (e) => {
+        e.preventDefault()
+        await props.api.clearMediaUrlCache()
+      }}>Clear media URL cache</div>
     </div>
   )
 }

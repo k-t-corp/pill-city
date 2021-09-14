@@ -2,6 +2,8 @@ import os
 from flask_restful import Resource, marshal_with, fields
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from mini_gplus.daos.invitation_code import create_invitation_code, get_invitation_codes
+from . import r
+from .posts import RMediaUrl
 
 admins = list(map(lambda s: s.strip(), os.getenv('ADMINS', '').split(',')))
 
@@ -28,3 +30,12 @@ class InvitationCode(Resource):
         if user_id not in admins:
             return {'msg': 'Not an admin'}, 403
         return create_invitation_code()
+
+
+class ClearMediaUrlCache(Resource):
+    @jwt_required()
+    def post(self):
+        user_id = get_jwt_identity()
+        if user_id not in admins:
+            return {'msg': 'Not an admin'}, 403
+        r.delete(RMediaUrl)

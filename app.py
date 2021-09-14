@@ -21,7 +21,7 @@ from mini_gplus.resources.reactions import Reactions, Reaction
 from mini_gplus.resources.circles import Circles, CircleMember, Circle
 from mini_gplus.resources.followings import Following
 from mini_gplus.resources.notifications import Notifications, NotificationRead, NotificationsAllRead
-from mini_gplus.resources.admin import InvitationCode, InvitationCodes
+from mini_gplus.resources.admin import InvitationCode, InvitationCodes, ClearMediaUrlCache
 
 # sentry
 if os.getenv('SENTRY_DSN'):
@@ -202,6 +202,7 @@ api.add_resource(Notifications, '/api/notifications')
 
 api.add_resource(InvitationCodes, '/api/invitationCodes')
 api.add_resource(InvitationCode, '/api/invitationCode')
+api.add_resource(ClearMediaUrlCache, '/api/clearMediaUrlCache')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
