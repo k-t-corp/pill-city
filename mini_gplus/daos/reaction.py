@@ -2,6 +2,7 @@ import emoji as emoji_lib
 from typing import Optional
 from mini_gplus.models import Reaction, NotifyingAction, Post, User
 from mini_gplus.utils.make_uuid import make_uuid
+from mini_gplus.utils.now_ms import now_seconds
 from .exceptions import UnauthorizedAccess, BadRequest, NotFound
 from .post import sees_post
 from .notification import create_notification
@@ -27,6 +28,7 @@ def create_reaction(self: User, emoji: str, parent_post: Post) -> str:
         new_reaction.eid = make_uuid()
         new_reaction.author = self.id
         new_reaction.emoji = emoji
+        new_reaction.created_at = now_seconds()
 
         parent_post.reactions2.append(new_reaction)
         parent_post.save()
