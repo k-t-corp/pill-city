@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import {useInterval} from 'react-interval-hook';
 import Post from "../../components/Post/Post";
 import "./Home.css"
 import NewPost from "../../components/NewPost/NewPost";
@@ -21,29 +20,9 @@ export default (props) => {
   useEffect(async () => {
     updateMe(await props.api.getMe())
     updatePosts(await props.api.getHome())
-    updateNotifications(await props.api.getNotifications())
     updateCircles(await props.api.getCircles())
     updateLoading(false)
   }, [])
-
-  useInterval(async () => {
-    const lastNotification = notifications[0]
-    const fetchedNewNotifications = await props.api.getNotifications()
-    // find position of lastNotification in fetchedNewNotifications
-    // anything that comes "before" lastNotification are actual new notifications
-    // TODO: there is a subtle bug that
-    // TODO: if there are more than page size number of actual new notifications
-    // TODO: some of them won't be displayed until load more or manual refresh page
-    const newNotifications = []
-    for (const n of fetchedNewNotifications) {
-      if (n.id !== lastNotification.id) {
-        newNotifications.push(n)
-      } else {
-        break
-      }
-    }
-    updateNotifications([...newNotifications, ...notifications])
-  }, 5000)
 
   const loadMorePosts = async () => {
     const lastPost = posts[posts.length - 1]
@@ -52,14 +31,6 @@ export default (props) => {
       updatePosts(posts.concat(newPosts))
     } else {
       alert('Go back to real life')
-    }
-  }
-
-  const loadMoreNotifications = async () => {
-    const lastNotification = notifications[notifications.length - 1]
-    const newNotifications = await props.api.getNotifications(lastNotification['id'])
-    if (newNotifications.length !== 0) {
-      updateNotifications(notifications.concat(newNotifications))
     }
   }
 
@@ -108,9 +79,9 @@ export default (props) => {
                  resharePostData={resharePostData}
                  updateResharePostData={updateResharePostData}/>
         <NotificationDropdown
-          notifications={notifications}
+
           api={props.api}
-          loadMoreNotifications={loadMoreNotifications}
+
         />
       </div>}
     </div>

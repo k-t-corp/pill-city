@@ -1,12 +1,33 @@
 from typing import List
-from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, LazyReferenceField, PULL,\
-    CASCADE, NULLIFY
+from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, LazyReferenceField, \
+    EmbeddedDocumentListField, EmbeddedDocument, LongField, PULL, CASCADE, NULLIFY
 from .created_at_mixin import CreatedAtMixin
 from .user import User
-from .comment import Comment
-from .reaction import Reaction
 from .circle import Circle
 from .media import Media
+
+
+class Reaction(EmbeddedDocument):
+    eid = StringField(required=True)
+    author = LazyReferenceField(User, required=True)  # type: User
+    emoji = StringField(required=True)
+    created_at = LongField(required=True, default=0)
+    # default=0 as a backfill because we've lost the timestamp if we haven't recorded it :(
+
+    def make_href(self, parent_post):
+        return f"/post/{parent_post.eid}#reaction-{self.eid}"
+
+
+class Comment(EmbeddedDocument):
+    eid = StringField(required=True)
+    author = LazyReferenceField(User, required=True)  # type: User
+    content = StringField(required=True)
+    comments = EmbeddedDocumentListField('Comment')  # type: List[Comment]
+    created_at = LongField(required=True, default=0)
+    # default=0 as a backfill because we've lost the timestamp if we haven't recorded it :(
+
+    def make_href(self, parent_post):
+        return f"/post/{parent_post.eid}#comment-{self.eid}"
 
 
 class Post(Document, CreatedAtMixin):
@@ -14,9 +35,11 @@ class Post(Document, CreatedAtMixin):
     author = LazyReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
     content = StringField(required=True)
     is_public = BooleanField(required=True)
-    reactions = ListField(ReferenceField(Reaction, reverse_delete_rule=PULL), default=[])  # type: List[Reaction]
+
+    reactions2 = EmbeddedDocumentListField(Reaction)
+    comments2 = EmbeddedDocumentListField(Comment)
+
     circles = ListField(ReferenceField(Circle, reverse_delete_rule=PULL), default=[])  # type: List[Circle]
-    comments = ListField(ReferenceField(Comment, reverse_delete_rule=PULL), default=[])  # type: List[Comment]
     reshareable = BooleanField(required=False, default=False)
     reshared_from = ReferenceField('Post', required=False, reverse_delete_rule=NULLIFY, default=None)  # type: Post
     media_list = ListField(LazyReferenceField(Media, reverse_delete_rule=PULL), default=[])  # type: List[Media]

@@ -12,8 +12,12 @@ bleach<4.0
 boto3==1.18.35
 Pillow==8.3.1
 sentry-sdk[flask]==1.3.1
+redis==3.5.3
 
+# production
 gunicorn==20.1.0
 dnspython==2.1.0
 
+# testing
 freezegun==1.1.0
+fakeredis==1.6.1

@@ -1,42 +1,52 @@
+import os
+import redis
 from bson import ObjectId
-from typing import Dict
+from typing import List, Union
 from mini_gplus.models import User
+from mini_gplus.utils.profiling import timer
 
-UserCacheByUserId = {}  # type: Dict[str, User]
-UserCacheByOid = {}  # type: Dict[ObjectId, User]
+
+r = redis.from_url(os.environ['REDIS_URL'])
+RUserByUserId = "userByUserId"
+RUserByOid = "userByOid"
+
+# Cache structure within Redis
+# "userByUserId" -> user_id  -> serialized user
+# "userByOid"    -> str(oid) -> serialized user
 
 
 def set_in_user_cache(user: User):
-    UserCacheByUserId[user.user_id] = user
-    UserCacheByOid[user.id] = user
+    r.hset(RUserByUserId, user.user_id, user.to_json())
+    r.hset(RUserByOid, str(user.id), user.to_json())
 
 
-def get_in_user_cache_by_user_id(user_id: str):
-    if user_id in UserCacheByUserId:
-        return UserCacheByUserId[user_id]
-    return False
+@timer
+def get_in_user_cache_by_user_id(user_id: str) -> Union[User, bool]:
+    r_user = r.hget(RUserByUserId, user_id)
+    if not r_user:
+        return False
+    r_user = r_user.decode('utf-8')
+    return User.from_json(r_user)
 
 
-def get_in_user_cache_by_oid(oid: ObjectId):
-    if oid in UserCacheByOid:
-        return UserCacheByOid[oid]
-    return False
+@timer
+def get_in_user_cache_by_oid(oid: ObjectId) -> Union[User, bool]:
+    r_user = r.hget(RUserByOid, str(oid))
+    if not r_user:
+        return False
+    r_user = r_user.decode('utf-8')
+    return User.from_json(r_user)
 
 
+@timer
 def populate_user_cache():
     for user in User.objects():
         set_in_user_cache(user)
 
 
-def get_users_in_user_cache():
-    return UserCacheByOid.values()
-
-
-def reset_user_cache():
-    """
-    Only useful for testing
-    """
-    for user_id in UserCacheByUserId:
-        UserCacheByUserId[user_id] = False
-    for oid in UserCacheByOid:
-        UserCacheByOid[oid] = False
+def get_users_in_user_cache() -> List[User]:
+    res = []
+    for oid, r_user in r.hgetall(RUserByOid).items():
+        r_user = r_user.decode('utf-8')
+        res.append(User.from_json(r_user))
+    return list(sorted(res, key=lambda u: u.id))

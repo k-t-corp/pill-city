@@ -92,16 +92,3 @@ def check_member(self, user):
     :return (bool): whether the user is in the circle
     """
     return len(list(filter(lambda member: member.id == user.id, self.members))) != 0
-
-
-def backfill_circles_eid():
-    backfill_count = 0
-    for n in Circle.objects():
-        if not n.eid:
-            n.eid = make_uuid()
-            n.save()
-            backfill_count += 1
-    if backfill_count != 0:
-        print(f'Backfilled {backfill_count} Circle with eid')
-    else:
-        print("No Circle was backfilled with eid. You can remove backfill code and required the field now!")

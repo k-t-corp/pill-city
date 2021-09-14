@@ -34,6 +34,7 @@ class UserProfilePic(fields.Raw):
 user_fields = {
     'id': UserId(attribute='id'),
     'created_at_seconds': UserCreatedAtSeconds(attribute='id'),
+    # todo: following not included is this a problem?
     'avatar_url': UserAvatar(attribute='id'),
     'profile_pic': UserProfilePic(attribute='id')
 }
