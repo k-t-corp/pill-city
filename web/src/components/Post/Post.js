@@ -6,7 +6,6 @@ import parseContent from "../../parseContent";
 import timePosted from "../../timePosted";
 import MediaPreview from "../MediaPreview/MediaPreview";
 import parseMentioned from "../../parseMentioned";
-import {useMediaQuery} from "react-responsive";
 
 export default (props) => {
   const [addComment, updateAddComment] = useState(false)

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import NewPost from "../../components/NewPost/NewPost";
 import "./MobileNewPost.css"
 

@@ -12,7 +12,6 @@ export default (props) => {
   const [circles, updateCircles] = useState([])
   const [me, updateMe] = useState(null)
   const [resharePostData, updateResharePostData] = useState(null)
-  const [notifications, updateNotifications] = useState(null)
   const [mobileNewPostOpened, updateMobileNewPostOpened] = useState(false)
 
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
