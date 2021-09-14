@@ -3,6 +3,7 @@ import boto3
 import werkzeug
 import uuid
 import json
+import redis
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from mini_gplus.daos.user import find_user
@@ -11,7 +12,6 @@ from mini_gplus.daos.post import get_post, create_post, sees_post, retrieves_pos
 from mini_gplus.daos.media import get_media
 from mini_gplus.utils.now_ms import now_ms
 from mini_gplus.utils.profiling import timer
-from . import r
 from .me import user_fields
 from .upload_to_s3 import upload_to_s3
 from .pagination import pagination_parser
@@ -20,6 +20,7 @@ from .mention import check_mentioned_user_ids
 MaxPostMediaCount = 4
 PostMediaUrlExpireSeconds = 3600 * 12  # 12 hours
 
+r = redis.Redis.from_url(os.environ['REDIS_URL'])
 RMediaUrl = "mediaUrl"
 
 # Cache structure within Redis
