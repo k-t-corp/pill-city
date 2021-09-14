@@ -2,6 +2,7 @@ import bleach
 from typing import List, Optional
 from mini_gplus.models import Comment, NotifyingAction, User, Post
 from mini_gplus.utils.make_uuid import make_uuid
+from mini_gplus.utils.now_ms import now_seconds
 from .exceptions import UnauthorizedAccess
 from .post import sees_post
 from .notification import create_notification
@@ -28,6 +29,7 @@ def create_comment(self: User, content: str, parent_post: Post, mentioned_users:
         new_comment.eid = make_uuid()
         new_comment.author = self.id
         new_comment.content = bleach.clean(content)
+        new_comment.created_at = now_seconds()
 
         parent_post.comments2.append(new_comment)
         parent_post.save()
@@ -70,6 +72,7 @@ def create_nested_comment(self: User, content: str, parent_comment: Comment, par
         new_comment.eid = make_uuid()
         new_comment.author = self.id
         new_comment.content = bleach.clean(content)
+        new_comment.created_at = now_seconds()
 
         parent_comment.comments.append(new_comment)
         parent_post.save()
