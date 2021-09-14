@@ -1,6 +1,7 @@
 from unittest import TestCase
 from mongoengine import connect, disconnect
-from mini_gplus.daos.user_cache import populate_user_cache, reset_user_cache
+from mini_gplus.daos.user_cache import populate_user_cache
+from . import r
 
 
 class BaseTestCase(TestCase):
@@ -9,6 +10,6 @@ class BaseTestCase(TestCase):
         populate_user_cache()
 
     def tearDown(self):
-        reset_user_cache()
+        r.flushall()
         self.connection.drop_database("mongoenginetest")
         disconnect()

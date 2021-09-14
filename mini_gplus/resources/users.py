@@ -12,6 +12,7 @@ class Users(Resource):
         Get all users other than the logged in user
         """
         user_id = get_jwt_identity()
+        # TODO: pretty inefficient because all Users needs to call get user by oid once more lol
         return get_users(user_id), 200
 
 
