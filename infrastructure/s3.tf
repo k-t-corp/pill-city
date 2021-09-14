@@ -85,4 +85,6 @@ resource "aws_iam_role" "media-reader" {
       ]
     })
   }
+
+  max_session_duration = 43200
 }
