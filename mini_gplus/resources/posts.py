@@ -18,7 +18,7 @@ from .pagination import pagination_parser
 from .mention import check_mentioned_user_ids
 
 MaxPostMediaCount = 4
-PostMediaUrlExpireSeconds = 900
+PostMediaUrlExpireSeconds = 3600 * 4  # 4 hours
 
 r = redis.Redis.from_url(os.environ['REDIS_URL'])
 RMediaUrlKey = "mediaUrl"
