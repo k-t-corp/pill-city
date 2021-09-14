@@ -11,7 +11,8 @@ class Reaction(EmbeddedDocument):
     eid = StringField(required=True)
     author = LazyReferenceField(User, required=True)  # type: User
     emoji = StringField(required=True)
-    created_at = LongField(required=True)
+    created_at = LongField(required=True, default=0)
+    # default=0 as a backfill because we've lost the timestamp if we haven't recorded it :(
 
     def make_href(self, parent_post):
         return f"/post/{parent_post.eid}#reaction-{self.eid}"
@@ -22,7 +23,8 @@ class Comment(EmbeddedDocument):
     author = LazyReferenceField(User, required=True)  # type: User
     content = StringField(required=True)
     comments = EmbeddedDocumentListField('Comment')  # type: List[Comment]
-    created_at = LongField(required=True)
+    created_at = LongField(required=True, default=0)
+    # default=0 as a backfill because we've lost the timestamp if we haven't recorded it :(
 
     def make_href(self, parent_post):
         return f"/post/{parent_post.eid}#comment-{self.eid}"
