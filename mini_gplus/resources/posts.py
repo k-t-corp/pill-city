@@ -40,10 +40,8 @@ class MediaUrls(fields.Raw):
             if r_media_url:
                 r_media_url = r_media_url.decode('utf-8')
                 if now_ms() < int(r_media_url.split(" ")[1]) + (PostMediaUrlExpireSeconds - 10) * 1000:
-                    print(f"Found cached url for object {object_name}")
                     return r_media_url.split(" ")[0]
 
-            print(f"Not finding cached url for object {object_name}")
             sts_client = boto3.client(
                 'sts',
                 endpoint_url=os.environ['STS_ENDPOINT_URL'],
