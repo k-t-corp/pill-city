@@ -6,6 +6,7 @@ import parseContent from "../../parseContent";
 import timePosted from "../../timePosted";
 import MediaPreview from "../MediaPreview/MediaPreview";
 import parseMentioned from "../../parseMentioned";
+import {useHotkeys} from "react-hotkeys-hook";
 
 export default (props) => {
   const [addComment, updateAddComment] = useState(false)
@@ -328,6 +329,9 @@ export default (props) => {
   }
 
   const [mediaUrlOpened, updateMediaUrlOpened] = useState('')
+  useHotkeys('esc', () => {
+    updateMediaUrlOpened('')
+  })
 
   const [postCommentContent, updatePostCommentContent] = useState('')
 
