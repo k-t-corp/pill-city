@@ -304,6 +304,10 @@ export default (props) => {
   }
 
   const reshareButtonOnClick = () => {
+    console.log(props.hasNewPostModal)
+    if (props.hasNewPostModal) {
+      props.updateNewPostOpened(true)
+    }
     if (props.data.reshared_from === null) {
       props.updateResharePostData(props.data)
     } else {
@@ -440,14 +444,14 @@ export default (props) => {
       }
       {
         mediaUrlOpened &&
-          <div
-            className='post-media'
-            onClick={
-              () => updateMediaUrlOpened('')
-            }
-          >
-            <img className="post-media-img" src={mediaUrlOpened} alt=""/>
-          </div>
+        <div
+          className='post-media'
+          onClick={
+            () => updateMediaUrlOpened('')
+          }
+        >
+          <img className="post-media-img" src={mediaUrlOpened} alt=""/>
+        </div>
       }
     </div>
   )
