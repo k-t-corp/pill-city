@@ -2,7 +2,8 @@ from mini_gplus.models import Notification
 from mini_gplus.utils.make_uuid import make_uuid
 from .pagination import get_page
 
-NotificationPageSize = 10
+# TODO: change back to 10
+NotificationPageSize = 5
 
 
 def create_notification(self, notifying_href, notifying_action, notified_href, owner):
