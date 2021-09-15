@@ -2,15 +2,30 @@ import React, {useEffect, useState} from 'react'
 import "./UserProfile.css"
 import Post from "../Post/Post";
 import getAvatarUrl from "../../api/getAvatarUrl";
+import NewPost from "../NewPost/NewPost";
 
 export default (props) => {
   const [postLoading, updatePostLoading] = useState(true)
   const [postData, updatePostData] = useState([])
   const [followingLoading, updateFollowingLoading] = useState(true)
   const [following, updateFollowing] = useState(false)
+  const [newPostOpened, updateNewPostOpened] = useState(false)
+  const [resharePostData, updateResharePostData] = useState(null)
+  const [circles, updateCircles] = useState()
+  const [me, updateMe] = useState()
+
+  window.onclick = function(event) {
+    let modal = document.getElementById("profile-new-post-modal");
+    if (event.target === modal) {
+      updateNewPostOpened(false)
+    }
+  }
+
 
   useEffect(async () => {
     updatePostData(await props.api.getProfile(props.userData.id))
+    updateCircles(await props.api.getCircles())
+    updateMe(await props.api.getMe())
     updatePostLoading(false)
   }, [])
 
@@ -38,7 +53,15 @@ export default (props) => {
     } else {
       let postElements = []
       for (let i = 0; i < postData.length; i++) {
-        postElements.push(<Post key={i} data={postData[i]} api={props.api} me={props.userData}/>)
+        postElements.push(<Post key={i}
+                                data={postData[i]}
+                                api={props.api}
+                                me={props.userData}
+                                updateResharePostData={updateResharePostData}
+                                hasNewPostModal={true}
+                                newPostOpened={newPostOpened}
+                                updateNewPostOpened={updateNewPostOpened}
+        />)
       }
       postElements.push(
         <div
@@ -105,6 +128,19 @@ export default (props) => {
       <div className="user-profile-posts">
         {profilePostElement()}
       </div>
+      {newPostOpened &&
+      <div id="profile-new-post-modal" className="post-detail-new-post-modal">
+        <div className="post-detail-new-post-modal-content">
+          <NewPost
+            circles={circles}
+            me={me}
+            api={props.api}
+            resharePostData={resharePostData}
+            updateResharePostData={updateResharePostData}
+          />
+        </div>
+      </div>
+      }
     </div>
   )
 }

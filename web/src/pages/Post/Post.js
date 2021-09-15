@@ -53,9 +53,16 @@ export default class Post extends Component {
       )
     }
 
+    const thisThis = this
+    window.onclick = function(event) {
+      let modal = document.getElementById("post-new-post-modal");
+      if (event.target === modal) {
+        thisThis.setState({'newPostOpened': false})
+      }
+    }
+
     const updateResharePostData = (data) => this.setState({'resharePostData': data})
     const updateMobileNewPostOpened = (opened) => {
-      console.log('opened, ', opened)
       this.setState({'newPostOpened': opened})
     }
     return (
@@ -72,7 +79,7 @@ export default class Post extends Component {
           updateNewPostOpened={updateMobileNewPostOpened}
         />
         {this.state.newPostOpened &&
-        <div id="newPostModal" className="post-detail-new-post-modal">
+        <div id="post-new-post-modal" className="post-detail-new-post-modal">
           <div className="post-detail-new-post-modal-content">
             <NewPost
               circles={this.state.circles}
