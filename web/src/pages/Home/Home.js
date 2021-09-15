@@ -29,7 +29,7 @@ export default (props) => {
     if (newPosts.length !== 0) {
       updatePosts(posts.concat(newPosts))
     } else {
-      alert('Go back to real life')
+      alert('You have reached the end.')
     }
   }
 
