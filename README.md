@@ -17,7 +17,7 @@ The API server stores information in a MongoDB database, and it uses S3 addition
 * Docker and docker-compose
 
 ### Start API and web development
-```
+``` shell
 make
 ```
 You will see the web frontend at [localhost:3000](http://localhost:3000)
@@ -26,22 +26,22 @@ The API will be running at `localhost:5000`
 
 ### Dump dummy data into API
 Make sure you have the API running
-```
+``` shell
 make dev-dump
 ```
 
 ### Start API development alone
-```
+``` shell
 make dev-api
 ```
 
 ### Start web development alone
-```
+``` shell
 make dev-web
 ```
 
 ### Run API unit tests
-```
+``` shell
 make test
 ```
 
