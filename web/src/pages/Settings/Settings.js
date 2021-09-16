@@ -113,8 +113,7 @@ export default (props) => {
     return (
       <LoadingModal title="Updating your avatar..."/>
       )
-  }
-  else {
+  } else {
     return (
       <div className="settings-wrapper">
         <div className="settings-user-info">
@@ -184,12 +183,10 @@ export default (props) => {
                   </div>
                   <div className="settings-modal-update-button"
                        onClick={async () => {
-                         updateUpdatingAvatar(true)
                          try {
                            await props.api.updateProfilePic(profileModalSelectedPic)
                            updateProfileModalOpened(false)
                            updateProfilePic(profileModalSelectedPic)
-                           updateUpdatingAvatar(false)
                          } catch (e) {
                            console.log(e)
                          }
@@ -221,6 +218,7 @@ export default (props) => {
                   </div>
                   <div className="settings-modal-update-button"
                        onClick={async () => {
+                         updateUpdatingAvatar(true)
                          const croppedImg = await getCroppedImg(avatarImageRef.current, crop, "new-avatar");
                          updateAvatarImageUrl(URL.createObjectURL(croppedImg))
                          let data = new FormData();
@@ -230,6 +228,7 @@ export default (props) => {
                            await props.api.updateAvatar(data)
                            inputAvatarElement.value = ''
                            updateAvatarModalOpened(false)
+                           updateUpdatingAvatar(false)
                          } catch (e) {
                            console.log(e)
                          }
