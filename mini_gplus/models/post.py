@@ -33,7 +33,7 @@ class Comment(EmbeddedDocument):
 class Post(Document, CreatedAtMixin):
     eid = StringField(required=True)
     author = LazyReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
-    content = StringField(required=True)
+    content = StringField(required=False, default='')
     is_public = BooleanField(required=True)
 
     reactions2 = EmbeddedDocumentListField(Reaction)
