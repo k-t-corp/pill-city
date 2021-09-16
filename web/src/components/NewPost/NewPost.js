@@ -66,6 +66,23 @@ export default (props) => {
     }
   }
 
+  if (posting) {
+    return (
+        <div className='new-post-posting-modal'>
+          <div className="new-post">
+          <div className='new-post-posting-modal-content'>
+
+            <div className="lds-circle">
+              <div/>
+            </div>
+            <div>
+              Sending your post...
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
   return (
     <div className="new-post">
       <div className="new-post-user-info">
