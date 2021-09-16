@@ -450,7 +450,8 @@ export default (props) => {
             () => updateMediaUrlOpened('')
           }
         >
-          <img className="post-media-img" src={mediaUrlOpened} alt=""/>
+            <img className="post-media-img" src={mediaUrlOpened} alt=""/>
+
         </div>
       }
     </div>
