@@ -26,14 +26,21 @@ def create_post(self, content, is_public, circles, reshareable, reshared_from, m
     :param (List[User]) mentioned_users: list of mentioned users
     :return (str) ID of the new post
     """
+    # a post has to have either content or media
+    if not content and not media_list:
+        return False
+
     new_post = Post()
     new_post.eid = make_uuid()
     new_post.author = self.id
-    new_post.content = bleach.clean(content)
+    if content:
+        new_post.content = bleach.clean(content)
     new_post.is_public = is_public
     new_post.circles = circles
     new_post.media_list = media_list
     sharing_from = None  # type: Optional[Post]
+
+    # validate reshared from post
     if reshared_from:
         if media_list:
             # when resharing, only allow content (text), e.g. no media

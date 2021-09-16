@@ -17,7 +17,7 @@ export default (props) => {
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
 
   const isValid = () => {
-    return content.trim().length !== 0 && circleIds.length !== 0
+    return (content.trim().length !== 0 || medias.length !== 0) && circleIds.length !== 0
   }
 
   const postButtonOnClick = async () => {

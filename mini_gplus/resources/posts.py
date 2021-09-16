@@ -138,7 +138,7 @@ post_fields = {
 
 
 post_parser = reqparse.RequestParser()
-post_parser.add_argument('content', type=str, required=True)
+post_parser.add_argument('content', type=str, required=False)
 post_parser.add_argument('is_public', type=bool, required=True)
 post_parser.add_argument('circle_ids', type=str, action="append", default=[])
 post_parser.add_argument('reshareable', type=bool, required=True)

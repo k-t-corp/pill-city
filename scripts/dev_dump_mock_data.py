@@ -59,7 +59,7 @@ class User(object):
         self._raise_on_unauthenticated()
         self.sess.post(f'/api/circle/{circle_id}/membership/{member_user_id}')
 
-    def create_post(self, content: str, is_public: bool, circle_ids=None, reshareable: bool = False,
+    def create_post(self, content: Optional[str], is_public: bool, circle_ids=None, reshareable: bool = False,
                     reshared_from: Optional[str] = None, media_filenames: List[str] = None,
                     mentioned_user_ids: List[str] = None):
         self._raise_on_unauthenticated()
@@ -202,7 +202,7 @@ def main():
                                             is_public=True, reshareable=True)
     huoguomei_id = roddyzhang.create_post("打个DOTA打到一般忽然壕语文的麦克风里出现妹子催促他快点打完吃火锅， -耿耿于怀啊- \n\n -JB文必须死- ", is_public=True,
                                           media_filenames=['huoguomei.png'])
-    heisi_id = ahuhu.create_post("啊啊啊啊啊啊啊啊啊啊啊啊", is_public=False, circle_ids=[ahuhu_limited_circle_id],
+    heisi_id = ahuhu.create_post(None, is_public=False, circle_ids=[ahuhu_limited_circle_id],
                                  reshareable=True,
                                  media_filenames=['heisi1.jpeg', 'heisi2.jpeg', 'heisi3.jpeg', 'heisi4.jpeg'])
     weiji_id = horo.create_post('你这种伪基佬真淫家早该B了！@mawei ', is_public=True, mentioned_user_ids=['mawei'])

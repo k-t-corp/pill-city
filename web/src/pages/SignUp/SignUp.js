@@ -120,7 +120,7 @@ export default class SignUp extends Component {
                 <Input
                   fluid
                   name='id'
-                  placeholder='ID. For example, "kt", "buki"'
+                  placeholder='ID. For example, it can as short as "kt"'
                   errorLabel={errorLabel}
                 />
                 <Input
