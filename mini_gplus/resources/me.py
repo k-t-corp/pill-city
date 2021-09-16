@@ -4,7 +4,7 @@ from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from mini_gplus.daos.user import find_user, update_profile_pic, update_avatar
 from mini_gplus.daos.user_cache import get_in_user_cache_by_oid
-from mini_gplus.utils.now_ms import now_ms
+from mini_gplus.utils.now_ms import now_seconds
 from .upload_to_s3 import upload_to_s3
 
 
@@ -67,7 +67,8 @@ class MyAvatar(Resource):
         # the resulting object name looks like avatars/kt-1627815711477.jpeg
         # avatars prefix is made explicitly public readable
         # because it's faster to read a user's metadata, and we are fine with all avatars being public
-        object_name_stem = f"avatars/{user_id}-{str(now_ms() // 1_000_000)}"
+        # BUG: the suffix was previously now_ms() // 1_000_000, meaning the timestamps where at ~1/3 hour scale
+        object_name_stem = f"avatars/{user_id}-{str(now_seconds())}"
         avatar_media = upload_to_s3(file, object_name_stem)
         if not avatar_media:
             return {'msg': f"Disallowed image type"}, 400

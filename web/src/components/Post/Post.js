@@ -7,12 +7,14 @@ import timePosted from "../../timePosted";
 import MediaPreview from "../MediaPreview/MediaPreview";
 import parseMentioned from "../../parseMentioned";
 import {useHotkeys} from "react-hotkeys-hook";
+import {useMediaQuery} from "react-responsive";
 
 export default (props) => {
   const [addComment, updateAddComment] = useState(false)
-  const [replyNestedCommentId, updateReplayNestedCommentId] = useState("")
+  const [replyNestedCommentId, updateReplyNestedCommentId] = useState("")
   const [showEmojiPicker, updateShowEmojiPicker] = useState(false)
   const [reactionData, setReactionData] = useState(parseReactionData(props.data.reactions))
+  const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
   const resharedElem = (resharedFrom) => {
     if (resharedFrom === null) {
       return null
@@ -40,8 +42,8 @@ export default (props) => {
             <MediaPreview
               mediaUrls={resharedFrom.media_urls}
               threeRowHeight="80px"
-              twoRowHeight="100px"
-              oneRowHeight="140px"
+              twoRowHeight={isTabletOrMobile ? "100px" : "140px"}
+              oneRowHeight={isTabletOrMobile ? "140px" : "240px"}
             />
           }
         </div>
@@ -214,17 +216,18 @@ export default (props) => {
     const comment = props.data.comments[i]
     const replyCommentButtonOnclick = () => {
       updateAddComment(true)
-      updateReplayNestedCommentId(comment.id)
-    }
-    const replyNestedCommentOnClick = () => {
-      // reply nested comment
-      updateAddComment(true)
-      updateReplayNestedCommentId(comment.id)
-      updatePostCommentContent(`@${comment.author.id} `)
+      updateReplyNestedCommentId(comment.id)
     }
     let nestedComments = []
     for (let i = 0; i < comment.comments.length; i++) {
       const nestedComment = comment.comments[i]
+      const replyNestedCommentOnClick = () => {
+        // reply nested comment
+        updateAddComment(true)
+        updateReplyNestedCommentId(comment.id)
+        updatePostCommentContent(`@${nestedComment.author.id} `)
+      }
+
       nestedComments.push(
         <div
           id={nestedComment.id}
@@ -296,7 +299,7 @@ export default (props) => {
     if (replyNestedCommentId !== "") {
       // reply nested comment
       await props.api.postNestedComment(content, props.data.id, replyNestedCommentId, parseMentioned(content))
-      updateReplayNestedCommentId("")
+      updateReplyNestedCommentId("")
     } else {
       await props.api.postComment(content, props.data.id, parseMentioned(content))
     }
@@ -304,7 +307,6 @@ export default (props) => {
   }
 
   const reshareButtonOnClick = () => {
-    console.log(props.hasNewPostModal)
     if (props.hasNewPostModal) {
       props.updateNewPostOpened(true)
     }
@@ -376,7 +378,7 @@ export default (props) => {
           mediaUrls={props.data.media_urls}
           threeRowHeight="130px"
           twoRowHeight="150px"
-          oneRowHeight="180px"
+          oneRowHeight={isTabletOrMobile ? "200px" : "280px"}
           onMediaClicked={updateMediaUrlOpened}
         />
         <div className="post-interactions-wrapper">
@@ -450,7 +452,8 @@ export default (props) => {
             () => updateMediaUrlOpened('')
           }
         >
-          <img className="post-media-img" src={mediaUrlOpened} alt=""/>
+            <img className="post-media-img" src={mediaUrlOpened} alt=""/>
+
         </div>
       }
     </div>
