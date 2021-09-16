@@ -7,6 +7,7 @@ import FormData from "form-data";
 import MediaPreview from "../MediaPreview/MediaPreview";
 import {useMediaQuery} from "react-responsive";
 import parseMentioned from "../../parseMentioned";
+import LoadingModal from "../LoadingModal/LoadingModal";
 
 export default (props) => {
   const [content, updateContent] = useState("")
@@ -68,19 +69,7 @@ export default (props) => {
 
   if (posting) {
     return (
-        <div className='new-post-posting-modal'>
-          <div className="new-post">
-          <div className='new-post-posting-modal-content'>
-
-            <div className="lds-circle">
-              <div/>
-            </div>
-            <div>
-              Sending your post...
-            </div>
-          </div>
-        </div>
-      </div>
+        <LoadingModal title="Sending your post..."/>
     )
   }
   return (

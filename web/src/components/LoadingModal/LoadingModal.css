@@ -1,0 +1,71 @@
+
+/* Post Loading Modal */
+/* The Modal (background) */
+.loading-modal {
+    position: fixed; /* Stay in place */
+    z-index: 10; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.loading-modal-content{
+    padding: 13px;
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 700px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 1px 1px #e0e0e0;
+    resize: none;
+    margin-bottom: 20px;
+    max-height: 70vh;
+
+    height: 50vh;
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+/* Loader */
+
+.lds-circle {
+    display: inline-block;
+    transform: translateZ(1px);
+}
+.lds-circle > div {
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border-radius: 50%;
+    background: #c25a5a;
+    animation: lds-circle 2.4s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+@keyframes lds-circle {
+    0%, 100% {
+        animation-timing-function: cubic-bezier(0.5, 0, 1, 0.5);
+    }
+    0% {
+        transform: rotateY(0deg);
+    }
+    50% {
+        transform: rotateY(1800deg);
+        animation-timing-function: cubic-bezier(0, 0.5, 0.5, 1);
+    }
+    100% {
+        transform: rotateY(3600deg);
+    }
+}
