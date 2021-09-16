@@ -1,3 +1,5 @@
+import os
+from typing import Union
 from mongoengine import NotUniqueError
 from werkzeug.security import generate_password_hash, check_password_hash
 from mini_gplus.models import User, Media
@@ -22,6 +24,11 @@ def sign_up(user_id, password):
     new_user.password = generate_password_hash(password)
     try:
         new_user.save()
+        if os.getenv('OFFICIAL', None):
+            official_user_id = os.getenv('OFFICIAL')
+            official_user = find_user(official_user_id)
+            if official_user:
+                add_following(new_user, official_user)
         set_in_user_cache(new_user)
     except NotUniqueError:
         return False
@@ -46,12 +53,12 @@ def sign_in(user_id, password):
 
 
 @timer
-def find_user(user_id):
+def find_user(user_id: str) -> Union[User, bool]:
     """
     Finds the user
 
-    :param (str) user_id: user id
-    :return (User|bool): Whether the user exists
+    :param user_id: user id
+    :return: Whether the user exists
     """
     return get_in_user_cache_by_user_id(user_id)
 

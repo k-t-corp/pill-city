@@ -128,7 +128,8 @@ def signup_user(user_id, avatar):
     user = User(user_id)
     user.sign_up()
     user.sign_in()
-    user.update_avatar(avatar)
+    if avatar:
+        user.update_avatar(avatar)
     return user
 
 
@@ -157,6 +158,7 @@ def main():
 
     print("Dumping dummy data")
     # Sign up some users
+    official = signup_user('official', None)
     kt = signup_user('kt', 'kt.jpeg')
     ika = signup_user('ika', 'ika.jpeg')
     soybean = signup_user('soybean', 'soybean.png')
@@ -188,6 +190,9 @@ def main():
         ika.follow(user)
 
     # Create some posts
+    official.create_post('Welcome to pill.city! '
+                         'Click the Users tab on top (or the left most tab if you are on a phone) '
+                         'to start following people!', is_public=True)
     with open('./scripts/xss.txt') as f:
         kt.create_post(f.read(), is_public=True, circle_ids=[kt_gplus_circle_id])
     kt.create_post(' _Hello, World!_ ', is_public=True)

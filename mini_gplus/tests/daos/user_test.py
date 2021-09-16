@@ -4,8 +4,10 @@ from mini_gplus.daos.user import sign_up, sign_in, find_user, is_following, add_
 
 class TestUserDao(BaseTestCase):
     def test_user_successful_check_after_create(self):
+        self.assertTrue(sign_up('official', '1234'))
         self.assertTrue(sign_up('user1', '1234'))
         self.assertEqual('user1', sign_in('user1', '1234').user_id)
+        self.assertIn(find_user('official'), find_user('user1').followings)
 
     def test_user_failure_check_wrong_password(self):
         self.assertTrue(sign_up('user1', '1234'))
