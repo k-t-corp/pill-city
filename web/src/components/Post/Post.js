@@ -11,7 +11,7 @@ import {useMediaQuery} from "react-responsive";
 
 export default (props) => {
   const [addComment, updateAddComment] = useState(false)
-  const [replyNestedCommentId, updateReplayNestedCommentId] = useState("")
+  const [replyNestedCommentId, updateReplyNestedCommentId] = useState("")
   const [showEmojiPicker, updateShowEmojiPicker] = useState(false)
   const [reactionData, setReactionData] = useState(parseReactionData(props.data.reactions))
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
@@ -216,17 +216,18 @@ export default (props) => {
     const comment = props.data.comments[i]
     const replyCommentButtonOnclick = () => {
       updateAddComment(true)
-      updateReplayNestedCommentId(comment.id)
-    }
-    const replyNestedCommentOnClick = () => {
-      // reply nested comment
-      updateAddComment(true)
-      updateReplayNestedCommentId(comment.id)
-      updatePostCommentContent(`@${comment.author.id} `)
+      updateReplyNestedCommentId(comment.id)
     }
     let nestedComments = []
     for (let i = 0; i < comment.comments.length; i++) {
       const nestedComment = comment.comments[i]
+      const replyNestedCommentOnClick = () => {
+        // reply nested comment
+        updateAddComment(true)
+        updateReplyNestedCommentId(comment.id)
+        updatePostCommentContent(`@${nestedComment.author.id} `)
+      }
+
       nestedComments.push(
         <div
           id={nestedComment.id}
@@ -298,7 +299,7 @@ export default (props) => {
     if (replyNestedCommentId !== "") {
       // reply nested comment
       await props.api.postNestedComment(content, props.data.id, replyNestedCommentId, parseMentioned(content))
-      updateReplayNestedCommentId("")
+      updateReplyNestedCommentId("")
     } else {
       await props.api.postComment(content, props.data.id, parseMentioned(content))
     }
@@ -306,7 +307,6 @@ export default (props) => {
   }
 
   const reshareButtonOnClick = () => {
-    console.log(props.hasNewPostModal)
     if (props.hasNewPostModal) {
       props.updateNewPostOpened(true)
     }
