@@ -9,7 +9,7 @@ from .notification import create_notification
 from .mention import mention
 
 
-def create_comment(self: User, content: str, parent_post: Post, mentioned_users: List[User]) -> str:
+def create_comment(self: User, content: str, parent_post: Post, mentioned_users: List[User]) -> Optional[Comment]:
     """
     Create a comment for the user
 
@@ -17,7 +17,7 @@ def create_comment(self: User, content: str, parent_post: Post, mentioned_users:
     :param content: the content
     :param parent_post: the post that this comment is attached to
     :param mentioned_users: list of mentioned users
-    :return ID of the new comment
+    :return The new comment object
     """
     # context_home_or_profile=False because context_home_or_profile only affects public posts
     # and it is fine for someone who does not see a public post on his home
@@ -48,22 +48,23 @@ def create_comment(self: User, content: str, parent_post: Post, mentioned_users:
             mentioned_users=mentioned_users
         )
 
-        return str(new_comment.eid)
+        return new_comment
     else:
         raise UnauthorizedAccess()
 
 
 def create_nested_comment(self: User, content: str, parent_comment: Comment, parent_post: Post,
-                          mentioned_users: List[User]) -> str:
+                          mentioned_users: List[User]) -> Optional[Comment]:
     """
     Create a nested comment for the user
+    TODO: this can be merged with create_comment
 
     :param self: The acting user
     :param content: the content
     :param parent_comment: the comment that this nested comment is attached to
     :param parent_post: the post that this comment is attached to
     :param mentioned_users: list of mentioned users
-    :return ID of the new comment
+    :return The new comment object
     """
     # same explanation for context_home_or_profile=False
     if sees_post(self, parent_post, context_home_or_profile=False):
@@ -91,7 +92,7 @@ def create_nested_comment(self: User, content: str, parent_comment: Comment, par
             mentioned_users=mentioned_users
         )
 
-        return str(new_comment.eid)
+        return new_comment
     else:
         raise UnauthorizedAccess()
 

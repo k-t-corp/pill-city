@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react'
 import Picker from 'emoji-picker-react';
+import _ from 'lodash'
 import "./Post.css"
 import getAvatarUrl from "../../api/getAvatarUrl";
 import parseContent from "../../parseContent";
@@ -10,11 +11,23 @@ import {useHotkeys} from "react-hotkeys-hook";
 import {useMediaQuery} from "react-responsive";
 
 export default (props) => {
+  // existing comment data cached in state
+  const [commentData, setCommentData] = useState(_.cloneDeep(props.data.comments))
+  // whether the comment box is expanded
   const [addComment, updateAddComment] = useState(false)
+  // comment box content
+  const [postCommentContent, updatePostCommentContent] = useState('')
+  // currently replying to comment ID
   const [replyNestedCommentId, updateReplyNestedCommentId] = useState("")
+  // comment button is disabled
+  const [commentButtonDisabled, updateCommentButtonDisabled] = useState(false)
+
   const [showEmojiPicker, updateShowEmojiPicker] = useState(false)
   const [reactionData, setReactionData] = useState(parseReactionData(props.data.reactions))
+
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
+  const [mediaUrlOpened, updateMediaUrlOpened] = useState('')
+
   const resharedElem = (resharedFrom) => {
     if (resharedFrom === null) {
       return null
@@ -212,8 +225,8 @@ export default (props) => {
   )
 
   let comments = []
-  for (let i = 0; i < props.data.comments.length; i++) {
-    const comment = props.data.comments[i]
+  for (let i = 0; i < commentData.length; i++) {
+    const comment = commentData[i]
     const replyCommentButtonOnclick = () => {
       updateAddComment(true)
       updateReplyNestedCommentId(comment.id)
@@ -296,14 +309,27 @@ export default (props) => {
 
   const postCommentButtonOnClick = async () => {
     const content = postCommentContent
+    updateCommentButtonDisabled(true)
     if (replyNestedCommentId !== "") {
       // reply nested comment
-      await props.api.postNestedComment(content, props.data.id, replyNestedCommentId, parseMentioned(content))
-      updateReplyNestedCommentId("")
+      const newNestedComment = await props.api.postNestedComment(content, props.data.id, replyNestedCommentId, parseMentioned(content))
+      setCommentData(commentData.map(c => {
+        if (c.id !== replyNestedCommentId) {
+          return c
+        }
+        return {
+          ...c,
+          comments: [...c.comments, newNestedComment]
+        }
+      }))
     } else {
-      await props.api.postComment(content, props.data.id, parseMentioned(content))
+      const newComment = await props.api.postComment(content, props.data.id, parseMentioned(content))
+      setCommentData([...commentData, newComment])
     }
-    window.location.reload()
+    updateCommentButtonDisabled(false)
+    updateAddComment(false)
+    updatePostCommentContent('')
+    updateReplyNestedCommentId("")
   }
 
   const reshareButtonOnClick = () => {
@@ -334,12 +360,9 @@ export default (props) => {
     }
   }
 
-  const [mediaUrlOpened, updateMediaUrlOpened] = useState('')
   useHotkeys('esc', () => {
     updateMediaUrlOpened('')
   })
-
-  const [postCommentContent, updatePostCommentContent] = useState('')
 
   return (
     <div className="post-wrapper">
@@ -433,13 +456,18 @@ export default (props) => {
               />
             </div>
             <div className="post-comment-box-buttons">
-              <div className="post-comment-box-post-button" onClick={postCommentButtonOnClick}>
-                Comment
-              </div>
+              <div
+                className={
+                  !commentButtonDisabled ?
+                    "post-comment-box-post-button" :
+                    "post-comment-box-post-button post-comment-box-post-button-invalid"
+                  }
+                onClick={postCommentButtonOnClick}
+              >Comment</div>
             </div>
           </div> : null}
       </div>
-      {props.data.comments.length === 0 ? null :
+      {commentData.length === 0 ? null :
         <div className="post-comments-wrapper">
           {comments}
         </div>

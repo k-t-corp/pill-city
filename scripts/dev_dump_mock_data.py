@@ -111,7 +111,7 @@ class User(object):
         return self.sess.post(f"/api/posts/{post_id}/comment/{comment_id}/comment", json={
             'content': content,
             'mentioned_user_ids': mentioned_user_ids
-        })
+        }).json()['id']
 
     def follow(self, following_user_id: str):
         self._raise_on_unauthenticated()
