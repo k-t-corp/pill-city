@@ -1,0 +1,12 @@
+.about {
+    color: lightgray;
+    padding-top: 5px;
+}
+
+.about-commit-link {
+    color: #9dd0ff;
+}
+
+.about-you-may-hit-a-bug {
+    /*color: #E05140;*/
+}

@@ -5,6 +5,7 @@ import NewPost from "../../components/NewPost/NewPost";
 import NotificationDropdown from "../../components/NotificationDropdown/NotificationDropdown";
 import {useMediaQuery} from "react-responsive";
 import MobileNewPost from "../../components/MobileNewPost/MobileNewPost";
+import About from "../../components/About/About";
 
 export default (props) => {
   const [loading, updateLoading] = useState(true)
@@ -77,11 +78,8 @@ export default (props) => {
                  api={props.api}
                  resharePostData={resharePostData}
                  updateResharePostData={updateResharePostData}/>
-        <NotificationDropdown
-
-          api={props.api}
-
-        />
+        <NotificationDropdown api={props.api}/>
+        <About api={props.api}/>
       </div>}
     </div>
   )

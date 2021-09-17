@@ -81,13 +81,19 @@ app.config['BUNDLE_ERRORS'] = True
 # cors
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-populate_user_cache()
 
-isOpenRegistration = os.environ.get('OPEN_REGISTRATION', 'false') == 'true'
-if isOpenRegistration:
+# open registration
+is_open_registration = os.environ.get('OPEN_REGISTRATION', 'false') == 'true'
+if is_open_registration:
     print('Open registration')
 else:
     print("Invite-only")
+
+# git commit
+# TODO: this only works on heroku https://devcenter.heroku.com/changelog-items/630
+git_commit = os.getenv('SOURCE_VERSION', None)
+
+populate_user_cache()
 
 
 @app.route('/', methods=['GET'])
@@ -137,7 +143,7 @@ def _sign_up():
         return jsonify({"message": {"id": "illegal id"}}), 400
     if not password:
         return jsonify({"message": {"password": "password is required"}}), 400
-    if not isOpenRegistration:
+    if not is_open_registration:
         invitation_code = request.json.get('invitation_code', None)
         if not invitation_code:
             return jsonify({"message": {"invitation_code": "invitation code is required"}}), 403
@@ -155,7 +161,14 @@ def _sign_up():
 @app.route('/api/isOpenRegistration', methods=['GET'])
 def _is_open_registration():
     return {
-        "is_open_registration": isOpenRegistration
+        "is_open_registration": is_open_registration
+    }
+
+
+@app.route('/api/gitCommit')
+def _git_commit():
+    return {
+        'git_commit': git_commit
     }
 
 
