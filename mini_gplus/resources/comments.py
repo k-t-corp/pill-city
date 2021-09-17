@@ -18,13 +18,9 @@ nested_comment_fields = {
     'content': fields.String,
 }
 
-comment_fields = {
-    'id': fields.String(attribute='eid'),
-    'created_at_seconds': fields.Integer(attribute='created_at'),
-    'author': fields.Nested(user_fields),
-    'content': fields.String,
+comment_fields = dict({
     'comments': fields.List(fields.Nested(nested_comment_fields))
-}
+}, **nested_comment_fields)
 
 
 class Comments(Resource):
