@@ -90,8 +90,11 @@ else:
     print("Invite-only")
 
 # git commit
-# TODO: this only works on heroku https://devcenter.heroku.com/changelog-items/630
-git_commit = os.getenv('SOURCE_VERSION', None)
+# TODO: this only works on heroku https://devcenter.heroku.com/articles/dyno-metadata
+git_commit = os.getenv('HEROKU_SLUG_COMMIT', None)
+if git_commit:
+    git_commit = git_commit[: 7]
+print(f'Git commit {git_commit}')
 
 populate_user_cache()
 
