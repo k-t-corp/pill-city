@@ -318,17 +318,6 @@ export default class Api {
     return res.data
   }
 
-  async isFollowing(followingUserId) {
-    Api.throwOnUnauthorized()
-    const res = await this.axiosInstance.get(
-      `/following/${followingUserId}`
-    )
-    if (res.status !== 200) {
-      throw new ApiError(res.status)
-    }
-    return res.data
-  }
-
   async addReaction(emoji, postId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.post(

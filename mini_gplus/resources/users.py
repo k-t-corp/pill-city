@@ -15,7 +15,7 @@ class IsFollowing(fields.Raw):
 
 
 user_with_following_fields = dict({
-    'is_follwing': IsFollowing(attribute='id')
+    'is_following': IsFollowing(attribute='id')
 }, **user_fields)
 
 
