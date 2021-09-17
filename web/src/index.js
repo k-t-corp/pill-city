@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import 'semantic-ui-css/semantic.min.css';
 import * as Sentry from "@sentry/react";
 import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+import {unregister} from './registerServiceWorker';
 
 if (process.env.REACT_APP_SENTRY_DSN) {
   console.log("Enable sentry")
@@ -15,4 +15,4 @@ if (process.env.REACT_APP_SENTRY_DSN) {
 }
 
 ReactDOM.render(<App />, document.getElementById('root'));
-registerServiceWorker();
+unregister();
