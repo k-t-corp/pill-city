@@ -8,6 +8,7 @@ import MediaPreview from "../MediaPreview/MediaPreview";
 import {useMediaQuery} from "react-responsive";
 import parseMentioned from "../../parseMentioned";
 import LoadingModal from "../LoadingModal/LoadingModal";
+import {useHotkeys} from "react-hotkeys-hook";
 
 export default (props) => {
   const [content, updateContent] = useState("")
@@ -20,6 +21,19 @@ export default (props) => {
   const isValid = () => {
     return (content.trim().length !== 0 || medias.length !== 0) && circleIds.length !== 0
   }
+
+  useHotkeys('ctrl+enter', async () => {
+    console.log('NewPost ctrl+enter')
+    if (content.endsWith('\n')) {
+      // if sent using ctrl+enter, there should be an extra newline at the end
+      updateContent(content.substring(0, content.length - 1))
+    }
+    if (isValid()) {
+      await postButtonOnClick()
+    }
+  }, {
+    enableOnTags: ['TEXTAREA']
+  })
 
   const postButtonOnClick = async () => {
     updatePosting(true);
@@ -69,7 +83,7 @@ export default (props) => {
 
   if (posting) {
     return (
-        <LoadingModal title="Sending your post..."/>
+      <LoadingModal title="Sending your post..."/>
     )
   }
   return (
