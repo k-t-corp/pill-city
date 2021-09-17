@@ -209,7 +209,7 @@ export default class Api {
     if (res.status !== 201) {
       throw new ApiError(res.status)
     }
-    return null
+    return res.data
   }
 
   async postNestedComment(content, postId, commentId, mentionedUserIds) {
@@ -221,10 +221,10 @@ export default class Api {
         mentioned_user_ids: mentionedUserIds
       }
     )
-    if (res.status !== 200) {
+    if (res.status !== 201) {
       throw new ApiError(res.status)
     }
-    return null
+    return res.data
   }
 
   async getCircles() {

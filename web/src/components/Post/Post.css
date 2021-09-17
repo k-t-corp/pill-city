@@ -260,6 +260,13 @@
     cursor: pointer;
 }
 
+.post-comment-box-post-button-invalid {
+    background-color: #767676;
+    cursor: none;
+    pointer-events: none;
+    user-select: none;
+}
+
 /*Emoji Picker*/
 
 #post-reaction-emoji-picker-wrapper {

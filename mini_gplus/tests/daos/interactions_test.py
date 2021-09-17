@@ -4,7 +4,7 @@ from mini_gplus.daos.user import sign_up, find_user, add_following
 from mini_gplus.daos.circle import create_circle, find_circle, toggle_member
 from mini_gplus.daos.post import create_post, get_post, owns_post, sees_post, retrieves_posts_on_home, \
     retrieves_posts_on_profile
-from mini_gplus.daos.comment import create_comment, create_nested_comment, get_comment
+from mini_gplus.daos.comment import create_comment, create_nested_comment
 from mini_gplus.daos.reaction import create_reaction, get_reaction
 from mini_gplus.daos.exceptions import UnauthorizedAccess
 
@@ -39,12 +39,11 @@ class InteractionsTest(BaseTestCase):
 
         comment1 = None
         if comments:
-            comment_id = create_comment(acting_user, 'comment1', post, [])
-            comment1 = get_comment(comment_id, post)
+            comment1 = create_comment(acting_user, 'comment1', post, [])
             self.assertIn(comment1.eid, list(map(lambda c: c.eid, post.comments2)))
             if acting_user.id != post.author.id:
                 self.assertEqual(1, len(Notification.objects(notifier=acting_user,
-                                                             notifying_href=f"/post/{post.eid}#comment-{comment_id}",
+                                                             notifying_href=f"/post/{post.eid}#comment-{comment1.eid}",
                                                              notifying_action=NotifyingAction.Comment,
                                                              notified_href=f"/post/{post.eid}",
                                                              owner=post.author.id)))
@@ -53,19 +52,17 @@ class InteractionsTest(BaseTestCase):
                 create_comment(acting_user, 'comment1', post, [])
 
             self.assertRaises(UnauthorizedAccess, op1)
-            comment_id = create_comment(post.author, 'comment1', post, [])
-            comment1 = get_comment(comment_id, post)
+            comment1 = create_comment(post.author, 'comment1', post, [])
 
         if nested_comments:
-            nested_comment_id = create_nested_comment(acting_user, 'nested_comment1', comment1, post, [])
-            nested_comment1 = get_comment(nested_comment_id, post)
+            nested_comment1 = create_nested_comment(acting_user, 'nested_comment1', comment1, post, [])
             self.assertIn(nested_comment1.eid, list(map(lambda c: c.eid, comment1.comments)))
             if acting_user.id != comment1.author.id:
                 self.assertEqual(1, len(Notification.objects(notifier=acting_user,
                                                              notifying_href=f"/post/{post.eid}"
-                                                                            f"#comment-{nested_comment_id}",
+                                                                            f"#comment-{nested_comment1.eid}",
                                                              notifying_action=NotifyingAction.Comment,
-                                                             notified_href=f"/post/{post.eid}#comment-{comment_id}",
+                                                             notified_href=f"/post/{post.eid}#comment-{comment1.eid}",
                                                              owner=comment1.author.id)))
         else:
             def op2():
