@@ -38,7 +38,9 @@ export default (props) => {
 
   const profilePostElement = () => {
     if (postLoading) {
-      return <div/>
+      return (<div className="user-profile-status">Loading...</div>)
+    } else if (postData.length === 0) {
+      return (<div className="user-profile-status">No posts here</div>)
     } else {
       let postElements = []
       for (let i = 0; i < postData.length; i++) {
