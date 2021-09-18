@@ -48,10 +48,13 @@ export default (props) => {
         )
       }
       for (let i = 0; i < posts.length; i++) {
+        const post = posts[i]
         postElements.push(
           <Post
-            key={i}
-            data={posts[i]}
+            // need to use post ID instead of index as key
+            // otherwise comments and reactions will be shifted after a new post is prepended
+            key={post.id}
+            data={post}
             me={me}
             api={props.api}
             detail={false}
