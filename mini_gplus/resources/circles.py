@@ -2,7 +2,7 @@ from flask_restful import Resource, fields, marshal_with, reqparse
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from mini_gplus.daos.user import find_user
 from mini_gplus.daos.circle import create_circle, get_circles, find_circle, toggle_member, delete_circle
-from .me import user_fields
+from .users import user_fields
 
 circle_fields = {
     'id': fields.String(attribute='eid'),

@@ -13,15 +13,14 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 from mini_gplus.daos.user import sign_in, sign_up
 from mini_gplus.daos.user_cache import populate_user_cache
 from mini_gplus.daos.invitation_code import check_invitation_code, claim_invitation_code
-from mini_gplus.resources.me import MyAvatar, MyProfilePic, Me
-from mini_gplus.resources.users import Users, User
+from mini_gplus.resources.users import Users, User, MyAvatar, MyProfilePic, Me
 from mini_gplus.resources.posts import Profile, Home, PostMedia, Posts, Post
 from mini_gplus.resources.comments import NestedComments, Comments
 from mini_gplus.resources.reactions import Reactions, Reaction
 from mini_gplus.resources.circles import Circles, CircleMember, Circle
 from mini_gplus.resources.followings import Following
 from mini_gplus.resources.notifications import Notifications, NotificationRead, NotificationsAllRead
-from mini_gplus.resources.admin import InvitationCode, InvitationCodes, ClearMediaUrlCache
+from mini_gplus.resources.invitations_codes import InvitationCode, InvitationCodes, ClearMediaUrlCache
 
 # sentry
 if os.getenv('SENTRY_DSN'):

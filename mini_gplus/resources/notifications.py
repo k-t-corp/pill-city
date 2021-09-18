@@ -5,7 +5,7 @@ from mini_gplus.daos.comment import get_comment
 from mini_gplus.daos.post import get_post
 from mini_gplus.daos.user import find_user
 from mini_gplus.daos.notification import get_notifications, mark_notification_as_read, mark_all_notifications_as_read
-from .me import user_fields
+from .users import user_fields
 from .pagination import pagination_parser
 
 

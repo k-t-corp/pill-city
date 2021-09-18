@@ -13,7 +13,7 @@ from mini_gplus.daos.post_cache import get_in_post_cache
 from mini_gplus.daos.media import get_media
 from mini_gplus.utils.now_ms import now_ms
 from mini_gplus.utils.profiling import timer
-from .me import user_fields
+from .users import user_fields
 from .upload_to_s3 import upload_to_s3
 from .pagination import pagination_parser
 from .mention import check_mentioned_user_ids
