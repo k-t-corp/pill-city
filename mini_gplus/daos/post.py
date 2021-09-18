@@ -7,6 +7,7 @@ from .notification import create_notification
 from .mention import mention
 from .pagination import get_page
 from .post_cache import set_in_post_cache, get_in_post_cache
+from .circle_cache import get_in_circle_cache
 
 HomePostsPageSize = 5
 ProfilePostsPageSize = 10
@@ -121,6 +122,7 @@ def sees_post(self, post, context_home_or_profile):
         return True
     else:
         for circle in post.circles:
+            circle = get_in_circle_cache(circle.id)
             if check_member(circle, self):
                 return True
     return False

@@ -365,7 +365,7 @@ export default (props) => {
   if (props.data.is_public) {
     sharingScope = 'Public'
   } else if (props.data.circles.length !== 0) {
-    sharingScope = props.data.circles.map(c => c.name).join(', ')
+    sharingScope = props.data.circles.filter(_ => _).map(c => c.name).join(', ')
   } else {
     sharingScope = 'Only you'
   }

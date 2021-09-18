@@ -1,9 +1,9 @@
 from mongoengine import NotUniqueError
 from mini_gplus.models import Circle
 from mini_gplus.utils.make_uuid import make_uuid
-from mini_gplus.utils.profiling import timer
 from .user import User
 from .exceptions import UnauthorizedAccess
+from .circle_cache import set_in_circle_cache, delete_from_circle_cache
 
 
 def get_circles(self):
@@ -30,6 +30,7 @@ def create_circle(self, name):
     new_circle.name = name
     try:
         new_circle.save()
+        set_in_circle_cache(new_circle)
     except NotUniqueError:
         return False
     return new_circle.eid
@@ -65,6 +66,7 @@ def toggle_member(self, circle, toggled_user):
         else:
             circle.members.append(toggled_user)
         circle.save()
+        set_in_circle_cache(circle)
     else:
         raise UnauthorizedAccess()
 
@@ -79,6 +81,7 @@ def delete_circle(self, circle):
     """
     if circle.owner.id == self.id:
         circle.delete()
+        delete_from_circle_cache(circle.id)
     else:
         raise UnauthorizedAccess()
 
