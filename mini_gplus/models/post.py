@@ -1,6 +1,6 @@
 from typing import List
-from mongoengine import Document, ListField, BooleanField, ReferenceField, StringField, LazyReferenceField, \
-    EmbeddedDocumentListField, EmbeddedDocument, LongField, PULL, CASCADE, NULLIFY
+from mongoengine import Document, ListField, BooleanField, StringField, LazyReferenceField, EmbeddedDocumentListField, \
+    EmbeddedDocument, LongField, PULL, CASCADE, NULLIFY
 from .created_at_mixin import CreatedAtMixin
 from .user import User
 from .circle import Circle
@@ -39,9 +39,9 @@ class Post(Document, CreatedAtMixin):
     reactions2 = EmbeddedDocumentListField(Reaction)
     comments2 = EmbeddedDocumentListField(Comment)
 
-    circles = ListField(ReferenceField(Circle, reverse_delete_rule=PULL), default=[])  # type: List[Circle]
+    circles = ListField(LazyReferenceField(Circle, reverse_delete_rule=PULL), default=[])  # type: List[Circle]
     reshareable = BooleanField(required=False, default=False)
-    reshared_from = ReferenceField('Post', required=False, reverse_delete_rule=NULLIFY, default=None)  # type: Post
+    reshared_from = LazyReferenceField('Post', required=False, reverse_delete_rule=NULLIFY, default=None)  # type: Post
     media_list = ListField(LazyReferenceField(Media, reverse_delete_rule=PULL), default=[])  # type: List[Media]
 
     def make_href(self):

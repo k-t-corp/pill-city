@@ -1,5 +1,4 @@
 import bleach
-from typing import Optional
 from mini_gplus.models import Post, NotifyingAction
 from mini_gplus.utils.profiling import timer
 from mini_gplus.utils.make_uuid import make_uuid
@@ -7,9 +6,11 @@ from .circle import check_member
 from .notification import create_notification
 from .mention import mention
 from .pagination import get_page
+from .post_cache import set_in_post_cache, get_in_post_cache
+from .circle_cache import get_in_circle_cache
 
-HomePostsPageSize = 5
-ProfilePostsPageSize = 10
+HomePostsPageSize = 15
+ProfilePostsPageSize = 15
 
 
 def create_post(self, content, is_public, circles, reshareable, reshared_from, media_list, mentioned_users):
@@ -38,38 +39,43 @@ def create_post(self, content, is_public, circles, reshareable, reshared_from, m
     new_post.is_public = is_public
     new_post.circles = circles
     new_post.media_list = media_list
-    sharing_from = None  # type: Optional[Post]
 
-    # validate reshared from post
+    if reshared_from and not reshareable:
+        # if resharing from a post, this post must also be reshareable, otherwise it's logically wrong
+        return False
+
     if reshared_from:
         if media_list:
             # when resharing, only allow content (text), e.g. no media
             return False
+
         if reshared_from.reshared_from:
             # if reshared_from itself is a reshared post, reshare reshared_from's original post
-            sharing_from = reshared_from.reshared_from
-        else:
-            sharing_from = reshared_from
+            # reshared_from.reshared_from is LazyReference so need to retrieve the full post
+            reshared_from = get_in_post_cache(reshared_from.reshared_from.id)
+
         # same explanation for context_home_or_profile=False
-        if not sees_post(self, sharing_from, context_home_or_profile=False):
+        if not sees_post(self, reshared_from, context_home_or_profile=False):
             return False
-        if not sharing_from.reshareable:
+
+        if not reshared_from.reshareable:
             return False
-        new_post.reshared_from = sharing_from
-    if reshared_from and not reshareable:
-        # if resharing from a post, this post must also be reshareable, otherwise it's logically wrong
-        return False
+
+        new_post.reshared_from = reshared_from
+
     new_post.reshareable = reshareable
     new_post.save()
 
-    if sharing_from:
+    if reshared_from:
         create_notification(
             self,
             notifying_href=new_post.make_href(),
             notifying_action=NotifyingAction.Reshare,
-            notified_href=sharing_from.make_href(),
-            owner=sharing_from.author
+            notified_href=reshared_from.make_href(),
+            owner=reshared_from.author
         )
+        # only cache reshared post
+        set_in_post_cache(reshared_from)
 
     mention(
         self,
@@ -116,6 +122,7 @@ def sees_post(self, post, context_home_or_profile):
         return True
     else:
         for circle in post.circles:
+            circle = get_in_circle_cache(circle.id)
             if check_member(circle, self):
                 return True
     return False

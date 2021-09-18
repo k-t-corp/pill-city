@@ -9,6 +9,6 @@ patch_env = unittest.mock.patch.dict(os.environ, {
 patch_env.start()
 
 r = fakeredis.FakeRedis()
-import mini_gplus.daos.user_cache
-patch_redis = unittest.mock.patch.object(mini_gplus.daos.user_cache, 'r', r)
+import mini_gplus.daos.cache
+patch_redis = unittest.mock.patch.object(mini_gplus.daos.cache, 'r', r)
 patch_redis.start()

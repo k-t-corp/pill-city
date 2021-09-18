@@ -4,7 +4,7 @@ from mini_gplus.daos.user import find_user
 from mini_gplus.daos.post import get_post
 from mini_gplus.daos.comment import create_comment, create_nested_comment, get_comment
 from .mention import check_mentioned_user_ids
-from .me import user_fields
+from .users import user_fields
 
 
 comment_parser = reqparse.RequestParser()

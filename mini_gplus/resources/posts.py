@@ -4,15 +4,18 @@ import werkzeug
 import uuid
 import json
 import redis
-from flask_restful import reqparse, Resource, fields, marshal_with
+from flask_restful import reqparse, Resource, fields, marshal_with, marshal
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from mini_gplus.daos.user import find_user
+from mini_gplus.daos.user_cache import get_in_user_cache_by_user_id
 from mini_gplus.daos.circle import find_circle
 from mini_gplus.daos.post import get_post, create_post, sees_post, retrieves_posts_on_home, retrieves_posts_on_profile
+from mini_gplus.daos.post_cache import get_in_post_cache
+from mini_gplus.daos.circle_cache import get_in_circle_cache
 from mini_gplus.daos.media import get_media
 from mini_gplus.utils.now_ms import now_ms
 from mini_gplus.utils.profiling import timer
-from .me import user_fields
+from .users import user_fields
 from .upload_to_s3 import upload_to_s3
 from .pagination import pagination_parser
 from .mention import check_mentioned_user_ids
@@ -95,6 +98,40 @@ class MediaUrls(fields.Raw):
         return list(map(get_media_url, media_list))
 
 
+class ResharedFrom(fields.Raw):
+    def format(self, value):
+        if not value:
+            return None
+        oid = value.id
+        post = get_in_post_cache(oid)
+        # we are returning reshared post without reactions or comments
+        # so no need to set cache when reactions or comments are updated for a reshared post
+        return marshal(post, {
+            'id': fields.String(attribute='eid'),
+            'created_at_seconds': fields.Integer(attribute='created_at'),
+            'author': fields.Nested(user_fields),
+            'content': fields.String,
+            'media_urls': MediaUrls(attribute='media_list'),
+        })
+
+
+class Circle(fields.Raw):
+    def format(self, value):
+        if not value:
+            return None
+        oid = value.id
+        circle = get_in_circle_cache(oid)
+        user_id = get_jwt_identity()
+        user = get_in_user_cache_by_user_id(user_id)
+        if user == circle.owner or user in circle.members:
+            return marshal(circle, {
+                # not using circle_fields because not exposing what members a circle has
+                'id': fields.String(attribute='eid'),
+                'name': fields.String,
+            })
+        return None
+
+
 post_fields = {
     'id': fields.String(attribute='eid'),
     'created_at_seconds': fields.Integer(attribute='created_at'),
@@ -102,14 +139,7 @@ post_fields = {
     'content': fields.String,
     'is_public': fields.Boolean,
     'reshareable': fields.Boolean,
-    'reshared_from': fields.Nested({
-        # this is a trimmed down version of post_fields
-        'id': fields.String(attribute='eid'),
-        'created_at_seconds': fields.Integer(attribute='created_at'),
-        'author': fields.Nested(user_fields),
-        'content': fields.String,
-        'media_urls': MediaUrls(attribute='media_list'),
-    }, allow_null=True),
+    'reshared_from': ResharedFrom(attribute='reshared_from'),
     'media_urls': MediaUrls(attribute='media_list'),
     'reactions': fields.List(fields.Nested({
         'id': fields.String(attribute='eid'),
@@ -117,12 +147,7 @@ post_fields = {
         'author': fields.Nested(user_fields),
     }), attribute='reactions2'),
     'comments': fields.List(fields.Nested(comment_fields), attribute='comments2'),
-    # TODO: only return the circles that the seeing user is in
-    'circles': fields.List(fields.Nested({
-        # not using circle_fields because not exposing what members a circle has
-        'id': fields.String(attribute='eid'),
-        'name': fields.String,
-    }))
+    'circles': fields.List(Circle)
 }
 
 
