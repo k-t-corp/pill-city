@@ -7,8 +7,6 @@ import NewPost from "../NewPost/NewPost";
 export default (props) => {
   const [postLoading, updatePostLoading] = useState(true)
   const [postData, updatePostData] = useState([])
-  const [followingLoading, updateFollowingLoading] = useState(true)
-  const [following, updateFollowing] = useState(false)
   const [newPostOpened, updateNewPostOpened] = useState(false)
   const [resharePostData, updateResharePostData] = useState(null)
   const [circles, updateCircles] = useState()
@@ -21,20 +19,11 @@ export default (props) => {
     }
   }
 
-
   useEffect(async () => {
     updatePostData(await props.api.getProfile(props.userData.id))
     updateCircles(await props.api.getCircles())
     updateMe(await props.api.getMe())
     updatePostLoading(false)
-  }, [])
-
-  useEffect(async () => {
-    if (!props.me) {
-      const isFollowing = (await props.api.isFollowing(props.userData.id)).is_following
-      updateFollowing(isFollowing)
-    }
-    updateFollowingLoading(false)
   }, [])
 
   const loadMorePosts = async () => {
@@ -91,22 +80,18 @@ export default (props) => {
           Edit profile
         </div>
       )
+    } else if (props.userData.is_following) {
+      return (
+        <div className="user-profile-info-button" onClick={unfollowOnClick}>
+          Unfollow
+        </div>
+      )
     } else {
-      if (followingLoading) {
-        return null
-      } else if (following) {
-        return (
-          <div className="user-profile-info-button" onClick={unfollowOnClick}>
-            Unfollow
-          </div>
-        )
-      } else {
-        return (
-          <div className="user-profile-info-button" onClick={followOnClick}>
-            Follow
-          </div>
-        )
-      }
+      return (
+        <div className="user-profile-info-button" onClick={followOnClick}>
+          Follow
+        </div>
+      )
     }
   }
 
