@@ -132,6 +132,14 @@
     margin-top: 10px;
 }
 
+.new-post-reshare-content-summary {
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 .new-post-text-box::-webkit-scrollbar {
     display: none;
