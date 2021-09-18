@@ -9,8 +9,8 @@ from .pagination import get_page
 from .post_cache import set_in_post_cache, get_in_post_cache
 from .circle_cache import get_in_circle_cache
 
-HomePostsPageSize = 5
-ProfilePostsPageSize = 10
+HomePostsPageSize = 15
+ProfilePostsPageSize = 15
 
 
 def create_post(self, content, is_public, circles, reshareable, reshared_from, media_list, mentioned_users):
