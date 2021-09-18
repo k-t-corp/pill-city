@@ -12,6 +12,9 @@ export default (props) => {
   }, [])
 
   useInterval(async () => {
+    if (notifications.length === 0) {
+      return
+    }
     const lastNotification = notifications[0]
     const fetchedNewNotifications = await props.api.getNotifications()
     // find position of lastNotification in fetchedNewNotifications
@@ -151,7 +154,12 @@ export default (props) => {
                onClick={async (e) => {
                  e.preventDefault()
                  await props.api.markAllNotificationsAsRead()
-                 window.location.reload()
+                 updateNotifications(notifications.map(n => {
+                   return {
+                     ...n,
+                     unread: false
+                   }
+                 }))
                }}>
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"/>
           </svg>
