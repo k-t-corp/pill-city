@@ -1,7 +1,8 @@
+import { isObjectLike, isString } from "lodash";
 export default (user) => {
   if (
-    typeof user === "object" &&
-    typeof user.avatar_url === "string" &&
+    isObjectLike(user) &&
+    isString(user.avatar_url) &&
     user.avatar_url.length > 0
   ) {
     return user.avatar_url
