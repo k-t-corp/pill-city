@@ -4,11 +4,12 @@ import werkzeug
 import uuid
 import json
 import redis
-from flask_restful import reqparse, Resource, fields, marshal_with
+from flask_restful import reqparse, Resource, fields, marshal_with, marshal
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from mini_gplus.daos.user import find_user
 from mini_gplus.daos.circle import find_circle
 from mini_gplus.daos.post import get_post, create_post, sees_post, retrieves_posts_on_home, retrieves_posts_on_profile
+from mini_gplus.daos.post_cache import get_in_post_cache
 from mini_gplus.daos.media import get_media
 from mini_gplus.utils.now_ms import now_ms
 from mini_gplus.utils.profiling import timer
@@ -95,6 +96,23 @@ class MediaUrls(fields.Raw):
         return list(map(get_media_url, media_list))
 
 
+class ResharedFrom(fields.Raw):
+    def format(self, value):
+        if not value:
+            return None
+        oid = value.id
+        post = get_in_post_cache(oid)
+        # we are returning reshared post without reactions or comments
+        # so no need to set cache when reactions or comments are updated for a reshared post
+        return marshal(post, {
+            'id': fields.String(attribute='eid'),
+            'created_at_seconds': fields.Integer(attribute='created_at'),
+            'author': fields.Nested(user_fields),
+            'content': fields.String,
+            'media_urls': MediaUrls(attribute='media_list'),
+        })
+
+
 post_fields = {
     'id': fields.String(attribute='eid'),
     'created_at_seconds': fields.Integer(attribute='created_at'),
@@ -102,14 +120,7 @@ post_fields = {
     'content': fields.String,
     'is_public': fields.Boolean,
     'reshareable': fields.Boolean,
-    'reshared_from': fields.Nested({
-        # this is a trimmed down version of post_fields
-        'id': fields.String(attribute='eid'),
-        'created_at_seconds': fields.Integer(attribute='created_at'),
-        'author': fields.Nested(user_fields),
-        'content': fields.String,
-        'media_urls': MediaUrls(attribute='media_list'),
-    }, allow_null=True),
+    'reshared_from': ResharedFrom(attribute='reshared_from'),
     'media_urls': MediaUrls(attribute='media_list'),
     'reactions': fields.List(fields.Nested({
         'id': fields.String(attribute='eid'),
