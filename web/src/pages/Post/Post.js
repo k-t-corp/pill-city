@@ -68,6 +68,7 @@ export default class Post extends Component {
     return (
       <div className='post-wrapper-page'>
         <PostComponent
+          detail={true}
           hasNewPostModal={true}
           data={this.state.data}
           highlightCommentId={highlightCommentId}
