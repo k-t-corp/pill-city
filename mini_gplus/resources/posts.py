@@ -163,6 +163,7 @@ post_parser.add_argument('mentioned_user_ids', type=str, action='append', defaul
 
 class Posts(Resource):
     @jwt_required()
+    @marshal_with(post_fields)
     def post(self):
         """
         Creates a new post
@@ -198,7 +199,7 @@ class Posts(Resource):
                 return {"msg": f"Media {media_object_name} is not found"}, 404
             media_objects.append(media_object)
 
-        post_id = create_post(
+        post = create_post(
             user,
             content=args['content'],
             is_public=args['is_public'],
@@ -208,9 +209,9 @@ class Posts(Resource):
             media_list=media_objects,
             mentioned_users=check_mentioned_user_ids(args['mentioned_user_ids'])
         )
-        if not post_id:
+        if not post:
             return {"msg": f"Not allowed to reshare post {reshared_from}"}, 403
-        return {'id': post_id}, 201
+        return post, 201
 
 
 post_media_parser = reqparse.RequestParser()

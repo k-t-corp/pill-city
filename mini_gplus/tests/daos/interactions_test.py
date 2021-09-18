@@ -91,7 +91,7 @@ class InteractionsTest(BaseTestCase):
         post = get_post(post.eid)
         if reshare:
             new_post_id = create_post(acting_user, 'resharing', is_public=True, circles=[], reshareable=True,
-                                      reshared_from=post, media_list=[], mentioned_users=[])
+                                      reshared_from=post, media_list=[], mentioned_users=[]).id
             self.assertEqual(1, len(Post.objects(eid=new_post_id)))
             new_post = get_post(new_post_id)
             self.assertEqual(post.id, new_post.reshared_from.id)
@@ -133,9 +133,9 @@ class InteractionsTest(BaseTestCase):
         self.assertTrue(1, len(post1))
         post1 = post1[0]
 
-        post2_id = create_post(user1, 'resharing post1', True, [], True, post1, [], [])
+        post2_id = create_post(user1, 'resharing post1', True, [], True, post1, [], []).id
         post2 = get_post(post2_id)
-        post3_id = create_post(user1, 'resharing post2', True, [], True, post2, [], [])
+        post3_id = create_post(user1, 'resharing post2', True, [], True, post2, [], []).id
         post3 = get_post(post3_id)
         self.assertEqual(post1.id, post2.reshared_from.id)
         self.assertEqual(post1.id, post3.reshared_from.id)
@@ -150,11 +150,11 @@ class InteractionsTest(BaseTestCase):
         user3 = find_user('user3')
 
         # Create reshareable public post1 from user1
-        post1_id = create_post(user1, 'post1', True, [], True, None, [], [])
+        post1_id = create_post(user1, 'post1', True, [], True, None, [], []).id
         post1 = get_post(post1_id)
 
         # Create non-reshareable public post2 from user1
-        post2_id = create_post(user1, 'post2', True, [], False, None, [], [])
+        post2_id = create_post(user1, 'post2', True, [], False, None, [], []).id
         post2 = get_post(post2_id)
 
         # user2 follows user1
@@ -226,11 +226,11 @@ class InteractionsTest(BaseTestCase):
         add_following(user2, user1)
 
         # Create reshareable post1 by user1 into circle1
-        post1_id = create_post(user1, 'post1', False, [circle1], True, None, [], [])
+        post1_id = create_post(user1, 'post1', False, [circle1], True, None, [], []).id
         post1 = get_post(post1_id)
 
         # Create non-reshareable post2 by user1 into circle1
-        post2_id = create_post(user1, 'post2', False, [circle1], False, None, [], [])
+        post2_id = create_post(user1, 'post2', False, [circle1], False, None, [], []).id
         post2 = get_post(post2_id)
 
         # User2 not owns but sees, sees on profile, comments, nested-comments, reacts and reshares on post1
