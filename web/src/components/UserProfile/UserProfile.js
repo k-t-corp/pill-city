@@ -11,6 +11,8 @@ export default (props) => {
   const [resharePostData, updateResharePostData] = useState(null)
   const [circles, updateCircles] = useState()
   const [me, updateMe] = useState()
+  const [followLoading, updateFollowLoading] = useState(false)
+  const [isFollowing, updateIsFollowing] = useState(props.userData.is_following)
 
   window.onclick = function(event) {
     let modal = document.getElementById("profile-new-post-modal");
@@ -65,14 +67,18 @@ export default (props) => {
     }
   }
 
-  const unfollowOnClick = async () => {
-    await props.api.unfollow(props.userData.id)
-    window.location.reload()
-  }
-
   const followOnClick = async () => {
-    await props.api.follow(props.userData.id)
-    window.location.reload()
+    if (followLoading) {
+      return
+    }
+    updateFollowLoading(true)
+    if (isFollowing) {
+      await props.api.unfollow(props.userData.id)
+    } else {
+      await props.api.follow(props.userData.id)
+    }
+    updateIsFollowing(!isFollowing)
+    updateFollowLoading(false)
   }
 
   const userInfoButton = () => {
@@ -82,17 +88,12 @@ export default (props) => {
           Edit profile
         </div>
       )
-    } else if (props.userData.is_following) {
-      return (
-        <div className="user-profile-info-button" onClick={unfollowOnClick}>
-          Unfollow
-        </div>
-      )
     } else {
       return (
-        <div className="user-profile-info-button" onClick={followOnClick}>
-          Follow
-        </div>
+        <div
+          className={!followLoading ? "user-profile-info-button" : "user-profile-info-button user-profile-info-button-disabled"}
+          onClick={followOnClick}
+        >{isFollowing ? 'Unfollow' : 'Follow'}</div>
       )
     }
   }
@@ -116,17 +117,17 @@ export default (props) => {
         {profilePostElement()}
       </div>
       {newPostOpened &&
-      <div id="profile-new-post-modal" className="post-detail-new-post-modal">
-        <div className="post-detail-new-post-modal-content">
-          <NewPost
-            circles={circles}
-            me={me}
-            api={props.api}
-            resharePostData={resharePostData}
-            updateResharePostData={updateResharePostData}
-          />
+        <div id="profile-new-post-modal" className="post-detail-new-post-modal">
+          <div className="post-detail-new-post-modal-content">
+            <NewPost
+              circles={circles}
+              me={me}
+              api={props.api}
+              resharePostData={resharePostData}
+              updateResharePostData={updateResharePostData}
+            />
+          </div>
         </div>
-      </div>
       }
     </div>
   )

@@ -58,6 +58,11 @@
     cursor: pointer;
 }
 
+.user-profile-info-button-disabled {
+    cursor: not-allowed;
+    background-color: lightgray;
+}
+
 .user-profile-posts {
     width: 60%;
     min-width: 600px;
