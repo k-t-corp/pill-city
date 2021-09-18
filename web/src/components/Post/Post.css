@@ -64,6 +64,14 @@
     margin: 15px 0;
 }
 
+.post-content-summary {
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 10;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
 /*Reactions*/
 
 .post-reactions-wrapper {

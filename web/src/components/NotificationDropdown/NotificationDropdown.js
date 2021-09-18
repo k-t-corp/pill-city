@@ -3,6 +3,7 @@ import "./NotificationDropdown.css"
 import getAvatarUrl from "../../api/getAvatarUrl";
 import timePosted from "../../timePosted";
 import {useInterval} from "react-interval-hook";
+import summary from "../../summary";
 
 export default (props) => {
   const [notifications, updateNotifications] = useState([])
@@ -42,13 +43,8 @@ export default (props) => {
   }
 
   const notificationSummary = (notification) => {
-    if (notification.notifying_action === "mention") {
-      return "you"
-    }
-    const summary = notification.notifying_location.summary
-    const summaryLength = 100
-    if (summary.length > summaryLength) return `${summary.slice(0,summaryLength)}...`
-    else return summary
+    const notification_summary = notification.notifying_location.summary
+    return summary(notification_summary, 100)
   }
 
   const notificationElem = (notification, i) => {
@@ -114,7 +110,7 @@ export default (props) => {
         </div>
 
         <div className="notification-second-row" onClick={notificationOnClick}>
-          {notification.notified_location.summary}
+          {summary(notification.notified_location.summary, 150)}
         </div>
       </div>
     )

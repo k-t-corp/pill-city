@@ -49,7 +49,7 @@ export default (props) => {
             {resharedFrom.author.id}
           </div>
         </div>
-        <div className="post-content">
+        <div className={`post-content ${props.detail ? '' : 'post-content-summary'}`}>
           {parseContent(resharedFrom.content, "")}
           {resharedFrom.media_urls.length === 0 ? null :
             <MediaPreview
@@ -289,7 +289,7 @@ export default (props) => {
               {timePosted(comment.created_at_seconds)}
             </div>
           </div>
-          <div className="post-content comment-content">
+          <div className={`post-content comment-content ${props.detail ? '' : 'post-content-summary'}`}>
             {parseContent(comment.content, "")}
             <span className="post-comment-reply-btn" onClick={replyCommentButtonOnclick}>
               Reply
@@ -412,7 +412,7 @@ export default (props) => {
         <div className='post-content-wrapper' onClick={navigateToPostPage} style={{
           cursor: disableNavigateToPostPage ? 'auto' : 'pointer'
         }}>
-          {parseContent(props.data.content, "post-content")}
+          {parseContent(props.data.content, `post-content ${props.detail ? '' : 'post-content-summary'}`)}
         </div>
         {resharedElem(props.data.reshared_from)}
         <MediaPreview

@@ -1,15 +1,21 @@
 export default (postedAtSeconds) => {
+
+  const minute = 60, hour = 3600, day = 3600 * 24, week = 3600 * 24 * 7;
+
   const currentTimeAtSeconds = new Date().getTime() / 1000;
-  const deltaAtSeconds = currentTimeAtSeconds - postedAtSeconds
-  if (deltaAtSeconds < 60) {
-    return `${Math.floor(deltaAtSeconds)}s`
-  } else if (deltaAtSeconds < 3600) {
-    return `${Math.floor(deltaAtSeconds / 60)}m`
-  } else if (deltaAtSeconds < 3600 * 24) {
-    return `${Math.floor(deltaAtSeconds / 3600)}h`
-  } else if (deltaAtSeconds < 3600 * 24 * 7) {
-    return `${Math.floor(deltaAtSeconds / (3600 * 24))}d`
+  const deltaAtSeconds = currentTimeAtSeconds - postedAtSeconds;
+
+  const d = deltaAtSeconds;
+  if (d < minute) {
+    return `${Math.floor(d)}s`;
+  } else if (d < hour) {
+    return `${Math.floor(d / minute)}m`;
+  } else if (d < day) {
+    return `${Math.floor(d / hour)}h`;
+  } else if (d < week) {
+    return `${Math.floor(d / day)}d`;
   } else {
     return new Date(postedAtSeconds * 1000).toISOString().split('T')[0];
   }
+
 }

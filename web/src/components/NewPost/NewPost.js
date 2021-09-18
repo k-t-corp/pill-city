@@ -119,7 +119,7 @@ export default (props) => {
               &times;
             </div>
           </div>
-          <div className="post-content">
+          <div className="post-content new-post-reshare-content-summary">
             {parseContent(props.resharePostData.content, "")}
           </div>
         </div>

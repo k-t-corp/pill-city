@@ -23,16 +23,16 @@ export default class CatchApiErrorBuilder {
   build() {
     return err => {
       if (err.name !== 'mini-gplus.ApiError') {
-        if (this.unknownErrorHandler) {
+        if (typeof this.unknownErrorHandler === "function") {
           this.unknownErrorHandler(err)
         } else {
           throw err
         }
       } else {
-        if (this.handlers[err.statusCode]) {
+        if (typeof this.handlers[err.statusCode] === "function") {
           this.handlers[err.statusCode](err)
         } else {
-          if (this.unknownStatusCodeHandler) {
+          if (typeof this.unknownStatusCodeHandler === "function") {
             this.unknownStatusCodeHandler(err)
           } else {
             throw err
