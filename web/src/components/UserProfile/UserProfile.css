@@ -58,10 +58,26 @@
     cursor: pointer;
 }
 
+.user-profile-info-button-disabled {
+    cursor: not-allowed;
+    background-color: lightgray;
+}
+
 .user-profile-posts {
     width: 60%;
     min-width: 600px;
     max-width: 1000px;
+}
+
+.user-profile-status {
+    padding: 13px;
+    background-color: #ffffff;
+    max-width: 700px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 1px 1px #e0e0e0;
+    margin-bottom: 20px;
+    min-width: 500px;
+    color: gray;
 }
 
 @media only screen and (max-width: 750px) {

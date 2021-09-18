@@ -1,5 +1,6 @@
 import bleach
-from mini_gplus.models import Post, NotifyingAction
+from typing import List, Optional, Union
+from mini_gplus.models import Post, NotifyingAction, User, Circle, Media
 from mini_gplus.utils.profiling import timer
 from mini_gplus.utils.make_uuid import make_uuid
 from .circle import check_member
@@ -13,19 +14,21 @@ HomePostsPageSize = 15
 ProfilePostsPageSize = 15
 
 
-def create_post(self, content, is_public, circles, reshareable, reshared_from, media_list, mentioned_users):
+def create_post(self: User, content: str, is_public: bool, circles: List[Circle], reshareable: bool,
+                reshared_from: Optional[Post], media_list: List[Media], mentioned_users: List[User]) \
+        -> Union[Post, bool]:
     """
     Create a post for the user
 
-    :param (User) self: The acting user
-    :param (str) content: the content
-    :param (bool) is_public: whether the post is public
-    :param (List[Circle]) circles: circles to share with
-    :param (bool) reshareable: whether the post is reshareable
-    :param (Post|None) reshared_from: Post object for the resharing post
-    :param (List[Media]) media_list: list of media's
-    :param (List[User]) mentioned_users: list of mentioned users
-    :return (str) ID of the new post
+    :param self: The acting user
+    :param content: the content
+    :param is_public: whether the post is public
+    :param circles: circles to share with
+    :param reshareable: whether the post is reshareable
+    :param reshared_from: Post object for the resharing post
+    :param media_list: list of media's
+    :param mentioned_users: list of mentioned users
+    :return ID of the new post
     """
     # a post has to have either content or media
     if not content and not media_list:
@@ -83,7 +86,7 @@ def create_post(self, content, is_public, circles, reshareable, reshared_from, m
         mentioned_users=mentioned_users
     )
 
-    return str(new_post.eid)
+    return new_post
 
 
 def get_post(post_id):

@@ -20,11 +20,15 @@ export default (props) => {
       {props.newPostOpened &&
       <div id="mobileNewPostModal" className="mobile-new-post-modal">
         <div className="mobile-new-post-modal-content">
-          <NewPost circles={props.circles}
-                   me={props.me}
-                   api={props.api}
-                   resharePostData={props.resharePostData}
-                   updateResharePostData={props.updateResharePostData}/>
+          <NewPost
+            circles={props.circles}
+            me={props.me}
+            api={props.api}
+            resharePostData={props.resharePostData}
+            updateResharePostData={props.updateResharePostData}
+            beforePosting={props.beforePosting}
+            afterPosting={props.afterPosting}
+          />
         </div>
       </div>}
     </div>

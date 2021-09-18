@@ -7,19 +7,26 @@ import FormData from "form-data";
 import MediaPreview from "../MediaPreview/MediaPreview";
 import {useMediaQuery} from "react-responsive";
 import parseMentioned from "../../parseMentioned";
-import LoadingModal from "../LoadingModal/LoadingModal";
 import {useHotkeys} from "react-hotkeys-hook";
 
 export default (props) => {
   const [content, updateContent] = useState("")
   const [circleIds, updateCircleIds] = useState([])
-  const [posting, updatePosting] = useState(false)
   const [resharableToggleChecked, updateResharableToggleChecked] = useState(true)
   const [medias, updateMedias] = useState([])
+
+  const [posting, updatePosting] = useState(false)
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
 
   const isValid = () => {
     return (content.trim().length !== 0 || medias.length !== 0) && circleIds.length !== 0
+  }
+
+  const reset = () => {
+    updateContent('')
+    updateCircleIds([])
+    updateResharableToggleChecked(true)
+    updateMedias([])
   }
 
   useHotkeys('ctrl+enter', async () => {
@@ -36,6 +43,9 @@ export default (props) => {
   })
 
   const postButtonOnClick = async () => {
+    if (posting) {
+      return
+    }
     updatePosting(true);
     const actualCircleIds = circleIds.filter(cn => cn !== true)
     const isPublic = circleIds.filter(cn => cn === true).length !== 0
@@ -44,7 +54,8 @@ export default (props) => {
       const blob = new Blob([medias[i]], {type: 'image/*'})
       mediaData.append(`media${i}`, blob, blob.name)
     }
-    await props.api.postPost(
+    props.beforePosting()
+    const post = await props.api.postPost(
       content,
       isPublic,
       actualCircleIds,
@@ -53,21 +64,15 @@ export default (props) => {
       props.resharePostData === null ? mediaData : [],
       parseMentioned(content)
     );
-    window.location.reload();
-  }
-
-  const submitButtonClass = () => {
-    let className = ["new-post-post-btn"]
-    if (!isValid()) {
-      className.push("new-post-post-btn-invalid")
-    }
-    if (posting) {
-      className.push("new-post-post-btn-loading ")
-    }
-    return className.join(" ")
+    reset()
+    props.afterPosting(post)
+    updatePosting(false)
   }
 
   const changeMediasOnClick = (event) => {
+    if (posting) {
+      return
+    }
     if (event.target.files && event.target.files[0]) {
       if (event.target.files.length > 4) {
         alert(`Only allowed to upload 4 images`);
@@ -81,11 +86,41 @@ export default (props) => {
     }
   }
 
-  if (posting) {
-    return (
-      <LoadingModal title="Sending your post..."/>
-    )
+  const contentOnChange = e => {
+    e.preventDefault();
+    if (posting) {
+      return
+    }
+    updateContent(e.target.value)
   }
+
+  const sharingScopeOnChange = (e, {value}) => {
+    e.preventDefault();
+    if (posting) {
+      return
+    }
+    updateCircleIds(value)
+  }
+
+  const resharableOnChange = e => {
+    e.preventDefault();
+    if (posting) {
+      return
+    }
+    updateResharableToggleChecked(!resharableToggleChecked)
+  }
+
+  const submitButtonClass = () => {
+    let className = ["new-post-post-btn"]
+    if (!isValid()) {
+      className.push("new-post-post-btn-invalid")
+    }
+    if (posting) {
+      className.push("new-post-post-btn-loading ")
+    }
+    return className.join(" ")
+  }
+
   return (
     <div className="new-post">
       <div className="new-post-user-info">
@@ -133,11 +168,14 @@ export default (props) => {
       <div className="new-post-text-box-container">
         {props.resharePostData === null ?
           <label className="new-post-attachment-button">
-            <input id="new-post-change-medias-button"
-                   accept="image/*"
-                   type="file"
-                   onChange={changeMediasOnClick}
-                   multiple={true}/>
+            <input
+              id="new-post-change-medias-button"
+              accept="image/*"
+              type="file"
+              onChange={changeMediasOnClick}
+              multiple={true}
+              disabled={posting}
+            />
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd"
                     d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
@@ -147,10 +185,8 @@ export default (props) => {
         <textarea
           className="new-post-text-box"
           value={content}
-          onChange={e => {
-            e.preventDefault();
-            updateContent(e.target.value)
-          }}
+          onChange={contentOnChange}
+          disabled={posting}
         />
       </div>
 
@@ -166,10 +202,8 @@ export default (props) => {
             )
           }
           value={circleIds}
-          onChange={(e, {value}) => {
-            e.preventDefault();
-            updateCircleIds(value)
-          }}
+          onChange={sharingScopeOnChange}
+          disabled={posting}
           fluid multiple selection
         />
         <Popup
@@ -190,10 +224,12 @@ export default (props) => {
       </div>
       {props.resharePostData === null ?
         <div className="new-post-resharable">
-          <Checkbox toggle
-                    label="Enable Resharing"
-                    onChange={() => updateResharableToggleChecked(!resharableToggleChecked)}
-                    checked={resharableToggleChecked}
+          <Checkbox
+            toggle
+            label="Enable Resharing"
+            onChange={resharableOnChange}
+            checked={resharableToggleChecked}
+            disabled={posting}
           />
           <Popup
             trigger={
