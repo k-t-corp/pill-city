@@ -29,11 +29,3 @@ class Following(Resource):
             return {'msg': f'User {following_user_id} is not found'}, 404
         if not remove_following(user, target_user):
             return {'msg': f"Already not following user {following_user_id}"}, 409
-
-    @jwt_required()
-    def get(self, following_user_id):
-        user_id = get_jwt_identity()
-        user = find_user(user_id)
-        return {
-            'is_following': is_following(user, following_user_id)
-        }, 200

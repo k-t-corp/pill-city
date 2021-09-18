@@ -16,6 +16,7 @@ from .me import user_fields
 from .upload_to_s3 import upload_to_s3
 from .pagination import pagination_parser
 from .mention import check_mentioned_user_ids
+from .comments import comment_fields
 
 MaxPostMediaCount = 4
 PostMediaUrlExpireSeconds = 3600 * 12  # 12 hours
@@ -115,19 +116,7 @@ post_fields = {
         'emoji': fields.String,
         'author': fields.Nested(user_fields),
     }), attribute='reactions2'),
-    'comments': fields.List(fields.Nested({
-        'id': fields.String(attribute='eid'),
-        'created_at_seconds': fields.Integer(attribute='created_at'),
-        'author': fields.Nested(user_fields),
-        'content': fields.String,
-        # we only assume two-levels of nesting for comments, so no need to recursively define comments fields
-        'comments': fields.List(fields.Nested({
-            'id': fields.String(attribute='eid'),
-            'created_at_seconds': fields.Integer(attribute='created_at'),
-            'author': fields.Nested(user_fields),
-            'content': fields.String,
-        }))
-    }), attribute='comments2'),
+    'comments': fields.List(fields.Nested(comment_fields), attribute='comments2'),
     # TODO: only return the circles that the seeing user is in
     'circles': fields.List(fields.Nested({
         # not using circle_fields because not exposing what members a circle has

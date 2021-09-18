@@ -18,6 +18,14 @@
     cursor: pointer;
 }
 
+.users-user-card-right {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    cursor: pointer;
+    justify-content: space-between;
+}
+
 .users-user-card-avatar {
     height: 100px;
     width: 100px;
@@ -46,12 +54,24 @@
     font-size: small;
 }
 
+.users-user-card-follow-button {
+    width: 25px;
+    height: 25px;
+    margin-left: 2px;
+    margin-right: 5px;
+}
+
+.users-user-card-follow-button-disabled {
+    color: lightgray;
+    cursor: not-allowed;
+}
+
 /* Mobile */
 @media only screen and (max-width: 750px) {
     .users-grid-container {
         padding: 15px;
         top: 0;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         grid-column-gap: 5px;
         grid-row-gap: 5px;
     }
@@ -65,4 +85,7 @@
         width: 50px;
     }
 
+    .users-user-card-join-time {
+        display: none;
+    }
 }

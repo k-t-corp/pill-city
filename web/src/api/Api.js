@@ -209,7 +209,7 @@ export default class Api {
     if (res.status !== 201) {
       throw new ApiError(res.status)
     }
-    return null
+    return res.data
   }
 
   async postNestedComment(content, postId, commentId, mentionedUserIds) {
@@ -221,10 +221,10 @@ export default class Api {
         mentioned_user_ids: mentionedUserIds
       }
     )
-    if (res.status !== 200) {
+    if (res.status !== 201) {
       throw new ApiError(res.status)
     }
-    return null
+    return res.data
   }
 
   async getCircles() {
@@ -310,17 +310,6 @@ export default class Api {
   async unfollow(followingUserId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.delete(
-      `/following/${followingUserId}`
-    )
-    if (res.status !== 200) {
-      throw new ApiError(res.status)
-    }
-    return res.data
-  }
-
-  async isFollowing(followingUserId) {
-    Api.throwOnUnauthorized()
-    const res = await this.axiosInstance.get(
       `/following/${followingUserId}`
     )
     if (res.status !== 200) {
@@ -451,5 +440,15 @@ export default class Api {
       throw new ApiError(res.status)
     }
     return res.data
+  }
+
+  async getApiGitCommit() {
+    const res = await this.axiosInstance.get(
+      `/gitCommit`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data.git_commit
   }
 }

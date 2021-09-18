@@ -29,6 +29,7 @@ Make sure you have the API running
 ``` shell
 make dev-dump
 ```
+Use ID `ika` and password `1234` to log in
 
 ### Start API development alone
 ``` shell
