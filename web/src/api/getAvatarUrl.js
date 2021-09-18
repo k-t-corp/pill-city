@@ -1,9 +1,12 @@
+import { isObjectLike, isString } from "lodash";
 export default (user) => {
-  if (!user) {
+  if (
+    isObjectLike(user) &&
+    isString(user.avatar_url) &&
+    user.avatar_url.length > 0
+  ) {
+    return user.avatar_url
+  } else {
     return `${process.env.PUBLIC_URL}/kusuou.png`
   }
-  if (!user.avatar_url) {
-    return `${process.env.PUBLIC_URL}/kusuou.png`
-  }
-  return user.avatar_url
 }
