@@ -12,6 +12,7 @@ export default (props) => {
   const [circles, updateCircles] = useState()
   const [me, updateMe] = useState()
   const [followLoading, updateFollowLoading] = useState(false)
+  // TODO: this might be buggy?
   const [isFollowing, updateIsFollowing] = useState(props.userData.is_following)
   const [postingNewPost, updatePostingNewPost] = useState(false)
 
@@ -52,10 +53,13 @@ export default (props) => {
         )
       }
       for (let i = 0; i < postData.length; i++) {
+        const post = postData[i]
         postElements.push(
           <Post
-            key={i}
-            data={postData[i]}
+            // need to use post ID instead of index as key
+            // otherwise comments and reactions will be shifted after a new post is prepended
+            key={post.id}
+            data={post}
             api={props.api}
             me={props.userData}
             updateResharePostData={updateResharePostData}
