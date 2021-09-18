@@ -74,6 +74,15 @@
     color: cornflowerblue;
 }
 
+.home-load-more-disabled {
+    color: lightgray;
+    cursor: not-allowed;
+}
+
 .home-load-more:hover {
     color: #0d71bb;
+}
+
+.home-load-more-disabled:hover {
+    color: lightgray;
 }

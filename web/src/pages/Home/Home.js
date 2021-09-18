@@ -15,6 +15,7 @@ export default (props) => {
   const [resharePostData, updateResharePostData] = useState(null)
   const [mobileNewPostOpened, updateMobileNewPostOpened] = useState(false)
   const [postingNewPost, updatePostingNewPost] = useState(false)
+  const [loadingMorePosts, updateLoadingMorePosts] = useState(false)
 
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
 
@@ -26,6 +27,10 @@ export default (props) => {
   }, [])
 
   const loadMorePosts = async () => {
+    if (loadingMorePosts) {
+      return
+    }
+    updateLoadingMorePosts(true)
     const lastPost = posts[posts.length - 1]
     const newPosts = await props.api.getHome(lastPost['id'])
     if (newPosts.length !== 0) {
@@ -33,6 +38,7 @@ export default (props) => {
     } else {
       alert('You have reached the end.')
     }
+    updateLoadingMorePosts(false)
   }
 
   let homePostElement = () => {
@@ -65,13 +71,22 @@ export default (props) => {
           />
         )
       }
-      postElements.push(
-        <div
-          key={posts.length}
-          className='home-load-more'
-          onClick={loadMorePosts}
-        >Load more</div>
-      )
+      if (!loadingMorePosts) {
+        postElements.push(
+          <div
+            key={posts.length}
+            className='home-load-more'
+            onClick={loadMorePosts}
+          >Load more</div>
+        )
+      } else {
+        postElements.push(
+          <div
+            key={posts.length}
+            className='home-load-more home-load-more-disabled'
+          >Loading...</div>
+        )
+      }
       return postElements
     }
   }

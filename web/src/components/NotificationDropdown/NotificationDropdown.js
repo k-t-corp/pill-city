@@ -7,13 +7,16 @@ import summary from "../../summary";
 
 export default (props) => {
   const [notifications, updateNotifications] = useState([])
+  const [loadingNotifications, updateLoadingNotifications] = useState(true)
+  const [loadingMoreNotifications, updateLoadingMoreNotifications] = useState(false)
 
   useEffect(async () => {
     updateNotifications(await props.api.getNotifications())
+    updateLoadingNotifications(false)
   }, [])
 
   useInterval(async () => {
-    if (notifications.length === 0) {
+    if (notifications.length === 0 || loadingMoreNotifications) {
       return
     }
     const lastNotification = notifications[0]
@@ -35,11 +38,18 @@ export default (props) => {
   }, 5000)
 
   const loadMoreNotifications = async () => {
+    if (loadingMoreNotifications) {
+      return
+    }
+    updateLoadingMoreNotifications(true)
     const lastNotification = notifications[notifications.length - 1]
     const newNotifications = await props.api.getNotifications(lastNotification['id'])
     if (newNotifications.length !== 0) {
       updateNotifications(notifications.concat(newNotifications))
+    } else {
+      alert('No more notifications.')
     }
+    updateLoadingMoreNotifications(false)
   }
 
   const notificationSummary = (notification) => {
@@ -117,16 +127,28 @@ export default (props) => {
   }
 
   const notificationElems = () => {
-    if (notifications === null) {
-      return <div className="notification-noop-wrapper">Loading...</div>
-    } else if (notifications.length === 0) {
-      return <div className="notification-noop-wrapper">No notifiations.</div>
-    } else {
-      const res = []
-      for (let i = 0; i < notifications.length; i++) {
-        const notification = notifications[i]
-        res.push(notificationElem(notification, i))
-      }
+    if (loadingNotifications) {
+      return (
+        <div
+          key={notifications.length}
+          className='notification-status'
+        >Loading...</div>
+      )
+    }
+    if (notifications.length === 0) {
+      return (
+        <div
+          key={notifications.length}
+          className='notification-status'
+        >No notification</div>
+      )
+    }
+    const res = []
+    for (let i = 0; i < notifications.length; i++) {
+      const notification = notifications[i]
+      res.push(notificationElem(notification, i))
+    }
+    if (!loadingMoreNotifications) {
       res.push(
         <div
           key={notifications.length}
@@ -134,8 +156,15 @@ export default (props) => {
           onClick={loadMoreNotifications}
         >Load more</div>
       )
-      return res
+    } else {
+      res.push(
+        <div
+          key={notifications.length}
+          className='notification-load-more notification-load-more-disabled'
+        >Loading...</div>
+      )
     }
+    return res
   }
 
   const unreadNotificationsCount = notifications ? notifications.filter(n => n.unread).length : 0
@@ -145,18 +174,20 @@ export default (props) => {
       <div className="notification-header-wrapper">
         <div className="notification-header">
           <span className="notification-title">Notifications <span className={`notification-count ${unreadNotificationsCount === 0 ? "notification-count-grey" : "notification-count-red"}`}>{unreadNotificationsCount}</span></span>
-          <svg className="notification-mark-all-button" xmlns="http://www.w3.org/2000/svg"  fill="none" viewBox="0 0 24 24"
-               stroke="currentColor"
-               onClick={async (e) => {
-                 e.preventDefault()
-                 await props.api.markAllNotificationsAsRead()
-                 updateNotifications(notifications.map(n => {
-                   return {
-                     ...n,
-                     unread: false
-                   }
-                 }))
-               }}>
+          <svg
+            className="notification-mark-all-button" xmlns="http://www.w3.org/2000/svg"  fill="none" viewBox="0 0 24 24"
+            stroke="currentColor"
+            onClick={async (e) => {
+             e.preventDefault()
+             await props.api.markAllNotificationsAsRead()
+             updateNotifications(notifications.map(n => {
+               return {
+                 ...n,
+                 unread: false
+               }
+             }))
+            }}
+          >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"/>
           </svg>
         </div>

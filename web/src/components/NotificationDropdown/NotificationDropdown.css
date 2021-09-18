@@ -53,10 +53,6 @@
     color: #0d71bb;
 }
 
-.notification-noop-wrapper {
-    padding: 5px;
-}
-
 .notification-wrapper {
     padding: 5px;
     border-bottom: 2px solid #f1f1f1;
@@ -114,6 +110,13 @@
     color: #767676;
 }
 
+.notification-status {
+    padding: 6px;
+    width: 100%;
+    text-align: center;
+    color: lightgray;
+}
+
 .notification-load-more {
     padding: 6px;
     width: 100%;
@@ -122,8 +125,17 @@
     color: cornflowerblue;
 }
 
+.notification-load-more-disabled {
+    color: lightgray;
+    cursor: not-allowed;
+}
+
 .notification-load-more:hover {
     color: #0d71bb;
+}
+
+.notification-load-more-disabled:hover {
+    color: lightgray;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

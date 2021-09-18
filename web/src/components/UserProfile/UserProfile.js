@@ -15,6 +15,7 @@ export default (props) => {
   // TODO: this might be buggy?
   const [isFollowing, updateIsFollowing] = useState(props.userData.is_following)
   const [postingNewPost, updatePostingNewPost] = useState(false)
+  const [loadingMorePosts, updateLoadingMorePosts] = useState(false)
 
   window.onclick = function(event) {
     let modal = document.getElementById("profile-new-post-modal");
@@ -31,6 +32,10 @@ export default (props) => {
   }, [])
 
   const loadMorePosts = async () => {
+    if (loadingMorePosts) {
+      return
+    }
+    updateLoadingMorePosts(true)
     const lastPost = postData[postData.length - 1]
     const newPosts = await props.api.getProfile(props.userData.id, lastPost['id'])
     if (newPosts.length !== 0) {
@@ -38,6 +43,7 @@ export default (props) => {
     } else {
       alert('You have reached the end.')
     }
+    updateLoadingMorePosts(false)
   }
 
   const profilePostElement = () => {
@@ -69,13 +75,22 @@ export default (props) => {
           />
         )
       }
-      postElements.push(
-        <div
-          key={postData.length}
-          className='profile-load-more'
-          onClick={loadMorePosts}
-        >Load more</div>
-      )
+      if (!loadingMorePosts) {
+        postElements.push(
+          <div
+            key={postData.length}
+            className='profile-load-more'
+            onClick={loadMorePosts}
+          >Load more</div>
+        )
+      } else {
+        postElements.push(
+          <div
+            key={postData.length}
+            className='profile-load-more profile-load-more-disable'
+          >Loading...</div>
+        )
+      }
       return postElements
     }
   }
