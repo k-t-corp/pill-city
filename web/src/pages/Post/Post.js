@@ -80,17 +80,24 @@ export default class Post extends Component {
           updateNewPostOpened={updateMobileNewPostOpened}
         />
         {this.state.newPostOpened &&
-        <div id="post-new-post-modal" className="post-detail-new-post-modal">
-          <div className="post-detail-new-post-modal-content">
-            <NewPost
-              circles={this.state.circles}
-              me={this.state.me}
-              api={this.props.api}
-              resharePostData={this.state.resharePostData}
-              updateResharePostData={this.updateResharePostData}
-            />
+          <div id="post-new-post-modal" className="post-detail-new-post-modal">
+            <div className="post-detail-new-post-modal-content">
+              <NewPost
+                circles={this.state.circles}
+                me={this.state.me}
+                api={this.props.api}
+                resharePostData={this.state.resharePostData}
+                updateResharePostData={this.updateResharePostData}
+                beforePosting={() => {
+                  // TODO: maybe a toast?
+                  updateMobileNewPostOpened(false)
+                }}
+                afterPosting={() => {
+                  // TODO: maybe a toast?
+                }}
+              />
+            </div>
           </div>
-        </div>
         }
       </div>
     )

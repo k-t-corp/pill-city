@@ -13,6 +13,7 @@ export default (props) => {
   const [me, updateMe] = useState()
   const [followLoading, updateFollowLoading] = useState(false)
   const [isFollowing, updateIsFollowing] = useState(props.userData.is_following)
+  const [postingNewPost, updatePostingNewPost] = useState(false)
 
   window.onclick = function(event) {
     let modal = document.getElementById("profile-new-post-modal");
@@ -45,16 +46,24 @@ export default (props) => {
       return (<div className="user-profile-status">No posts here</div>)
     } else {
       let postElements = []
+      if (postingNewPost) {
+        postElements.push(
+          <div key='posting' className="user-profile-status">Sending new post...</div>
+        )
+      }
       for (let i = 0; i < postData.length; i++) {
-        postElements.push(<Post key={i}
-                                data={postData[i]}
-                                api={props.api}
-                                me={props.userData}
-                                updateResharePostData={updateResharePostData}
-                                hasNewPostModal={true}
-                                newPostOpened={newPostOpened}
-                                updateNewPostOpened={updateNewPostOpened}
-        />)
+        postElements.push(
+          <Post
+            key={i}
+            data={postData[i]}
+            api={props.api}
+            me={props.userData}
+            updateResharePostData={updateResharePostData}
+            hasNewPostModal={true}
+            newPostOpened={newPostOpened}
+            updateNewPostOpened={updateNewPostOpened}
+          />
+        )
       }
       postElements.push(
         <div
@@ -125,6 +134,24 @@ export default (props) => {
               api={props.api}
               resharePostData={resharePostData}
               updateResharePostData={updateResharePostData}
+              beforePosting={() => {
+                updateNewPostOpened(false)
+                if (!props.me) {
+                  // not showing my own profile, no need to show "sending post" to stream
+                  // TODO: maybe a toast?
+                  return
+                }
+                updatePostingNewPost(true)
+              }}
+              afterPosting={(post) => {
+                if (!props.me) {
+                  // not showing my own profile, no need to prepend new post to stream
+                  // TODO: maybe a toast?
+                  return
+                }
+                updatePostingNewPost(false)
+                updatePostData([post, ...postData])
+              }}
             />
           </div>
         </div>

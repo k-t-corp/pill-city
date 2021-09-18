@@ -14,6 +14,7 @@ export default (props) => {
   const [me, updateMe] = useState(null)
   const [resharePostData, updateResharePostData] = useState(null)
   const [mobileNewPostOpened, updateMobileNewPostOpened] = useState(false)
+  const [postingNewPost, updatePostingNewPost] = useState(false)
 
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
 
@@ -41,13 +42,25 @@ export default (props) => {
       return (<div className="home-status">No posts here</div>)
     } else {
       let postElements = []
+      if (postingNewPost) {
+        postElements.push(
+         <div className="home-status">Sending new post...</div>
+        )
+      }
       for (let i = 0; i < posts.length; i++) {
-        postElements.push(<Post key={i} data={posts[i]} me={me} api={props.api}
-                                detail={false}
-                                hasNewPostModal={isTabletOrMobile}
-                                updateResharePostData={updateResharePostData}
-                                newPostOpened={mobileNewPostOpened}
-                                updateNewPostOpened={updateMobileNewPostOpened}/>)
+        postElements.push(
+          <Post
+            key={i}
+            data={posts[i]}
+            me={me}
+            api={props.api}
+            detail={false}
+            hasNewPostModal={isTabletOrMobile}
+            updateResharePostData={updateResharePostData}
+            newPostOpened={mobileNewPostOpened}
+            updateNewPostOpened={updateMobileNewPostOpened}
+          />
+        )
       }
       postElements.push(
         <div
@@ -65,23 +78,45 @@ export default (props) => {
       <div className="home-posts-wrapper">
         {homePostElement()}
       </div>
-      {isTabletOrMobile && <MobileNewPost circles={circles}
-                                          me={me}
-                                          api={props.api}
-                                          resharePostData={resharePostData}
-                                          updateResharePostData={updateResharePostData}
-                                          newPostOpened={mobileNewPostOpened}
-                                          updateNewPostOpened={updateMobileNewPostOpened}
-      />}
-      {!isTabletOrMobile && <div className="home-right-column-container">
-        <NewPost circles={circles}
-                 me={me}
-                 api={props.api}
-                 resharePostData={resharePostData}
-                 updateResharePostData={updateResharePostData}/>
-        <NotificationDropdown api={props.api}/>
-        <About api={props.api}/>
-      </div>}
+      {isTabletOrMobile &&
+        <MobileNewPost
+          circles={circles}
+          me={me}
+          api={props.api}
+          resharePostData={resharePostData}
+          updateResharePostData={updateResharePostData}
+          newPostOpened={mobileNewPostOpened}
+          updateNewPostOpened={updateMobileNewPostOpened}
+          beforePosting={() => {
+            updateMobileNewPostOpened(false)
+            updatePostingNewPost(true)
+          }}
+          afterPosting={(post) => {
+            updatePostingNewPost(false)
+            updatePosts([post, ...posts])
+          }}
+        />
+      }
+      {!isTabletOrMobile &&
+        <div className="home-right-column-container">
+          <NewPost
+            circles={circles}
+            me={me}
+            api={props.api}
+            resharePostData={resharePostData}
+            updateResharePostData={updateResharePostData}
+            beforePosting={() => {
+              updatePostingNewPost(true)
+            }}
+            afterPosting={(post) => {
+              updatePostingNewPost(false)
+              updatePosts([post, ...posts])
+            }}
+          />
+          <NotificationDropdown api={props.api}/>
+          <About api={props.api}/>
+        </div>
+      }
     </div>
   )
 }
