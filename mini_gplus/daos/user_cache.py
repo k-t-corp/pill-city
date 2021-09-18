@@ -1,12 +1,10 @@
-import os
-import redis
 from bson import ObjectId
 from typing import List, Union
 from mini_gplus.models import User
 from mini_gplus.utils.profiling import timer
+from .cache import r
 
 
-r = redis.from_url(os.environ['REDIS_URL'])
 RUserByUserId = "userByUserId"
 RUserByOid = "userByOid"
 
