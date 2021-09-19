@@ -1,7 +1,7 @@
 {
     "theme_color": "#000000",
     "background_color": "#A8CFFB",
-    "display": "minimal-ui",
+    "display": "standalone",
     "scope": "/",
     "start_url": "/",
     "name": "pill.city",
