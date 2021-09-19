@@ -1,21 +1,32 @@
 {
-  "short_name": "pill.city",
-  "name": "pill.city",
-  "icons": [
-    {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "apple-touch-icon.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    }
-  ],
-  "start_url": "./index.html",
-  "display": "standalone",
-  "theme_color": "#DC4439",
-  "background_color": "#DC4439",
-  "description": "An one-of-a-kind social network"
+    "theme_color": "#000000",
+    "background_color": "#A8CFFB",
+    "display": "minimal-ui",
+    "scope": "/",
+    "start_url": "/",
+    "name": "pill.city",
+    "short_name": "pill.city",
+    "description": "An one-of-a-kind social network",
+    "icons": [
+        {
+            "src": "/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/icon-256x256.png",
+            "sizes": "256x256",
+            "type": "image/png"
+        },
+        {
+            "src": "/icon-384x384.png",
+            "sizes": "384x384",
+            "type": "image/png"
+        },
+        {
+            "src": "/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
 }
