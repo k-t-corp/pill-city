@@ -22,62 +22,66 @@ import Settings from './pages/Settings/Settings'
 import Post from './pages/Post/Post'
 import Notifications from "./pages/Notifications/Notifications";
 import Admin from "./pages/Admin/Admin";
+import ToastProvider from "./components/Toast/ToastProvider";
 
 const api = new Api(process.env.REACT_APP_API_ENDPOINT)
 
 export default class App extends Component {
   render() {
     return (
-      <Router>
-        <Switch>
-          <Route
-            exact={true}
-            path='/'
-            component={withApi(withAuthRedirect(withNavBar(Home, '/')), api)}
-          />
-          <Route
-            path='/post/:id'
-            component={withPostId(withApi(withAuthRedirect(withNavBar(Post, '/post')), api))}
-          />
-          <Route
-            path="/profile/:id"
-            component={withUserId(withApi(withAuthRedirect(withNavBar(Profile, '/profile')), api))}
-          />
-          <Route
-            path="/profile"
-            component={withApi(withAuthRedirect(withNavBar(Profile, '/profile')), api)}
-          />
-          <Route
-            path="/notifications"
-            component={withApi(withAuthRedirect(withNavBar(Notifications, '/notifications')), api)}
-          />
-          <Route
-            path="/users"
-            component={withApi(withAuthRedirect(withNavBar(Users, '/users')), api)}
-          />
-          <Route
-            path="/signup"
-            component={withApi(withNoAuthRedirect(SignUp), api)}
-          />
-          <Route
-            path="/signin"
-            component={withApi(withNoAuthRedirect(SignIn), api)}
-          />
-          <Route
-            path="/circles"
-            component={withApi(withAuthRedirect(withNavBar(Circles, '/circles')), api)}
-          />
-          <Route
-            path="/settings"
-            component={withApi(withAuthRedirect(withNavBar(Settings, '/settings')), api)}
-          />
-          <Route
-            path="/admin"
-            component={withApi(withAuthRedirect(Admin, '/admin'), api)}
-          />
-          <Redirect to='/'/>
-        </Switch>
-      </Router>
+      <ToastProvider>
+        <Router>
+          <Switch>
+            <Route
+              exact={true}
+              path='/'
+              component={withApi(withAuthRedirect(withNavBar(Home, '/')), api)}
+            />
+            <Route
+              path='/post/:id'
+              component={withPostId(withApi(withAuthRedirect(withNavBar(Post, '/post')), api))}
+            />
+            <Route
+              path="/profile/:id"
+              component={withUserId(withApi(withAuthRedirect(withNavBar(Profile, '/profile')), api))}
+            />
+            <Route
+              path="/profile"
+              component={withApi(withAuthRedirect(withNavBar(Profile, '/profile')), api)}
+            />
+            <Route
+              path="/notifications"
+              component={withApi(withAuthRedirect(withNavBar(Notifications, '/notifications')), api)}
+            />
+            <Route
+              path="/users"
+              component={withApi(withAuthRedirect(withNavBar(Users, '/users')), api)}
+            />
+            <Route
+              path="/signup"
+              component={withApi(withNoAuthRedirect(SignUp), api)}
+            />
+            <Route
+              path="/signin"
+              component={withApi(withNoAuthRedirect(SignIn), api)}
+            />
+            <Route
+              path="/circles"
+              component={withApi(withAuthRedirect(withNavBar(Circles, '/circles')), api)}
+            />
+            <Route
+              path="/settings"
+              component={withApi(withAuthRedirect(withNavBar(Settings, '/settings')), api)}
+            />
+            <Route
+              path="/admin"
+              component={withApi(withAuthRedirect(Admin, '/admin'), api)}
+            />
+            <Redirect to='/'/>
+          </Switch>
+        </Router>
+      </ToastProvider>
+
     );
   }
 }

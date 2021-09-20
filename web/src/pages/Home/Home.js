@@ -6,6 +6,7 @@ import NotificationDropdown from "../../components/NotificationDropdown/Notifica
 import {useMediaQuery} from "react-responsive";
 import MobileNewPost from "../../components/MobileNewPost/MobileNewPost";
 import About from "../../components/About/About";
+import {useToast} from "../../components/Toast/ToastProvider";
 
 export default (props) => {
   const [loading, updateLoading] = useState(true)
@@ -14,8 +15,8 @@ export default (props) => {
   const [me, updateMe] = useState(null)
   const [resharePostData, updateResharePostData] = useState(null)
   const [mobileNewPostOpened, updateMobileNewPostOpened] = useState(false)
-  const [postingNewPost, updatePostingNewPost] = useState(false)
   const [loadingMorePosts, updateLoadingMorePosts] = useState(false)
+  const {addToast} = useToast()
 
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
 
@@ -48,11 +49,6 @@ export default (props) => {
       return (<div className="home-status">No posts here</div>)
     } else {
       let postElements = []
-      if (postingNewPost) {
-        postElements.push(
-         <div className="home-status">Sending new post...</div>
-        )
-      }
       for (let i = 0; i < posts.length; i++) {
         const post = posts[i]
         postElements.push(
@@ -107,11 +103,11 @@ export default (props) => {
           updateNewPostOpened={updateMobileNewPostOpened}
           beforePosting={() => {
             updateMobileNewPostOpened(false)
-            updatePostingNewPost(true)
+            addToast('Sending new post')
           }}
           afterPosting={(post) => {
-            updatePostingNewPost(false)
             updatePosts([post, ...posts])
+            addToast('New post sent')
           }}
         />
       }
@@ -124,11 +120,11 @@ export default (props) => {
             resharePostData={resharePostData}
             updateResharePostData={updateResharePostData}
             beforePosting={() => {
-              updatePostingNewPost(true)
+              addToast('Sending new post')
             }}
             afterPosting={(post) => {
-              updatePostingNewPost(false)
               updatePosts([post, ...posts])
+              addToast('New post sent')
             }}
           />
           <NotificationDropdown api={props.api}/>
