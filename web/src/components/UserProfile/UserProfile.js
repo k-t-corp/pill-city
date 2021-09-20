@@ -3,6 +3,7 @@ import "./UserProfile.css"
 import Post from "../Post/Post";
 import getAvatarUrl from "../../api/getAvatarUrl";
 import NewPost from "../NewPost/NewPost";
+import {useToast} from "../Toast/ToastProvider";
 
 export default (props) => {
   const [postLoading, updatePostLoading] = useState(true)
@@ -12,10 +13,9 @@ export default (props) => {
   const [circles, updateCircles] = useState()
   const [me, updateMe] = useState()
   const [followLoading, updateFollowLoading] = useState(false)
-  // TODO: this might be buggy?
   const [isFollowing, updateIsFollowing] = useState(props.userData.is_following)
-  const [postingNewPost, updatePostingNewPost] = useState(false)
   const [loadingMorePosts, updateLoadingMorePosts] = useState(false)
+  const {addToast} = useToast()
 
   window.onclick = function(event) {
     let modal = document.getElementById("profile-new-post-modal");
@@ -53,11 +53,6 @@ export default (props) => {
       return (<div className="user-profile-status">No posts here</div>)
     } else {
       let postElements = []
-      if (postingNewPost) {
-        postElements.push(
-          <div key='posting' className="user-profile-status">Sending new post...</div>
-        )
-      }
       for (let i = 0; i < postData.length; i++) {
         const post = postData[i]
         postElements.push(
@@ -155,21 +150,11 @@ export default (props) => {
               updateResharePostData={updateResharePostData}
               beforePosting={() => {
                 updateNewPostOpened(false)
-                if (!props.me) {
-                  // not showing my own profile, no need to show "sending post" to stream
-                  // TODO: maybe a toast?
-                  return
-                }
-                updatePostingNewPost(true)
+                addToast('Sending new post')
               }}
               afterPosting={(post) => {
-                if (!props.me) {
-                  // not showing my own profile, no need to prepend new post to stream
-                  // TODO: maybe a toast?
-                  return
-                }
-                updatePostingNewPost(false)
                 updatePostData([post, ...postData])
+                addToast('New post sent')
               }}
             />
           </div>
