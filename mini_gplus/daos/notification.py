@@ -1,12 +1,20 @@
-from mini_gplus.models import Notification
+from mini_gplus.models import Notification, User, NotifyingAction
 from mini_gplus.utils.make_uuid import make_uuid
 from .pagination import get_page
 
-# TODO: change back to 10
-NotificationPageSize = 5
+
+NotificationPageSize = 15
 
 
-def create_notification(self, notifying_href, notifying_action, notified_href, owner):
+def create_notification(
+        self: User,
+        notifying_href: str,
+        notifying_summary: str,
+        notifying_action: NotifyingAction,
+        notified_href: str,
+        notified_summary: str,
+        owner: User
+):
     """
     Create a notification where the notifier is the user. If the user is the owner, then do nothing
     Hrefs can be
@@ -14,15 +22,17 @@ def create_notification(self, notifying_href, notifying_action, notified_href, o
         2) Link to comment or nested comment, e.g. /post/post-id#comment-comment-id
         3) Link to reaction, e.g. /post/post-id#reaction-reaction-id
 
-    :param (User) self: The acting user
-    :param (str) notifying_href: href for the object that triggers this notification
+    :param self: The acting user
+    :param notifying_href: href for the object that triggers this notification
                                     e.g. if the user creates a comment A on post B,
                                     then notifying_href is /post/B#comment-A
-    :param (NotifyingAction) notifying_action: the specific action for the notification
-    :param (str) notified_href: href for the object that triggers this notification
+    :param notifying_summary: Text summary for the notifying href
+    :param notifying_action: the specific action for the notification
+    :param notified_href: href for the object that triggers this notification
                                     e.g. if the user creates a comment A on post B,
                                     then notifying_href is /post/A
-    :param (User) owner: The user who is notified
+    :param notified_summary: Text summary for the notified href
+    :param owner: The user who is notified
     """
     if self.id == owner.id:
         return
@@ -30,8 +40,10 @@ def create_notification(self, notifying_href, notifying_action, notified_href, o
     new_notification.eid = make_uuid()
     new_notification.notifier = self
     new_notification.notifying_href = notifying_href
+    new_notification.notifying_summary = notifying_summary
     new_notification.notifying_action = notifying_action
     new_notification.notified_href = notified_href
+    new_notification.notified_summary = notified_summary
     new_notification.owner = owner
     new_notification.save()
 

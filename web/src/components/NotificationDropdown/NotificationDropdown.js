@@ -53,7 +53,7 @@ export default (props) => {
   }
 
   const notificationSummary = (notification) => {
-    const notification_summary = notification.notifying_location.summary
+    const notification_summary = notification.notifying_summary
     return summary(notification_summary, 100)
   }
 
@@ -69,13 +69,13 @@ export default (props) => {
     else notifiedLocationPronoun = "your"
 
     let notifiedLocationType
-    if (notification.notified_location.href.indexOf("#comment-") !== -1) notifiedLocationType = 'comment'
-    else if (notification.notified_location.href.indexOf("/post/") !== -1) notifiedLocationType = 'post'
+    if (notification.notified_href.indexOf("#comment-") !== -1) notifiedLocationType = 'comment'
+    else if (notification.notified_href.indexOf("/post/") !== -1) notifiedLocationType = 'post'
 
     const notificationOnClick = async () => {
       console.log(notification.id)
       await props.api.markNotificationAsRead(notification.id)
-      window.location.href = notification.notified_location.href
+      window.location.href = notification.notified_href
     }
 
     return (
@@ -120,7 +120,7 @@ export default (props) => {
         </div>
 
         <div className="notification-second-row" onClick={notificationOnClick}>
-          {summary(notification.notified_location.summary, 150)}
+          {summary(notification.notified_summary, 150)}
         </div>
       </div>
     )
