@@ -3,7 +3,7 @@ from mini_gplus.utils.make_uuid import make_uuid
 from .pagination import get_page
 
 
-NotificationPageSize = 15
+NotificationPageSize = 10
 
 
 def create_notification(
