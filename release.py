@@ -9,4 +9,4 @@ connect(
     db=parse_uri(uri)['database']
 )
 
-backfill_notification_href_summaries()
+# backfill_notification_href_summaries()
