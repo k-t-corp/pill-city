@@ -2,10 +2,10 @@ import React from 'react';
 
 export default (content, className) => {
 
-  const regExForStrikeThrough = /(^|\s)-(.+?)-($|\s)/g
-  const regExForItalic = /(^|\s)_(.+?)_($|\s)/g
-  const regExForBold = /(^|\s)\*(.+?)\*($|\s)/g
-  const regExForMention = /@([A-Za-z0-9_-]+)(\s|$)/g;
+  const regExForStrikeThrough = /(^|\s)-(.+?)-($|\s)/gm
+  const regExForItalic = /(^|\s)_(.+?)_($|\s)/gm
+  const regExForBold = /(^|\s)\*(.+?)\*($|\s)/gm
+  const regExForMention = /@([A-Za-z0-9_-]+)(\s|$)/gm;
 
   const newContent = content
     .replace(regExForStrikeThrough, '$1<del>$2</del>$3')
