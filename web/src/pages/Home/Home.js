@@ -9,7 +9,7 @@ import About from "../../components/About/About";
 import {useToast} from "../../components/Toast/ToastProvider";
 
 export default (props) => {
-  const [loading, updateLoading] = useState(true)
+  const [loadingPosts, updateLoadingPosts] = useState(true)
   const [posts, updatePosts] = useState([])
   const [circles, updateCircles] = useState([])
   const [me, updateMe] = useState(null)
@@ -21,10 +21,10 @@ export default (props) => {
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
 
   useEffect(async () => {
-    updateMe(await props.api.getMe())
     updatePosts(await props.api.getHome())
+    updateLoadingPosts(false)
+    updateMe(await props.api.getMe())
     updateCircles(await props.api.getCircles())
-    updateLoading(false)
   }, [])
 
   const loadMorePosts = async () => {
@@ -43,7 +43,7 @@ export default (props) => {
   }
 
   let homePostElement = () => {
-    if (loading) {
+    if (loadingPosts) {
       return (<div className="home-status">Loading...</div>)
     } else if (posts.length === 0) {
       return (<div className="home-status">No posts here</div>)
