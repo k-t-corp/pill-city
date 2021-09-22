@@ -73,8 +73,10 @@ def create_post(self: User, content: str, is_public: bool, circles: List[Circle]
         create_notification(
             self,
             notifying_href=new_post.make_href(),
+            notifying_summary=new_post.content,
             notifying_action=NotifyingAction.Reshare,
             notified_href=reshared_from.make_href(),
+            notified_summary=reshared_from.content,
             owner=reshared_from.author
         )
         # only cache reshared post
@@ -83,6 +85,7 @@ def create_post(self: User, content: str, is_public: bool, circles: List[Circle]
     mention(
         self,
         notified_href=new_post.make_href(),
+        notified_summary=new_post.content,
         mentioned_users=mentioned_users
     )
 

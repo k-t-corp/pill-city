@@ -2,7 +2,7 @@ from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from mini_gplus.daos.user import find_user
 from mini_gplus.daos.post import get_post
-from mini_gplus.daos.comment import create_comment, create_nested_comment, get_comment
+from mini_gplus.daos.comment import create_comment, get_comment
 from .mention import check_mentioned_user_ids
 from .users import user_fields
 
@@ -35,7 +35,8 @@ class Comments(Resource):
         post = get_post(post_id)
 
         args = comment_parser.parse_args()
-        comment = create_comment(user, args['content'], post, check_mentioned_user_ids(args['mentioned_user_ids']))
+        comment = create_comment(user, args['content'], post, None,
+                                 check_mentioned_user_ids(args['mentioned_user_ids']))
         return comment, 201
 
 
@@ -54,5 +55,6 @@ class NestedComments(Resource):
             return {'msg': 'Cannot nest more than two levels of comment'}, 403
 
         args = comment_parser.parse_args()
-        nested_comment = create_nested_comment(user, args['content'], comment, post, check_mentioned_user_ids(args['mentioned_user_ids']))
+        nested_comment = create_comment(user, args['content'], post, comment,
+                                        check_mentioned_user_ids(args['mentioned_user_ids']))
         return nested_comment, 201

@@ -36,8 +36,10 @@ def create_reaction(self: User, emoji: str, parent_post: Post) -> str:
         create_notification(
             self,
             notifying_href=new_reaction.make_href(parent_post),
+            notifying_summary=new_reaction.emoji,
             notifying_action=NotifyingAction.Reaction,
             notified_href=parent_post.make_href(),
+            notified_summary=parent_post.content,
             owner=parent_post.author
         )
 

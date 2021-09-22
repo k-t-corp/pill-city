@@ -9,13 +9,14 @@ from .notification import create_notification
 from .mention import mention
 
 
-def create_comment(self: User, content: str, parent_post: Post, mentioned_users: List[User]) -> Optional[Comment]:
+def create_comment(self: User, content: str, parent_post: Post, parent_comment: Optional[Comment], mentioned_users: List[User]) -> Optional[Comment]:
     """
     Create a comment for the user
 
     :param self: The acting user
     :param content: the content
     :param parent_post: the post that this comment is attached to
+    :param parent_comment: The comment that this (maybe) nested comment is attached to
     :param mentioned_users: list of mentioned users
     :return The new comment object
     """
@@ -31,64 +32,37 @@ def create_comment(self: User, content: str, parent_post: Post, mentioned_users:
         new_comment.content = bleach.clean(content)
         new_comment.created_at = now_seconds()
 
-        parent_post.comments2.append(new_comment)
+        if not parent_comment:
+            parent_post.comments2.append(new_comment)
+        else:
+            parent_comment.comments.append(new_comment)
         parent_post.save()
 
-        create_notification(
-            self,
-            notifying_href=new_comment.make_href(parent_post),
-            notifying_action=NotifyingAction.Comment,
-            notified_href=parent_post.make_href(),
-            owner=parent_post.author
-        )
+        if not parent_comment:
+            create_notification(
+                self,
+                notifying_href=new_comment.make_href(parent_post),
+                notifying_summary=new_comment.content,
+                notifying_action=NotifyingAction.Comment,
+                notified_href=parent_post.make_href(),
+                notified_summary=parent_post.content,
+                owner=parent_post.author
+            )
+        else:
+            create_notification(
+                self,
+                notifying_href=new_comment.make_href(parent_post),
+                notifying_summary=new_comment.content,
+                notifying_action=NotifyingAction.Comment,
+                notified_href=parent_comment.make_href(parent_post),
+                notified_summary=parent_comment.content,
+                owner=parent_comment.author
+            )
 
         mention(
             self,
             notified_href=new_comment.make_href(parent_post),
-            mentioned_users=mentioned_users
-        )
-
-        return new_comment
-    else:
-        raise UnauthorizedAccess()
-
-
-def create_nested_comment(self: User, content: str, parent_comment: Comment, parent_post: Post,
-                          mentioned_users: List[User]) -> Optional[Comment]:
-    """
-    Create a nested comment for the user
-    TODO: this can be merged with create_comment
-
-    :param self: The acting user
-    :param content: the content
-    :param parent_comment: the comment that this nested comment is attached to
-    :param parent_post: the post that this comment is attached to
-    :param mentioned_users: list of mentioned users
-    :return The new comment object
-    """
-    # same explanation for context_home_or_profile=False
-    if sees_post(self, parent_post, context_home_or_profile=False):
-
-        new_comment = Comment()
-        new_comment.eid = make_uuid()
-        new_comment.author = self.id
-        new_comment.content = bleach.clean(content)
-        new_comment.created_at = now_seconds()
-
-        parent_comment.comments.append(new_comment)
-        parent_post.save()
-
-        create_notification(
-            self,
-            notifying_href=new_comment.make_href(parent_post),
-            notifying_action=NotifyingAction.Comment,
-            notified_href=parent_comment.make_href(parent_post),
-            owner=parent_comment.author
-        )
-
-        mention(
-            self,
-            notified_href=new_comment.make_href(parent_post),
+            notified_summary=new_comment.content,
             mentioned_users=mentioned_users
         )
 
