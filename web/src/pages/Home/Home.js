@@ -13,7 +13,6 @@ export default (props) => {
   const [posts, updatePosts] = useState([])
   const [circles, updateCircles] = useState([])
   const [me, updateMe] = useState(null)
-  const [loadingMe, updateLoadingMe] = useState(true)
   const [resharePostData, updateResharePostData] = useState(null)
   const [mobileNewPostOpened, updateMobileNewPostOpened] = useState(false)
   const [loadingMorePosts, updateLoadingMorePosts] = useState(false)
@@ -23,9 +22,8 @@ export default (props) => {
 
   useEffect(async () => {
     updatePosts(await props.api.getHome())
-    updateLoadingPosts(false)
     updateMe(await props.api.getMe())
-    updateLoadingMe(false)
+    updateLoadingPosts(false)
     updateCircles(await props.api.getCircles())
   }, [])
 
@@ -94,7 +92,7 @@ export default (props) => {
       <div className="home-posts-wrapper">
         {homePostElement()}
       </div>
-      {isTabletOrMobile && !loadingMe &&
+      {isTabletOrMobile &&
         <MobileNewPost
           circles={circles}
           me={me}
@@ -113,7 +111,7 @@ export default (props) => {
           }}
         />
       }
-      {!isTabletOrMobile && !loadingMe &&
+      {!isTabletOrMobile &&
         <div className="home-right-column-container">
           <NewPost
             circles={circles}
