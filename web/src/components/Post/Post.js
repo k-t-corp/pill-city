@@ -409,9 +409,7 @@ export default (props) => {
             </div>
           </div>
         </div>
-        <div className='post-content-wrapper' onClick={navigateToPostPage} style={{
-          cursor: disableNavigateToPostPage ? 'auto' : 'pointer'
-        }}>
+        <div className='post-content-wrapper'>
           {parseContent(props.data.content, `post-content ${props.detail ? '' : 'post-content-summary'}`)}
         </div>
         {resharedElem(props.data.reshared_from)}
