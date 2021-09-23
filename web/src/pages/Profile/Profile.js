@@ -10,9 +10,6 @@ export default class Profile extends Component {
       'loading': true,
       'error': undefined,
       'data': undefined,
-      'resharePostData': null,
-      'newPostOpened': false,
-      'circles': undefined
     }
   }
 

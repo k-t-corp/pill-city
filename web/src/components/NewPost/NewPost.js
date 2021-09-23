@@ -1,13 +1,13 @@
 import React, {useState} from 'react'
 import {Dropdown, Popup, Icon, Checkbox} from 'semantic-ui-react'
-import "./NewPost.css"
+import FormData from "form-data";
+import {useMediaQuery} from "react-responsive";
+import {useHotkeys} from "react-hotkeys-hook";
 import getAvatarUrl from "../../api/getAvatarUrl";
 import parseContent from "../../parseContent";
-import FormData from "form-data";
 import MediaPreview from "../MediaPreview/MediaPreview";
-import {useMediaQuery} from "react-responsive";
 import parseMentioned from "../../parseMentioned";
-import {useHotkeys} from "react-hotkeys-hook";
+import "./NewPost.css"
 
 export default (props) => {
   const [content, updateContent] = useState("")
