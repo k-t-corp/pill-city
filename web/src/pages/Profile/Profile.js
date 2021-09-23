@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react'
+import {useHistory} from "react-router-dom";
 import PostComponent from "../../components/Post/Post";
 import NewPost from "../../components/NewPost/NewPost";
 import {useToast} from "../../components/Toast/ToastProvider";
 import getProfilePicUrl from "../../api/getProfilePicUrl";
 import getAvatarUrl from "../../api/getAvatarUrl";
-import "./Profile.css"
 import ApiError from "../../api/ApiError";
+import "./Profile.css"
 
 export default (props) => {
   const [user, updateUser] = useState(null)
@@ -23,6 +24,7 @@ export default (props) => {
   const [followLoading, updateFollowLoading] = useState(true)
 
   const {addToast} = useToast()
+  const history = useHistory()
 
   window.onclick = function(event) {
     let modal = document.getElementById("profile-new-post-modal");
@@ -136,7 +138,12 @@ export default (props) => {
   const userInfoButton = () => {
     if (!props.userId) {
       return (
-        <div className="profile-info-button" onClick={() => window.location.href = `/settings`}>
+        <div
+          className="profile-info-button"
+          onClick={() => {
+            history.push(`/settings`)
+          }}
+        >
           Edit profile
         </div>
       )
