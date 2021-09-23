@@ -14,7 +14,6 @@ export default class Post extends Component {
       'me': undefined,
       'resharePostData': null,
       'newPostOpened': false,
-      'circles': undefined
     }
   }
 
@@ -23,11 +22,10 @@ export default class Post extends Component {
       [
         this.props.api.getPost(this.props.postId),
         this.props.api.getMe(),
-        this.props.api.getCircles()
       ]
     )
-      .then(([data, me, circles]) => {
-        this.setState({data, me, circles})
+      .then(([data, me]) => {
+        this.setState({data, me})
       })
       .catch(error => {
         this.setState({error})
@@ -83,8 +81,6 @@ export default class Post extends Component {
           <div id="post-new-post-modal" className="post-detail-new-post-modal">
             <div className="post-detail-new-post-modal-content">
               <NewPost
-                circles={this.state.circles}
-                me={this.state.me}
                 api={this.props.api}
                 resharePostData={this.state.resharePostData}
                 updateResharePostData={this.updateResharePostData}

@@ -9,6 +9,7 @@ export default (props) => {
       props.updateNewPostOpened(false)
     }
   }
+  
   return (
     <div className="mobile-new-post-wrapper">
       <svg className="mobile-new-post-button"
@@ -21,8 +22,6 @@ export default (props) => {
       <div id="mobileNewPostModal" className="mobile-new-post-modal">
         <div className="mobile-new-post-modal-content">
           <NewPost
-            circles={props.circles}
-            me={props.me}
             api={props.api}
             resharePostData={props.resharePostData}
             updateResharePostData={props.updateResharePostData}

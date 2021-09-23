@@ -1,4 +1,5 @@
 import { isObjectLike, isString } from "lodash";
+
 export default (user) => {
   if (
     isObjectLike(user) &&
