@@ -10,8 +10,6 @@ export default (props) => {
   const [postData, updatePostData] = useState([])
   const [newPostOpened, updateNewPostOpened] = useState(false)
   const [resharePostData, updateResharePostData] = useState(null)
-  const [circles, updateCircles] = useState()
-  const [me, updateMe] = useState()
   const [followLoading, updateFollowLoading] = useState(false)
   const [isFollowing, updateIsFollowing] = useState(props.userData.is_following)
   const [loadingMorePosts, updateLoadingMorePosts] = useState(false)
@@ -26,8 +24,6 @@ export default (props) => {
 
   useEffect(async () => {
     updatePostData(await props.api.getProfile(props.userData.id))
-    updateCircles(await props.api.getCircles())
-    updateMe(await props.api.getMe())
     updatePostLoading(false)
   }, [])
 
@@ -143,8 +139,6 @@ export default (props) => {
         <div id="profile-new-post-modal" className="post-detail-new-post-modal">
           <div className="post-detail-new-post-modal-content">
             <NewPost
-              circles={circles}
-              me={me}
               api={props.api}
               resharePostData={resharePostData}
               updateResharePostData={updateResharePostData}
@@ -153,6 +147,7 @@ export default (props) => {
                 addToast('Sending new post')
               }}
               afterPosting={(post) => {
+                // TODO: this is a bug
                 updatePostData([post, ...postData])
                 addToast('New post sent')
               }}

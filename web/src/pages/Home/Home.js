@@ -11,7 +11,6 @@ import {useToast} from "../../components/Toast/ToastProvider";
 export default (props) => {
   const [loading, updateLoading] = useState(true)
   const [posts, updatePosts] = useState([])
-  const [circles, updateCircles] = useState([])
   const [me, updateMe] = useState(null)
   const [resharePostData, updateResharePostData] = useState(null)
   const [mobileNewPostOpened, updateMobileNewPostOpened] = useState(false)
@@ -23,7 +22,6 @@ export default (props) => {
   useEffect(async () => {
     updateMe(await props.api.getMe())
     updatePosts(await props.api.getHome())
-    updateCircles(await props.api.getCircles())
     updateLoading(false)
   }, [])
 
@@ -94,8 +92,6 @@ export default (props) => {
       </div>
       {isTabletOrMobile &&
         <MobileNewPost
-          circles={circles}
-          me={me}
           api={props.api}
           resharePostData={resharePostData}
           updateResharePostData={updateResharePostData}
@@ -114,8 +110,6 @@ export default (props) => {
       {!isTabletOrMobile &&
         <div className="home-right-column-container">
           <NewPost
-            circles={circles}
-            me={me}
             api={props.api}
             resharePostData={resharePostData}
             updateResharePostData={updateResharePostData}

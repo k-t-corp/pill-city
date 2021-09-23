@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Dropdown, Popup, Icon, Checkbox} from 'semantic-ui-react'
 import FormData from "form-data";
 import {useMediaQuery} from "react-responsive";
@@ -10,30 +10,27 @@ import parseMentioned from "../../parseMentioned";
 import "./NewPost.css"
 
 export default (props) => {
-  const [content, updateContent] = useState("")
-  const [circleIds, updateCircleIds] = useState([])
-  const [resharableToggleChecked, updateResharableToggleChecked] = useState(true)
-  const [medias, updateMedias] = useState([])
+  const [me, updateMe] = useState(null)
+  const [myCircles, updateMyCircles] = useState([])
+
+  const [newPostContent, updateNewPostContent] = useState("")
+  const [newPostCircleIds, updateNewPostCircleIds] = useState([])
+  const [newPostResharable, updateNewPostResharable] = useState(true)
+  const [newPostMedias, updateNewPostMedias] = useState([])
 
   const [posting, updatePosting] = useState(false)
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
 
-  const isValid = () => {
-    return (content.trim().length !== 0 || medias.length !== 0) && circleIds.length !== 0
-  }
-
-  const reset = () => {
-    updateContent('')
-    updateCircleIds([])
-    updateResharableToggleChecked(true)
-    updateMedias([])
-  }
+  useEffect(async () => {
+    updateMe(await props.api.getMe())
+    updateMyCircles(await props.api.getCircles())
+  }, [])
 
   useHotkeys('ctrl+enter', async () => {
     console.log('NewPost ctrl+enter')
-    if (content.endsWith('\n')) {
+    if (newPostContent.endsWith('\n')) {
       // if sent using ctrl+enter, there should be an extra newline at the end
-      updateContent(content.substring(0, content.length - 1))
+      updateNewPostContent(newPostContent.substring(0, newPostContent.length - 1))
     }
     if (isValid()) {
       await postButtonOnClick()
@@ -42,27 +39,38 @@ export default (props) => {
     enableOnTags: ['TEXTAREA']
   })
 
+  const isValid = () => {
+    return (newPostContent.trim().length !== 0 || newPostMedias.length !== 0) && newPostCircleIds.length !== 0
+  }
+
+  const reset = () => {
+    updateNewPostContent('')
+    updateNewPostCircleIds([])
+    updateNewPostResharable(true)
+    updateNewPostMedias([])
+  }
+
   const postButtonOnClick = async () => {
     if (posting) {
       return
     }
     updatePosting(true);
-    const actualCircleIds = circleIds.filter(cn => cn !== true)
-    const isPublic = circleIds.filter(cn => cn === true).length !== 0
+    const actualCircleIds = newPostCircleIds.filter(cn => cn !== true)
+    const isPublic = newPostCircleIds.filter(cn => cn === true).length !== 0
     let mediaData = new FormData()
-    for (let i = 0; i < medias.length; i++) {
-      const blob = new Blob([medias[i]], {type: 'image/*'})
+    for (let i = 0; i < newPostMedias.length; i++) {
+      const blob = new Blob([newPostMedias[i]], {type: 'image/*'})
       mediaData.append(`media${i}`, blob, blob.name)
     }
     props.beforePosting()
     const post = await props.api.postPost(
-      content,
+      newPostContent,
       isPublic,
       actualCircleIds,
-      props.resharePostData === null ? resharableToggleChecked : true,
+      props.resharePostData === null ? newPostResharable : true,
       props.resharePostData === null ? null : props.resharePostData.id,
       props.resharePostData === null ? mediaData : [],
-      parseMentioned(content)
+      parseMentioned(newPostContent)
     );
     reset()
     props.afterPosting(post)
@@ -81,7 +89,7 @@ export default (props) => {
         for (let i = 0; i < event.target.files.length; i++) {
           selectedMedias.push(event.target.files[i])
         }
-        updateMedias(selectedMedias)
+        updateNewPostMedias(selectedMedias)
       }
     }
   }
@@ -91,7 +99,7 @@ export default (props) => {
     if (posting) {
       return
     }
-    updateContent(e.target.value)
+    updateNewPostContent(e.target.value)
   }
 
   const sharingScopeOnChange = (e, {value}) => {
@@ -99,7 +107,7 @@ export default (props) => {
     if (posting) {
       return
     }
-    updateCircleIds(value)
+    updateNewPostCircleIds(value)
   }
 
   const resharableOnChange = e => {
@@ -107,7 +115,7 @@ export default (props) => {
     if (posting) {
       return
     }
-    updateResharableToggleChecked(!resharableToggleChecked)
+    updateNewPostResharable(!newPostResharable)
   }
 
   const submitButtonClass = () => {
@@ -127,12 +135,12 @@ export default (props) => {
         <div className="new-post-avatar">
           <img
             className="new-post-avatar-img"
-            src={getAvatarUrl(props.me)}
+            src={getAvatarUrl(me)}
             alt=""
           />
         </div>
         <div className="new-post-name">
-          {props.me !== null ? props.me.id : '...'}
+          {me !== null ? me.id : '...'}
         </div>
       </div>
       {props.resharePostData === null ? null :
@@ -160,7 +168,7 @@ export default (props) => {
         </div>
       }
       {props.resharePostData === null ?
-        <MediaPreview mediaUrls={medias.map(m => URL.createObjectURL(m))}
+        <MediaPreview mediaUrls={newPostMedias.map(m => URL.createObjectURL(m))}
                       threeRowHeight={isTabletOrMobile ? "30px" : "80px"}
                       twoRowHeight={isTabletOrMobile ? "50px" : "100px"}
                       oneRowHeight={isTabletOrMobile ? "80px" : "140px"}/>
@@ -184,7 +192,7 @@ export default (props) => {
           </label> : null}
         <textarea
           className="new-post-text-box"
-          value={content}
+          value={newPostContent}
           onChange={contentOnChange}
           disabled={posting}
         />
@@ -195,13 +203,13 @@ export default (props) => {
           placeholder='Who can see it'
           options={
             [{key: 'public', text: '🌏 Public', value: true}].concat(
-              props.circles.map(circle => {
+              myCircles.map(circle => {
                 const {name, id} = circle
                 return {key: name, text: `⭕ ${name}`, value: id}
               })
             )
           }
-          value={circleIds}
+          value={newPostCircleIds}
           onChange={sharingScopeOnChange}
           disabled={posting}
           fluid multiple selection
@@ -228,7 +236,7 @@ export default (props) => {
             toggle
             label="Enable Resharing"
             onChange={resharableOnChange}
-            checked={resharableToggleChecked}
+            checked={newPostResharable}
             disabled={posting}
           />
           <Popup
