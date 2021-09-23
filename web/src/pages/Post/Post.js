@@ -1,101 +1,90 @@
-import React, {Component} from 'react'
-import {Loader} from 'semantic-ui-react'
+import React, {useEffect, useState} from 'react'
+import {useLocation} from "react-router-dom";
 import PostComponent from "../../components/Post/Post";
-import './Post.css'
 import NewPost from "../../components/NewPost/NewPost";
+import {useToast} from "../../components/Toast/ToastProvider";
+import './Post.css'
 
-export default class Post extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      'loading': true,
-      'error': undefined,
-      'data': undefined,
-      'me': undefined,
-      'resharePostData': null,
-      'newPostOpened': false,
-    }
+export default (props) => {
+  const [loading, updateLoading] = useState(true)
+  const [post, updatePost] = useState(null)
+  const [me, updateMe] = useState(null)
+  const [resharePost, updateResharePost] = useState(null)
+  const [newPostOpened, updateNewPostOpened] = useState(false)
+  const {addToast} = useToast()
+
+  useEffect(async () => {
+    updateMe(await props.api.getMe())
+    updatePost(await props.api.getPost(props.postId))
+    updateLoading(false)
+  }, [])
+
+  let highlightCommentId
+  const location = useLocation()
+  if (location.hash) {
+    highlightCommentId = location.hash.split('#comment-')[1]
   }
 
-  componentDidMount() {
-    Promise.all(
-      [
-        this.props.api.getPost(this.props.postId),
-        this.props.api.getMe(),
-      ]
-    )
-      .then(([data, me]) => {
-        this.setState({data, me})
-      })
-      .catch(error => {
-        this.setState({error})
-      })
-      .finally(() => {
-        this.setState({'loading': false})
-      })
-  }
-
-  render() {
-    let highlightCommentId
-    if (this.props.location.hash) {
-      highlightCommentId = this.props.location.hash.split('#comment-')[1]
+  const renderPost = () => {
+    if (loading) {
+      return (<div className="post-status">Loading...</div>)
     }
-    if (this.state.loading) {
-      return (
-        <Loader size='massive'/>
-      )
-    }
-    if (this.state.error) {
-      return (
-        <div>{this.state.error.toString()}</div>
-      )
-    }
-
-    const thisThis = this
-    window.onclick = function(event) {
-      let modal = document.getElementById("post-new-post-modal");
-      if (event.target === modal) {
-        thisThis.setState({'newPostOpened': false})
-      }
-    }
-
-    const updateResharePostData = (data) => this.setState({'resharePostData': data})
-    const updateMobileNewPostOpened = (opened) => {
-      this.setState({'newPostOpened': opened})
+    if (!post) {
+      return (<div className="post-status">Errored loading post</div>)
     }
     return (
-      <div className='post-wrapper-page'>
+      <>
         <PostComponent
           detail={true}
           hasNewPostModal={true}
-          data={this.state.data}
+          data={post}
           highlightCommentId={highlightCommentId}
-          me={this.state.me}
-          api={this.props.api}
+          me={me}
+          api={props.api}
           disableNavigateToPostPage={true}
-          resharePostData={this.resharePostData}
+          resharePostData={resharePost}
           updateResharePostData={updateResharePostData}
           updateNewPostOpened={updateMobileNewPostOpened}
         />
-        {this.state.newPostOpened &&
+        {newPostOpened &&
           <div id="post-new-post-modal" className="post-detail-new-post-modal">
             <div className="post-detail-new-post-modal-content">
               <NewPost
-                api={this.props.api}
-                resharePostData={this.state.resharePostData}
-                updateResharePostData={this.updateResharePostData}
+                api={props.api}
+                resharePostData={resharePost}
+                updateResharePostData={updateResharePostData}
                 beforePosting={() => {
-                  // TODO: maybe a toast?
+                  addToast('Sending new post')
                   updateMobileNewPostOpened(false)
                 }}
                 afterPosting={() => {
-                  // TODO: maybe a toast?
+                  addToast('New post sent')
                 }}
               />
             </div>
           </div>
         }
-      </div>
+      </>
     )
   }
+
+  window.onclick = (event) => {
+    let modal = document.getElementById("post-new-post-modal");
+    if (event.target === modal) {
+      updateNewPostOpened(false)
+    }
+  }
+
+  const updateResharePostData = (data) => {
+    updateResharePost(data)
+  }
+  const updateMobileNewPostOpened = (opened) => {
+    updateNewPostOpened(opened)
+  }
+
+  return (
+    <div className='post-wrapper-page'>
+      {renderPost()}
+    </div>
+  )
 }
