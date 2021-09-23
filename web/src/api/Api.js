@@ -85,14 +85,19 @@ export default class Api {
 
   async getUser(userId) {
     Api.throwOnUnauthorized()
-    const res = await this.axiosInstance.get(
-      `/user/${userId}`,
-      {
-        headers: Api.authorizedHeaders()
-      }
-    )
+    let res
+    try {
+      res = await this.axiosInstance.get(
+        `/user/${userId}`,
+        {
+          headers: Api.authorizedHeaders()
+        }
+      )
+    } catch (e) {
+      res = e.response
+    }
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res.status, res.data)
     }
     return res.data
   }
