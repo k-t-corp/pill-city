@@ -5,10 +5,12 @@ import {useToast} from "../../components/Toast/ToastProvider";
 import getProfilePicUrl from "../../api/getProfilePicUrl";
 import getAvatarUrl from "../../api/getAvatarUrl";
 import "./Profile.css"
+import ApiError from "../../api/ApiError";
 
 export default (props) => {
   const [user, updateUser] = useState(null)
   const [me, updateMe] = useState(null)
+  const [userNotFound, updateUserNotFound] = useState(false)
 
   const [postsLoading, updatePostsLoading] = useState(true)
   const [posts, updatePosts] = useState([])
@@ -35,14 +37,25 @@ export default (props) => {
     if (!props.userId) {
       updateUser(me)
       updatePosts(await props.api.getProfile(me.id))
+      updatePostsLoading(false)
+      updateFollowLoading(false)
     } else {
-      const user = await props.api.getUser(props.userId)
-      updateUser(user)
-      updateIsFollowing(user.is_following)
-      updatePosts(await props.api.getProfile(props.userId))
+      let user
+      try {
+        user = await props.api.getUser(props.userId)
+        updateUser(user)
+        updateIsFollowing(user.is_following)
+        updatePosts(await props.api.getProfile(props.userId))
+        updatePostsLoading(false)
+        updateFollowLoading(false)
+      } catch (e) {
+        if (e instanceof ApiError && e.statusCode === 404) {
+          updateUserNotFound(true)
+        } else {
+          throw e
+        }
+      }
     }
-    updatePostsLoading(false)
-    updateFollowLoading(false)
   }, [])
 
   const loadMorePosts = async () => {
@@ -61,7 +74,9 @@ export default (props) => {
   }
 
   const profilePosts = () => {
-    if (postsLoading) {
+    if (userNotFound) {
+      return (<div className="profile-status">User not found</div>)
+    } else if (postsLoading) {
       return (<div className="profile-status">Loading...</div>)
     } else if (posts.length === 0) {
       return (<div className="profile-status">No posts here</div>)
@@ -146,7 +161,7 @@ export default (props) => {
           <img className="profile-avatar-img" src={getAvatarUrl(user)} alt="user-avatar"/>
         </div>
         <div className="profile-user-name">
-          {user !== null ? user.id : ''}
+          {props.userId ? props.userId : me !== null ? me.id : '...'}
         </div>
         {userInfoButton()}
       </div>
