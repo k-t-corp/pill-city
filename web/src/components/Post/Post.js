@@ -9,6 +9,7 @@ import MediaPreview from "../MediaPreview/MediaPreview";
 import parseMentioned from "../../parseMentioned";
 import {useHotkeys} from "react-hotkeys-hook";
 import {useMediaQuery} from "react-responsive";
+import {useHistory} from "react-router-dom";
 
 export default (props) => {
   // existing comment data cached in state
@@ -27,6 +28,7 @@ export default (props) => {
 
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
   const [mediaUrlOpened, updateMediaUrlOpened] = useState('')
+  const history = useHistory()
 
   const resharedElem = (resharedFrom) => {
     if (resharedFrom === null) {
@@ -35,7 +37,7 @@ export default (props) => {
     return (
       <div className="post-reshared-wrapper" onClick={e => {
         e.preventDefault()
-        window.location.href = `/post/${resharedFrom.id}`
+          history.push(`/post/${resharedFrom.id}`)
       }}>
         <div className="post-reshared-info">
           <div className="post-avatar post-reshared-avatar">
@@ -374,7 +376,7 @@ export default (props) => {
   const navigateToPostPage = e => {
     e.preventDefault();
     if (!disableNavigateToPostPage) {
-      window.location.href = `/post/${props.data.id}`
+      history.push(`/post/${props.data.id}`)
     }
   }
 

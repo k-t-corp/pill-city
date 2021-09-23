@@ -1,9 +1,12 @@
 import React, {useEffect, useState} from 'react'
-import "./Users.css"
+import {useHistory} from "react-router-dom";
 import getAvatarUrl from "../../api/getAvatarUrl";
+import "./Users.css"
 
 export default (props) => {
   const [users, updateUsers] = useState([])
+  const history = useHistory()
+
   useEffect(async () => {
     const users = await props.api.getUsers()
     updateUsers(users.map(u => {
@@ -15,7 +18,7 @@ export default (props) => {
   for (let i = 0; i < users.length; i++) {
     const user = users[i]
     const userCardOnClick = () => {
-      window.location.href = `/profile/${user.id}`
+      history.push(`/profile/${user.id}`)
     }
     const createdAtDate = new Date(user['created_at_seconds'] * 1000)
     userCardElements.push(

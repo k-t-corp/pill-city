@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {useHistory} from "react-router-dom";
 import "./NotificationDropdown.css"
 import getAvatarUrl from "../../api/getAvatarUrl";
 import timePosted from "../../timePosted";
@@ -9,6 +10,7 @@ export default (props) => {
   const [notifications, updateNotifications] = useState([])
   const [loadingNotifications, updateLoadingNotifications] = useState(true)
   const [loadingMoreNotifications, updateLoadingMoreNotifications] = useState(false)
+  const history = useHistory()
 
   useEffect(async () => {
     updateNotifications(await props.api.getNotifications())
@@ -75,7 +77,7 @@ export default (props) => {
     const notificationOnClick = async () => {
       console.log(notification.id)
       await props.api.markNotificationAsRead(notification.id)
-      window.location.href = notification.notified_href
+      history.push(notification.notified_href)
     }
 
     return (

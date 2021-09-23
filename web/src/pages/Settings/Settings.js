@@ -5,6 +5,7 @@ import 'react-image-crop/dist/ReactCrop.css';
 import {removeAccessToken} from "../../api/AuthStorage";
 import LoadingModal from "../../components/LoadingModal/LoadingModal";
 import About from "../../components/About/About";
+import {useHistory} from "react-router-dom";
 
 const FormData = require('form-data');
 
@@ -28,6 +29,7 @@ export default (props) => {
   const [profilePic, updateProfilePic] = useState()
   const [profileModalOpened, updateProfileModalOpened] = useState(false)
   const [profileModalSelectedPic, updateProfileModalSelectedPic] = useState()
+  const history = useHistory()
   const profileModalOptionsElem = () => {
     let optionElem = []
     for (let i = 0; i < profilePicOptions.length; i++) {
@@ -102,7 +104,7 @@ export default (props) => {
 
   const handleSignOut = () => {
     removeAccessToken()
-    window.location.href = "/signin"
+    history.push("/signin")
   }
 
   if (loading) {

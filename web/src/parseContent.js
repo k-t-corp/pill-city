@@ -13,7 +13,8 @@ export default (content, className) => {
     .replace(regExForBold, '$1<b>$2</b>$3')
     .replace(
       regExForMention,
-      `<a href="/profile/$1" style="color: #56a5ff; text-decoration: none;">@$1</a>$2`
+      // TODO: this triggers a reload still #167
+      `<a href="/profile/$1" style="color: #56a5ff; text-decoration: none;">@$1</Link>$2`
     );
 
   return <div className={className} dangerouslySetInnerHTML={{__html: newContent}}/>
