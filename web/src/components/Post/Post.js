@@ -329,7 +329,7 @@ export default (props) => {
             }
             <span className="post-time post-nested-comment-time">{timePosted(nestedComment.created_at_seconds)}</span>
             {
-              !nestedComment.deleting && !nestedComment.deleted &&
+              !nestedComment.deleting && !nestedComment.deleted && !comment.deleted &&
                 <span className="post-comment-reply-btn" onClick={replyNestedCommentOnClick}>
                   Reply
                 </span>
