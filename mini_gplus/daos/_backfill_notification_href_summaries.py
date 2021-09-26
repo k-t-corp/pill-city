@@ -1,7 +1,7 @@
 from mini_gplus.models import Notification
 from .post import get_post
 from .reaction import get_reaction
-from .comment import get_comment
+from .comment import dangerously_get_comment
 
 
 def _href_to_summary(href: str) -> str:
@@ -15,7 +15,7 @@ def _href_to_summary(href: str) -> str:
         comment_id = href.split('#comment-')[1]
         post_id = href.split("#comment-")[0].split('/post/')[1]
         post = get_post(post_id)
-        return get_comment(comment_id, post).content
+        return dangerously_get_comment(comment_id, post).content
     elif '/post/' in href:
         post_id = href.split('/post/')[1]
         return get_post(post_id).content

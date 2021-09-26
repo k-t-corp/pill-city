@@ -4,7 +4,7 @@ from mini_gplus.daos.user import sign_up, find_user, add_following
 from mini_gplus.daos.circle import create_circle, find_circle, toggle_member
 from mini_gplus.daos.post import create_post, get_post, owns_post, sees_post, retrieves_posts_on_home, \
     retrieves_posts_on_profile
-from mini_gplus.daos.comment import create_comment
+from mini_gplus.daos.comment import create_comment, delete_comment, dangerously_get_comment
 from mini_gplus.daos.reaction import create_reaction, get_reaction
 from mini_gplus.daos.exceptions import UnauthorizedAccess
 
@@ -20,7 +20,9 @@ class InteractionsTest(BaseTestCase):
             comments: bool,
             nested_comments: bool,
             react_once: bool,
-            reshare: bool
+            reshare: bool,
+            deletes_comment: bool,
+            deletes_nested_comment: bool
     ):
         if owns:
             self.assertTrue(owns_post(acting_user, post))
@@ -69,6 +71,7 @@ class InteractionsTest(BaseTestCase):
                 create_comment(acting_user, 'nested_comment1', post, comment1, [])
 
             self.assertRaises(UnauthorizedAccess, op2)
+            nested_comment1 = create_comment(post.author, 'nested_comment1', post, None, [])
 
         # has to re-query post object because author in reactions won't be filled as an actual User object
         post = get_post(post.eid)
@@ -105,8 +108,30 @@ class InteractionsTest(BaseTestCase):
             self.assertFalse(create_post(acting_user, 'resharing', is_public=True, circles=[], reshareable=True,
                                          reshared_from=post, media_list=[], mentioned_users=[]))
 
+        post = get_post(post.eid)
+        if deletes_nested_comment:
+            deleted_nested_comment = delete_comment(acting_user, nested_comment1.eid, post)
+            self.assertEqual('', dangerously_get_comment(deleted_nested_comment.eid, post).content)
+        else:
+            def op_delete_nested_comment():
+                delete_comment(acting_user, nested_comment1.eid, post)
+
+            self.assertRaises(UnauthorizedAccess, op_delete_nested_comment)
+
+        post = get_post(post.eid)
+        if deletes_comment:
+            deleted_comment = delete_comment(acting_user, comment1.eid, post)
+            self.assertEqual('', dangerously_get_comment(deleted_comment.eid, post).content)
+        else:
+            def op_delete_comment():
+                delete_comment(acting_user, comment1.eid, post)
+
+            self.assertRaises(UnauthorizedAccess, op_delete_comment)
+
+
     def test_can_act_on_my_own_public_post(self):
         # Create user1
+        self.assertTrue(sign_up('ghost', '1234'))
         self.assertTrue(sign_up('user1', '1234'))
         user1 = find_user('user1')
 
@@ -119,11 +144,12 @@ class InteractionsTest(BaseTestCase):
         # User1 owns, sees, sees on profile, comments, nested-comments, reacts and reshares on post1
         self._assert_user_to_post_privilege(
             user1, post1, owns=True, sees=True, sees_on_profile=True, comments=True, nested_comments=True,
-            react_once=True, reshare=True
+            react_once=True, reshare=True, deletes_comment=True, deletes_nested_comment=True,
         )
 
     def test_chained_reshare_on_my_own_public_post(self):
         # Create user1
+        self.assertTrue(sign_up('ghost', '1234'))
         self.assertTrue(sign_up('user1', '1234'))
         user1 = find_user('user1')
 
@@ -142,6 +168,7 @@ class InteractionsTest(BaseTestCase):
 
     def test_can_act_on_others_public_post(self):
         # Create users
+        self.assertTrue(sign_up('ghost', '1234'))
         self.assertTrue(sign_up('user1', '1234'))
         self.assertTrue(sign_up('user2', '2345'))
         self.assertTrue(sign_up('user3', '3456'))
@@ -163,29 +190,30 @@ class InteractionsTest(BaseTestCase):
         # User2 not owns but sees, sees on profile, comments, nested-comments, reacts and reshares on post1
         self._assert_user_to_post_privilege(
             user2, post1, owns=False, sees=True, sees_on_profile=True, comments=True, nested_comments=True,
-            react_once=True, reshare=True
+            react_once=True, reshare=True, deletes_comment=True, deletes_nested_comment=True,
         )
 
         # User2 cannot reshare on post2
         self._assert_user_to_post_privilege(
             user2, post2, owns=False, sees=True, sees_on_profile=True, comments=True, nested_comments=True,
-            react_once=True, reshare=False
+            react_once=True, reshare=False, deletes_comment=True, deletes_nested_comment=True,
         )
 
         # User3 not owns nor sees, but sees on profile, comments, nested-comments, reacts and reshares on post1
         self._assert_user_to_post_privilege(
             user3, post1, owns=False, sees=False, sees_on_profile=True, comments=True, nested_comments=True,
-            react_once=True, reshare=True
+            react_once=True, reshare=True, deletes_comment=True, deletes_nested_comment=True,
         )
 
         # User3 cannot reshare on post2
         self._assert_user_to_post_privilege(
             user3, post2, owns=False, sees=False, sees_on_profile=True, comments=True, nested_comments=True,
-            react_once=True, reshare=False
+            react_once=True, reshare=False, deletes_comment=True, deletes_nested_comment=True,
         )
 
     def test_can_act_on_my_own_private_post(self):
         # Create user1
+        self.assertTrue(sign_up('ghost', '1234'))
         self.assertTrue(sign_up('user1', '1234'))
         user1 = find_user('user1')
 
@@ -202,11 +230,12 @@ class InteractionsTest(BaseTestCase):
         # User1 owns, sees, sees on profile, comments, nested-comments, reacts and reshares on post1
         self._assert_user_to_post_privilege(
             user1, post1, owns=True, sees=True, sees_on_profile=True, comments=True, nested_comments=True,
-            react_once=True, reshare=True
+            react_once=True, reshare=True, deletes_comment=True, deletes_nested_comment=True,
         )
 
     def test_can_act_on_others_private_post(self):
         # Create users
+        self.assertTrue(sign_up('ghost', '1234'))
         self.assertTrue(sign_up('user1', '1234'))
         self.assertTrue(sign_up('user2', '2345'))
         self.assertTrue(sign_up('user3', '3456'))
@@ -236,37 +265,37 @@ class InteractionsTest(BaseTestCase):
         # User2 not owns but sees, sees on profile, comments, nested-comments, reacts and reshares on post1
         self._assert_user_to_post_privilege(
             user2, post1, owns=False, sees=True, sees_on_profile=True, comments=True, nested_comments=True,
-            react_once=True, reshare=True
+            react_once=True, reshare=True, deletes_comment=True, deletes_nested_comment=True,
         )
 
         # User2 cannot reshare on post2
         self._assert_user_to_post_privilege(
             user2, post2, owns=False, sees=True, sees_on_profile=True, comments=True, nested_comments=True,
-            react_once=True, reshare=False
+            react_once=True, reshare=False, deletes_comment=True, deletes_nested_comment=True,
         )
 
         # User3 not owns nor sees, but sees on profile, comments, nested-comments, reacts and reshares on post1
         self._assert_user_to_post_privilege(
             user3, post1, owns=False, sees=False, sees_on_profile=True, comments=True, nested_comments=True,
-            react_once=True, reshare=True
+            react_once=True, reshare=True, deletes_comment=True, deletes_nested_comment=True,
         )
 
         # User3 cannot reshare on post2
         self._assert_user_to_post_privilege(
             user3, post2, owns=False, sees=False, sees_on_profile=True, comments=True, nested_comments=True,
-            react_once=True, reshare=False
+            react_once=True, reshare=False, deletes_comment=True, deletes_nested_comment=True,
         )
 
         # User4 cannot do anything to post1
         self._assert_user_to_post_privilege(
             user4, post1, owns=False, sees=False, sees_on_profile=False, comments=False, nested_comments=False,
-            react_once=False, reshare=False
+            react_once=False, reshare=False, deletes_comment=False, deletes_nested_comment=False,
         )
 
         # User4 cannot do anything to post2
         self._assert_user_to_post_privilege(
             user4, post2, owns=False, sees=False, sees_on_profile=False, comments=False, nested_comments=False,
-            react_once=False, reshare=False
+            react_once=False, reshare=False, deletes_comment=False, deletes_nested_comment=False,
         )
 
     def test_retrieves_posts(self):

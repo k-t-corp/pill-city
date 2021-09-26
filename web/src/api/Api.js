@@ -217,6 +217,17 @@ export default class Api {
     return res.data
   }
 
+  async deleteComment(postId, commentId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.delete(
+      `/posts/${postId}/comment/${commentId}`
+    )
+    if (res.status !== 201) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
+
   async postNestedComment(content, postId, commentId, mentionedUserIds) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.post(
@@ -225,6 +236,17 @@ export default class Api {
         content,
         mentioned_user_ids: mentionedUserIds
       }
+    )
+    if (res.status !== 201) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
+
+  async deleteNestedComment(postId, commentId, nestedCommentId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.delete(
+      `/posts/${postId}/comment/${commentId}/comment/${nestedCommentId}`
     )
     if (res.status !== 201) {
       throw new ApiError(res.status)

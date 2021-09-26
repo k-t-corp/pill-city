@@ -18,8 +18,10 @@ notification_fields = {
     'notifying_href': fields.String,
     'notifying_summary': fields.String,
     'notifying_action': NotifyingAction,
+    'notifying_deleted': fields.Boolean,
     'notified_href': fields.String,
     'notified_summary': fields.String,
+    'notified_deleted': fields.Boolean,
     'unread': fields.Boolean
 }
 

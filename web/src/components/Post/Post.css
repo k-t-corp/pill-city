@@ -193,6 +193,20 @@
     background-color: #e7e7e7;
 }
 
+.post-comment-delete-btn {
+    margin-left: 10px;
+    font-size: smaller;
+    background-color: pink;
+    padding: 2px 5px;
+    border-radius: 2px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.post-comment-delete-btn:hover {
+    background-color: lightpink;
+}
+
 /*Nested Comment*/
 
 .post-nested-comment-wrapper {

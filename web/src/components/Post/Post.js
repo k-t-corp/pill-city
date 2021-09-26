@@ -13,7 +13,20 @@ import {useHistory} from "react-router-dom";
 
 export default (props) => {
   // existing comment data cached in state
-  const [commentData, setCommentData] = useState(_.cloneDeep(props.data.comments))
+  const [comments, updateComments] = useState(
+    _.cloneDeep(props.data.comments).map(c => {
+      return {
+        ...c,
+        deleting: false,
+        comments: c.comments.map(cc => {
+          return {
+            ...cc,
+            deleting: false
+          }
+        })
+      }
+    })
+  )
   // whether the comment box is expanded
   const [addingComment, updateAddingComment] = useState(false)
   // comment box content
@@ -226,24 +239,65 @@ export default (props) => {
     </div>
   )
 
-  let comments = []
-  for (let i = 0; i < commentData.length; i++) {
-    const comment = commentData[i]
-    const replyCommentButtonOnclick = () => {
-      updateAddingComment(true)
-      updateReplyNestedCommentId(comment.id)
-    }
-    let nestedComments = []
+  let commentElements = []
+  for (let i = 0; i < comments.length; i++) {
+    const comment = comments[i]
+
+    let nestedCommentElements = []
     for (let i = 0; i < comment.comments.length; i++) {
       const nestedComment = comment.comments[i]
       const replyNestedCommentOnClick = () => {
+        if (nestedComment.deleting) {
+          return
+        }
         // reply nested comment
         updateAddingComment(true)
         updateReplyNestedCommentId(comment.id)
         updateCommentContent(`@${nestedComment.author.id} `)
       }
 
-      nestedComments.push(
+      const deleteNestedCommentOnClick = async () => {
+        if (nestedComment.deleting) {
+          return
+        }
+        if (!window.confirm('Are you sure you want to delete this comment?')) {
+          return
+        }
+        // mark as deleting
+        updateComments(comments.map(c => {
+          return {
+            ...c,
+            comments: c.comments.map(cc => {
+              if (cc.id === nestedComment.id) {
+                return {
+                  ...cc,
+                  deleting: true
+                }
+              }
+              return {...cc}
+            })
+          }
+        }))
+        await props.api.deleteNestedComment(props.data.id, comment.id, nestedComment.id)
+        // mark as deleted and not deleting
+        updateComments(comments.map(c => {
+          return {
+            ...c,
+            comments: c.comments.map(cc => {
+              if (cc.id === nestedComment.id) {
+                return {
+                  ...cc,
+                  deleted: true,
+                  deleting: false
+                }
+              }
+              return {...cc}
+            })
+          }
+        }))
+      }
+
+      nestedCommentElements.push(
         <div
           id={nestedComment.id}
           ref={isHighlightComment(nestedComment.id) ? highlightCommentRef : null}
@@ -251,24 +305,86 @@ export default (props) => {
           className={`post-nested-comment ${isHighlightComment(nestedComment.id) ? "highlight-comment" : ""}`}
         >
           <div className="post-avatar post-nested-comment-avatar">
-            <img
-              className="post-avatar-img"
-              src={getAvatarUrl(nestedComment.author)}
-              alt=""
-            />
+            {
+              !nestedComment.deleted ?
+                <img
+                  className="post-avatar-img"
+                  src={getAvatarUrl(nestedComment.author)}
+                  alt=""
+                /> :
+                <img
+                  className="post-avatar-img"
+                  src={getAvatarUrl(null)}
+                  alt=""
+                />
+            }
           </div>
-          <div className="post-name nested-comment-name">{nestedComment.author.id}:&nbsp;</div>
+          <div className="post-name nested-comment-name">
+            {!nestedComment.deleted ? nestedComment.author.id : ''}:&nbsp;
+          </div>
           <div className="post-nested-comment-content">
-            {parseContent(nestedComment.content, "")}
+            {!nestedComment.deleted ?
+              parseContent(nestedComment.content, "") :
+              <div style={{fontStyle: 'italic'}}>This comment has been deleted</div>
+            }
             <span className="post-time post-nested-comment-time">{timePosted(nestedComment.created_at_seconds)}</span>
-            <span className="post-comment-reply-btn" onClick={replyNestedCommentOnClick}>
-              Reply
-            </span>
+            {
+              !nestedComment.deleting && !nestedComment.deleted && !comment.deleted &&
+                <span className="post-comment-reply-btn" onClick={replyNestedCommentOnClick}>
+                  Reply
+                </span>
+            }
+            {
+              !nestedComment.deleting && !nestedComment.deleted && nestedComment.author.id === props.me.id &&
+                <span className="post-comment-delete-btn" onClick={deleteNestedCommentOnClick}>
+                  Delete
+                </span>
+            }
           </div>
         </div>
       )
     }
-    comments.push(
+
+    const replyCommentButtonOnclick = () => {
+      if (comment.deleting) {
+        return
+      }
+      updateAddingComment(true)
+      updateReplyNestedCommentId(comment.id)
+    }
+
+    const deleteCommentButtonOnclick = async () => {
+      if (comment.deleting) {
+        return
+      }
+      if (!window.confirm('Are you sure you want to delete this comment?')) {
+        return
+      }
+      // mark as deleting
+      updateComments(comments.map(c => {
+        if (comment.id === c.id) {
+          return {
+            ...c,
+            deleting: true
+          }
+        }
+        return {...c}
+      }))
+      await props.api.deleteComment(props.data.id, comment.id)
+      // marked as deleted and not deleting
+      updateComments(comments.map(c => {
+        if (comment.id === c.id) {
+          return {
+            ...c,
+            deleted: true,
+            deleting: false
+          }
+        }
+        return {...c}
+      }))
+    }
+
+    commentElements.push(
       <div
         id={comment.id}
         ref={isHighlightComment(comment.id) ? highlightCommentRef : null}
@@ -276,29 +392,50 @@ export default (props) => {
         className={`post-comment ${isHighlightComment(comment.id) ? "highlight-comment" : ""}`}
       >
         <div className="post-avatar post-comment-avatar">
-          <img
-            className="post-avatar-img"
-            src={getAvatarUrl(comment.author)}
-            alt=""
-          />
+          {
+            !comment.deleted ?
+              <img
+                className="post-avatar-img"
+                src={getAvatarUrl(comment.author)}
+                alt=""
+              /> :
+              <img
+                className="post-avatar-img"
+                src={getAvatarUrl(null)}
+                alt=""
+              />
+          }
         </div>
         <div className="post-comment-main-content">
           <div className="post-comment-info">
             <div className="post-name post-comment-name">
-              {comment.author.id}
+              {!comment.deleted ? comment.author.id : ''}
             </div>
             <div className="post-time">
               {timePosted(comment.created_at_seconds)}
             </div>
           </div>
           <div className={`post-content comment-content ${props.detail ? '' : 'post-content-summary'}`}>
-            {parseContent(comment.content, "")}
-            <span className="post-comment-reply-btn" onClick={replyCommentButtonOnclick}>
-              Reply
-            </span>
+            {
+              !comment.deleted ?
+                parseContent(comment.content, "") :
+                <div style={{fontStyle: 'italic'}}>This comment has been deleted</div>
+            }
+            {
+              !comment.deleting && !comment.deleted &&
+              <span className="post-comment-reply-btn" onClick={replyCommentButtonOnclick}>
+                Reply
+              </span>
+            }
+            {
+              !comment.deleting && !comment.deleted && comment.author.id === props.me.id &&
+              <span className="post-comment-delete-btn" onClick={deleteCommentButtonOnclick}>
+                Delete
+              </span>
+            }
           </div>
           <div className="post-nested-comment-wrapper">
-            {nestedComments}
+            {nestedCommentElements}
           </div>
         </div>
       </div>
@@ -333,7 +470,7 @@ export default (props) => {
     if (replyNestedCommentId !== "") {
       // reply nested comment
       const newNestedComment = await props.api.postNestedComment(content, props.data.id, replyNestedCommentId, parseMentioned(content))
-      setCommentData(commentData.map(c => {
+      updateComments(comments.map(c => {
         if (c.id !== replyNestedCommentId) {
           return c
         }
@@ -344,7 +481,7 @@ export default (props) => {
       }))
     } else {
       const newComment = await props.api.postComment(content, props.data.id, parseMentioned(content))
-      setCommentData([...commentData, newComment])
+      updateComments([...comments, newComment])
     }
     updateAfterCommentLoading(false)
     updateAddingComment(false)
@@ -485,9 +622,9 @@ export default (props) => {
             </div>
           </div> : null}
       </div>
-      {commentData.length === 0 ? null :
+      {comments.length === 0 ? null :
         <div className="post-comments-wrapper">
-          {comments}
+          {commentElements}
         </div>
       }
       {

@@ -18,5 +18,4 @@ export default (content, className) => {
     );
 
   return <div className={className} dangerouslySetInnerHTML={{__html: newContent}}/>
-
 }

@@ -15,7 +15,7 @@ from mini_gplus.daos.user_cache import populate_user_cache
 from mini_gplus.daos.invitation_code import check_invitation_code, claim_invitation_code
 from mini_gplus.resources.users import Users, User, MyAvatar, MyProfilePic, Me
 from mini_gplus.resources.posts import Profile, Home, PostMedia, Posts, Post
-from mini_gplus.resources.comments import NestedComments, Comments
+from mini_gplus.resources.comments import NestedComments, Comments, NestedComment, Comment
 from mini_gplus.resources.reactions import Reactions, Reaction
 from mini_gplus.resources.circles import Circles, CircleMember, Circle
 from mini_gplus.resources.followings import Following
@@ -197,7 +197,9 @@ api.add_resource(User, '/api/user/<string:user_id>')
 api.add_resource(Profile, '/api/profile/<string:profile_user_id>')
 api.add_resource(Home, '/api/home')
 
+api.add_resource(NestedComment, '/api/posts/<string:post_id>/comment/<string:comment_id>/comment/<string:nested_comment_id>')
 api.add_resource(NestedComments, '/api/posts/<string:post_id>/comment/<string:comment_id>/comment')
+api.add_resource(Comment, '/api/posts/<string:post_id>/comment/<string:comment_id>')
 api.add_resource(Comments, '/api/posts/<string:post_id>/comment')
 api.add_resource(Reactions, '/api/posts/<string:post_id>/reactions')
 api.add_resource(Reaction, '/api/posts/<string:post_id>/reaction/<string:reaction_id>')
