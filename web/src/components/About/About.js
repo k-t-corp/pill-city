@@ -13,6 +13,19 @@ export default (props) => {
   }
 
   return (
-    <p className='about'>Web {webGitCommit ? githubLink(webGitCommit) : '?'}, API {apiGitCommit ? githubLink(apiGitCommit) : '?'}</p>
+    <p className='about'>
+      Web {webGitCommit ? githubLink(webGitCommit) : '?'}{', '}
+      API {apiGitCommit ? githubLink(apiGitCommit) : '?'}{', '}
+      <a
+        href="https://github.com/KTachibanaM/pill-city/issues"
+        target='_blank'
+        className='about-commit-link'
+      >Issues</a>{', '}
+      <a
+        href="https://github.com/KTachibanaM/pill-city/issues/new"
+        target='_blank'
+        className='about-commit-link'
+      >New issue</a>
+    </p>
   )
 }
