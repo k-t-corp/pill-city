@@ -18,3 +18,7 @@ def get_in_post_cache(oid: ObjectId):
         set_in_post_cache(post)
         return post
     return Post.from_json(r_post.decode('utf-8'))
+
+
+def exists_in_post_cache(oid: ObjectId):
+    return r.hexists(RPost, str(oid))

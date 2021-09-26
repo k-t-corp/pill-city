@@ -158,6 +158,7 @@ def main():
 
     print("Dumping dummy data")
     # Sign up some users
+    ghost = signup_user('ghost', None)
     official = signup_user('official', None)
     kt = signup_user('kt', 'kt.jpeg')
     ika = signup_user('ika', 'ika.jpeg')

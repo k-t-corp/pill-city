@@ -13,11 +13,13 @@ class NotifyingAction(Enum):
 
 class Notification(Document, CreatedAtMixin):
     eid = StringField(required=True)
+    notifying_action = EnumField(NotifyingAction, required=True)  # type: NotifyingAction
+    unread = BooleanField(required=False, default=True)
+
     notifier = LazyReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
     notifying_href = StringField(required=True)
     notifying_summary = StringField(required=False, default='')  # todo: backfilled by backfill_notification_href_summaries
-    notifying_action = EnumField(NotifyingAction, required=True)  # type: NotifyingAction
+
+    owner = LazyReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
     notified_href = StringField(required=True)
     notified_summary = StringField(required=False, default='')  # todo: backfill_notification_href_summaries
-    owner = LazyReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
-    unread = BooleanField(required=False, default=True)
