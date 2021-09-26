@@ -96,7 +96,7 @@ export default (props) => {
             <div className="notification-notifier">
               <div className="notification-notifier-wrapper">
                 <b className="notification-notifier-id">
-                  {notification.notifier.id}{' '}
+                  {!notification.notifying_deleted ? notification.notifier.id : ''}{' '}
                 </b>
                 {action}
                 {' '}
