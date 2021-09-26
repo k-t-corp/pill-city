@@ -4,7 +4,8 @@ import fakeredis
 
 patch_env = unittest.mock.patch.dict(os.environ, {
     "REDIS_URL": "redis://localhost.fake",
-    "OFFICIAL": "official"
+    "OFFICIAL": "official",
+    "GHOST": "ghost"
 })
 patch_env.start()
 

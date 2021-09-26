@@ -19,7 +19,9 @@ class Notification(Document, CreatedAtMixin):
     notifier = LazyReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
     notifying_href = StringField(required=True)
     notifying_summary = StringField(required=False, default='')  # todo: backfilled by backfill_notification_href_summaries
+    notifying_deleted = BooleanField(required=False, default=False)
 
     owner = LazyReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
     notified_href = StringField(required=True)
     notified_summary = StringField(required=False, default='')  # todo: backfill_notification_href_summaries
+    notified_deleted = BooleanField(required=False, default=False)

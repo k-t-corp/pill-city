@@ -118,10 +118,18 @@ def delete_comment(self: User, comment_id: str, parent_post: Post) -> Optional[C
     for n in Notification.objects(notifying_href=comment.make_href(parent_post)):
         n.notifier = ghost_user
         n.notifying_summary = ''
+        n.notifying_deleted = True
         n.save()
     for n in Notification.objects(notified_href=comment.make_href(parent_post)):
-        n.owner = ghost_user
+        if n.notifying_action != NotifyingAction.Mention:
+            # In non mentioning case, notified location is owned by owner, hence set owner to ghost
+            n.owner = ghost_user
+        else:
+            # In mentioning case, notified location is owned by notifier, hence set notifier to ghost
+            # See mention.py
+            n.notifier = ghost_user
         n.notified_summary = ''
+        n.notified_deleted = True
         n.save()
 
     # nullify comment fields
