@@ -242,10 +242,7 @@ export default (props) => {
   let commentElements = []
   for (let i = 0; i < comments.length; i++) {
     const comment = comments[i]
-    const replyCommentButtonOnclick = () => {
-      updateAddingComment(true)
-      updateReplyNestedCommentId(comment.id)
-    }
+
     let nestedCommentElements = []
     for (let i = 0; i < comment.comments.length; i++) {
       const nestedComment = comment.comments[i]
@@ -347,6 +344,46 @@ export default (props) => {
         </div>
       )
     }
+
+    const replyCommentButtonOnclick = () => {
+      if (comment.deleting) {
+        return
+      }
+      updateAddingComment(true)
+      updateReplyNestedCommentId(comment.id)
+    }
+
+    const deleteCommentButtonOnclick = async () => {
+      if (comment.deleting) {
+        return
+      }
+      if (!window.confirm('Are you sure you want to delete this comment?')) {
+        return
+      }
+      // mark as deleting
+      updateComments(comments.map(c => {
+        if (comment.id === c.id) {
+          return {
+            ...c,
+            deleting: true
+          }
+        }
+        return {...c}
+      }))
+      await props.api.deleteComment(props.data.id, comment.id)
+      // marked as deleted and not deleting
+      updateComments(comments.map(c => {
+        if (comment.id === c.id) {
+          return {
+            ...c,
+            deleted: true,
+            deleting: false
+          }
+        }
+        return {...c}
+      }))
+    }
+
     commentElements.push(
       <div
         id={comment.id}
@@ -355,26 +392,47 @@ export default (props) => {
         className={`post-comment ${isHighlightComment(comment.id) ? "highlight-comment" : ""}`}
       >
         <div className="post-avatar post-comment-avatar">
-          <img
-            className="post-avatar-img"
-            src={getAvatarUrl(comment.author)}
-            alt=""
-          />
+          {
+            !comment.deleted ?
+              <img
+                className="post-avatar-img"
+                src={getAvatarUrl(comment.author)}
+                alt=""
+              /> :
+              <img
+                className="post-avatar-img"
+                src={getAvatarUrl(null)}
+                alt=""
+              />
+          }
         </div>
         <div className="post-comment-main-content">
           <div className="post-comment-info">
             <div className="post-name post-comment-name">
-              {comment.author.id}
+              {!comment.deleted ? comment.author.id : ''}
             </div>
             <div className="post-time">
               {timePosted(comment.created_at_seconds)}
             </div>
           </div>
           <div className={`post-content comment-content ${props.detail ? '' : 'post-content-summary'}`}>
-            {parseContent(comment.content, "")}
-            <span className="post-comment-reply-btn" onClick={replyCommentButtonOnclick}>
-              Reply
-            </span>
+            {
+              !comment.deleted ?
+                parseContent(comment.content, "") :
+                <div style={{fontStyle: 'italic'}}>This comment has been deleted</div>
+            }
+            {
+              !comment.deleting && !comment.deleted &&
+              <span className="post-comment-reply-btn" onClick={replyCommentButtonOnclick}>
+                Reply
+              </span>
+            }
+            {
+              !comment.deleting && !comment.deleted && comment.author.id === props.me.id &&
+              <span className="post-comment-delete-btn" onClick={deleteCommentButtonOnclick}>
+                Delete
+              </span>
+            }
           </div>
           <div className="post-nested-comment-wrapper">
             {nestedCommentElements}
