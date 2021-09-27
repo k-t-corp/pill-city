@@ -142,3 +142,11 @@ def update_avatar(self, avatar_media):
     self.avatar = avatar_media
     self.save()
     set_in_user_cache(self)
+
+
+def find_ghost_user_or_raise() -> User:
+    ghost_user_id = os.environ['GHOST']
+    ghost_user = find_user(ghost_user_id)
+    if not ghost_user:
+        raise RuntimeError(f'Ghost user {ghost_user_id} does not exist')
+    return ghost_user
