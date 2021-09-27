@@ -4,11 +4,12 @@ import tempfile
 import uuid
 from PIL import Image, UnidentifiedImageError
 from mini_gplus.daos.media import create_media
+from mini_gplus.models import Media
 
 AllowedImageTypes = ['gif', 'jpeg', 'bmp', 'png']
 
 
-def upload_to_s3(file, object_name_stem):
+def upload_to_s3(file, object_name_stem: str):
     s3_client = boto3.client(
         's3',
         endpoint_url=os.environ['S3_ENDPOINT_URL'],
@@ -52,3 +53,18 @@ def upload_to_s3(file, object_name_stem):
     os.remove(temp_fp)
 
     return media
+
+
+def delete_from_s3(media: Media):
+    s3_client = boto3.client(
+        's3',
+        endpoint_url=os.environ['S3_ENDPOINT_URL'],
+        region_name=os.environ.get('AWS_REGION', ''),
+        aws_access_key_id=os.environ['AWS_ACCESS_KEY'],
+        aws_secret_access_key=os.environ['AWS_SECRET_KEY']
+    )
+
+    s3_bucket_name = os.environ['S3_BUCKET_NAME']
+
+    s3_client.delete_object(Bucket=s3_bucket_name, Key=media.id)
+    media.delete()

@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from mini_gplus.daos.user import find_user, update_profile_pic, update_avatar, get_users
 from mini_gplus.daos.user_cache import get_in_user_cache_by_oid
 from mini_gplus.utils.now_ms import now_seconds
-from .upload_to_s3 import upload_to_s3
+from .s3 import upload_to_s3
 
 
 class UserId(fields.Raw):
