@@ -60,6 +60,13 @@ export default (props) => {
   }
 
   const notificationElem = (notification, i) => {
+    let notifier
+    if (notification.notifying_action !== "mention") {
+      notifier = !notification.notifying_deleted ? notification.notifier.id : ''
+    } else {
+      notifier = !notification.notified_deleted ? notification.notifier.id : ''
+    }
+
     let action
     if (notification.notifying_action === "mention") action = "mentioned"
     if (notification.notifying_action === "reshare") action = "reshared"
@@ -75,7 +82,6 @@ export default (props) => {
     else if (notification.notified_href.indexOf("/post/") !== -1) notifiedLocationType = 'post'
 
     const notificationOnClick = async () => {
-      console.log(notification.id)
       await props.api.markNotificationAsRead(notification.id)
       history.push(notification.notified_href)
     }
@@ -96,7 +102,7 @@ export default (props) => {
             <div className="notification-notifier">
               <div className="notification-notifier-wrapper">
                 <b className="notification-notifier-id">
-                  {!notification.notifying_deleted ? notification.notifier.id : ''}{' '}
+                  {notifier}{' '}
                 </b>
                 {action}
                 {' '}
