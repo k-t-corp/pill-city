@@ -197,8 +197,8 @@ def delete_post(self: User, post_id: str) -> Optional[Post]:
     if self != post.author:
         raise UnauthorizedAccess()
 
-    ghost_user = find_ghost_user_or_raise()
-    nullify_notifications(post.make_href(), ghost_user)
+    # do not nullify the user to keep consistent with the below implementation
+    nullify_notifications(post.make_href(), post.author)
 
     # we do not nullify the author in database for a post
     # so that a "skeleton" is left on home and profile
