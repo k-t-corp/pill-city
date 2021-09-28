@@ -2,7 +2,7 @@ from .base_test_case import BaseTestCase
 from freezegun import freeze_time
 from mini_gplus.models import Post
 from mini_gplus.daos.user import sign_up, find_user
-from mini_gplus.daos.post import create_post, get_post, sees_post
+from mini_gplus.daos.post import create_post, dangerously_get_post, sees_post
 from mini_gplus.daos.pagination import get_page
 
 
@@ -25,7 +25,7 @@ class PaginationTest(BaseTestCase):
         user1 = find_user('user1')
         all_paged_posts = []
         for i in range(4):
-            all_paged_posts.append(get_post(create_post(user1, str(i), True, [], False, None, [], []).eid))
+            all_paged_posts.append(dangerously_get_post(create_post(user1, str(i), True, [], False, None, [], []).eid))
         all_paged_posts = list(reversed(all_paged_posts))
 
         self.assertEqual(all_paged_posts, get_page(Post, {}, self._post_filter_noop, None, 5))
@@ -40,7 +40,7 @@ class PaginationTest(BaseTestCase):
         all_paged_posts = []
         for i in range(8):
             if i % 2 == 0:
-                all_paged_posts.append(get_post(create_post(user1, str(i), True, [], False, None, [], []).eid))
+                all_paged_posts.append(dangerously_get_post(create_post(user1, str(i), True, [], False, None, [], []).eid))
             else:
                 create_post(user2, str(i), True, [], False, None, [], [])
         all_paged_posts = list(reversed(all_paged_posts))
@@ -54,7 +54,7 @@ class PaginationTest(BaseTestCase):
         user1 = find_user('user1')
         all_paged_posts = []
         for i in range(9):
-            all_paged_posts.append(get_post(create_post(user1, str(i), True, [], False, None, [], []).eid))
+            all_paged_posts.append(dangerously_get_post(create_post(user1, str(i), True, [], False, None, [], []).eid))
         all_paged_posts = list(reversed(all_paged_posts))
 
         self.assertEqual(all_paged_posts[: 5], get_page(Post, {}, self._post_filter_noop, None, 5))
@@ -69,7 +69,7 @@ class PaginationTest(BaseTestCase):
         all_paged_posts = []
         for i in range(18):
             if i % 2 == 0:
-                all_paged_posts.append(get_post(create_post(user1, str(i), True, [], False, None, [], []).eid))
+                all_paged_posts.append(dangerously_get_post(create_post(user1, str(i), True, [], False, None, [], []).eid))
             else:
                 create_post(user2, str(i), True, [], False, None, [], [])
         all_paged_posts = list(reversed(all_paged_posts))
@@ -85,7 +85,7 @@ class PaginationTest(BaseTestCase):
         all_paged_posts = []
         with freeze_time():
             for i in range(9):
-                all_paged_posts.append(get_post(create_post(user1, str(i), True, [], False, None, [], []).eid))
+                all_paged_posts.append(dangerously_get_post(create_post(user1, str(i), True, [], False, None, [], []).eid))
         all_paged_posts = list(reversed(all_paged_posts))
 
         self.assertEqual(all_paged_posts[: 5], get_page(Post, {}, self._post_filter_noop, None, 5))
@@ -101,7 +101,7 @@ class PaginationTest(BaseTestCase):
         with freeze_time():
             for i in range(18):
                 if i % 2 == 0:
-                    all_paged_posts.append(get_post(create_post(user1, str(i), True, [], False, None, [], []).eid))
+                    all_paged_posts.append(dangerously_get_post(create_post(user1, str(i), True, [], False, None, [], []).eid))
                 else:
                     create_post(user2, str(i), True, [], False, None, [], [])
         all_paged_posts = list(reversed(all_paged_posts))

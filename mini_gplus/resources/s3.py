@@ -5,6 +5,7 @@ import uuid
 from PIL import Image, UnidentifiedImageError
 from mini_gplus.daos.media import create_media
 from mini_gplus.models import Media
+from .media_url_cache import r, RMediaUrl
 
 AllowedImageTypes = ['gif', 'jpeg', 'bmp', 'png']
 
@@ -66,5 +67,8 @@ def delete_from_s3(media: Media):
 
     s3_bucket_name = os.environ['S3_BUCKET_NAME']
 
-    s3_client.delete_object(Bucket=s3_bucket_name, Key=media.id)
-    media.delete()
+    object_name = media.id
+
+    s3_client.delete_object(Bucket=s3_bucket_name, Key=object_name)
+    r.hdel(RMediaUrl, object_name)
+    media.fetch().delete()

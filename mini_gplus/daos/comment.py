@@ -110,11 +110,10 @@ def delete_comment(self: User, comment_id: str, parent_post: Post) -> Optional[C
     ghost_user = find_ghost_user_or_raise()
     nullify_notifications(comment.make_href(parent_post), ghost_user)
 
-    # nullify comment fields
     comment.author = ghost_user
     comment.content = ''
     comment.deleted = True
-    # TODO: remove media both on here and media collection
+    # TODO: remove media both on here and on media collection
     parent_post.save()
 
     if exists_in_post_cache(parent_post.id):

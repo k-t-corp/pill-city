@@ -1,7 +1,7 @@
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from mini_gplus.daos.user import find_user
-from mini_gplus.daos.post import get_post
+from mini_gplus.daos.post import dangerously_get_post
 from mini_gplus.daos.comment import create_comment, dangerously_get_comment, delete_comment
 from .mention import check_mentioned_user_ids
 from .users import user_fields
@@ -33,7 +33,7 @@ class Comments(Resource):
         """
         user_id = get_jwt_identity()
         user = find_user(user_id)
-        post = get_post(post_id)
+        post = dangerously_get_post(post_id)
 
         args = comment_parser.parse_args()
         comment = create_comment(user, args['content'], post, None,
@@ -46,7 +46,7 @@ class Comment(Resource):
     def delete(self, post_id: str, comment_id: str):
         user_id = get_jwt_identity()
         user = find_user(user_id)
-        post = get_post(post_id)
+        post = dangerously_get_post(post_id)
 
         deleted_comment = delete_comment(user, comment_id, post)
         return {'id': deleted_comment.eid}, 201
@@ -61,7 +61,7 @@ class NestedComments(Resource):
         """
         user_id = get_jwt_identity()
         user = find_user(user_id)
-        post = get_post(post_id)
+        post = dangerously_get_post(post_id)
         comment = dangerously_get_comment(comment_id, post)
         if not post.comments2.filter(eid=comment.eid):
             return {'msg': 'Cannot nest more than two levels of comment'}, 403
@@ -77,7 +77,7 @@ class NestedComment(Resource):
     def delete(self, post_id: str, comment_id: str, nested_comment_id: str):
         user_id = get_jwt_identity()
         user = find_user(user_id)
-        post = get_post(post_id)
+        post = dangerously_get_post(post_id)
 
         deleted_comment = delete_comment(user, nested_comment_id, post)
         return {'id': deleted_comment.eid}, 201

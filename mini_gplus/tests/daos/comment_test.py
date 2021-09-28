@@ -2,6 +2,7 @@ from .base_test_case import BaseTestCase
 from mini_gplus.daos.user import sign_up, find_user
 from mini_gplus.daos.post import create_post
 from mini_gplus.daos.comment import create_comment, delete_comment
+from mini_gplus.daos.exceptions import UnauthorizedAccess
 from mini_gplus.models import Post, Notification, NotifyingAction
 
 
@@ -64,7 +65,7 @@ class CommentTest(BaseTestCase):
         self.assertEqual('', user3_notification.notifying_href)
         self.assertEqual('', user3_notification.notified_summary)
 
-        # The post should also be nullified
+        # The comment should also be nullified
         post = Post.objects(author=user1)
         self.assertTrue(1, len(post))
         post = post[0]
@@ -72,3 +73,28 @@ class CommentTest(BaseTestCase):
         self.assertEqual(ghost, comment.author)
         self.assertEqual('', comment.content)
         self.assertTrue(comment.deleted)
+
+    def test_nested_comment_after_delete(self):
+        # Create users
+        self.assertTrue(sign_up('ghost', '1234'))
+        self.assertTrue(sign_up('user1', '1234'))
+        self.assertTrue(sign_up('user2', '1234'))
+        ghost = find_user('ghost')
+        user1 = find_user('user1')
+        user2 = find_user('user2')
+
+        # Post reshareable post1 by user1
+        create_post(user1, 'post', True, [], True, None, [], [])
+        post = Post.objects(author=user1)
+        self.assertTrue(1, len(post))
+        post = post[0]
+
+        # User2 comment on post1 and then deletes it
+        comment = create_comment(user2, 'comment', post, None, [])
+        deleted_comment = delete_comment(user2, comment.eid, post)
+
+        # Even user1 is not able to make a nested comment on the deleted commetn
+        def op_create_nested_comment():
+            create_comment(user1, 'nested comment', post, deleted_comment, [])
+
+        self.assertRaises(UnauthorizedAccess, op_create_nested_comment)

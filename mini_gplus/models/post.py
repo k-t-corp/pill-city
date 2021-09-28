@@ -45,5 +45,7 @@ class Post(Document, CreatedAtMixin):
     reshared_from = LazyReferenceField('Post', required=False, reverse_delete_rule=NULLIFY, default=None)  # type: Post
     media_list = ListField(LazyReferenceField(Media, reverse_delete_rule=PULL), default=[])  # type: List[Media]
 
+    deleted = BooleanField(required=False, default=False)
+
     def make_href(self):
         return f"/post/{self.eid}"
