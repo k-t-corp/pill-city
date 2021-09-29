@@ -17,6 +17,10 @@
     font-weight: bold;
 }
 
+.dropdown-menu:hover {
+    background-color: #f0f0f0;
+}
+
 .dropdown-menu-active {
     opacity: 1;
     visibility: visible;
