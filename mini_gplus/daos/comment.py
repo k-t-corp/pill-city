@@ -31,6 +31,8 @@ def create_comment(self: User, content: str, parent_post: Post, parent_comment: 
         raise UnauthorizedAccess()
     if parent_comment and parent_comment.deleted:
         raise UnauthorizedAccess()
+    if parent_post.deleted:
+        raise UnauthorizedAccess()
 
     new_comment = Comment()
     new_comment.eid = make_uuid()

@@ -79,7 +79,6 @@ class CommentTest(BaseTestCase):
         self.assertTrue(sign_up('ghost', '1234'))
         self.assertTrue(sign_up('user1', '1234'))
         self.assertTrue(sign_up('user2', '1234'))
-        ghost = find_user('ghost')
         user1 = find_user('user1')
         user2 = find_user('user2')
 

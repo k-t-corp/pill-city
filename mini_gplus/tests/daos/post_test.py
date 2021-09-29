@@ -1,6 +1,8 @@
 from .base_test_case import BaseTestCase
 from mini_gplus.daos.user import sign_up, find_user
 from mini_gplus.daos.post import create_post, delete_post
+from mini_gplus.daos.comment import create_comment
+from mini_gplus.daos.reaction import create_reaction
 from mini_gplus.daos.exceptions import UnauthorizedAccess
 from mini_gplus.models import Post, Notification, NotifyingAction
 
@@ -59,3 +61,31 @@ class PostTest(BaseTestCase):
         self.assertTrue(post.deleted)
         self.assertFalse(post.reshareable)
         self.assertEqual([], post.media_list)
+
+    def test_comment_and_reation_after_delete(self):
+        # Create users
+        self.assertTrue(sign_up('ghost', '1234'))
+        self.assertTrue(sign_up('user1', '1234'))
+        self.assertTrue(sign_up('user2', '1234'))
+        user1 = find_user('user1')
+        user2 = find_user('user2')
+
+        # Post reshareable post1 by user1
+        create_post(user1, 'post', True, [], True, None, [], [])
+        post = Post.objects(author=user1)
+        self.assertTrue(1, len(post))
+        post = post[0]
+
+        # User1 deletes the post
+        deleted_post = delete_post(user1, post.eid)
+
+        # Even user1 is not able to make a comment or reaction
+        def op_comment():
+            create_comment(user1, '', deleted_post, None, [])
+
+        self.assertRaises(UnauthorizedAccess, op_comment)
+
+        def op_react():
+            create_reaction(user1, '💩', deleted_post)
+
+        self.assertRaises(UnauthorizedAccess, op_react)
