@@ -27,6 +27,7 @@
     opacity: 0;
     visibility: hidden;
     cursor: pointer;
+    font-weight: bold;
 }
 
 .dropdown-menu-active {

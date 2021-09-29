@@ -433,15 +433,15 @@ export default (props) => {
             }
             {
               !comment.deleting && !comment.deleted &&
-              <span className="post-comment-reply-btn" onClick={replyCommentButtonOnclick}>
-                Reply
-              </span>
+                <span className="post-comment-reply-btn" onClick={replyCommentButtonOnclick}>
+                  Reply
+                </span>
             }
             {
               !comment.deleting && !comment.deleted && comment.author.id === props.me.id &&
-              <span className="post-comment-delete-btn" onClick={deleteCommentButtonOnclick}>
-                Delete
-              </span>
+                <span className="post-comment-delete-btn" onClick={deleteCommentButtonOnclick}>
+                  Delete
+                </span>
             }
           </div>
           <div className="post-nested-comment-wrapper">
