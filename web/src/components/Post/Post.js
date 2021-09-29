@@ -12,6 +12,9 @@ import {useMediaQuery} from "react-responsive";
 import {useHistory} from "react-router-dom";
 
 export default (props) => {
+  const [deleted, updateDeleted] = useState(props.data.deleted)
+  const [deleting, updateDeleting] = useState(false)
+
   // existing comment data cached in state
   const [comments, updateComments] = useState(
     _.cloneDeep(props.data.comments).map(c => {
@@ -65,14 +68,20 @@ export default (props) => {
           </div>
         </div>
         <div className={`post-content ${props.detail ? '' : 'post-content-summary'}`}>
-          {parseContent(resharedFrom.content, "")}
-          {resharedFrom.media_urls.length === 0 ? null :
-            <MediaPreview
-              mediaUrls={resharedFrom.media_urls}
-              threeRowHeight="80px"
-              twoRowHeight={isTabletOrMobile ? "100px" : "140px"}
-              oneRowHeight={isTabletOrMobile ? "140px" : "240px"}
-            />
+          {
+            !resharedFrom.deleted ?
+              parseContent(resharedFrom.content, "")
+              :
+              <div style={{fontStyle: 'italic'}}>This post has been deleted</div>
+          }
+          {
+            !resharedFrom.deleted && resharedFrom.media_urls.length !== 0 &&
+              <MediaPreview
+                mediaUrls={resharedFrom.media_urls}
+                threeRowHeight="80px"
+                twoRowHeight={isTabletOrMobile ? "100px" : "140px"}
+                oneRowHeight={isTabletOrMobile ? "140px" : "240px"}
+              />
           }
         </div>
       </div>)
@@ -442,6 +451,19 @@ export default (props) => {
     )
   }
 
+  const deleteButtonOnClick = async () => {
+    if (deleting) {
+      return
+    }
+    if (!window.confirm('Are you sure you want to delete this post?')) {
+      return
+    }
+    updateDeleting(true)
+    await props.api.deletePost(props.data.id)
+    updateDeleted(true)
+    updateDeleting(false)
+  }
+
   const commentButtonOnClick = () => {
     updateAddingComment(!addingComment)
   }
@@ -549,47 +571,66 @@ export default (props) => {
           </div>
         </div>
         <div className='post-content-wrapper'>
-          {parseContent(props.data.content, `post-content ${props.detail ? '' : 'post-content-summary'}`)}
+          {
+            !deleted ?
+              parseContent(props.data.content, `post-content ${props.detail ? '' : 'post-content-summary'}`)
+              :
+              <div className='post-content' style={{fontStyle: 'italic'}}>This post has been deleted</div>
+          }
         </div>
         {resharedElem(props.data.reshared_from)}
-        <MediaPreview
-          mediaUrls={props.data.media_urls}
-          threeRowHeight="130px"
-          twoRowHeight="150px"
-          oneRowHeight={isTabletOrMobile ? "200px" : "280px"}
-          onMediaClicked={updateMediaUrlOpened}
-        />
-        <div className="post-interactions-wrapper">
-          <div className="post-reactions-wrapper">
-            {reactions}
-          </div>
-          <div className="post-interactions">
-            <div className="post-circle-button" onClick={commentButtonOnClick}>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd"
-                      d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
-                      clipRule="evenodd"/>
-              </svg>
+        {!deleted &&
+          <MediaPreview
+            mediaUrls={props.data.media_urls}
+            threeRowHeight="130px"
+            twoRowHeight="150px"
+            oneRowHeight={isTabletOrMobile ? "200px" : "280px"}
+            onMediaClicked={updateMediaUrlOpened}
+          />
+        }
+        {
+          !deleting && !deleted &&
+          <div className="post-interactions-wrapper">
+            <div className="post-reactions-wrapper">
+              {reactions}
             </div>
+            <div className="post-interactions">
+              {
+                props.data.author.id === props.me.id &&
+                  <div className="post-circle-button post-delete-button" onClick={deleteButtonOnClick}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </div>
+              }
 
-            {props.data.reshareable ?
-              <div className="post-circle-button" onClick={reshareButtonOnClick}>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path
-                    d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/>
-                </svg>
-              </div>
-              :
-              <div className="post-circle-button">
+              <div className="post-circle-button" onClick={commentButtonOnClick}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd"
-                        d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z"
+                        d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
                         clipRule="evenodd"/>
                 </svg>
               </div>
-            }
+
+              {props.data.reshareable ?
+                <div className="post-circle-button" onClick={reshareButtonOnClick}>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                      d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/>
+                  </svg>
+                </div>
+                :
+                <div className="post-circle-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd"
+                          d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z"
+                          clipRule="evenodd"/>
+                  </svg>
+                </div>
+              }
+            </div>
           </div>
-        </div>
+        }
         {addingComment ?
           <div className="post-comment-box-wrapper fade-in">
             <div className="post-comment-box-input-area">
@@ -635,8 +676,7 @@ export default (props) => {
             () => updateMediaUrlOpened('')
           }
         >
-            <img className="post-media-img" src={mediaUrlOpened} alt=""/>
-
+          <img className="post-media-img" src={mediaUrlOpened} alt=""/>
         </div>
       }
     </div>

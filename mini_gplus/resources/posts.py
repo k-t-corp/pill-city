@@ -112,6 +112,7 @@ class ResharedFrom(fields.Raw):
             'author': fields.Nested(user_fields),
             'content': fields.String,
             'media_urls': MediaUrls(attribute='media_list'),
+            'deleted': fields.String
         })
 
 
