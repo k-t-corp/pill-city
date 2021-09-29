@@ -566,7 +566,13 @@ export default (props) => {
           <div className="post-op-info-right">
             {
               props.me.id === props.data.author.id && !deleted &&
-                <DropdownMenu onClick={deleteButtonOnClick}/>
+                <DropdownMenu onClick={deleteButtonOnClick}>
+                  <div className="post-more-actions-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                    </svg>
+                  </div>
+                </DropdownMenu>
             }
             <div className="post-op-info-time" onClick={navigateToPostPage} style={{
               cursor: disableNavigateToPostPage ? 'auto' : 'pointer'

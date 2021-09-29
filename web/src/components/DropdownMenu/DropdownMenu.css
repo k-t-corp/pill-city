@@ -3,19 +3,6 @@
     margin-right: 8px;
 }
 
-.dropdown-menu-trigger {
-    color: #bdbdbd;
-    width: 30px;
-    height: 30px;
-    border-radius: 7px;
-    padding: 5px;
-    cursor: pointer;
-}
-
-.dropdown-menu-trigger:hover {
-    background-color: #e7e7e7;
-}
-
 .dropdown-menu {
     color: #e58181;
     border-radius: 4px;
