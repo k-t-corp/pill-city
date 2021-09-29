@@ -1,7 +1,7 @@
 from flask_restful import reqparse, Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from mini_gplus.daos.user import find_user
-from mini_gplus.daos.post import get_post
+from mini_gplus.daos.post import dangerously_get_post
 from mini_gplus.daos.reaction import get_reaction, delete_reaction, create_reaction
 
 reaction_parser = reqparse.RequestParser()
@@ -16,7 +16,7 @@ class Reactions(Resource):
         """
         user_id = get_jwt_identity()
         user = find_user(user_id)
-        post = get_post(post_id)
+        post = dangerously_get_post(post_id)
         if not post:
             return {"msg": "post is not found"}, 404
         reaction_args = reaction_parser.parse_args()
@@ -32,7 +32,7 @@ class Reaction(Resource):
         """
         user_id = get_jwt_identity()
         user = find_user(user_id)
-        post = get_post(post_id)
+        post = dangerously_get_post(post_id)
         if not post:
             return {"msg": "post is not found"}, 404
         reaction_to_delete = get_reaction(reaction_id, post)

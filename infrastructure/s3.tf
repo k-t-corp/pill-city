@@ -43,7 +43,8 @@ resource "aws_iam_user_policy" "stsadmin-user-policy" {
         Action: [
           "s3:GetObject",
           "s3:PutObject",
-          "s3:AbortMultipartUpload"
+          "s3:AbortMultipartUpload",
+          "s3:DeleteObject"
         ],
         Effect: "Allow",
         Resource: [

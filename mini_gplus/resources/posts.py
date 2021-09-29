@@ -3,29 +3,29 @@ import boto3
 import werkzeug
 import uuid
 import json
-import redis
 from flask_restful import reqparse, Resource, fields, marshal_with, marshal
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from mini_gplus.daos.user import find_user
 from mini_gplus.daos.user_cache import get_in_user_cache_by_user_id
 from mini_gplus.daos.circle import find_circle
-from mini_gplus.daos.post import get_post, create_post, sees_post, retrieves_posts_on_home, retrieves_posts_on_profile
+from mini_gplus.daos.post import dangerously_get_post, create_post, sees_post, retrieves_posts_on_home, \
+    retrieves_posts_on_profile, delete_post
 from mini_gplus.daos.post_cache import get_in_post_cache
 from mini_gplus.daos.circle_cache import get_in_circle_cache
 from mini_gplus.daos.media import get_media
+from mini_gplus.daos.exceptions import UnauthorizedAccess
 from mini_gplus.utils.now_ms import now_ms
 from mini_gplus.utils.profiling import timer
 from .users import user_fields
-from .upload_to_s3 import upload_to_s3
+from .s3 import upload_to_s3, delete_from_s3
 from .pagination import pagination_parser
 from .mention import check_mentioned_user_ids
 from .comments import comment_fields
+from .media_url_cache import r, RMediaUrl
 
 MaxPostMediaCount = 4
 PostMediaUrlExpireSeconds = 3600 * 12  # 12 hours
 
-r = redis.Redis.from_url(os.environ['REDIS_URL'])
-RMediaUrl = "mediaUrl"
 
 # Cache structure within Redis
 # "mediaUrl" -> object_name -> "media url"(space)"media url generated time in ms"
@@ -112,6 +112,7 @@ class ResharedFrom(fields.Raw):
             'author': fields.Nested(user_fields),
             'content': fields.String,
             'media_urls': MediaUrls(attribute='media_list'),
+            'deleted': fields.String
         })
 
 
@@ -147,7 +148,8 @@ post_fields = {
         'author': fields.Nested(user_fields),
     }), attribute='reactions2'),
     'comments': fields.List(fields.Nested(comment_fields), attribute='comments2'),
-    'circles': fields.List(Circle)
+    'circles': fields.List(Circle),
+    'deleted': fields.Boolean,
 }
 
 
@@ -184,7 +186,7 @@ class Posts(Resource):
         reshared_from = args['reshared_from']
         reshared_from_post = None
         if reshared_from:
-            reshared_from_post = get_post(reshared_from)
+            reshared_from_post = dangerously_get_post(reshared_from)
             if not reshared_from_post:
                 return {"msg": f"Post {reshared_from} is not found"}, 404
 
@@ -263,10 +265,25 @@ class Post(Resource):
         user_id = get_jwt_identity()
         user = find_user(user_id)
 
-        post = get_post(post_id)
+        post = dangerously_get_post(post_id)
         if not sees_post(user, post, context_home_or_profile=False):
             return {'msg': 'Do not have permission to see the post'}, 403
         return post
+
+    @jwt_required()
+    def delete(self, post_id: str):
+        user_id = get_jwt_identity()
+        user = find_user(user_id)
+
+        post = dangerously_get_post(post_id)
+        if user != post.author:
+            raise UnauthorizedAccess()
+
+        for m in post.media_list:
+            delete_from_s3(m)
+
+        deleted_post = delete_post(user, post_id)
+        return {'id': deleted_post.eid}, 201
 
 
 class Profile(Resource):

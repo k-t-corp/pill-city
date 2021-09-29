@@ -17,35 +17,35 @@ def create_reaction(self: User, emoji: str, parent_post: Post) -> str:
     :param parent_post: the post that this reaction is attached to
     :return ID of the new reaction
     """
-    if sees_post(self, parent_post, context_home_or_profile=False):
-        if parent_post.reactions2.filter(author=self, emoji=emoji):
-            raise UnauthorizedAccess()
-
-        if emoji_lib.emoji_count(emoji) != 1:
-            raise BadRequest()
-
-        new_reaction = Reaction()
-        new_reaction.eid = make_uuid()
-        new_reaction.author = self.id
-        new_reaction.emoji = emoji
-        new_reaction.created_at = now_seconds()
-
-        parent_post.reactions2.append(new_reaction)
-        parent_post.save()
-
-        create_notification(
-            self,
-            notifying_href=new_reaction.make_href(parent_post),
-            notifying_summary=new_reaction.emoji,
-            notifying_action=NotifyingAction.Reaction,
-            notified_href=parent_post.make_href(),
-            notified_summary=parent_post.content,
-            owner=parent_post.author
-        )
-
-        return str(new_reaction.eid)
-    else:
+    if not sees_post(self, parent_post, context_home_or_profile=False):
         raise UnauthorizedAccess()
+    if parent_post.deleted:
+        raise UnauthorizedAccess()
+    if parent_post.reactions2.filter(author=self, emoji=emoji):
+        raise UnauthorizedAccess()
+    if emoji_lib.emoji_count(emoji) != 1:
+        raise BadRequest()
+
+    new_reaction = Reaction()
+    new_reaction.eid = make_uuid()
+    new_reaction.author = self.id
+    new_reaction.emoji = emoji
+    new_reaction.created_at = now_seconds()
+
+    parent_post.reactions2.append(new_reaction)
+    parent_post.save()
+
+    create_notification(
+        self,
+        notifying_href=new_reaction.make_href(parent_post),
+        notifying_summary=new_reaction.emoji,
+        notifying_action=NotifyingAction.Reaction,
+        notified_href=parent_post.make_href(),
+        notified_summary=parent_post.content,
+        owner=parent_post.author
+    )
+
+    return str(new_reaction.eid)
 
 
 def get_reaction(reaction_id: str, parent_post: Post) -> Optional[Reaction]:

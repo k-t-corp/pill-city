@@ -95,3 +95,28 @@ def mark_all_notifications_as_read(self):
     for n in Notification.objects(owner=self, unread=True):
         n.unread = False
         n.save()
+
+
+def nullify_notifications(href: str, ghost_user: User):
+    """
+    "Nullify" (e.g. clean information) notifications by href
+
+    :param href: The nullified href
+    :param ghost_user: The "ghost" user to assign notifier or owner to
+    """
+    for n in Notification.objects(notifying_href=href):
+        n.notifier = ghost_user
+        n.notifying_summary = ''
+        n.notifying_deleted = True
+        n.save()
+    for n in Notification.objects(notified_href=href):
+        if n.notifying_action != NotifyingAction.Mention:
+            # In non mentioning case, notified location is owned by owner, hence set owner to ghost
+            n.owner = ghost_user
+        else:
+            # In mentioning case, notified location is owned by notifier, hence set notifier to ghost
+            # See mention.py
+            n.notifier = ghost_user
+        n.notified_summary = ''
+        n.notified_deleted = True
+        n.save()

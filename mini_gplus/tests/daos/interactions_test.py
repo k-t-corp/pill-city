@@ -2,7 +2,7 @@ from .base_test_case import BaseTestCase
 from mini_gplus.models import Post, NotifyingAction, Notification
 from mini_gplus.daos.user import sign_up, find_user, add_following
 from mini_gplus.daos.circle import create_circle, find_circle, toggle_member
-from mini_gplus.daos.post import create_post, get_post, owns_post, sees_post, retrieves_posts_on_home, \
+from mini_gplus.daos.post import create_post, dangerously_get_post, owns_post, sees_post, retrieves_posts_on_home, \
     retrieves_posts_on_profile
 from mini_gplus.daos.comment import create_comment, delete_comment, dangerously_get_comment
 from mini_gplus.daos.reaction import create_reaction, get_reaction
@@ -74,7 +74,7 @@ class InteractionsTest(BaseTestCase):
             nested_comment1 = create_comment(post.author, 'nested_comment1', post, None, [])
 
         # has to re-query post object because author in reactions won't be filled as an actual User object
-        post = get_post(post.eid)
+        post = dangerously_get_post(post.eid)
         if react_once:
             reaction_id = create_reaction(acting_user, "💩", post)
             reaction1 = get_reaction(reaction_id, post)
@@ -91,12 +91,12 @@ class InteractionsTest(BaseTestCase):
 
             self.assertRaises(UnauthorizedAccess, op3)
 
-        post = get_post(post.eid)
+        post = dangerously_get_post(post.eid)
         if reshare:
             new_post_id = create_post(acting_user, 'resharing', is_public=True, circles=[], reshareable=True,
                                       reshared_from=post, media_list=[], mentioned_users=[]).eid
             self.assertEqual(1, len(Post.objects(eid=new_post_id)))
-            new_post = get_post(new_post_id)
+            new_post = dangerously_get_post(new_post_id)
             self.assertEqual(post.id, new_post.reshared_from.id)
             if acting_user.id != post.author.id:
                 self.assertEqual(1, len(Notification.objects(notifier=acting_user,
@@ -108,7 +108,7 @@ class InteractionsTest(BaseTestCase):
             self.assertFalse(create_post(acting_user, 'resharing', is_public=True, circles=[], reshareable=True,
                                          reshared_from=post, media_list=[], mentioned_users=[]))
 
-        post = get_post(post.eid)
+        post = dangerously_get_post(post.eid)
         if deletes_nested_comment:
             deleted_nested_comment = delete_comment(acting_user, nested_comment1.eid, post)
             self.assertEqual('', dangerously_get_comment(deleted_nested_comment.eid, post).content)
@@ -118,7 +118,7 @@ class InteractionsTest(BaseTestCase):
 
             self.assertRaises(UnauthorizedAccess, op_delete_nested_comment)
 
-        post = get_post(post.eid)
+        post = dangerously_get_post(post.eid)
         if deletes_comment:
             deleted_comment = delete_comment(acting_user, comment1.eid, post)
             self.assertEqual('', dangerously_get_comment(deleted_comment.eid, post).content)
@@ -160,9 +160,9 @@ class InteractionsTest(BaseTestCase):
         post1 = post1[0]
 
         post2_id = create_post(user1, 'resharing post1', True, [], True, post1, [], []).eid
-        post2 = get_post(post2_id)
+        post2 = dangerously_get_post(post2_id)
         post3_id = create_post(user1, 'resharing post2', True, [], True, post2, [], []).eid
-        post3 = get_post(post3_id)
+        post3 = dangerously_get_post(post3_id)
         self.assertEqual(post1.id, post2.reshared_from.id)
         self.assertEqual(post1.id, post3.reshared_from.id)
 
@@ -178,11 +178,11 @@ class InteractionsTest(BaseTestCase):
 
         # Create reshareable public post1 from user1
         post1_id = create_post(user1, 'post1', True, [], True, None, [], []).eid
-        post1 = get_post(post1_id)
+        post1 = dangerously_get_post(post1_id)
 
         # Create non-reshareable public post2 from user1
         post2_id = create_post(user1, 'post2', True, [], False, None, [], []).eid
-        post2 = get_post(post2_id)
+        post2 = dangerously_get_post(post2_id)
 
         # user2 follows user1
         add_following(user2, user1)
@@ -256,11 +256,11 @@ class InteractionsTest(BaseTestCase):
 
         # Create reshareable post1 by user1 into circle1
         post1_id = create_post(user1, 'post1', False, [circle1], True, None, [], []).eid
-        post1 = get_post(post1_id)
+        post1 = dangerously_get_post(post1_id)
 
         # Create non-reshareable post2 by user1 into circle1
         post2_id = create_post(user1, 'post2', False, [circle1], False, None, [], []).eid
-        post2 = get_post(post2_id)
+        post2 = dangerously_get_post(post2_id)
 
         # User2 not owns but sees, sees on profile, comments, nested-comments, reacts and reshares on post1
         self._assert_user_to_post_privilege(

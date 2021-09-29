@@ -3,12 +3,14 @@ from typing import List, Optional, Union
 from mini_gplus.models import Post, NotifyingAction, User, Circle, Media
 from mini_gplus.utils.profiling import timer
 from mini_gplus.utils.make_uuid import make_uuid
+from mini_gplus.daos.exceptions import UnauthorizedAccess
 from .circle import check_member
-from .notification import create_notification
+from .notification import create_notification, nullify_notifications
 from .mention import mention
 from .pagination import get_page
-from .post_cache import set_in_post_cache, get_in_post_cache
+from .post_cache import set_in_post_cache, get_in_post_cache, exists_in_post_cache
 from .circle_cache import get_in_circle_cache
+from .user import find_ghost_user_or_raise
 
 HomePostsPageSize = 10
 ProfilePostsPageSize = 10
@@ -92,9 +94,14 @@ def create_post(self: User, content: str, is_public: bool, circles: List[Circle]
     return new_post
 
 
-def get_post(post_id):
+def dangerously_get_post(post_id: str):
     """
-    Get a post by its ID
+    Get a post by its ID without checking permission
+    We don't need to check permission here because this method is only used internally
+        e.g. Not exposed to an API
+
+    :param post_id: The post ID
+    :return:
     """
     return Post.objects.get(eid=post_id)
 
@@ -176,3 +183,35 @@ def retrieves_posts_on_profile(self, profile_user, from_id):
         from_id=from_id,
         page_count=ProfilePostsPageSize
     )
+
+
+def delete_post(self: User, post_id: str) -> Optional[Post]:
+    """
+    Delete a post by its ID
+
+    :param self: The acting user
+    :param post_id: The post ID
+    :return:
+    """
+    post = dangerously_get_post(post_id)
+    if self != post.author:
+        raise UnauthorizedAccess()
+
+    # do not nullify the user to keep consistent with the below implementation
+    nullify_notifications(post.make_href(), post.author)
+
+    # we do not nullify the author in database for a post
+    # so that a "skeleton" is left on home and profile
+    post.content = ''
+    post.deleted = True
+    post.reshareable = False
+    post.media_list = []
+    # TODO: remove poll both on here and on polls collection
+    post.save()
+
+    if exists_in_post_cache(post.id):
+        # only set in post cache if it already exists
+        # post cache should only have reshared posts so it should not cache any deleted post
+        set_in_post_cache(post)
+
+    return post

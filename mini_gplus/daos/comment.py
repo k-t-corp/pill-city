@@ -1,4 +1,3 @@
-import os
 import bleach
 from typing import List, Optional
 from mini_gplus.models import Comment, NotifyingAction, User, Post, Notification
@@ -7,9 +6,9 @@ from mini_gplus.utils.now_ms import now_seconds
 from .exceptions import UnauthorizedAccess
 from .post import sees_post
 from .post_cache import set_in_post_cache, exists_in_post_cache
-from .notification import create_notification
+from .notification import create_notification, nullify_notifications
 from .mention import mention
-from .user import find_user
+from .user import find_ghost_user_or_raise
 
 
 def create_comment(self: User, content: str, parent_post: Post, parent_comment: Optional[Comment], mentioned_users: List[User]) -> Optional[Comment]:
@@ -31,6 +30,8 @@ def create_comment(self: User, content: str, parent_post: Post, parent_comment: 
     if not sees_post(self, parent_post, context_home_or_profile=False):
         raise UnauthorizedAccess()
     if parent_comment and parent_comment.deleted:
+        raise UnauthorizedAccess()
+    if parent_post.deleted:
         raise UnauthorizedAccess()
 
     new_comment = Comment()
@@ -108,35 +109,13 @@ def delete_comment(self: User, comment_id: str, parent_post: Post) -> Optional[C
     if self != comment.author:
         raise UnauthorizedAccess()
 
-    # get ghost user
-    ghost_user_id = os.environ['GHOST']
-    ghost_user = find_user(ghost_user_id)
-    if not ghost_user:
-        raise RuntimeError(f'Ghost user {ghost_user_id} does not exist')
+    ghost_user = find_ghost_user_or_raise()
+    nullify_notifications(comment.make_href(parent_post), ghost_user)
 
-    # nullify notification fields
-    for n in Notification.objects(notifying_href=comment.make_href(parent_post)):
-        n.notifier = ghost_user
-        n.notifying_summary = ''
-        n.notifying_deleted = True
-        n.save()
-    for n in Notification.objects(notified_href=comment.make_href(parent_post)):
-        if n.notifying_action != NotifyingAction.Mention:
-            # In non mentioning case, notified location is owned by owner, hence set owner to ghost
-            n.owner = ghost_user
-        else:
-            # In mentioning case, notified location is owned by notifier, hence set notifier to ghost
-            # See mention.py
-            n.notifier = ghost_user
-        n.notified_summary = ''
-        n.notified_deleted = True
-        n.save()
-
-    # nullify comment fields
     comment.author = ghost_user
     comment.content = ''
     comment.deleted = True
-    # TODO: remove media both on here and media collection
+    # TODO: remove media both on here and on media collection
     parent_post.save()
 
     if exists_in_post_cache(parent_post.id):
