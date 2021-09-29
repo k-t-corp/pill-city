@@ -1,0 +1,35 @@
+.dropdown-menu-container {
+    position: relative;
+    margin-right: 8px;
+}
+
+.dropdown-menu-trigger {
+    color: #bdbdbd;
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.dropdown-menu-trigger:hover {
+    background-color: #e7e7e7;
+}
+
+.dropdown-menu {
+    color: #e58181;
+    border-radius: 4px;
+    position: absolute;
+    border: 1px solid #e0e0e0;
+    right: 0;
+    width: 100px;
+    padding: 6px;
+    opacity: 0;
+    visibility: hidden;
+    cursor: pointer;
+}
+
+.dropdown-menu-active {
+    opacity: 1;
+    visibility: visible;
+}
