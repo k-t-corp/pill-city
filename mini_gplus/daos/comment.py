@@ -3,7 +3,7 @@ from typing import List, Optional
 from mini_gplus.models import Comment, NotifyingAction, User, Post, Media
 from mini_gplus.utils.make_uuid import make_uuid
 from mini_gplus.utils.now_ms import now_seconds
-from .exceptions import UnauthorizedAccess
+from .exceptions import UnauthorizedAccess, BadRequest
 from .post import sees_post
 from .post_cache import set_in_post_cache, exists_in_post_cache
 from .notification import create_notification, nullify_notifications
@@ -36,10 +36,15 @@ def create_comment(self: User, content: str, parent_post: Post, parent_comment: 
     if parent_post.deleted:
         raise UnauthorizedAccess()
 
+    # a comment has to have either content or media
+    if not content and not media_list:
+        raise BadRequest()
+
     new_comment = Comment()
     new_comment.eid = make_uuid()
     new_comment.author = self.id
-    new_comment.content = bleach.clean(content)
+    if content:
+        new_comment.content = bleach.clean(content)
     new_comment.created_at = now_seconds()
     new_comment.media_list = media_list
 

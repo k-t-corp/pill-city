@@ -21,7 +21,7 @@ class Reaction(EmbeddedDocument):
 class Comment(EmbeddedDocument):
     eid = StringField(required=True)
     author = LazyReferenceField(User, required=True)  # type: User
-    content = StringField(required=True)
+    content = StringField(required=False, default='')
     comments = EmbeddedDocumentListField('Comment')  # type: List[Comment]
     # default=0 as a backfill because we've lost the timestamp if we haven't recorded it :(
     created_at = LongField(required=True, default=0)

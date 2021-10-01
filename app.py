@@ -14,8 +14,9 @@ from mini_gplus.daos.user import sign_in, sign_up
 from mini_gplus.daos.user_cache import populate_user_cache
 from mini_gplus.daos.invitation_code import check_invitation_code, claim_invitation_code
 from mini_gplus.resources.users import Users, User, MyAvatar, MyProfilePic, Me
-from mini_gplus.resources.posts import Profile, Home, Media, Posts, Post
+from mini_gplus.resources.posts import Profile, Home, Posts, Post
 from mini_gplus.resources.comments import NestedComments, Comments, NestedComment, Comment
+from mini_gplus.resources.media import Media
 from mini_gplus.resources.reactions import Reactions, Reaction
 from mini_gplus.resources.circles import Circles, CircleMember, Circle
 from mini_gplus.resources.followings import Following

@@ -81,7 +81,7 @@ class PostTest(BaseTestCase):
 
         # Even user1 is not able to make a comment or reaction
         def op_comment():
-            create_comment(user1, '', deleted_post, None, [])
+            create_comment(user1, '', deleted_post, None, [], [])
 
         self.assertRaises(UnauthorizedAccess, op_comment)
 

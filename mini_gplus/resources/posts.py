@@ -1,5 +1,3 @@
-import werkzeug
-import uuid
 from flask_restful import reqparse, Resource, fields, marshal_with, marshal
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from mini_gplus.daos.user import find_user
@@ -11,13 +9,13 @@ from mini_gplus.daos.post_cache import get_in_post_cache
 from mini_gplus.daos.circle_cache import get_in_circle_cache
 from mini_gplus.daos.exceptions import UnauthorizedAccess
 from .users import user_fields
-from .s3 import upload_to_s3, delete_from_s3
+from .s3 import delete_from_s3
 from .pagination import pagination_parser
 from .mention import check_mentioned_user_ids
 from .comments import comment_fields
 from .media import check_media_object_names, MediaUrls
 
-MaxMediaCount = 4
+MaxPostMediaCount = 4
 
 
 class ResharedFrom(fields.Raw):
@@ -124,38 +122,12 @@ class Posts(Resource):
             circles=circles,
             reshareable=args['reshareable'],
             reshared_from=reshared_from_post,
-            media_list=check_media_object_names(media_object_names),
+            media_list=check_media_object_names(media_object_names, MaxPostMediaCount),
             mentioned_users=check_mentioned_user_ids(args['mentioned_user_ids'])
         )
         if not post:
             return {"msg": f"Not allowed to reshare post {reshared_from}"}, 403
         return post, 201
-
-
-media_parser = reqparse.RequestParser()
-for i in range(MaxMediaCount):
-    media_parser.add_argument('media' + str(i), type=werkzeug.datastructures.FileStorage, location='files',
-                              required=False, default=None)
-
-
-class Media(Resource):
-    @jwt_required()
-    def post(self):
-        args = media_parser.parse_args()
-        media_files = []
-        for i in range(MaxMediaCount):
-            media_file = args['media' + str(i)]
-            if media_file:
-                media_files.append(media_file)
-        media_object_names = []
-        for media_file in media_files:
-            object_name_stem = f"media/{uuid.uuid4()}"
-            media_object = upload_to_s3(media_file, object_name_stem)
-            if not media_object:
-                return {'msg': f"Disallowed image type"}, 400
-            media_object_names.append(media_object.id)
-
-        return media_object_names, 201
 
 
 class Home(Resource):

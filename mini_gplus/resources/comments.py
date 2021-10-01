@@ -9,6 +9,7 @@ from .users import user_fields
 from .media import check_media_object_names, MediaUrls
 from .s3 import delete_from_s3
 
+MaxCommentMediaCount = 1
 
 comment_parser = reqparse.RequestParser()
 comment_parser.add_argument('content', type=str, required=True)
@@ -47,7 +48,7 @@ class Comments(Resource):
             parent_post=post,
             parent_comment=None,
             mentioned_users=check_mentioned_user_ids(args['mentioned_user_ids']),
-            media_list=check_media_object_names(args['media_object_names'])
+            media_list=check_media_object_names(args['media_object_names'], MaxCommentMediaCount)
         )
         return comment, 201
 
@@ -90,7 +91,7 @@ class NestedComments(Resource):
             parent_post=post,
             parent_comment=comment,
             mentioned_users=check_mentioned_user_ids(args['mentioned_user_ids']),
-            media_list=check_media_object_names(args['media_object_names'])
+            media_list=check_media_object_names(args['media_object_names'], MaxCommentMediaCount)
         )
         return nested_comment, 201
 

@@ -1,15 +1,19 @@
 import os
 import boto3
 import json
+import werkzeug
+import uuid
 from typing import List
-from mini_gplus.models import Media
+from flask_restful import reqparse, Resource, fields
+from flask_jwt_extended import jwt_required
 from mini_gplus.daos.media import get_media
-from flask_restful import fields
 from mini_gplus.utils.now_ms import now_ms
 from mini_gplus.utils.profiling import timer
 from .cache import r, RMediaUrl
+from .s3 import upload_to_s3
 
 
+MaxMediaCount = 4
 PostMediaUrlExpireSeconds = 3600 * 12  # 12 hours
 
 
@@ -84,9 +88,35 @@ class MediaUrls(fields.Raw):
         return list(map(get_media_url, media_list))
 
 
-def check_media_object_names(media_object_names: List[str]) -> List[Media]:
+media_parser = reqparse.RequestParser()
+for i in range(MaxMediaCount):
+    media_parser.add_argument('media' + str(i), type=werkzeug.datastructures.FileStorage, location='files',
+                              required=False, default=None)
+
+
+class Media(Resource):
+    @jwt_required()
+    def post(self):
+        args = media_parser.parse_args()
+        media_files = []
+        for i in range(MaxMediaCount):
+            media_file = args['media' + str(i)]
+            if media_file:
+                media_files.append(media_file)
+        media_object_names = []
+        for media_file in media_files:
+            object_name_stem = f"media/{uuid.uuid4()}"
+            media_object = upload_to_s3(media_file, object_name_stem)
+            if not media_object:
+                return {'msg': f"Disallowed image type"}, 400
+            media_object_names.append(media_object.id)
+
+        return media_object_names, 201
+
+
+def check_media_object_names(media_object_names: List[str], limit: int) -> List[Media]:
     media_objects = []
-    for media_object_name in media_object_names:
+    for media_object_name in media_object_names[: limit]:
         media_object = get_media(media_object_name)
         if media_object:
             media_objects.append(media_object)
