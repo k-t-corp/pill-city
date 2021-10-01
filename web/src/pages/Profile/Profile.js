@@ -165,7 +165,12 @@ export default (props) => {
           backgroundImage: `url(${getProfilePicUrl(user)})`
         }}/>
         <div className="profile-avatar-wrapper">
-          <img className="profile-avatar-img" src={getAvatarUrl(user)} alt="user-avatar"/>
+          {/* Not using RoundAvatar here because it doesn't need to be clicked + it has extra styles*/}
+          <img
+            className="profile-avatar-img"
+            src={getAvatarUrl(user)}
+            alt=""
+          />
         </div>
         <div className="profile-user-name">
           {props.userId ? props.userId : me !== null ? me.id : '...'}

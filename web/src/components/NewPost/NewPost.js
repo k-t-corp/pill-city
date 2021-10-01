@@ -3,10 +3,10 @@ import {Dropdown, Popup, Icon, Checkbox} from 'semantic-ui-react'
 import FormData from "form-data";
 import {useMediaQuery} from "react-responsive";
 import {useHotkeys} from "react-hotkeys-hook";
-import getAvatarUrl from "../../api/getAvatarUrl";
 import parseContent from "../../parseContent";
 import MediaPreview from "../MediaPreview/MediaPreview";
 import parseMentioned from "../../parseMentioned";
+import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import "./NewPost.css"
 
 export default (props) => {
@@ -133,11 +133,7 @@ export default (props) => {
     <div className="new-post">
       <div className="new-post-user-info">
         <div className="new-post-avatar">
-          <img
-            className="new-post-avatar-img"
-            src={getAvatarUrl(me)}
-            alt=""
-          />
+          <RoundAvatar user={me}/>
         </div>
         <div className="new-post-name">
           {me !== null ? me.id : '...'}
@@ -148,11 +144,7 @@ export default (props) => {
           <div className="new-post-reshared-info-wrapper">
             <div className="new-post-reshared-info">
               <div className="post-avatar post-reshared-avatar">
-                <img
-                  className="post-avatar-img"
-                  src={getAvatarUrl(props.resharePostData.author)}
-                  alt=""
-                />
+                <RoundAvatar user={props.resharePostData.author}/>
               </div>
               <div className="post-reshared-author">
                 {props.resharePostData.author.id}

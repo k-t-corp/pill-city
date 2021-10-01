@@ -2,7 +2,6 @@ import React, {useEffect, useRef, useState} from 'react'
 import Picker from 'emoji-picker-react';
 import _ from 'lodash'
 import "./Post.css"
-import getAvatarUrl from "../../api/getAvatarUrl";
 import parseContent from "../../parseContent";
 import timePosted from "../../timePosted";
 import MediaPreview from "../MediaPreview/MediaPreview";
@@ -12,6 +11,7 @@ import {useHotkeys} from "react-hotkeys-hook";
 import {useMediaQuery} from "react-responsive";
 import {useHistory} from "react-router-dom";
 import FormData from "form-data";
+import RoundAvatar from "../RoundAvatar/RoundAvatar";
 
 export default (props) => {
   const [deleted, updateDeleted] = useState(props.data.deleted)
@@ -61,11 +61,7 @@ export default (props) => {
       }}>
         <div className="post-reshared-info">
           <div className="post-avatar post-reshared-avatar">
-            <img
-              className="post-avatar-img"
-              src={getAvatarUrl(resharedFrom.author)}
-              alt=""
-            />
+            <RoundAvatar user={resharedFrom.author}/>
           </div>
           <div className="post-reshared-author">
             {resharedFrom.author.id}
@@ -318,19 +314,7 @@ export default (props) => {
           className={`post-nested-comment ${isHighlightComment(nestedComment.id) ? "highlight-comment" : ""}`}
         >
           <div className="post-avatar post-nested-comment-avatar">
-            {
-              !nestedComment.deleted ?
-                <img
-                  className="post-avatar-img"
-                  src={getAvatarUrl(nestedComment.author)}
-                  alt=""
-                /> :
-                <img
-                  className="post-avatar-img"
-                  src={getAvatarUrl(null)}
-                  alt=""
-                />
-            }
+            <RoundAvatar user={!nestedComment.deleted ? nestedComment.author : null}/>
           </div>
           <div className="post-name nested-comment-name">
             {!nestedComment.deleted ? nestedComment.author.id : ''}:&nbsp;
@@ -412,19 +396,7 @@ export default (props) => {
         className={`post-comment ${isHighlightComment(comment.id) ? "highlight-comment" : ""}`}
       >
         <div className="post-avatar post-comment-avatar">
-          {
-            !comment.deleted ?
-              <img
-                className="post-avatar-img"
-                src={getAvatarUrl(comment.author)}
-                alt=""
-              /> :
-              <img
-                className="post-avatar-img"
-                src={getAvatarUrl(null)}
-                alt=""
-              />
-          }
+          <RoundAvatar user={!comment.deleted ? comment.author : null}/>
         </div>
         <div className="post-comment-main-content">
           <div className="post-comment-info">
@@ -602,11 +574,7 @@ export default (props) => {
         <div className="post-op-info-wrapper">
           <div className="post-op-info-left">
             <div className="post-avatar">
-              <img
-                className="post-avatar-img"
-                src={getAvatarUrl(props.data.author)}
-                alt=""
-              />
+              <RoundAvatar user={props.data.author}/>
             </div>
             <div className="post-name">
               {props.data.author.id}
@@ -689,11 +657,7 @@ export default (props) => {
           <div className="post-comment-box-wrapper fade-in">
             <div className="post-comment-box-input-area">
               <div className="post-avatar post-comment-avatar">
-                <img
-                  className="post-avatar-img"
-                  src={getAvatarUrl(props.me)}
-                  alt=""
-                />
+                <RoundAvatar user={props.me}/>
               </div>
               <textarea
                 id="post-comment-box-input"
