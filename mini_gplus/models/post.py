@@ -11,8 +11,8 @@ class Reaction(EmbeddedDocument):
     eid = StringField(required=True)
     author = LazyReferenceField(User, required=True)  # type: User
     emoji = StringField(required=True)
-    created_at = LongField(required=True, default=0)
     # default=0 as a backfill because we've lost the timestamp if we haven't recorded it :(
+    created_at = LongField(required=True, default=0)
 
     def make_href(self, parent_post):
         return f"/post/{parent_post.eid}#reaction-{self.eid}"
@@ -21,10 +21,12 @@ class Reaction(EmbeddedDocument):
 class Comment(EmbeddedDocument):
     eid = StringField(required=True)
     author = LazyReferenceField(User, required=True)  # type: User
-    content = StringField(required=True)
+    content = StringField(required=False, default='')
     comments = EmbeddedDocumentListField('Comment')  # type: List[Comment]
-    created_at = LongField(required=True, default=0)
     # default=0 as a backfill because we've lost the timestamp if we haven't recorded it :(
+    created_at = LongField(required=True, default=0)
+    # no reverse delete rule but that's fine because when the comment is "deleted", media_list is manually reset
+    media_list = ListField(LazyReferenceField(Media), default=[])  # type: List[Media]
     deleted = BooleanField(required=False, default=False)
 
     def make_href(self, parent_post):

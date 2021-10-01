@@ -136,7 +136,7 @@ export default class Api {
     Api.throwOnUnauthorized()
     let mediaObjName = []
     if (mediaData.length !== 0) {
-      mediaObjName = await this.postMedia(mediaData)
+      mediaObjName = await this.media(mediaData)
     }
     const res = await this.axiosInstance.post(
       `/posts`,
@@ -156,10 +156,10 @@ export default class Api {
     return res.data
   }
 
-  async postMedia(mediaData) {
+  async media(mediaData) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.post(
-      `/posts/media`,
+      `/media`,
       mediaData,
       {
         headers: {
@@ -213,13 +213,18 @@ export default class Api {
     return res.data
   }
 
-  async postComment(content, postId, mentionedUserIds) {
+  async postComment(content, postId, mentionedUserIds, mediaData) {
     Api.throwOnUnauthorized()
+    let mediaObjNames = []
+    if (mediaData.length !== 0) {
+      mediaObjNames = await this.media(mediaData)
+    }
     const res = await this.axiosInstance.post(
       `/posts/${postId}/comment`,
       {
         content,
-        mentioned_user_ids: mentionedUserIds
+        mentioned_user_ids: mentionedUserIds,
+        media_object_names: mediaObjNames
       }
     )
     if (res.status !== 201) {
@@ -239,13 +244,18 @@ export default class Api {
     return res.data
   }
 
-  async postNestedComment(content, postId, commentId, mentionedUserIds) {
+  async postNestedComment(content, postId, commentId, mentionedUserIds, mediaData) {
     Api.throwOnUnauthorized()
+    let mediaObjNames = []
+    if (mediaData.length !== 0) {
+      mediaObjNames = await this.media(mediaData)
+    }
     const res = await this.axiosInstance.post(
       `/posts/${postId}/comment/${commentId}/comment`,
       {
         content,
-        mentioned_user_ids: mentionedUserIds
+        mentioned_user_ids: mentionedUserIds,
+        media_object_names: mediaObjNames
       }
     )
     if (res.status !== 201) {

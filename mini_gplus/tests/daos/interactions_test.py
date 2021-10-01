@@ -41,7 +41,7 @@ class InteractionsTest(BaseTestCase):
 
         comment1 = None
         if comments:
-            comment1 = create_comment(acting_user, 'comment1', post, None, [])
+            comment1 = create_comment(acting_user, 'comment1', post, None, [], [])
             self.assertIn(comment1.eid, list(map(lambda c: c.eid, post.comments2)))
             if acting_user.id != post.author.id:
                 self.assertEqual(1, len(Notification.objects(notifier=acting_user,
@@ -51,13 +51,13 @@ class InteractionsTest(BaseTestCase):
                                                              owner=post.author.id)))
         else:
             def op1():
-                create_comment(acting_user, 'comment1', post, None, [])
+                create_comment(acting_user, 'comment1', post, None, [], [])
 
             self.assertRaises(UnauthorizedAccess, op1)
-            comment1 = create_comment(post.author, 'comment1', post, None, [])
+            comment1 = create_comment(post.author, 'comment1', post, None, [], [])
 
         if nested_comments:
-            nested_comment1 = create_comment(acting_user, 'nested_comment1', post, comment1, [])
+            nested_comment1 = create_comment(acting_user, 'nested_comment1', post, comment1, [], [])
             self.assertIn(nested_comment1.eid, list(map(lambda c: c.eid, comment1.comments)))
             if acting_user.id != comment1.author.id:
                 self.assertEqual(1, len(Notification.objects(notifier=acting_user,
@@ -68,10 +68,10 @@ class InteractionsTest(BaseTestCase):
                                                              owner=comment1.author.id)))
         else:
             def op2():
-                create_comment(acting_user, 'nested_comment1', post, comment1, [])
+                create_comment(acting_user, 'nested_comment1', post, comment1, [], [])
 
             self.assertRaises(UnauthorizedAccess, op2)
-            nested_comment1 = create_comment(post.author, 'nested_comment1', post, None, [])
+            nested_comment1 = create_comment(post.author, 'nested_comment1', post, None, [], [])
 
         # has to re-query post object because author in reactions won't be filled as an actual User object
         post = dangerously_get_post(post.eid)

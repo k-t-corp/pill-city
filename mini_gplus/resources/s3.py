@@ -5,7 +5,7 @@ import uuid
 from PIL import Image, UnidentifiedImageError
 from mini_gplus.daos.media import create_media
 from mini_gplus.models import Media
-from .media_url_cache import r, RMediaUrl
+from .cache import r, RMediaUrl
 
 AllowedImageTypes = ['gif', 'jpeg', 'bmp', 'png']
 
