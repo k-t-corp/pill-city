@@ -293,6 +293,20 @@
     outline: none !important;
 }
 
+.new-comment-attachment-button {
+    top: 15px;
+    right: 5px;
+    width: 20px;
+    cursor: pointer;
+}
+
+.new-comment-attachment-preview {
+    margin-left: 45px;
+    height: 200px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
 .post-comment-box-buttons {
     display: flex;
     justify-content: flex-end;
