@@ -344,7 +344,7 @@ export default (props) => {
             {
               !nestedComment.deleted && nestedComment.media_urls.length > 0 &&
                 <div>
-                  <img src={comment.media_urls[0]} alt="" className='comment-media'/>
+                  <img src={nestedComment.media_urls[0]} alt="" className='comment-media'/>
                 </div>
             }
             <span className="post-time post-nested-comment-time">{timePosted(nestedComment.created_at_seconds)}</span>
