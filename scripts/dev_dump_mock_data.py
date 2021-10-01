@@ -122,13 +122,31 @@ class User(object):
             'media_object_names': media_object_names,
         }).json()['id']
 
-    def create_nested_comment(self, post_id: str, comment_id: str, content: str, mentioned_user_ids: List[str] = None):
+    def create_nested_comment(self, post_id: str, comment_id: str, content: Optional[str], mentioned_user_ids: List[str] = None,
+                              media_filenames: List[str] = None):
         self._raise_on_unauthenticated()
+
+        # upload media first
+        if media_filenames is None:
+            media_filenames = []
+        media_object_names = []
+        if media_filenames:
+            media_filepaths = list(map(lambda fn: os.path.join('scripts', 'dev_mock_data_media', fn), media_filenames))
+            files = {}
+            for i, fp in enumerate(media_filepaths):
+                if i < 9:
+                    files['media' + str(i)] = open(fp, 'rb')
+            media_object_names = self.sess.post(f'/api/media', files=files).json()
+            for _, f in files.items():
+                f.close()
+
+        # comment
         if not mentioned_user_ids:
             mentioned_user_ids = []
         return self.sess.post(f"/api/posts/{post_id}/comment/{comment_id}/comment", json={
             'content': content,
-            'mentioned_user_ids': mentioned_user_ids
+            'mentioned_user_ids': mentioned_user_ids,
+            'media_object_names': media_object_names,
         }).json()['id']
 
     def follow(self, following_user_id: str):
@@ -265,7 +283,10 @@ def main():
     mawei.create_nested_comment(weiji_id, weiji_comment_id, '@horo 都把人家约到家里了好吧！！', ['horo'])
     kt.create_comment(xiaomoyu_id, '你好我是 kt')
     kyo_kt_kotori_comment_id = kyo.create_comment(kotori_id, None, media_filenames=['szzex1.jpg'])
-    ika.create_comment(kotori_id, '四齋蒸鵝心', media_filenames=['szzex2.jpg'])
+    ika_kt_kotori_comment_id = ika.create_comment(kotori_id, '四齋蒸鵝心', media_filenames=['szzex2.jpg'])
+    ika_kt_kotori_comment2_id = ika.create_comment(kotori_id, None, media_filenames=['szzex2.jpg'])
+    ika.create_nested_comment(kotori_id, ika_kt_kotori_comment_id, '四齋蒸鵝心', media_filenames=['szzex2.jpg'])
+    ika.create_nested_comment(kotori_id, ika_kt_kotori_comment2_id, None, media_filenames=['szzex2.jpg'])
     kyo.delete_comment(kotori_id, kyo_kt_kotori_comment_id)
     kt.delete_post(kotori_id)
 

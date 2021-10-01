@@ -201,6 +201,12 @@
     max-width: 100%;
 }
 
+.comment-media {
+    height: 200px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
 .post-comment-reply-btn {
     margin-left: 10px;
     font-size: smaller;

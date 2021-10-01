@@ -337,6 +337,12 @@ export default (props) => {
               parseContent(nestedComment.content, "") :
               <div style={{fontStyle: 'italic'}}>This comment has been deleted</div>
             }
+            {
+              nestedComment.media_urls.length > 0 &&
+                <div>
+                  <img src={comment.media_urls[0]} alt="" className='comment-media'/>
+                </div>
+            }
             <span className="post-time post-nested-comment-time">{timePosted(nestedComment.created_at_seconds)}</span>
             {
               !nestedComment.deleting && !nestedComment.deleted && !comment.deleted &&
@@ -430,6 +436,12 @@ export default (props) => {
               !comment.deleted ?
                 parseContent(comment.content, "") :
                 <div style={{fontStyle: 'italic'}}>This comment has been deleted</div>
+            }
+            {
+              comment.media_urls.length > 0 &&
+                <div>
+                  <img src={comment.media_urls[0]} alt="" className='comment-media'/>
+                </div>
             }
             {
               !comment.deleting && !comment.deleted &&
