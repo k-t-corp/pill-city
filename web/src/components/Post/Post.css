@@ -15,12 +15,6 @@
     flex-shrink: 0;
 }
 
-.post-avatar-img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-}
-
 .post-op-info-wrapper {
     display: flex;
     justify-content: space-between;

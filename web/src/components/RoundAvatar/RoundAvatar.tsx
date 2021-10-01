@@ -17,9 +17,11 @@ export default (props: Props) => {
       src={getAvatarUrl(props.user)}
       alt=""
       style={{
-        cursor: props.user !== null ? 'default' : 'pointer'
+        cursor: props.user !== null ? 'pointer' : 'default'
       }}
-      onClick={() => {
+      onClick={e => {
+        // This component is sometimes nested in other clickable places so need this
+        e.stopPropagation()
         if (props.user === null) {
           return
         }

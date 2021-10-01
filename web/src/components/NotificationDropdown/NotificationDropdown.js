@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory} from "react-router-dom";
 import "./NotificationDropdown.css"
-import getAvatarUrl from "../../api/getAvatarUrl";
 import timePosted from "../../timePosted";
 import {useInterval} from "react-interval-hook";
 import summary from "../../summary";
+import RoundAvatar from "../RoundAvatar/RoundAvatar";
 
 export default (props) => {
   const [notifications, updateNotifications] = useState([])
@@ -93,11 +93,7 @@ export default (props) => {
         <div className="notification-first-row" onClick={notificationOnClick}>
           <div className="notification-info">
             <div className="post-avatar notification-avatar">
-              <img
-                className="post-avatar-img"
-                src={getAvatarUrl(notification.notifier)}
-                alt="avatar-img"
-              />
+              <RoundAvatar user={notification.notifier}/>
             </div>
             <div className="notification-notifier">
               <div className="notification-notifier-wrapper">
