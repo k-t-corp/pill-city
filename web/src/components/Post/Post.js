@@ -336,12 +336,13 @@ export default (props) => {
             {!nestedComment.deleted ? nestedComment.author.id : ''}:&nbsp;
           </div>
           <div className="post-nested-comment-content">
-            {!nestedComment.deleted ?
-              parseContent(nestedComment.content, "") :
-              <div style={{fontStyle: 'italic'}}>This comment has been deleted</div>
+            {
+              !nestedComment.deleted ?
+                parseContent(nestedComment.content, "") :
+                <div style={{fontStyle: 'italic'}}>This comment has been deleted</div>
             }
             {
-              nestedComment.media_urls.length > 0 &&
+              !nestedComment.deleted && nestedComment.media_urls.length > 0 &&
                 <div>
                   <img src={comment.media_urls[0]} alt="" className='comment-media'/>
                 </div>
@@ -441,7 +442,7 @@ export default (props) => {
                 <div style={{fontStyle: 'italic'}}>This comment has been deleted</div>
             }
             {
-              comment.media_urls.length > 0 &&
+              !comment.deleted && comment.media_urls.length > 0 &&
                 <div>
                   <img src={comment.media_urls[0]} alt="" className='comment-media'/>
                 </div>
