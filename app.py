@@ -14,7 +14,7 @@ from mini_gplus.daos.user import sign_in, sign_up
 from mini_gplus.daos.user_cache import populate_user_cache
 from mini_gplus.daos.invitation_code import check_invitation_code, claim_invitation_code
 from mini_gplus.resources.users import Users, User, MyAvatar, MyProfilePic, Me
-from mini_gplus.resources.posts import Profile, Home, PostMedia, Posts, Post
+from mini_gplus.resources.posts import Profile, Home, Media, Posts, Post
 from mini_gplus.resources.comments import NestedComments, Comments, NestedComment, Comment
 from mini_gplus.resources.reactions import Reactions, Reaction
 from mini_gplus.resources.circles import Circles, CircleMember, Circle
@@ -203,9 +203,9 @@ api.add_resource(Comment, '/api/posts/<string:post_id>/comment/<string:comment_i
 api.add_resource(Comments, '/api/posts/<string:post_id>/comment')
 api.add_resource(Reactions, '/api/posts/<string:post_id>/reactions')
 api.add_resource(Reaction, '/api/posts/<string:post_id>/reaction/<string:reaction_id>')
-api.add_resource(PostMedia, '/api/posts/media')
 api.add_resource(Posts, '/api/posts')
 api.add_resource(Post, '/api/post/<string:post_id>')
+api.add_resource(Media, '/api/media')
 
 api.add_resource(Circles, '/api/circles')
 api.add_resource(CircleMember, '/api/circle/<string:circle_id>/membership/<string:member_user_id>')

@@ -1,6 +1,6 @@
 import bleach
 from typing import List, Optional
-from mini_gplus.models import Comment, NotifyingAction, User, Post, Notification
+from mini_gplus.models import Comment, NotifyingAction, User, Post, Media
 from mini_gplus.utils.make_uuid import make_uuid
 from mini_gplus.utils.now_ms import now_seconds
 from .exceptions import UnauthorizedAccess
@@ -11,15 +11,17 @@ from .mention import mention
 from .user import find_ghost_user_or_raise
 
 
-def create_comment(self: User, content: str, parent_post: Post, parent_comment: Optional[Comment], mentioned_users: List[User]) -> Optional[Comment]:
+def create_comment(self: User, content: str, parent_post: Post, parent_comment: Optional[Comment],
+                   mentioned_users: List[User], media_list: List[Media]) -> Optional[Comment]:
     """
     Create a comment for the user
 
     :param self: The acting user
-    :param content: the content
-    :param parent_post: the post that this comment is attached to
+    :param content: The content
+    :param parent_post: The post that this comment is attached to
     :param parent_comment: The comment that this (maybe) nested comment is attached to
-    :param mentioned_users: list of mentioned users
+    :param mentioned_users: List of mentioned users
+    :param media_list: List of media attachment
     :return The new comment object
     """
     # context_home_or_profile=False because context_home_or_profile only affects public posts
@@ -39,6 +41,7 @@ def create_comment(self: User, content: str, parent_post: Post, parent_comment: 
     new_comment.author = self.id
     new_comment.content = bleach.clean(content)
     new_comment.created_at = now_seconds()
+    new_comment.media_list = media_list
 
     if not parent_comment:
         parent_post.comments2.append(new_comment)
@@ -115,7 +118,7 @@ def delete_comment(self: User, comment_id: str, parent_post: Post) -> Optional[C
     comment.author = ghost_user
     comment.content = ''
     comment.deleted = True
-    # TODO: remove media both on here and on media collection
+    comment.media_list = []
     parent_post.save()
 
     if exists_in_post_cache(parent_post.id):

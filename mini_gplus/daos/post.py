@@ -10,7 +10,6 @@ from .mention import mention
 from .pagination import get_page
 from .post_cache import set_in_post_cache, get_in_post_cache, exists_in_post_cache
 from .circle_cache import get_in_circle_cache
-from .user import find_ghost_user_or_raise
 
 HomePostsPageSize = 10
 ProfilePostsPageSize = 10

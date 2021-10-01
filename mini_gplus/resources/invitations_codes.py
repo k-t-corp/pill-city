@@ -2,7 +2,7 @@ import os
 from flask_restful import Resource, marshal_with, fields
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from mini_gplus.daos.invitation_code import create_invitation_code, get_invitation_codes
-from .posts import r, RMediaUrl
+from .cache import r, RMediaUrl
 
 admins = list(map(lambda s: s.strip(), os.getenv('ADMINS', '').split(',')))
 

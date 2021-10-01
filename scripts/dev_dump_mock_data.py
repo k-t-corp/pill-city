@@ -74,7 +74,7 @@ class User(object):
             for i, fp in enumerate(media_filepaths):
                 if i < 9:
                     files['media' + str(i)] = open(fp, 'rb')
-            media_object_names = self.sess.post(f'/api/posts/media', files=files).json()
+            media_object_names = self.sess.post(f'/api/media', files=files).json()
             for _, f in files.items():
                 f.close()
 

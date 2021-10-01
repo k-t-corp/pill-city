@@ -136,7 +136,7 @@ export default class Api {
     Api.throwOnUnauthorized()
     let mediaObjName = []
     if (mediaData.length !== 0) {
-      mediaObjName = await this.postMedia(mediaData)
+      mediaObjName = await this.media(mediaData)
     }
     const res = await this.axiosInstance.post(
       `/posts`,
@@ -156,10 +156,10 @@ export default class Api {
     return res.data
   }
 
-  async postMedia(mediaData) {
+  async media(mediaData) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.post(
-      `/posts/media`,
+      `/media`,
       mediaData,
       {
         headers: {
