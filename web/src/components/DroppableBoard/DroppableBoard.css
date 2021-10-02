@@ -87,10 +87,28 @@
     flex-direction: column;
 }
 
+.droppable-board-modal-circle {
+    cursor: pointer;
+    display: flex;
+}
+
 .droppable-board-modal-circle-name {
     font-size: xx-large;
     font-weight: bold;
     margin-bottom: 40px;
+}
+
+.droppable-board-modal-circle-rename-icon {
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+}
+
+.droppable-board-modal-circle-rename {
+    border-color: black;
+    border-width: 0 0 2px;
+    margin-bottom: 40px;
+    text-align: center;
 }
 
 .droppable-board-modal-circle-members {

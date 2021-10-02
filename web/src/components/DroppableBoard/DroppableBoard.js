@@ -3,6 +3,7 @@ import "./DroppableBoard.css"
 import UserProfileCard from "../UserProfileCard";
 import getAvatarUrl from "../../api/getAvatarUrl";
 import { useMediaQuery } from 'react-responsive'
+import {useHotkeys} from "react-hotkeys-hook";
 
 export default (props) => {
   const isTabletOrMobile = useMediaQuery({ query: '(max-width: 750px)' })
@@ -16,6 +17,9 @@ export default (props) => {
   const cardNumber = Math.floor(360 / anglePerCardAsDegree);
   const finalAnglePerCardAsDegree = 360 / cardNumber
 
+  const [circleName, updateCircleName] = useState(props.circleName)
+  const [renamingCircle, updateRenamingCircle] = useState(false)
+  const [renameCircleLoading, updateRenameCircleLoading] = useState(false)
   const [members, updateCards] = useState(props.members)
   const [modalOpened, updateModalOpened] = useState(false)
   const [deleteCircleClicked, updateDeleteCircleClicked] = useState(false)
@@ -211,14 +215,60 @@ export default (props) => {
     }
   }
 
+  const renameCircle = async () => {
+    updateRenamingCircle(false)
+    updateRenameCircleLoading(true)
+    await props.api.renameCircle(props.circleId, circleName)
+    updateCircleName(circleName)
+    updateRenameCircleLoading(false)
+  }
+
+  useHotkeys('enter', async () => {
+    if (renamingCircle) {
+      await renameCircle()
+    }
+  }, {
+    enableOnTags: ['INPUT']
+  })
+
+  const onCircleEditingDone = async () => {
+    if (renamingCircle) {
+      await renameCircle()
+    }
+    window.location.reload()
+  }
+
+  const onCircleRenameClick = () => {
+    if (renameCircleLoading) {
+      return
+    }
+    updateRenamingCircle(true)
+  }
+
   return (
     <div className="droppable-board-wrapper">
       {modalOpened ?
         <div id="droppable-board-modal-wrapper" className="droppable-board-modal-wrapper">
           <div className="droppable-board-modal-content">
-            <div className="droppable-board-modal-circle-name">
-              {props.circleName}
-            </div>
+            {
+              !renamingCircle ?
+                <div className="droppable-board-modal-circle" onClick={onCircleRenameClick}>
+                  <div className="droppable-board-modal-circle-name">{circleName}</div>
+                  <div className="droppable-board-modal-circle-rename-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                  </div>
+                </div>
+                :
+                <input
+                  className="droppable-board-modal-circle-name droppable-board-modal-circle-rename"
+                  type="text"
+                  value={circleName}
+                  onChange={e => updateCircleName(e.target.value)}
+                />
+            }
+
             <div className="droppable-board-modal-circle-members">
               {memberModalCards()}
             </div>
@@ -226,7 +276,7 @@ export default (props) => {
               <div className="droppable-board-modal-button-delete" onClick={deleteCircleButtonOnClick}>
                 {deleteCircleClicked ? "Confirm Delete Circle" : "Delete Circle"}
               </div>
-              <div className="droppable-board-modal-button-done" onClick={() => {window.location.reload()}}>
+              <div className="droppable-board-modal-button-done" onClick={onCircleEditingDone}>
                 Done
               </div>
             </div>
@@ -250,7 +300,7 @@ export default (props) => {
              id={`${props.circleId}-inner-circle`}
              style={{backgroundColor: circleColor(props.circleId)}}>
           <div className="droppable-board-inner-circle-name">
-            {props.circleName}
+            {circleName}
           </div>
           <div className="droppable-board-inner-circle-follow-number">
             {members.length}

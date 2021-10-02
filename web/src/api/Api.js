@@ -297,6 +297,20 @@ export default class Api {
     return res.data
   }
 
+  async renameCircle(circleId, newName) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.patch(
+      `/circle/${circleId}/name`,
+      {
+        'name': newName
+      }
+    )
+    if (res.status !== 204) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
+
   async createCircle(name) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.post(
