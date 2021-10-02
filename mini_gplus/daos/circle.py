@@ -71,6 +71,33 @@ def toggle_member(self, circle, toggled_user):
         raise UnauthorizedAccess()
 
 
+def check_member(self, user):
+    """
+    Check whether a user is in the circle
+
+    :param (Circle) self: The checked circle
+    :param (User) user: checked user
+    :return (bool): whether the user is in the circle
+    """
+    return len(list(filter(lambda member: member.id == user.id, self.members))) != 0
+
+
+def rename_circle(self: User, circle: Circle, new_name: str):
+    """
+    Rename a circle
+
+    :param self: The acting user
+    :param circle: The renamed circle object
+    :param new_name: New name for the circle
+    :return:
+    """
+    if self != circle.owner:
+        raise UnauthorizedAccess()
+    circle.name = new_name
+    circle.save()
+    set_in_circle_cache(circle)
+
+
 def delete_circle(self, circle):
     """
     Delete a circle
@@ -84,14 +111,3 @@ def delete_circle(self, circle):
         delete_from_circle_cache(circle.id)
     else:
         raise UnauthorizedAccess()
-
-
-def check_member(self, user):
-    """
-    Check whether a user is in the circle
-
-    :param (Circle) self: The checked circle
-    :param (User) user: checked user
-    :return (bool): whether the user is in the circle
-    """
-    return len(list(filter(lambda member: member.id == user.id, self.members))) != 0

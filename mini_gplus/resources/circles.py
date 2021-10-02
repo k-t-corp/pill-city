@@ -1,7 +1,8 @@
 from flask_restful import Resource, fields, marshal_with, reqparse
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from mini_gplus.daos.user import find_user
-from mini_gplus.daos.circle import create_circle, get_circles, find_circle, toggle_member, delete_circle
+from mini_gplus.daos.circle import create_circle, get_circles, find_circle, toggle_member, delete_circle, rename_circle
+from mini_gplus.daos.exceptions import NotFound
 from .users import user_fields
 
 circle_fields = {
@@ -42,6 +43,23 @@ class Circles(Resource):
         if not circle_id:
             return {'msg': f'Circle name {name} is already taken'}, 409
         return {'id': circle_id}, 201
+
+
+class CircleName(Resource):
+    @jwt_required()
+    def patch(self, circle_id):
+        """
+        Rename a circle
+        """
+        user_id = get_jwt_identity()
+        user = find_user(user_id)
+        circle = find_circle(user, circle_id)
+        if not circle:
+            raise NotFound()
+
+        args = circle_parser.parse_args()
+        rename_circle(user, circle, args['name'])
+        return {'id': circle.eid}, 204
 
 
 class Circle(Resource):

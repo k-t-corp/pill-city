@@ -18,7 +18,7 @@ from mini_gplus.resources.posts import Profile, Home, Posts, Post
 from mini_gplus.resources.comments import NestedComments, Comments, NestedComment, Comment
 from mini_gplus.resources.media import Media
 from mini_gplus.resources.reactions import Reactions, Reaction
-from mini_gplus.resources.circles import Circles, CircleMember, Circle
+from mini_gplus.resources.circles import Circles, CircleName, CircleMember, Circle
 from mini_gplus.resources.followings import Following
 from mini_gplus.resources.notifications import Notifications, NotificationRead, NotificationsAllRead
 from mini_gplus.resources.invitations_codes import InvitationCode, InvitationCodes, ClearMediaUrlCache
@@ -209,6 +209,7 @@ api.add_resource(Post, '/api/post/<string:post_id>')
 api.add_resource(Media, '/api/media')
 
 api.add_resource(Circles, '/api/circles')
+api.add_resource(CircleName, '/api/circle/<string:circle_id>/name')
 api.add_resource(CircleMember, '/api/circle/<string:circle_id>/membership/<string:member_user_id>')
 api.add_resource(Circle, '/api/circle/<string:circle_id>')
 
