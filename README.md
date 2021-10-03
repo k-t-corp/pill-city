@@ -31,15 +31,25 @@ make dev-dump
 ```
 Use ID `ika` and password `1234` to log in
 
-### Start API development alone
+### Start API development
 ``` shell
 make dev-api
 ```
 
-### Start web development alone
+### Start web development
 ``` shell
 make dev-web
 ```
+
+### Start API and web development on LAN (e.g. Android simulator or iOS device)
+1. Figure out your LAN IP. You can do this by running `make dev-web` and inspect the `On Your Network` IP printed by `create-react-app`
+2. Stop `make dev-web`
+3. Temporarily update `.example.env`
+   1. Replace `localhost` in `CDN_URL` with your LAN IP
+4. Temporarily update `web/.example.env`
+   1. Replace `lcoalhost` in `REACT_APP_API_ENDPOINT` with your LAN IP
+5. Run `make dev-api` and `make dev-web` as usual
+6. Do not forget to revert `.example.env` and `web/.example.env` when done
 
 ### Run API unit tests
 ``` shell
