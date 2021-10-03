@@ -86,37 +86,6 @@
     flex-wrap: wrap;
 }
 
-.post-reaction {
-    padding: 2px 8px;
-    margin-right: 5px;
-    margin-top: 3px;
-    border-radius: 4px;
-    background-color: #f0f0f0;
-    border: #f0f0f0 1px solid;
-    font-weight: bold;
-    font-size: small;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-}
-
-.post-reaction:hover {
-    background-color: #e7e7e7;
-}
-
-.post-reaction-active {
-    background-color: #e0f4ff;
-    border: #9dd0ff 1px solid;
-}
-
-.post-reaction-active:hover {
-    background-color: #e0f4ff;
-}
-
-.post-emoji {
-    font-size: large;
-}
-
 /*Post Interactions*/
 
 .post-interactions-wrapper {
@@ -322,20 +291,6 @@
     cursor: none;
     pointer-events: none;
     user-select: none;
-}
-
-/*Emoji Picker*/
-
-#post-reaction-emoji-picker-wrapper {
-    position: relative;
-    width: 0;
-    height: 0;
-    z-index: 3;
-}
-
-.post-reaction-emoji-picker {
-    position: absolute;
-    top: 10px;
 }
 
 /* Reshare */
