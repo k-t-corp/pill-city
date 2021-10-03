@@ -251,9 +251,6 @@ def main():
                                  reshareable=True,
                                  media_filenames=['heisi1.jpeg', 'heisi2.jpeg', 'heisi3.jpeg', 'heisi4.jpeg'])
     weiji_id = horo.create_post('你这种伪基佬真淫家早该B了！@mawei ', is_public=True, mentioned_user_ids=['mawei'])
-    kotori_id = kt.create_post('啊啊啊啊啊啊阿啊啊啊啊啊啊啊啊 @ika', is_public=True, mentioned_user_ids=['ika'], media_filenames=['kotori1.jpg', 'kotori2.jpg', 'kotori3.jpg', 'kotori4.jpg'])
-
-    # Create some reshares
     sizhongzhuanfa_id = luxiyuan.create_post(
         '''有一回，骚豆菊苣对我说道：“你用过Android么？”我略略点一点头。
 他说：“用过……我便考你一考。AndroidApp的网络访问方式，是怎样的？”
@@ -262,6 +259,10 @@ def main():
 我愈不耐烦了，努着嘴走远。骚豆菊苣刚用指甲蘸了酒，想在柜上画图，见我毫不热心，便又叹一口气，显出极惋惜的样子。''',
         is_public=True, reshareable=True, reshared_from=sizhongfangshi_id)
     kele.create_post('啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊', is_public=True, reshareable=True, reshared_from=heisi_id)
+    kotori_id = kt.create_post('啊啊啊啊啊啊阿啊啊啊啊啊啊啊啊 @ika', is_public=True, mentioned_user_ids=['ika'], media_filenames=['kotori1.jpg', 'kotori2.jpg', 'kotori3.jpg', 'kotori4.jpg'])
+    ika.create_post('23333 https://china.kyodonews.net/news/2021/10/625d1318d9e5-6.html', is_public=True)
+    kt.create_post('https://www.youtube.com/watch?v=y8OnoxKotPQ', is_public=True)
+    ahuhu.create_post('https://twitter.com/U_S_O/status/1358737558155399169', is_public=True)
 
     # Create some reactions
     for i, user in enumerate(everybody_obj):
