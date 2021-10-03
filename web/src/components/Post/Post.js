@@ -12,6 +12,7 @@ import {useMediaQuery} from "react-responsive";
 import {useHistory} from "react-router-dom";
 import FormData from "form-data";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
+import LinkPreview from "../LinkPreview/LinkPreview";
 
 export default (props) => {
   const [deleted, updateDeleted] = useState(props.data.deleted)
@@ -618,6 +619,10 @@ export default (props) => {
             oneRowHeight={isTabletOrMobile ? "200px" : "280px"}
             onMediaClicked={updateMediaUrlOpened}
           />
+        }
+        {
+          !deleted &&
+            <LinkPreview post={props.data}/>
         }
         {
           !deleting && !deleted &&
