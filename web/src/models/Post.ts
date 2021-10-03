@@ -1,7 +1,7 @@
 import User from "./User";
 import Circle from "./Circle";
 
-interface NestedComment {
+export interface NestedComment {
   id: string
   created_at_seconds: number
   author: User
@@ -10,11 +10,11 @@ interface NestedComment {
   media_urls: string[],
 }
 
-interface Comment extends NestedComment {
+export interface Comment extends NestedComment {
   comments: NestedComment[]
 }
 
-interface Reaction {
+export interface Reaction {
   id: string
   emoji: string
   author: User

@@ -1,5 +1,4 @@
 import React, {useEffect, useRef, useState} from 'react'
-import Picker from 'emoji-picker-react';
 import _ from 'lodash'
 import "./Post.css"
 import parseContent from "../../parseContent";
@@ -13,6 +12,7 @@ import {useHistory} from "react-router-dom";
 import FormData from "form-data";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import LinkPreview from "../LinkPreview/LinkPreview";
+import Reactions from "./Reactions";
 
 export default (props) => {
   const [deleted, updateDeleted] = useState(props.data.deleted)
@@ -43,9 +43,6 @@ export default (props) => {
   const [replyNestedCommentId, updateReplyNestedCommentId] = useState("")
   // is loading after a comment is posted
   const [afterCommentLoading, updateAfterCommentLoading] = useState(false)
-
-  const [showEmojiPicker, updateShowEmojiPicker] = useState(false)
-  const [reactionData, setReactionData] = useState(parseReactionData(props.data.reactions))
 
   const [mediaUrls, updateMediaUrls] = useState(props.data.media_urls)
   const [mediaUrlOpened, updateMediaUrlOpened] = useState('')
@@ -90,141 +87,6 @@ export default (props) => {
       </div>)
   }
 
-  function parseReactionData(data) {
-    let parsedData = {} // Format: {emoji: [{author, reactionId}]}
-    for (let i = 0; i < data.length; i++) {
-      let emoji = data[i].emoji
-      let author = data[i].author
-      let reactionId = data[i].id
-      if (emoji in parsedData) {
-        parsedData[emoji].push({
-          key: i,
-          author: author,
-          reactionId: reactionId
-        })
-      } else {
-        parsedData[emoji] = [{
-          key: i,
-          author: author,
-          reactionId: reactionId
-        }]
-      }
-    }
-    return parsedData
-  }
-
-  const meReactedWithEmoji = (emoji) => {
-    //  return reaction id if me reacted with emoji, return null otherwise
-    let reactionDetail = reactionData[emoji]
-    if (reactionDetail === undefined) {
-      return null
-    }
-    for (let i = 0; i < reactionDetail.length; i++) {
-      if (reactionDetail[i].author.id === props.me.id) {
-        return reactionDetail[i].reactionId
-      }
-    }
-    return null
-  }
-
-  const toggleReactionOnClick = async (emoji) => {
-    let reactionId = meReactedWithEmoji(emoji)
-    if (reactionId === null) {
-      // add reaction
-      try {
-        const res = await props.api.addReaction(emoji, props.data.id)
-        setReactionData({
-          ...reactionData,
-          [emoji]: [
-            ...(reactionData[emoji] || []),
-            {author: props.me, reactionId: res.id}
-          ]
-        })
-      } catch (e) {
-        console.log(e)
-      }
-    } else {
-      // delete reaction with reactionId
-      try {
-        await props.api.deleteReaction(props.data.id, reactionId)
-        setReactionData({
-          ...reactionData,
-          [emoji]: reactionData[emoji].filter(({reactionId: rId}) => rId !== reactionId)
-        })
-      } catch (e) {
-        console.log(e)
-      }
-    }
-  }
-
-  const updateReactions = () => {
-    let reactionElements = []
-    for (const [emoji, reactionDetail] of Object.entries(reactionData)) {
-      if (reactionDetail.length === 0) {
-        continue
-      }
-
-      let className = "post-reaction"
-      if (meReactedWithEmoji(emoji) !== null) {
-        className += " post-reaction-active"
-      }
-      reactionElements.push(
-        <div className={className} key={emoji} onClick={() => toggleReactionOnClick(emoji)}>
-          <span className="post-emoji">{emoji}</span><span>&nbsp;{reactionDetail.length}</span>
-        </div>
-      )
-    }
-    return reactionElements
-  }
-
-  let reactions = updateReactions()
-  useEffect(() => {
-    reactions = updateReactions()
-  }, [reactionData])
-
-  const addNewReactionOnClick = () => {
-    // show emoji picker
-    updateShowEmojiPicker(true)
-  }
-
-  const onEmojiClick = async (event, emojiObject) => {
-    updateShowEmojiPicker(false)
-    const emoji = emojiObject.emoji
-
-    try {
-      const res = await props.api.addReaction(emoji, props.data.id)
-      setReactionData({
-        ...reactionData,
-        [emoji]: [
-          ...(reactionData[emoji] || []),
-          {author: props.me, reactionId: res.id}
-        ]
-      })
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
-  function closePickerWhenClickOutside(ref) {
-    useEffect(() => {
-      function handleClickOutside(event) {
-        if (ref.current && !ref.current.contains(event.target)) {
-          updateShowEmojiPicker(false)
-        }
-      }
-
-      // Bind the event listener
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => {
-        // Unbind the event listener on clean up
-        document.removeEventListener("mousedown", handleClickOutside);
-      };
-    }, [ref]);
-  }
-
-  const emojiPickerRef = useRef(null);
-  closePickerWhenClickOutside(emojiPickerRef);
-
   const highlightCommentId = props.highlightCommentId
   const isHighlightComment = (commentId) => {
     return highlightCommentId === commentId
@@ -235,21 +97,6 @@ export default (props) => {
       highlightCommentRef.current.scrollIntoView({behavior: 'smooth'})
     }
   }, [highlightCommentRef])
-
-  reactions.push(
-    <div key={'add-reaction'}>
-      <div className="post-reaction" onClick={addNewReactionOnClick}>
-        <span className="post-emoji" role="img" aria-label="Add Reaction">➕</span>
-        {Object.keys(props.data.reactions).length === 0 ? "Add Reaction" : null}
-      </div>
-      {showEmojiPicker ? <div id="post-reaction-emoji-picker-wrapper" ref={emojiPickerRef}>
-          <div className="post-reaction-emoji-picker">
-            <Picker onEmojiClick={onEmojiClick} preload={true} native={true}/>
-          </div>
-        </div>
-        : null}
-    </div>
-  )
 
   let commentElements = []
   for (let i = 0; i < comments.length; i++) {
@@ -659,7 +506,12 @@ export default (props) => {
           !deleting && !deleted &&
           <div className="post-interactions-wrapper">
             <div className="post-reactions-wrapper">
-              {reactions}
+              <Reactions
+                reactions={props.data.reactions}
+                api={props.api}
+                me={props.me}
+                postId={props.data.id}
+              />
             </div>
             <div className="post-interactions">
               <div className="post-circle-button" onClick={commentButtonOnClick}>
