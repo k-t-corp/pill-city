@@ -47,8 +47,10 @@ export default (props) => {
   const [showEmojiPicker, updateShowEmojiPicker] = useState(false)
   const [reactionData, setReactionData] = useState(parseReactionData(props.data.reactions))
 
-  const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
+  const [mediaUrls, updateMediaUrls] = useState(props.data.media_urls)
   const [mediaUrlOpened, updateMediaUrlOpened] = useState('')
+
+  const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
   const history = useHistory()
 
   const resharedElem = (resharedFrom) => {
@@ -441,7 +443,7 @@ export default (props) => {
     )
   }
 
-  const deleteButtonOnClick = async () => {
+  const deletePost = async () => {
     if (deleting) {
       return
     }
@@ -452,6 +454,17 @@ export default (props) => {
     await props.api.deletePost(props.data.id)
     updateDeleted(true)
     updateDeleting(false)
+  }
+
+  const deletePostMedia = async () => {
+    if (mediaUrls.length === 0) {
+      return
+    }
+    if (!window.confirm('Are you sure you want to delete all media of this post?')) {
+      return
+    }
+    updateMediaUrls([])
+    await props.api.deletePostMedia(props.data.id)
   }
 
   const commentButtonOnClick = () => {
@@ -587,7 +600,25 @@ export default (props) => {
           <div className="post-op-info-right">
             {
               props.me.id === props.data.author.id && !deleted &&
-                <DropdownMenu onClick={deleteButtonOnClick}>
+                <DropdownMenu
+                  items={
+                    mediaUrls.length > 0 && props.data.content ? [
+                      {
+                        text: 'Delete all media',
+                        callback: deletePostMedia
+                      },
+                      {
+                        text: 'Delete post',
+                        callback: deletePost
+                      }
+                    ] : [
+                      {
+                        text: 'Delete post',
+                        callback: deletePost
+                      }
+                    ]
+                  }
+                >
                   <div className="post-more-actions-trigger">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                       <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
@@ -613,7 +644,7 @@ export default (props) => {
         {resharedElem(props.data.reshared_from)}
         {!deleted &&
           <MediaPreview
-            mediaUrls={props.data.media_urls}
+            mediaUrls={mediaUrls}
             threeRowHeight="130px"
             twoRowHeight="150px"
             oneRowHeight={isTabletOrMobile ? "200px" : "280px"}

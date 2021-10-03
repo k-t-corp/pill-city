@@ -186,6 +186,17 @@ export default class Api {
     return res.data
   }
 
+  async deletePostMedia(postId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.delete(
+      `/post/${postId}/media`
+    )
+    if (res.status !== 201) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
+
   async getHome(fromId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
