@@ -165,7 +165,6 @@ export default (props) => {
     props.updateRedirectTo('/signin')
   }
 
-
   return (
     <ViewportProvider>
       <NavBarElem/>
