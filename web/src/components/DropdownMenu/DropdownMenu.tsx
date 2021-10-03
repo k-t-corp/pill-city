@@ -1,13 +1,23 @@
 import React, {useRef, useState, useEffect} from "react";
 import './DropdownMenu.css'
 
-export default (props) => {
+export interface DropdownMenuItem {
+  text: string
+  callback: () => void
+}
+
+interface Props {
+  items: DropdownMenuItem[]
+  children: JSX.Element,
+}
+
+export default (props: Props) => {
   const dropdownRef = useRef(null);
   const [isActive, updateIsActive] = useState(false);
 
   useEffect(() => {
-    const pageClickEvent = (e) => {
-      if (dropdownRef.current !== null && !dropdownRef.current.contains(e.target)) {
+    const pageClickEvent = (e: any) => {
+      if (dropdownRef.current !== null && !(dropdownRef.current as any).contains(e.target)) {
         updateIsActive(!isActive);
       }
     };
@@ -26,12 +36,16 @@ export default (props) => {
       </div>
       <div
         className={`dropdown-menu${isActive ? ' dropdown-menu-active' : ''}`}
-        onClick={() => {
-          updateIsActive(false)
-          props.onClick()
-        }}
       >
-        Delete
+        {props.items.map((item, i) => {
+          return (
+            <div
+              key={i}
+              className='dropdown-menu-item'
+              onClick={item.callback}
+            >{item.text}</div>
+          )
+        })}
       </div>
     </div>
   );

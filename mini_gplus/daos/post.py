@@ -214,3 +214,25 @@ def delete_post(self: User, post_id: str) -> Optional[Post]:
         set_in_post_cache(post)
 
     return post
+
+
+def delete_post_media(self: User, post_id: str) -> Optional[Post]:
+    """
+    Delete all media for a post
+
+    :param self: The acting user
+    :param post_id: The post ID
+    """
+    post = dangerously_get_post(post_id)
+    if self != post.author:
+        raise UnauthorizedAccess()
+
+    post.media_list = []
+    post.save()
+
+    if exists_in_post_cache(post.id):
+        # only set in post cache if it already exists
+        # post cache should only have reshared posts so it should not cache any deleted post
+        set_in_post_cache(post)
+
+    return post

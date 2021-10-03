@@ -4,20 +4,24 @@
 }
 
 .dropdown-menu {
-    color: #e58181;
     border-radius: 4px;
     position: absolute;
     border: 1px solid #e0e0e0;
     right: 0;
-    width: 100px;
-    padding: 6px;
+    width: 150px;
     opacity: 0;
     visibility: hidden;
+}
+
+.dropdown-menu-item {
+    color: #e58181;
+    padding: 6px;
+    background-color: white;
     cursor: pointer;
     font-weight: bold;
 }
 
-.dropdown-menu:hover {
+.dropdown-menu-item:hover {
     background-color: #f0f0f0;
 }
 

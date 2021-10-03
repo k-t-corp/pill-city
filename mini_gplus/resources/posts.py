@@ -4,10 +4,10 @@ from mini_gplus.daos.user import find_user
 from mini_gplus.daos.user_cache import get_in_user_cache_by_user_id
 from mini_gplus.daos.circle import find_circle
 from mini_gplus.daos.post import dangerously_get_post, create_post, sees_post, retrieves_posts_on_home, \
-    retrieves_posts_on_profile, delete_post
+    retrieves_posts_on_profile, delete_post, delete_post_media
 from mini_gplus.daos.post_cache import get_in_post_cache
 from mini_gplus.daos.circle_cache import get_in_circle_cache
-from mini_gplus.daos.exceptions import UnauthorizedAccess
+from mini_gplus.daos.exceptions import UnauthorizedAccess, BadRequest
 from .users import user_fields
 from .s3 import delete_from_s3
 from .pagination import pagination_parser
@@ -170,6 +170,25 @@ class Post(Resource):
             delete_from_s3(m)
 
         deleted_post = delete_post(user, post_id)
+        return {'id': deleted_post.eid}, 201
+
+
+class PostMedia(Resource):
+    @jwt_required()
+    def delete(self, post_id: str):
+        user_id = get_jwt_identity()
+        user = find_user(user_id)
+
+        post = dangerously_get_post(post_id)
+        if user != post.author:
+            raise UnauthorizedAccess()
+        if not post.content:
+            # keep the criteria that a post has to have either content or media
+            raise BadRequest()
+        for m in post.media_list:
+            delete_from_s3(m)
+
+        deleted_post = delete_post_media(user, post_id)
         return {'id': deleted_post.eid}, 201
 
 
