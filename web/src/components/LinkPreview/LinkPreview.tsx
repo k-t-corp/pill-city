@@ -1,11 +1,11 @@
 import * as React from "react";
 import { Tweet } from 'react-twitter-widgets'
 import YouTube from 'react-youtube'
-import Post from "../../models/Post";
+import {WithContent} from "../../models/Post";
 import './LinkPreview.css'
 
 interface Props {
-  post: Post
+  post: WithContent
 }
 
 // https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url

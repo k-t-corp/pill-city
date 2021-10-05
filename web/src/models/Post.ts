@@ -20,21 +20,25 @@ export interface Reaction {
   author: User
 }
 
-export default interface Post {
+export interface WithContent {
+  content: string
+}
+
+export interface ResharedPost extends WithContent {
   id: string
   created_at_seconds: number
   author: User
-  content: string
+  media_urls: string[],
+  deleted: boolean
+}
+
+export default interface Post extends WithContent {
+  id: string
+  created_at_seconds: number
+  author: User
   is_public: boolean
   reshareable: boolean
-  reshared_from: {
-    id: string
-    created_at_seconds: number
-    author: User
-    content: string
-    media_urls: string[],
-    deleted: boolean
-  }
+  reshared_from: ResharedPost | null,
   media_urls: string[],
   reactions: Reaction[],
   comments: Comment[],

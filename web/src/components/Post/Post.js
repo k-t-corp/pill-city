@@ -13,6 +13,7 @@ import FormData from "form-data";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import LinkPreview from "../LinkPreview/LinkPreview";
 import Reactions from "./Reactions";
+import ResharedPost from "./ResharedPost";
 
 export default (props) => {
   const [deleted, updateDeleted] = useState(props.data.deleted)
@@ -49,43 +50,6 @@ export default (props) => {
 
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
   const history = useHistory()
-
-  const resharedElem = (resharedFrom) => {
-    if (resharedFrom === null) {
-      return null
-    }
-    return (
-      <div className="post-reshared-wrapper" onClick={e => {
-        e.preventDefault()
-          history.push(`/post/${resharedFrom.id}`)
-      }}>
-        <div className="post-reshared-info">
-          <div className="post-avatar post-reshared-avatar">
-            <RoundAvatar user={resharedFrom.author}/>
-          </div>
-          <div className="post-reshared-author">
-            {resharedFrom.author.id}
-          </div>
-        </div>
-        <div className={`post-content ${props.detail ? '' : 'post-content-summary'}`}>
-          {
-            !resharedFrom.deleted ?
-              parseContent(resharedFrom.content, "")
-              :
-              <div style={{fontStyle: 'italic'}}>This post has been deleted</div>
-          }
-          {
-            !resharedFrom.deleted && resharedFrom.media_urls.length !== 0 &&
-              <MediaPreview
-                mediaUrls={resharedFrom.media_urls}
-                threeRowHeight="80px"
-                twoRowHeight={isTabletOrMobile ? "100px" : "140px"}
-                oneRowHeight={isTabletOrMobile ? "140px" : "240px"}
-              />
-          }
-        </div>
-      </div>)
-  }
 
   const highlightCommentId = props.highlightCommentId
   const isHighlightComment = (commentId) => {
@@ -491,7 +455,12 @@ export default (props) => {
               <div className='post-content' style={{fontStyle: 'italic'}}>This post has been deleted</div>
           }
         </div>
-        {resharedElem(props.data.reshared_from)}
+        {props.data.reshared_from &&
+          <ResharedPost
+            resharedFrom={props.data.reshared_from}
+            showDetail={props.detail}
+          />
+        }
         {!deleted &&
           <MediaPreview
             mediaUrls={mediaUrls}
