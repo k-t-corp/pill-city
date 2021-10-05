@@ -7,6 +7,7 @@ import parseContent from "../../parseContent";
 import MediaPreview from "../MediaPreview/MediaPreview";
 import parseMentioned from "../../parseMentioned";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
+import ClickableId from "../ClickableId/ClickableId";
 import "./NewPost.css"
 
 export default (props) => {
@@ -136,7 +137,7 @@ export default (props) => {
           <RoundAvatar user={me}/>
         </div>
         <div className="new-post-name">
-          {me !== null ? me.id : '...'}
+          <ClickableId user={me}/>
         </div>
       </div>
       {props.resharePostData === null ? null :
@@ -147,7 +148,7 @@ export default (props) => {
                 <RoundAvatar user={props.resharePostData.author}/>
               </div>
               <div className="post-reshared-author">
-                {props.resharePostData.author.id}
+                <ClickableId user={props.resharePostData.author}/>
               </div>
             </div>
             <div className="new-post-reshare-delete" onClick={() => props.updateResharePostData(null)}>
