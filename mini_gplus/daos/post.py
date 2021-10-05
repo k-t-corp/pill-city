@@ -16,23 +16,25 @@ ProfilePostsPageSize = 10
 
 
 def create_post(self: User, content: str, is_public: bool, circles: List[Circle], reshareable: bool,
-                reshared_from: Optional[Post], media_list: List[Media], mentioned_users: List[User]) \
+                reshared_from: Optional[Post], media_list: List[Media], mentioned_users: List[User],
+                is_update_avatar: bool) \
         -> Union[Post, bool]:
     """
     Create a post for the user
 
     :param self: The acting user
-    :param content: the content
-    :param is_public: whether the post is public
-    :param circles: circles to share with
-    :param reshareable: whether the post is reshareable
+    :param content: The post content
+    :param is_public: Whether the post is public
+    :param circles: Circles to share with
+    :param reshareable: Whether the post is reshareable
     :param reshared_from: Post object for the resharing post
-    :param media_list: list of media's
-    :param mentioned_users: list of mentioned users
+    :param media_list: List of media's
+    :param mentioned_users: List of mentioned users
+    :param is_update_avatar: Whether the post is for updating avatar
     :return ID of the new post
     """
-    # a post has to have either content or media
     if not content and not media_list:
+        # a post has to have either content or media
         return False
 
     new_post = Post()
@@ -43,6 +45,7 @@ def create_post(self: User, content: str, is_public: bool, circles: List[Circle]
     new_post.is_public = is_public
     new_post.circles = circles
     new_post.media_list = media_list
+    new_post.is_update_avatar = is_update_avatar
 
     if reshared_from and not reshareable:
         # if resharing from a post, this post must also be reshareable, otherwise it's logically wrong

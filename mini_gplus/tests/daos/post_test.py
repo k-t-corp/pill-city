@@ -19,7 +19,7 @@ class PostTest(BaseTestCase):
         user3 = find_user('user3')
 
         # Post reshareable post1 by user1 while mentioning user3
-        create_post(user1, 'post', True, [], True, None, [], [user3])
+        create_post(user1, 'post', True, [], True, None, [], [user3], False)
         post = Post.objects(author=user1)
         self.assertTrue(1, len(post))
         post = post[0]
@@ -71,7 +71,7 @@ class PostTest(BaseTestCase):
         user2 = find_user('user2')
 
         # Post reshareable post1 by user1
-        create_post(user1, 'post', True, [], True, None, [], [])
+        create_post(user1, 'post', True, [], True, None, [], [], False)
         post = Post.objects(author=user1)
         self.assertTrue(1, len(post))
         post = post[0]
