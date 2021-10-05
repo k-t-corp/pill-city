@@ -5,6 +5,7 @@ import timePosted from "../../timePosted";
 import {useInterval} from "react-interval-hook";
 import summary from "../../summary";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
+import ClickableId from "../ClickableId/ClickableId";
 
 export default (props) => {
   const [notifications, updateNotifications] = useState([])
@@ -62,9 +63,9 @@ export default (props) => {
   const notificationElem = (notification, i) => {
     let notifier
     if (notification.notifying_action !== "mention") {
-      notifier = !notification.notifying_deleted ? notification.notifier.id : ''
+      notifier = !notification.notifying_deleted ? notification.notifier : null
     } else {
-      notifier = !notification.notified_deleted ? notification.notifier.id : ''
+      notifier = !notification.notified_deleted ? notification.notifier : null
     }
 
     let action
@@ -98,7 +99,7 @@ export default (props) => {
             <div className="notification-notifier">
               <div className="notification-notifier-wrapper">
                 <b className="notification-notifier-id">
-                  {notifier}{' '}
+                  <ClickableId user={notifier}/>{' '}
                 </b>
                 {action}
                 {' '}

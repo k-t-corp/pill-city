@@ -14,6 +14,7 @@ import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import LinkPreview from "../LinkPreview/LinkPreview";
 import Reactions from "./Reactions";
 import ResharedPost from "./ResharedPost";
+import ClickableId from "../ClickableId/ClickableId";
 
 export default (props) => {
   const [deleted, updateDeleted] = useState(props.data.deleted)
@@ -131,7 +132,7 @@ export default (props) => {
             <RoundAvatar user={!nestedComment.deleted ? nestedComment.author : null}/>
           </div>
           <div className="post-name nested-comment-name">
-            {!nestedComment.deleted ? nestedComment.author.id : ''}:&nbsp;
+            <ClickableId user={!nestedComment.deleted ? nestedComment.author : null} />:&nbsp;
           </div>
           <div className="post-nested-comment-content">
             {
@@ -215,7 +216,7 @@ export default (props) => {
         <div className="post-comment-main-content">
           <div className="post-comment-info">
             <div className="post-name post-comment-name">
-              {!comment.deleted ? comment.author.id : ''}
+              <ClickableId user={!comment.deleted ? comment.author : null} />
             </div>
             <div className="post-time">
               {timePosted(comment.created_at_seconds)}
@@ -402,7 +403,7 @@ export default (props) => {
               <RoundAvatar user={props.data.author}/>
             </div>
             <div className="post-name">
-              {props.data.author.id}
+              <ClickableId user={props.data.author}/>
             </div>
             <div className="post-visibility">
               &#x25B8; {sharingScope}
