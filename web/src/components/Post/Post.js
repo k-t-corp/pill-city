@@ -486,7 +486,7 @@ export default (props) => {
               !props.data.is_update_avatar ?
                 parseContent(props.data.content, `post-content ${props.detail ? '' : 'post-content-summary'}`)
                 :
-                <div className='post-content' style={{fontStyle: 'italic'}}>@{props.data.author.id} has update avatar!</div>
+                <div className='post-content' style={{fontStyle: 'italic'}}>@{props.data.author.id} has a new avatar!</div>
               :
               <div className='post-content' style={{fontStyle: 'italic'}}>This post has been deleted</div>
           }

@@ -1,35 +1,27 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react'
-import './Settings.css'
-import ReactCrop from 'react-image-crop';
-import 'react-image-crop/dist/ReactCrop.css';
+import React, {useEffect, useState} from 'react'
 import {removeAccessToken} from "../../api/AuthStorage";
 import LoadingModal from "../../components/LoadingModal/LoadingModal";
 import About from "../../components/About/About";
 import {useHistory} from "react-router-dom";
-
-const FormData = require('form-data');
+import './Settings.css'
+import UpdateAvatarModal from "../../components/UpdateAvatarModal/UpdateAvatarModal";
 
 export default (props) => {
   const [loading, updateLoading] = useState(true)
   const [me, updateMe] = useState("")
-  const [avatarImageUrl, updateAvatarImageUrl] = useState()
-  const avatarImageRef = useRef(null);
+
+  const [avatarUrl, updateAvatarUrl] = useState()
+  const [uploadedAvatarObjectUrl, updateUploadedAvatarObjectUrl] = useState()
   const [avatarModalOpened, updateAvatarModalOpened] = useState(false)
   const [updatingAvatar, updateUpdatingAvatar] = useState(false)
-  const [crop, setCrop] = useState(
-    {
-      unit: '%',
-      aspect: 1,
-      x: 0,
-      y: 0,
-      width: 100,
-    });
-  const [uploadedAvatarImage, updateUploadedAvatarImage] = useState()
+
   const profilePicOptions = ["pill1.png", "pill2.png", "pill3.png", "pill4.png", "pill5.png", "pill6.png"]
   const [profilePic, updateProfilePic] = useState()
   const [profileModalOpened, updateProfileModalOpened] = useState(false)
   const [profileModalSelectedPic, updateProfileModalSelectedPic] = useState()
+
   const history = useHistory()
+
   const profileModalOptionsElem = () => {
     let optionElem = []
     for (let i = 0; i < profilePicOptions.length; i++) {
@@ -48,7 +40,7 @@ export default (props) => {
   useEffect(async () => {
     const meProfile = await props.api.getMe()
     updateMe(meProfile)
-    updateAvatarImageUrl(meProfile.avatar_url)
+    updateAvatarUrl(meProfile.avatar_url)
     updateProfilePic(meProfile.profile_pic)
     updateProfileModalSelectedPic(meProfile.profile_pic)
     updateLoading(false)
@@ -57,65 +49,25 @@ export default (props) => {
   const changeAvatarOnClick = (event) => {
     if (event.target.files && event.target.files[0]) {
       let img = event.target.files[0];
-      updateUploadedAvatarImage(URL.createObjectURL(img))
+      updateUploadedAvatarObjectUrl(URL.createObjectURL(img))
       updateAvatarModalOpened(true)
     }
   }
-
-  /**
-   * @param {HTMLImageElement} image - Image File Object
-   * @param {Object} crop - crop Object
-   * @param {String} fileName - Name of the returned file in Promise
-   */
-  function getCroppedImg(image, crop, fileName) {
-    const canvas = document.createElement('canvas');
-    const scaleX = image.naturalWidth / image.width;
-    const scaleY = image.naturalHeight / image.height;
-    canvas.width = crop.width;
-    canvas.height = crop.height;
-    const ctx = canvas.getContext('2d');
-
-    ctx.drawImage(
-      image,
-      crop.x * scaleX,
-      crop.y * scaleY,
-      crop.width * scaleX,
-      crop.height * scaleY,
-      0,
-      0,
-      crop.width,
-      crop.height,
-    );
-
-    // As a blob
-    return new Promise((resolve, reject) => {
-      canvas.toBlob(blob => {
-        blob.name = fileName;
-        resolve(blob);
-      }, 'image/*', 1);
-    });
-  }
-
-  const onLoad = useCallback((img) => {
-    avatarImageRef.current = img;
-  }, []);
-
-  const inputAvatarElement = document.getElementById("settings-change-avatar-button")
 
   const handleSignOut = () => {
     removeAccessToken()
     history.push("/signin")
   }
 
+  const dismissAvatarModal = () => {
+    updateAvatarModalOpened(false)
+  }
+
   if (loading) {
-    return (
-      <LoadingModal title="Loading"/>
-    )
+    return <LoadingModal title="Loading..."/>
   }
   else if (updatingAvatar) {
-    return (
-      <LoadingModal title="Updating your avatar..."/>
-      )
+    return <LoadingModal title="Updating your avatar..."/>
   } else {
     return (
       <div className="settings-wrapper">
@@ -137,14 +89,15 @@ export default (props) => {
           </div>
           <div className="settings-avatar-box">
             <div className="settings-avatar-wrapper">
-              <img className="settings-avatar-img" src={avatarImageUrl} alt="user-avatar"/>
+              <img className="settings-avatar-img" src={avatarUrl} alt="user-avatar"/>
             </div>
             <label className="settings-change-avatar-button-wrapper">
-              <input id="settings-change-avatar-button"
-                     accept="image/*"
-                     type="file"
-                     name="new-avatar"
-                     onChange={changeAvatarOnClick}/>
+              <input
+                accept="image/*"
+                type="file"
+                name="new-avatar"
+                onChange={changeAvatarOnClick}
+              />
               <svg className="settings-change-avatar-button-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
                    viewBox="0 0 24 24"
                    stroke="currentColor">
@@ -185,65 +138,29 @@ export default (props) => {
                        }}>
                     Cancel
                   </div>
-                  <div className="settings-modal-update-button"
-                       onClick={async () => {
-                         try {
-                           await props.api.updateProfilePic(profileModalSelectedPic)
-                           updateProfileModalOpened(false)
-                           updateProfilePic(profileModalSelectedPic)
-                         } catch (e) {
-                           console.log(e)
-                         }
-                       }
-                       }>
-                    Update
-                  </div>
+                  <div
+                    onClick={async () => {
+                     try {
+                       await props.api.updateProfilePic(profileModalSelectedPic)
+                       updateProfileModalOpened(false)
+                       updateProfilePic(profileModalSelectedPic)
+                     } catch (e) {
+                       console.log(e)
+                     }}
+                    }>Update</div>
                 </div>
               </div>
             </div>
             : null}
-          {avatarModalOpened ?
-            <div className="settings-avatar-modal">
-              <div className="settings-avatar-modal-content">
-                <ReactCrop src={uploadedAvatarImage}
-                           crop={crop}
-                           minWidth={50}
-                           onImageLoaded={onLoad}
-                           onChange={newCrop => {
-                             setCrop(newCrop)
-                           }}/>
-                <div className="settings-modal-buttons">
-                  <div className="settings-modal-cancel-button"
-                       onClick={() => {
-                         inputAvatarElement.value = ''
-                         updateAvatarModalOpened(false)
-                       }}>
-                    Cancel
-                  </div>
-                  <div className="settings-modal-update-button"
-                       onClick={async () => {
-                         updateUpdatingAvatar(true)
-                         const croppedImg = await getCroppedImg(avatarImageRef.current, crop, "new-avatar");
-                         updateAvatarImageUrl(URL.createObjectURL(croppedImg))
-                         let data = new FormData();
-                         data.append('file', croppedImg, croppedImg.name);
-
-                         try {
-                           await props.api.updateAvatar(data)
-                           inputAvatarElement.value = ''
-                           updateAvatarModalOpened(false)
-                           updateUpdatingAvatar(false)
-                         } catch (e) {
-                           console.log(e)
-                         }
-                       }
-                       }>
-                    Update
-                  </div>
-                </div>
-              </div>
-            </div>
-            : null}
+          {avatarModalOpened &&
+            <UpdateAvatarModal
+              uploadedAvatarObjectUrl={uploadedAvatarObjectUrl}
+              api={props.api}
+              updateUpdatingAvatar={updateUpdatingAvatar}
+              updateAvatarUrl={updateAvatarUrl}
+              dismiss={dismissAvatarModal}
+            />
+          }
         </div>
       </div>
     )
