@@ -162,7 +162,7 @@ export default (props) => {
       <div className="profile-user-info">
         <div className="profile-banner-wrapper" style={{
           backgroundColor: "#9dd0ff",
-          backgroundImage: `url(${getProfilePicUrl(user)})`
+          backgroundImage: user ? `url(${getProfilePicUrl(user)})` : undefined
         }}/>
         <div className="profile-avatar-wrapper">
           {/* Not using RoundAvatar here because it doesn't need to be clicked + it has extra styles*/}
