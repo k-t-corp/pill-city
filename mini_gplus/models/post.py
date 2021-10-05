@@ -48,6 +48,7 @@ class Post(Document, CreatedAtMixin):
     media_list = ListField(LazyReferenceField(Media, reverse_delete_rule=PULL), default=[])  # type: List[Media]
 
     deleted = BooleanField(required=False, default=False)
+    is_update_avatar = BooleanField(required=False, default=False)
 
     def make_href(self):
         return f"/post/{self.eid}"
