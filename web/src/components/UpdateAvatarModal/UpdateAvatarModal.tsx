@@ -59,6 +59,7 @@ export default (props: Props) => {
     y: 0,
     width: 100,
   });
+  const [sendPost, updateSendPost] = useState(true)
 
   const onLoad = useCallback((img) => {
     avatarImageRef.current = img;
@@ -76,14 +77,15 @@ export default (props: Props) => {
            updateCrop(newCrop)
           }}
         />
-        <div className="settings-modal-buttons">
+        <div className="settings-avatar-modal-controls">
           <div
-            className="settings-modal-cancel-button"
+            className="settings-avatar-modal-button settings-avatar-modal-cancel-button"
             onClick={() => {
              props.dismiss()
             }}
           >Cancel</div>
           <div
+            className="settings-avatar-modal-button settings-avatar-modal-confirm-button"
             onClick={async () => {
               if (!avatarImageRef.current) {
                 return
@@ -93,8 +95,7 @@ export default (props: Props) => {
               const croppedImg = await getCroppedImg(avatarImageRef.current, crop);
               const data = new FormData();
               data.append('file', croppedImg, 'new-avatar');
-              // TODO: checkbox
-              data.append('update_post', '1')
+              data.append('update_post', sendPost ? '1' : '0')
               await props.api.updateAvatar(data)
 
               props.updateAvatarUrl(URL.createObjectURL(croppedImg))
@@ -102,6 +103,16 @@ export default (props: Props) => {
               props.updateUpdatingAvatar(false)
             }}
           >Update</div>
+          <input
+            className="settings-avatar-modal-send-post-checkbox"
+            type="checkbox"
+            checked={sendPost}
+            onChange={() => {updateSendPost(!sendPost)}}
+          />
+          <span
+            className="settings-avatar-modal-send-post-checkbox-label"
+            onClick={() => {updateSendPost(!sendPost)}}
+          >Send a post for this avatar change</span>
         </div>
       </div>
     </div>

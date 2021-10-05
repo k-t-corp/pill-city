@@ -29,18 +29,18 @@
 
 /* Modal Buttons */
 /* TODO: this is duplicated*/
-.settings-modal-buttons {
+.settings-avatar-modal-controls {
     display: flex;
     justify-content: center;
+    align-items: center;
+    margin-top: 20px;
 }
 
 /* TODO: this is duplicated*/
-.settings-modal-buttons > * {
-    margin-top: 20px;
+.settings-avatar-modal-button {
     padding: 8px 10px;
     font-weight: bold;
     font-size: medium;
-    background-color: #E05140;
     color: white;
     border-radius: 5px;
     width: auto;
@@ -48,7 +48,21 @@
 }
 
 /* TODO: this is duplicated*/
-.settings-modal-cancel-button {
+.settings-avatar-modal-cancel-button {
     background-color: #727272;
-    margin-right: 20px;
+}
+
+/* TODO: this is duplicated*/
+.settings-avatar-modal-confirm-button {
+    background-color: #E05140;
+    margin-left: 20px;
+}
+
+.settings-avatar-modal-send-post-checkbox {
+    margin-left: 10px;
+}
+
+.settings-avatar-modal-send-post-checkbox-label {
+    margin-left: 5px;
+    cursor: pointer;
 }
