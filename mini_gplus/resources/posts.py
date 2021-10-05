@@ -70,6 +70,7 @@ post_fields = {
     'comments': fields.List(fields.Nested(comment_fields), attribute='comments2'),
     'circles': fields.List(Circle),
     'deleted': fields.Boolean,
+    'is_update_avatar': fields.Boolean
 }
 
 

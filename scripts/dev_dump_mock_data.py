@@ -46,7 +46,9 @@ class User(object):
         fp = os.path.join('scripts', "dev_mock_data_avatars", fn)
         with open(fp, 'rb') as f:
             self.sess.post(f'/api/me/avatar', files={
-                'file': f
+                'file': f,
+            }, data={
+                'update_post': '1'
             })
 
     def create_circle(self, name: str):

@@ -5,6 +5,7 @@ from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from mini_gplus.daos.user import find_user, update_profile_pic, update_avatar, get_users
 from mini_gplus.daos.user_cache import get_in_user_cache_by_oid
+from mini_gplus.daos.post import create_post
 from mini_gplus.utils.now_ms import now_seconds
 from .s3 import upload_to_s3
 
@@ -52,6 +53,8 @@ class Me(Resource):
 
 user_avatar_parser = reqparse.RequestParser()
 user_avatar_parser.add_argument('file', type=werkzeug.datastructures.FileStorage, location='files', required=True)
+# use str 1 as True to avoid form data boolean messiness
+user_avatar_parser.add_argument('update_post', type=str, required=True)
 
 
 class MyAvatar(Resource):
@@ -62,8 +65,10 @@ class MyAvatar(Resource):
         user = find_user(user_id)
         if not user:
             return {'msg': f'User {user_id} is not found'}, 404
+
         args = user_avatar_parser.parse_args()
         file = args['file']
+        update_post = args['update_post']
 
         # the resulting object name looks like avatars/kt-1627815711477.jpeg
         # avatars prefix is made explicitly public readable
@@ -75,6 +80,18 @@ class MyAvatar(Resource):
             return {'msg': f"Disallowed image type"}, 400
 
         update_avatar(user, avatar_media)
+        if update_post == '1':
+            create_post(
+                user,
+                content='',
+                is_public=True,
+                circles=[],
+                reshareable=True,
+                reshared_from=None,
+                media_list=[avatar_media],
+                mentioned_users=[],
+                is_update_avatar=True
+            )
 
 
 class MyProfilePic(Resource):
