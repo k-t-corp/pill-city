@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Tweet } from 'react-twitter-widgets'
+import { Tweet, Timeline } from 'react-twitter-widgets'
 import YouTube from 'react-youtube'
 import {WithContent} from "../../models/Post";
 import './LinkPreview.css'
@@ -16,18 +16,33 @@ const parseUrls = (content: string): string[] => {
   return [...content.matchAll(regExForUrl)].map(a => a[1])
 }
 
-const twitterTidRegex = /\/status\/(\d+)/
+const twitterStatusRegex = /\/status\/(\d+)/
+const twitterProfileRegex = /^\/([a-zA-Z0-9_]{1,15})$/
 
 const renderTwitterLinkPreview = (url: URL) => {
-  const tidMatches = url.pathname.match(twitterTidRegex)
-  if (tidMatches === null) {
-    return null
+  const statusMatches = url.pathname.match(twitterStatusRegex)
+  if (statusMatches === null) {
+    const profileMatches = url.pathname.match(twitterProfileRegex)
+    if (profileMatches === null) {
+      return null
+    }
+    const handle = profileMatches[1]
+    return <Timeline
+      dataSource={{
+        sourceType: 'profile',
+        screenName: handle
+      }}
+      options={{
+        dnt: true,
+        height: 851
+      }}
+    />
   }
-  const tid = tidMatches[1]
+  const tid = statusMatches[1]
   return <Tweet
     tweetId={tid}
     options={{
-      dnt: true
+      dnt: true,
     }}
   />
 }
@@ -40,10 +55,22 @@ const renderYouTubeLinkPreview = (url: URL) => {
   return <YouTube videoId={vid} containerClassName='link-preview-youtube-container'/>
 }
 
+const twitterDomains = [
+  "twitter.com",
+  "www.twitter.com",
+  "mobile.twitter.com"
+]
+
+const youtubeDomains = [
+  "youtube.com",
+  "www.youtube.com",
+  "m.youtube.com"
+]
+
 const renderLinkPreview = (url: URL) => {
-  if (url.hostname === 'twitter.com' || url.hostname === 'www.twitter.com') {
+  if (twitterDomains.indexOf(url.hostname) !== -1) {
     return renderTwitterLinkPreview(url)
-  } else if (url.hostname === 'youtube.com' || url.hostname === 'www.youtube.com') {
+  } else if (youtubeDomains.indexOf(url.hostname) !== -1) {
     return renderYouTubeLinkPreview(url)
   } else {
     // TODO
