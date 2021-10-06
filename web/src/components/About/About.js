@@ -9,7 +9,7 @@ export default (props) => {
   }, [])
 
   const githubLink = (commit) => {
-    return <a href={`https://github.com/KTachibanaM/pill-city/commit/${commit}`} className='about-commit-link'>{commit}</a>
+    return <a href={`https://github.com/pill-city/pill-city/commit/${commit}`} className='about-commit-link'>{commit}</a>
   }
 
   return (
@@ -17,13 +17,13 @@ export default (props) => {
       Web {webGitCommit ? githubLink(webGitCommit) : '?'}{', '}
       API {apiGitCommit ? githubLink(apiGitCommit) : '?'}{', '}
       <a
-        href="https://github.com/KTachibanaM/pill-city/issues"
+        href="https://github.com/pill-city/pill-city/issues"
         target='_blank'
         rel='noopener noreferrer'
         className='about-commit-link'
       >Issues</a>{', '}
       <a
-        href="https://github.com/KTachibanaM/pill-city/issues/new"
+        href="https://github.com/pill-city/pill-city/issues/new"
         target='_blank'
         rel='noopener noreferrer'
         className='about-commit-link'
