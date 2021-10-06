@@ -40,10 +40,22 @@ const renderYouTubeLinkPreview = (url: URL) => {
   return <YouTube videoId={vid} containerClassName='link-preview-youtube-container'/>
 }
 
+const twitterDomains = [
+  "twitter.com",
+  "www.twitter.com",
+  "mobile.twitter.com"
+]
+
+const youtubeDomains = [
+  "youtube.com",
+  "www.youtube.com",
+  "m.youtube.com"
+]
+
 const renderLinkPreview = (url: URL) => {
-  if (url.hostname === 'twitter.com' || url.hostname === 'www.twitter.com') {
+  if (twitterDomains.indexOf(url.hostname) !== -1) {
     return renderTwitterLinkPreview(url)
-  } else if (url.hostname === 'youtube.com' || url.hostname === 'www.youtube.com') {
+  } else if (youtubeDomains.indexOf(url.hostname) !== -1) {
     return renderYouTubeLinkPreview(url)
   } else {
     // TODO
