@@ -9,14 +9,21 @@ from mini_gplus.models import LinkPreview, LinkPreviewState
 celery = Celery('tasks', broker=os.environ['REDIS_URL'])
 logger = get_task_logger(__name__)
 
+# todo: pretty hacky but hey
+inited_mongo = [False]
+
+
+def init_mongo():
+    if not inited_mongo[0]:
+        mongodb_uri = os.environ['MONGODB_URI']
+        mongodb_db = parse_uri(mongodb_uri)['database']
+        mongoengine.connect(mongodb_db, host=mongodb_uri)
+        inited_mongo[0] = True
+
 
 @celery.task
 def generate_link_preview(url: str):
-    # todo: pretty hacky but hey
-    mongodb_uri = os.environ['MONGODB_URI']
-    mongodb_db = parse_uri(mongodb_uri)['database']
-    mongoengine.connect(mongodb_db, host=mongodb_uri)
-
+    init_mongo()
     logger.info(f'Generating link preview for url {url}')
     link_preview = LinkPreview.objects.get(url=url)
     try:

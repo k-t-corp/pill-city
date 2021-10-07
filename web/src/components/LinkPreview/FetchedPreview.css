@@ -7,6 +7,10 @@
     cursor: pointer;
 }
 
+.fetched-preview:hover {
+    background-color: #f0f0f0;
+}
+
 .fetched-preview-with-image {
     border-top: 0;
     border-radius: 0 0 4px 4px;
