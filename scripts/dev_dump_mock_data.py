@@ -264,8 +264,11 @@ def main():
     kotori_id = kt.create_post('啊啊啊啊啊啊阿啊啊啊啊啊啊啊啊 @ika', is_public=True, mentioned_user_ids=['ika'], media_filenames=['kotori1.jpg', 'kotori2.jpg', 'kotori3.jpg', 'kotori4.jpg'])
     ika.create_post('23333 https://china.kyodonews.net/news/2021/10/625d1318d9e5-6.html', is_public=True)
     ahuhu.create_post('https://twitter.com/U_S_O/status/1358737558155399169', is_public=True)
-    kt.create_post('https://www.youtube.com/watch?v=y8OnoxKotPQ', is_public=True)
+    ahuhu.create_post('https://mobile.twitter.com/U_S_O/status/1358737558155399169', is_public=True)
+    kt.create_post('https://twitter.com/daily_keke', is_public=True)
     kt.create_post('https://mobile.twitter.com/daily_keke', is_public=True)
+    kt.create_post('https://www.youtube.com/watch?v=y8OnoxKotPQ', is_public=True)
+    kt.create_post('https://m.youtube.com/watch?v=y8OnoxKotPQ', is_public=True)
 
     # Create some reactions
     for i, user in enumerate(everybody_obj):
