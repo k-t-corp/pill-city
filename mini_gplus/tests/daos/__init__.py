@@ -13,3 +13,8 @@ r = fakeredis.FakeRedis()
 import mini_gplus.daos.cache
 patch_redis = unittest.mock.patch.object(mini_gplus.daos.cache, 'r', r)
 patch_redis.start()
+
+c = None
+import mini_gplus.tasks.tasks
+patch_celery = unittest.mock.patch.object(mini_gplus.tasks.tasks, 'celery', c)
+patch_celery.start()

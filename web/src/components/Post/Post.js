@@ -47,7 +47,6 @@ export default (props) => {
   const [afterCommentLoading, updateAfterCommentLoading] = useState(false)
 
   const [mediaUrls, updateMediaUrls] = useState(props.data.media_urls)
-  const [mediaUrlOpened, updateMediaUrlOpened] = useState('')
 
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
   const history = useHistory()
@@ -373,10 +372,6 @@ export default (props) => {
     }
   }
 
-  useHotkeys('esc', () => {
-    updateMediaUrlOpened('')
-  })
-
   const onCommentMediaOnClick = (e) => {
     if (afterCommentLoading) {
       return
@@ -460,6 +455,7 @@ export default (props) => {
           <ResharedPost
             resharedFrom={props.data.reshared_from}
             showDetail={props.detail}
+            api={props.api}
           />
         }
         {!deleted &&
@@ -468,12 +464,11 @@ export default (props) => {
             threeRowHeight="130px"
             twoRowHeight="150px"
             oneRowHeight={isTabletOrMobile ? "200px" : "280px"}
-            onMediaClicked={updateMediaUrlOpened}
           />
         }
         {
           !deleted &&
-            <LinkPreview post={props.data}/>
+            <LinkPreview post={props.data} api={props.api}/>
         }
         {
           !deleting && !deleted &&
@@ -567,17 +562,6 @@ export default (props) => {
       {comments.length === 0 ? null :
         <div className="post-comments-wrapper">
           {commentElements}
-        </div>
-      }
-      {
-        mediaUrlOpened &&
-        <div
-          className='post-media'
-          onClick={
-            () => updateMediaUrlOpened('')
-          }
-        >
-          <img className="post-media-img" src={mediaUrlOpened} alt=""/>
         </div>
       }
     </div>

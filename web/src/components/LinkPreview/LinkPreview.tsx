@@ -2,9 +2,11 @@ import * as React from "react";
 import {WithContent} from "../../models/Post";
 import InstantPreview, {getInstantPreview} from "./InstantPreview";
 import './LinkPreview.css'
+import FetchedPreview from "./FetchedPreview";
 
 interface Props {
   post: WithContent
+  api: any
 }
 
 // https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -36,7 +38,7 @@ export default (props: Props) => {
     if (instantPreview) {
       preview = <InstantPreview instantPreview={instantPreview}/>
     } else {
-      // TODO
+      preview = <FetchedPreview url={url} api={props.api}/>
     }
     linkPreviewElems.push(
       <div key={i}>{preview}</div>

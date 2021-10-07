@@ -336,25 +336,3 @@
         margin-bottom: 2px;
     }
 }
-
-.post-media {
-    position: fixed; /* Stay in place */
-    z-index: 20; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0, 0, 0); /* Fallback color */
-    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 200px 0;
-}
-
-.post-media-img {
-    object-fit: contain;
-    width: 100%;
-    height: 600px;
-}

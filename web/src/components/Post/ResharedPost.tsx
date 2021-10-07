@@ -10,7 +10,8 @@ import LinkPreview from "../LinkPreview/LinkPreview";
 
 interface Props {
   resharedFrom: ResharedPost,
-  showDetail: boolean
+  showDetail: boolean,
+  api: any
 }
 
 export default (props: Props) => {
@@ -50,7 +51,7 @@ export default (props: Props) => {
         }
         {
           !resharedFrom.deleted &&
-            <LinkPreview post={resharedFrom}/>
+            <LinkPreview post={resharedFrom} api={props.api}/>
         }
       </div>
     </div>
