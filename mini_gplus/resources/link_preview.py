@@ -16,8 +16,7 @@ link_preview_fields = {
     'url': fields.String,
     'title': fields.String,
     'subtitle': fields.String,
-    'image_url': fields.String,
-    'youtube_vid': fields.String,
+    'image_urls': fields.List(fields.String),
     'state': LinkPreviewState
 }
 
