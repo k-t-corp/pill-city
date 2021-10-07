@@ -49,7 +49,8 @@ def get_link_preview(url: str) -> Optional[LinkPreview]:
                 url=url,
                 state=LinkPreviewState.Fetching
             )
-            generate_link_preview(url)
+            new_link_preview.save()
+            generate_link_preview.delay(url)
             return new_link_preview
         return link_preview[0]
     except ValueError:

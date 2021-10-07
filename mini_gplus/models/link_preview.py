@@ -12,5 +12,5 @@ class LinkPreview(Document):
     url = URLField(required=True, unique=True)
     title = StringField(required=False, default='')
     subtitle = StringField(required=False, default='')
-    image_urls = ListField(URLField, required=False, default=[])
+    image_urls = ListField(URLField(), required=False, default=list)
     state = EnumField(LinkPreviewState, required=True)

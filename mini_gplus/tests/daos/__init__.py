@@ -16,5 +16,5 @@ patch_redis.start()
 
 c = None
 import mini_gplus.tasks.tasks
-patch_celery = unittest.mock.patch.object(mini_gplus.tasks.tasks, 'app', c)
+patch_celery = unittest.mock.patch.object(mini_gplus.tasks.tasks, 'celery', c)
 patch_celery.start()
