@@ -21,7 +21,7 @@ def init_mongo():
         inited_mongo[0] = True
 
 
-@celery.task
+@celery.task(rate_limit='12/m')
 def generate_link_preview(url: str):
     init_mongo()
     logger.info(f'Generating link preview for url {url}')
