@@ -15,6 +15,7 @@ The API server stores information in a MongoDB database, and it uses S3 addition
 * Python 3.7+
 * Node.js v14 and Yarn
 * Docker and docker-compose
+* Heroku CLI (used for running Procfile locally)
 
 ### Start API and web development
 ``` shell

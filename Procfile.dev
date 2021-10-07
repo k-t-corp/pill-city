@@ -1,0 +1,2 @@
+web: FLASK_ENVIRONMENT=development ./venv/bin/python app.py
+worker: ./venv/bin/celery -A mini_gplus.tasks worker --loglevel=INFO

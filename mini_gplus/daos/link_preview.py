@@ -3,6 +3,7 @@ import urllib.parse
 from urllib.parse import ParseResult
 from typing import Optional
 from mini_gplus.models import LinkPreview, LinkPreviewState
+from mini_gplus.tasks import generate_link_preview
 
 twitter_domains = [
     "twitter.com",
@@ -42,14 +43,14 @@ def get_link_preview(url: str) -> Optional[LinkPreview]:
         parsed_url = urllib.parse.urlparse(url)
         if _is_instant_preview(parsed_url):
             return None
-        link_preview = LinkPreview.objects.get(url=url)
+        link_preview = LinkPreview.objects(url=url)
         if not link_preview:
             new_link_preview = LinkPreview(
                 url=url,
                 state=LinkPreviewState.Fetching
             )
-            # TODO: kick background worker to fetch
+            generate_link_preview(url)
             return new_link_preview
-        return link_preview
+        return link_preview[0]
     except ValueError:
         return None
