@@ -3,7 +3,7 @@ import urllib.parse
 from urllib.parse import ParseResult
 from typing import Optional
 from mini_gplus.models import LinkPreview, LinkPreviewState
-from mini_gplus.tasks import generate_link_preview
+from mini_gplus.tasks.tasks import generate_link_preview
 
 twitter_domains = [
     "twitter.com",
