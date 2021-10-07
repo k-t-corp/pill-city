@@ -14,7 +14,7 @@ youtube_domains = [
     "www.youtube.com",
     "m.youtube.com"
 ]
-twitter_status_regex = re.compile('/status/(\d+)')
+twitter_status_regex = re.compile('^/([a-zA-Z0-9_]{1,15})/status/(\d+)$')
 twitter_profile_regex = re.compile('^/([a-zA-Z0-9_]{1,15})$')
 
 
