@@ -1,11 +1,14 @@
 /* Media Preview */
-
 .media-preview-container {
     margin-top: 10px;
     margin-bottom: 10px;
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
+}
+
+.media-preview-container-for-link-preview {
+    margin-bottom: 0;
 }
 
 .media-preview {
@@ -15,6 +18,11 @@
     cursor: pointer;
 }
 
+.media-preview-for-link-preview {
+    margin: 0;
+    border-radius: 4px 4px 0 0;
+}
+
 .media-preview-img {
     object-fit: cover;
     width: 100%;
@@ -22,9 +30,17 @@
     border-radius: 4px;
 }
 
+.media-preview-img-for-link-preview {
+    border-radius: 4px 4px 0 0;
+}
+
 @media only screen and (max-width: 750px) {
     .media-preview-container {
         margin-bottom: 5px;
+    }
+
+    .media-preview-container-for-link-preview {
+        margin-bottom: 0;
     }
 }
 

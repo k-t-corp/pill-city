@@ -7,9 +7,12 @@ interface Props {
   oneRowHeight: string
   twoRowHeight: string
   threeRowHeight: string
+  forLinkPreview?: boolean
 }
 
 export default (props: Props) => {
+  // todo: pretty hack that only works for link previews with one image...
+  const forLinkPreview = props.forLinkPreview !== undefined ? props.forLinkPreview : false
   const mediaCount = props.mediaUrls.length
   if (mediaCount === 0) {
     return null
@@ -50,7 +53,7 @@ export default (props: Props) => {
     const mediaUrl = props.mediaUrls[i]
     mediaPreviewElems.push(
       <div
-        className="media-preview"
+        className={!forLinkPreview ? "media-preview" : "media-preview media-preview-for-link-preview"}
         key={i}
         style={{
           width: widthPerPreview,
@@ -61,13 +64,18 @@ export default (props: Props) => {
           openMedia(i)
         }}
       >
-        <img className="media-preview-img" src={mediaUrl} alt=""/>
+        <img
+          className={!forLinkPreview ? "media-preview-img" : "media-preview-img media-preview-img-for-link-preview"}
+          src={mediaUrl} alt=""
+        />
       </div>
     )
   }
 
   return (
-    <div className="media-preview-container">
+    <div
+      className={!forLinkPreview ? "media-preview-container" : "media-preview-container media-preview-container-for-link-preview"}
+    >
       {mediaPreviewElems}
       {
         mediaOpenedIndex !== -1 &&

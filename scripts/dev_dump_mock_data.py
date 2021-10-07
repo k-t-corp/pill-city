@@ -270,6 +270,7 @@ def main():
     kt.create_post('https://mobile.twitter.com/daily_keke', is_public=True)
     kt.create_post('https://www.youtube.com/watch?v=y8OnoxKotPQ', is_public=True)
     kt.create_post('https://m.youtube.com/watch?v=y8OnoxKotPQ', is_public=True)
+    ahuhu.create_post('https://www.pixiv.net/en/artworks/91872507', is_public=True)
 
     # Create some reactions
     for i, user in enumerate(everybody_obj):
