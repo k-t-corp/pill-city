@@ -524,4 +524,15 @@ export default class Api {
     }
     return res.data.git_commit
   }
+
+  async getLinkPreview(url) {
+    const res = await this.axiosInstance.post(
+      `/linkPreview`,
+      { url }
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res.status)
+    }
+    return res.data
+  }
 }

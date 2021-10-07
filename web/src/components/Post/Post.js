@@ -460,6 +460,7 @@ export default (props) => {
           <ResharedPost
             resharedFrom={props.data.reshared_from}
             showDetail={props.detail}
+            api={props.api}
           />
         }
         {!deleted &&
@@ -473,7 +474,7 @@ export default (props) => {
         }
         {
           !deleted &&
-            <LinkPreview post={props.data}/>
+            <LinkPreview post={props.data} api={props.api}/>
         }
         {
           !deleting && !deleted &&
