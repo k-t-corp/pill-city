@@ -12,6 +12,7 @@ logger = get_task_logger(__name__)
 
 @celery.task
 def generate_link_preview(url: str):
+    # todo: pretty hacky but hey
     mongodb_uri = os.environ['MONGODB_URI']
     mongodb_db = parse_uri(mongodb_uri)['database']
     mongoengine.connect(mongodb_db, host=mongodb_uri)
