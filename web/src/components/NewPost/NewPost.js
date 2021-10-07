@@ -161,10 +161,12 @@ export default (props) => {
         </div>
       }
       {props.resharePostData === null ?
-        <MediaPreview mediaUrls={newPostMedias.map(m => URL.createObjectURL(m))}
-                      threeRowHeight={isTabletOrMobile ? "30px" : "80px"}
-                      twoRowHeight={isTabletOrMobile ? "50px" : "100px"}
-                      oneRowHeight={isTabletOrMobile ? "80px" : "140px"}/>
+        <MediaPreview
+          mediaUrls={newPostMedias.map(m => URL.createObjectURL(m))}
+          threeRowHeight={isTabletOrMobile ? "30px" : "80px"}
+          twoRowHeight={isTabletOrMobile ? "50px" : "100px"}
+          oneRowHeight={isTabletOrMobile ? "80px" : "140px"}
+        />
         : null}
       <div className="new-post-text-box-container">
         {props.resharePostData === null ?
