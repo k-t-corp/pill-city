@@ -57,13 +57,6 @@ export default class SignIn extends Component {
     const loginForm = () => {
       return (
         <div className='login-form'>
-          <style>{`
-          body > div,
-          body > div > div,
-          body > div > div > div.login-form {
-            height: 100%;
-          }
-        `}</style>
           <Grid textAlign='center' style={{height: '100%'}} verticalAlign='middle'>
             <Grid.Column style={{maxWidth: 450}}>
               <div className="sign-in-title">
