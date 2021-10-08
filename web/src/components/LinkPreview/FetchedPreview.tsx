@@ -47,15 +47,18 @@ export default (props: Props) => {
               forLinkPreview={true}
             />
         }
-        <div
-          onClick={() => {
-            window.open(props.url, '_blank')
-          }}
-          className={preview.image_urls.length === 0 ? "fetched-preview" : "fetched-preview fetched-preview-with-image"}
-        >
-          <div className='fetched-preview-title'>{preview.title}</div>
-          <div className='fetched-preview-subtitle'>{preview.subtitle}</div>
-        </div>
+        {
+          (preview.title || preview.subtitle) &&
+            <div
+              onClick={() => {
+                window.open(props.url, '_blank')
+              }}
+              className={preview.image_urls.length === 0 ? "fetched-preview" : "fetched-preview fetched-preview-with-image"}
+            >
+              <div className='fetched-preview-title'>{preview.title}</div>
+              <div className='fetched-preview-subtitle'>{preview.subtitle}</div>
+            </div>
+        }
       </>
     )
   }
