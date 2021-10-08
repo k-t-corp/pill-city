@@ -1,12 +1,22 @@
 import React, { useState, useContext, useCallback } from "react";
 import ToastContainer from "./ToastContainer";
+import {Toast} from './ToastContainer'
 
-const ToastContext = React.createContext(null);
+interface Context {
+  addToast: (content: string) => void
+  removeToast: (id: number) => void
+}
+
+const ToastContext = React.createContext<Context | null>(null);
 
 let id = 1;
 
-const ToastProvider = ({ children }) => {
-  const [toasts, setToasts] = useState([]);
+interface Props {
+  children: JSX.Element
+}
+
+const ToastProvider = ({ children }: Props) => {
+  const [toasts, setToasts] = useState<Toast[]>([]);
 
   const addToast = useCallback(
     content => {
@@ -41,8 +51,9 @@ const ToastProvider = ({ children }) => {
   );
 };
 
-const useToast = () => {
-  return useContext(ToastContext);
+// todo: hacky
+const useToast = (): Context => {
+  return useContext(ToastContext) as Context;
 };
 
 export { ToastContext, useToast };

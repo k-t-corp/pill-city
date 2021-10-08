@@ -3,7 +3,16 @@ import {createPortal} from "react-dom";
 import Toast from './Toast'
 import './ToastContainer.css'
 
-export default ({ toasts }) => {
+export interface Toast {
+  id: number
+  content: string
+}
+
+interface Props {
+  toasts: Toast[]
+}
+
+export default ({ toasts }: Props) => {
   return createPortal(
     <div className='toast-container'>
       {toasts.map(item => {

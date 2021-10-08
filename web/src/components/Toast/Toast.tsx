@@ -2,7 +2,12 @@ import React, {useEffect} from 'react'
 import {useToast} from "./ToastProvider";
 import './Toast.css'
 
-export default ({ children, id }) => {
+interface Props {
+  children: string
+  id: number
+}
+
+export default ({ children, id }: Props) => {
   const { removeToast } = useToast();
 
   useEffect(() => {
