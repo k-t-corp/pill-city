@@ -16,7 +16,7 @@ from mini_gplus.daos.invitation_code import check_invitation_code, claim_invitat
 from mini_gplus.resources.users import Users, User, MyAvatar, MyProfilePic, Me
 from mini_gplus.resources.posts import Profile, Home, Posts, Post, PostMedia
 from mini_gplus.resources.comments import NestedComments, Comments, NestedComment, Comment
-from mini_gplus.resources.media import Media
+from mini_gplus.resources.media import Media, MaxMediaCount
 from mini_gplus.resources.reactions import Reactions, Reaction
 from mini_gplus.resources.circles import Circles, CircleName, CircleMember, Circle
 from mini_gplus.resources.followings import Following
@@ -70,7 +70,8 @@ app.config['MONGODB_SETTINGS'] = {
 db = MongoEngine(app)
 app.session_interface = MongoEngineSessionInterface(db)
 
-app.config['MAX_CONTENT_LENGTH'] = 40 * 1024 * 1024  # 40MB max upload size
+max_mb_per_media = 40
+app.config['MAX_CONTENT_LENGTH'] = (max_mb_per_media * 1024 * 1024) * MaxMediaCount
 
 # jwt
 app.config['JWT_SECRET_KEY'] = os.environ['JWT_SECRET_KEY']
