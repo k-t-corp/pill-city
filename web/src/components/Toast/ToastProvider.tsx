@@ -3,7 +3,7 @@ import ToastContainer from "./ToastContainer";
 import {Toast} from './ToastContainer'
 
 interface Context {
-  addToast: (content: string) => void
+  addToast: (content: string, dismissible?: boolean) => number
   removeToast: (id: number) => void
 }
 
@@ -16,27 +16,24 @@ interface Props {
 }
 
 const ToastProvider = ({ children }: Props) => {
-  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [toasts, updateToasts] = useState<Toast[]>([]);
 
-  const addToast = useCallback(
-    content => {
-      setToasts(toasts => [
-        ...toasts,
-        {
-          id: id++,
-          content
-        }
-      ]);
-    },
-    [setToasts]
-  );
+  const addToast = useCallback((content, dismissible) => {
+    const newId = id++
+    updateToasts(toasts => [
+      ...toasts,
+      {
+        id: newId,
+        content,
+        dismissible: dismissible !== undefined ? dismissible : true
+      }
+    ])
+    return newId
+  }, [updateToasts]);
 
-  const removeToast = useCallback(
-    id => {
-      setToasts(toasts => toasts.filter(t => t.id !== id));
-    },
-    [setToasts]
-  );
+  const removeToast = useCallback(id => {
+    updateToasts(toasts => toasts.filter(t => t.id !== id));
+  }, [updateToasts]);
 
   return (
     <ToastContext.Provider

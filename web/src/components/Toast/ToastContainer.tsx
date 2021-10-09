@@ -6,6 +6,7 @@ import './ToastContainer.css'
 export interface Toast {
   id: number
   content: string
+  dismissible: boolean
 }
 
 interface Props {
@@ -16,7 +17,7 @@ export default ({ toasts }: Props) => {
   return createPortal(
     <div className='toast-container'>
       {toasts.map(item => {
-        return <Toast key={item.id} id={item.id}>{item.content}</Toast>
+        return <Toast key={item.id} id={item.id} dismissible={item.dismissible}>{item.content}</Toast>
       })}
     </div>,
     document.body

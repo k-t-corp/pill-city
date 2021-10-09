@@ -6,7 +6,6 @@ import NotificationDropdown from "../../components/NotificationDropdown/Notifica
 import {useMediaQuery} from "react-responsive";
 import MobileNewPost from "../../components/MobileNewPost/MobileNewPost";
 import About from "../../components/About/About";
-import {useToast} from "../../components/Toast/ToastProvider";
 
 export default (props) => {
   const [loading, updateLoading] = useState(true)
@@ -15,7 +14,6 @@ export default (props) => {
   const [resharePostData, updateResharePostData] = useState(null)
   const [mobileNewPostOpened, updateMobileNewPostOpened] = useState(false)
   const [loadingMorePosts, updateLoadingMorePosts] = useState(false)
-  const {addToast} = useToast()
 
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
 
@@ -99,11 +97,9 @@ export default (props) => {
           updateNewPostOpened={updateMobileNewPostOpened}
           beforePosting={() => {
             updateMobileNewPostOpened(false)
-            addToast('Sending new post')
           }}
           afterPosting={(post) => {
             updatePosts([post, ...posts])
-            addToast('New post sent')
           }}
         />
       }
@@ -113,12 +109,9 @@ export default (props) => {
             api={props.api}
             resharePostData={resharePostData}
             updateResharePostData={updateResharePostData}
-            beforePosting={() => {
-              addToast('Sending new post')
-            }}
+            beforePosting={() => {}}
             afterPosting={(post) => {
               updatePosts([post, ...posts])
-              addToast('New post sent')
             }}
           />
           <NotificationDropdown api={props.api}/>

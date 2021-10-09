@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react'
 import {useLocation} from "react-router-dom";
 import PostComponent from "../../components/Post/Post";
 import NewPost from "../../components/NewPost/NewPost";
-import {useToast} from "../../components/Toast/ToastProvider";
 import './Post.css'
 
 export default (props) => {
@@ -11,7 +10,6 @@ export default (props) => {
   const [me, updateMe] = useState(null)
   const [resharePost, updateResharePost] = useState(null)
   const [newPostOpened, updateNewPostOpened] = useState(false)
-  const {addToast} = useToast()
 
   useEffect(async () => {
     updateMe(await props.api.getMe())
@@ -54,12 +52,9 @@ export default (props) => {
                 resharePostData={resharePost}
                 updateResharePostData={updateResharePostData}
                 beforePosting={() => {
-                  addToast('Sending new post')
                   updateMobileNewPostOpened(false)
                 }}
-                afterPosting={() => {
-                  addToast('New post sent')
-                }}
+                afterPosting={() => {}}
               />
             </div>
           </div>

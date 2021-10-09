@@ -12,6 +12,7 @@ import User from "../../models/User";
 import Circle from "../../models/Circle";
 import Post from "../../models/Post";
 import "./NewPost.css"
+import {useToast} from "../Toast/ToastProvider";
 
 interface Props {
   api: any
@@ -33,7 +34,9 @@ export default (props: Props) => {
   const [newPostMedias, updateNewPostMedias] = useState<string[]>([])
 
   const [posting, updatePosting] = useState(false)
+
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
+  const { addToast, removeToast } = useToast()
 
   useEffect( () => {
     (async () => {
@@ -79,6 +82,7 @@ export default (props: Props) => {
       const blob = new Blob([newPostMedias[i]], {type: 'image/*'})
       mediaData.append(`media${i}`, blob)
     }
+    const toastId = addToast('Sending new post', false)
     props.beforePosting()
     const post = await props.api.postPost(
       newPostContent,
@@ -90,7 +94,9 @@ export default (props: Props) => {
       parseMentioned(newPostContent)
     );
     reset()
+    removeToast(toastId)
     props.afterPosting(post)
+    addToast('New post sent')
     updatePosting(false)
   }
 

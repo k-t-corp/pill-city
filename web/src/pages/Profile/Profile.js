@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react'
 import {useHistory} from "react-router-dom";
 import PostComponent from "../../components/Post/Post";
 import NewPost from "../../components/NewPost/NewPost";
-import {useToast} from "../../components/Toast/ToastProvider";
 import getProfilePicUrl from "../../api/getProfilePicUrl";
 import getAvatarUrl from "../../api/getAvatarUrl";
 import ApiError from "../../api/ApiError";
@@ -23,7 +22,6 @@ export default (props) => {
   const [isFollowing, updateIsFollowing] = useState(false)
   const [followLoading, updateFollowLoading] = useState(true)
 
-  const {addToast} = useToast()
   const history = useHistory()
 
   window.onclick = function(event) {
@@ -189,13 +187,11 @@ export default (props) => {
             updateResharePostData={updateResharePostData}
             beforePosting={() => {
               updateNewPostOpened(false)
-              addToast('Sending new post')
             }}
             afterPosting={(post) => {
               if (!props.userId) {
                 updatePosts([post, ...posts])
               }
-              addToast('New post sent')
             }}
           />
         </div>
