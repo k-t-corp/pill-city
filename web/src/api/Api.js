@@ -9,6 +9,9 @@ export default class Api {
       headers: {
         ...Api.authorizedHeaders(),
         'Content-Type': 'application/json',
+      },
+      validateStatus: status => {
+        return status < 500; // Resolve only if the status code is less than 500
       }
     })
   }
@@ -35,7 +38,7 @@ export default class Api {
       }
     )
     if (res.status !== 201) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return null
   }
@@ -45,7 +48,7 @@ export default class Api {
       `/isOpenRegistration`
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data.is_open_registration
   }
@@ -59,7 +62,7 @@ export default class Api {
       }
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     setAccessToken(res.data['access_token'])
     this.axiosInstance.defaults.headers = {
@@ -78,7 +81,7 @@ export default class Api {
       }
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -97,7 +100,7 @@ export default class Api {
       res = e.response
     }
     if (res.status !== 200) {
-      throw new ApiError(res.status, res.data)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -113,7 +116,7 @@ export default class Api {
       }
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -127,16 +130,16 @@ export default class Api {
       }
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
 
   async postPost(content, isPublic, circleIds, reshareable, resharedFrom, mediaData, mentionedUserIds) {
     Api.throwOnUnauthorized()
-    let mediaObjName = []
+    let mediaObjNames = []
     if (mediaData.length !== 0) {
-      mediaObjName = await this.media(mediaData)
+      mediaObjNames = await this.media(mediaData)
     }
     const res = await this.axiosInstance.post(
       `/posts`,
@@ -146,12 +149,12 @@ export default class Api {
         circle_ids: circleIds,
         reshareable: reshareable,
         reshared_from: resharedFrom,
-        media_object_names: mediaObjName,
+        media_object_names: mediaObjNames,
         mentioned_user_ids: mentionedUserIds
       }
     )
     if (res.status !== 201) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -170,7 +173,7 @@ export default class Api {
       }
     )
     if (res.status !== 201) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -181,7 +184,7 @@ export default class Api {
       `/post/${postId}`
     )
     if (res.status !== 201) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -192,7 +195,7 @@ export default class Api {
       `/post/${postId}/media`
     )
     if (res.status !== 201) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -208,7 +211,7 @@ export default class Api {
       }
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -219,7 +222,7 @@ export default class Api {
       `/post/${postId}`
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -239,7 +242,7 @@ export default class Api {
       }
     )
     if (res.status !== 201) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -250,7 +253,7 @@ export default class Api {
       `/posts/${postId}/comment/${commentId}`
     )
     if (res.status !== 201) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -270,7 +273,7 @@ export default class Api {
       }
     )
     if (res.status !== 201) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -281,7 +284,7 @@ export default class Api {
       `/posts/${postId}/comment/${commentId}/comment/${nestedCommentId}`
     )
     if (res.status !== 201) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -292,7 +295,7 @@ export default class Api {
       `/circles`
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -303,7 +306,7 @@ export default class Api {
       `/circle/${circleId}`
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -317,7 +320,7 @@ export default class Api {
       }
     )
     if (res.status !== 204) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -331,7 +334,7 @@ export default class Api {
       }
     )
     if (res.status !== 201) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return null
   }
@@ -342,7 +345,7 @@ export default class Api {
       `/circle/${circleId}`
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return null
   }
@@ -353,7 +356,7 @@ export default class Api {
       `/circle/${circleId}/membership/${memberUserId}`
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -364,7 +367,7 @@ export default class Api {
       `/circle/${circleId}/membership/${memberUserId}`
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -375,7 +378,7 @@ export default class Api {
       `/following/${followingUserId}`
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -386,7 +389,7 @@ export default class Api {
       `/following/${followingUserId}`
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -400,7 +403,7 @@ export default class Api {
       }
     )
     if (res.status !== 201) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -411,7 +414,7 @@ export default class Api {
       `/posts/${postId}/reaction/${reactionId}`,
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return null
   }
@@ -430,7 +433,7 @@ export default class Api {
       }
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
   }
 
@@ -440,7 +443,7 @@ export default class Api {
       `/me/profilePic/${newProfilePic}`
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
   }
 
@@ -455,7 +458,7 @@ export default class Api {
       }
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -466,7 +469,7 @@ export default class Api {
       `/notification/${notificationId}/read`
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -477,7 +480,7 @@ export default class Api {
       `/notifications/read`
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -488,7 +491,7 @@ export default class Api {
       `/invitationCode`
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -499,7 +502,7 @@ export default class Api {
       `/invitationCodes`
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -510,7 +513,7 @@ export default class Api {
       `/clearMediaUrlCache`
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }
@@ -520,7 +523,7 @@ export default class Api {
       `/gitCommit`
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data.git_commit
   }
@@ -531,7 +534,7 @@ export default class Api {
       { url }
     )
     if (res.status !== 200) {
-      throw new ApiError(res.status)
+      throw new ApiError(res)
     }
     return res.data
   }

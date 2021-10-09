@@ -15,6 +15,8 @@ import LinkPreview from "../LinkPreview/LinkPreview";
 import Reactions from "./Reactions";
 import ResharedPost from "./ResharedPost";
 import ClickableId from "../ClickableId/ClickableId";
+import ApiError from "../../api/ApiError";
+import {useToast} from "../Toast/ToastProvider";
 
 export default (props) => {
   const [deleted, updateDeleted] = useState(props.data.deleted)
@@ -49,6 +51,7 @@ export default (props) => {
   const [mediaUrls, updateMediaUrls] = useState(props.data.media_urls)
 
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
+  const { addToast } = useToast()
   const history = useHistory()
 
   const highlightCommentId = props.highlightCommentId
@@ -312,30 +315,46 @@ export default (props) => {
 
     if (replyNestedCommentId !== "") {
       // reply nested comment
-      const newNestedComment = await props.api.postNestedComment(
-        commentContent,
-        props.data.id,
-        replyNestedCommentId,
-        parseMentioned(commentContent),
-        mediaData
-      )
-      updateComments(comments.map(c => {
-        if (c.id !== replyNestedCommentId) {
-          return c
+      try {
+        const newNestedComment = await props.api.postNestedComment(
+          commentContent,
+          props.data.id,
+          replyNestedCommentId,
+          parseMentioned(commentContent),
+          mediaData
+        )
+        updateComments(comments.map(c => {
+          if (c.id !== replyNestedCommentId) {
+            return c
+          }
+          return {
+            ...c,
+            comments: [...c.comments, newNestedComment]
+          }
+        }))
+      } catch (e) {
+        if (e instanceof ApiError) {
+          addToast(e.message)
+        } else {
+          addToast('Unknown error')
         }
-        return {
-          ...c,
-          comments: [...c.comments, newNestedComment]
-        }
-      }))
+      }
     } else {
-      const newComment = await props.api.postComment(
-        commentContent,
-        props.data.id,
-        parseMentioned(commentContent),
-        mediaData
-      )
-      updateComments([...comments, newComment])
+      try {
+        const newComment = await props.api.postComment(
+          commentContent,
+          props.data.id,
+          parseMentioned(commentContent),
+          mediaData
+        )
+        updateComments([...comments, newComment])
+      } catch (e) {
+        if (e instanceof ApiError) {
+          addToast(e.message)
+        } else {
+          addToast('Unknown error')
+        }
+      }
     }
     updateAfterCommentLoading(false)
     updateAddingComment(false)

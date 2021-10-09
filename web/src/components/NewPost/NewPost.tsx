@@ -13,6 +13,7 @@ import Circle from "../../models/Circle";
 import Post from "../../models/Post";
 import "./NewPost.css"
 import {useToast} from "../Toast/ToastProvider";
+import ApiError from "../../api/ApiError";
 
 interface Props {
   api: any
@@ -75,6 +76,8 @@ export default (props: Props) => {
       return
     }
     updatePosting(true);
+
+    // parse post parameters
     const actualCircleIds = newPostCircleIds.filter(cn => cn !== true)
     const isPublic = newPostCircleIds.filter(cn => cn === true).length !== 0
     let mediaData = new FormData()
@@ -82,21 +85,39 @@ export default (props: Props) => {
       const blob = new Blob([newPostMedias[i]], {type: 'image/*'})
       mediaData.append(`media${i}`, blob)
     }
+
+    // before sending post
     const toastId = addToast('Sending new post', false)
     props.beforePosting()
-    const post = await props.api.postPost(
-      newPostContent,
-      isPublic,
-      actualCircleIds,
-      props.resharePostData === null ? newPostResharable : true,
-      props.resharePostData === null ? null : props.resharePostData.id,
-      props.resharePostData === null ? mediaData : [],
-      parseMentioned(newPostContent)
-    );
+
+    // send post
+    let post: Post | null = null
+    try {
+      post = await props.api.postPost(
+        newPostContent,
+        isPublic,
+        actualCircleIds,
+        props.resharePostData === null ? newPostResharable : true,
+        props.resharePostData === null ? null : props.resharePostData.id,
+        props.resharePostData === null ? mediaData : [],
+        parseMentioned(newPostContent)
+      );
+    } catch (e) {
+      if (e instanceof ApiError) {
+        addToast(e.message)
+      } else {
+        addToast('Unknown error')
+      }
+    }
+
+    // after sending post
     reset()
     removeToast(toastId)
-    props.afterPosting(post)
-    addToast('New post sent')
+    if (post) {
+      props.afterPosting(post)
+      addToast('New post sent')
+    }
+
     updatePosting(false)
   }
 
