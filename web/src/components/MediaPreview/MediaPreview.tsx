@@ -8,6 +8,7 @@ interface Props {
   twoRowHeight: string
   threeRowHeight: string
   forLinkPreview?: boolean
+  forCommentPreview?: boolean
 }
 
 export default (props: Props) => {
@@ -37,6 +38,10 @@ export default (props: Props) => {
     widthPerPreview = "46%"
   } else if (mediaCount === 1) {
     widthPerPreview = "100%"
+  }
+
+  if (props.forCommentPreview) {
+    widthPerPreview = "300px"
   }
 
   let heightPerPreview

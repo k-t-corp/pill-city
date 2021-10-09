@@ -144,9 +144,10 @@ export default (props) => {
               <div>
                 <MediaPreview
                   mediaUrls={[nestedComment.media_urls[0]]}
-                  oneRowHeight='300px'
+                  oneRowHeight='200px'
                   twoRowHeight=''
                   threeRowHeight=''
+                  forCommentPreview={true}
                 />
               </div>
             }
@@ -237,15 +238,12 @@ export default (props) => {
               <div>
                 <MediaPreview
                   mediaUrls={[comment.media_urls[0]]}
-                  oneRowHeight='300px'
+                  oneRowHeight='200px'
                   twoRowHeight=''
                   threeRowHeight=''
+                  forCommentPreview={true}
                 />
               </div>
-              // <div>
-              //   <img src={comment.media_urls[0]} alt="" className='comment-media'/>
-              //
-              // </div>
             }
             {
               !comment.deleting && !comment.deleted &&
