@@ -43,7 +43,7 @@ export default (props: Props) => {
               mediaUrls={preview.image_urls}
               threeRowHeight={isTabletOrMobile ? "30px" : "80px"}
               twoRowHeight={isTabletOrMobile ? "50px" : "100px"}
-              oneRowHeight={isTabletOrMobile ? "80px" : "140px"}
+              oneRowHeight={isTabletOrMobile ? "150px" : "220px"}
               forLinkPreview={true}
             />
         }
