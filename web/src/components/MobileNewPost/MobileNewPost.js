@@ -1,5 +1,5 @@
 import React from 'react';
-import NewPost from "../../components/NewPost/NewPost";
+import NewPost from "../NewPost/NewPost";
 import "./MobileNewPost.css"
 
 export default (props) => {

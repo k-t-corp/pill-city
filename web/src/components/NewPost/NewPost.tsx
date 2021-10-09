@@ -8,34 +8,50 @@ import MediaPreview from "../MediaPreview/MediaPreview";
 import parseMentioned from "../../parseMentioned";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
+import User from "../../models/User";
+import Circle from "../../models/Circle";
+import Post from "../../models/Post";
 import "./NewPost.css"
 
-export default (props) => {
-  const [me, updateMe] = useState(null)
-  const [myCircles, updateMyCircles] = useState([])
+interface Props {
+  api: any
+  beforePosting: () => void
+  afterPosting: (post: Post) => void
+  resharePostData: Post | null
+  updateResharePostData: (post: Post | null) => void
+}
 
-  const [newPostContent, updateNewPostContent] = useState("")
-  const [newPostCircleIds, updateNewPostCircleIds] = useState([])
+type CircleIdOrPublic = string | true
+
+export default (props: Props) => {
+  const [me, updateMe] = useState<User | null>(null)
+  const [myCircles, updateMyCircles] = useState<Circle[]>([])
+
+  const [newPostContent, updateNewPostContent] = useState<string>("")
+  const [newPostCircleIds, updateNewPostCircleIds] = useState<CircleIdOrPublic[]>([])
   const [newPostResharable, updateNewPostResharable] = useState(true)
-  const [newPostMedias, updateNewPostMedias] = useState([])
+  const [newPostMedias, updateNewPostMedias] = useState<string[]>([])
 
   const [posting, updatePosting] = useState(false)
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
 
-  useEffect(async () => {
-    updateMe(await props.api.getMe())
-    updateMyCircles(await props.api.getCircles())
+  useEffect( () => {
+    (async () => {
+      updateMe(await props.api.getMe())
+      updateMyCircles(await props.api.getCircles())
+    })()
   }, [])
 
-  useHotkeys('ctrl+enter', async () => {
-    console.log('NewPost ctrl+enter')
-    if (newPostContent.endsWith('\n')) {
-      // if sent using ctrl+enter, there should be an extra newline at the end
-      updateNewPostContent(newPostContent.substring(0, newPostContent.length - 1))
-    }
-    if (isValid()) {
-      await postButtonOnClick()
-    }
+  useHotkeys('ctrl+enter', () => {
+    (async () => {
+      if (newPostContent.endsWith('\n')) {
+        // if sent using ctrl+enter, there should be an extra newline at the end
+        updateNewPostContent(newPostContent.substring(0, newPostContent.length - 1))
+      }
+      if (isValid()) {
+        await postButtonOnClick()
+      }
+    })()
   }, {
     enableOnTags: ['TEXTAREA']
   })
@@ -61,7 +77,7 @@ export default (props) => {
     let mediaData = new FormData()
     for (let i = 0; i < newPostMedias.length; i++) {
       const blob = new Blob([newPostMedias[i]], {type: 'image/*'})
-      mediaData.append(`media${i}`, blob, blob.name)
+      mediaData.append(`media${i}`, blob)
     }
     props.beforePosting()
     const post = await props.api.postPost(
@@ -78,7 +94,7 @@ export default (props) => {
     updatePosting(false)
   }
 
-  const changeMediasOnClick = (event) => {
+  const changeMediasOnClick = (event: any) => {
     if (posting) {
       return
     }
@@ -95,7 +111,7 @@ export default (props) => {
     }
   }
 
-  const contentOnChange = e => {
+  const contentOnChange = (e: any) => {
     e.preventDefault();
     if (posting) {
       return
@@ -103,7 +119,7 @@ export default (props) => {
     updateNewPostContent(e.target.value)
   }
 
-  const sharingScopeOnChange = (e, {value}) => {
+  const sharingScopeOnChange = (e: any, {value}: any) => {
     e.preventDefault();
     if (posting) {
       return
@@ -111,7 +127,7 @@ export default (props) => {
     updateNewPostCircleIds(value)
   }
 
-  const resharableOnChange = e => {
+  const resharableOnChange = (e: any) => {
     e.preventDefault();
     if (posting) {
       return
@@ -130,6 +146,7 @@ export default (props) => {
     return className.join(" ")
   }
 
+  // @ts-ignore
   return (
     <div className="new-post">
       <div className="new-post-user-info">
@@ -198,6 +215,7 @@ export default (props) => {
           placeholder='Who can see it'
           options={
             [{key: 'public', text: '🌏 Public', value: true}].concat(
+              // @ts-ignore
               myCircles.map(circle => {
                 const {name, id} = circle
                 return {key: name, text: `⭕ ${name}`, value: id}
