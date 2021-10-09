@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import "./NavBar.css"
 import {Menu, MenuItem} from "semantic-ui-react";
 import {removeAccessToken} from "../../api/AuthStorage";
@@ -6,6 +6,13 @@ import {useMediaQuery} from "react-responsive";
 
 export default (props) => {
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
+  const [hasNewNotifications, updateHasNewNotifications] = useState(false)
+
+  useEffect(async () => {
+    let newNotifications = await props.wrappedComponent.props.api.getNotifications()
+    newNotifications = newNotifications.filter(n => n.unread)
+    updateHasNewNotifications(newNotifications.length > 0)
+  }, [])
   const WebNavBarElem = () => {
     return (
       <div>
@@ -112,6 +119,9 @@ export default (props) => {
                onClick={() => {
                  handleNavItemClick('/notifications')
                }}>
+
+            {hasNewNotifications && <div className='mobile-nav-bar-notification-indicator-wrapper'><div className='mobile-nav-bar-notification-indicator'></div></div>}
+
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path
                 d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
