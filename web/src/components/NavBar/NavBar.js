@@ -2,9 +2,10 @@ import React from 'react'
 import "./NavBar.css"
 import {Menu, MenuItem} from "semantic-ui-react";
 import {removeAccessToken} from "../../api/AuthStorage";
+import {useMediaQuery} from "react-responsive";
 
 export default (props) => {
-  const breakpoint = 750;
+  const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
   const WebNavBarElem = () => {
     return (
       <div>
@@ -82,32 +83,43 @@ export default (props) => {
     return (
       <div className="mobile-nav-bar-wrapper">
         <div className="mobile-nav-bar-container">
-          <div className={`mobile-nav-bar-button-container ${handleNavItemActiveClass("/users")}`} onClick={() => {handleNavItemClick('/users')}}>
+          <div className={`mobile-nav-bar-button-container ${handleNavItemActiveClass("/users")}`} onClick={() => {
+            handleNavItemClick('/users')
+          }}>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path
                 d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/>
             </svg>
           </div>
-          <div className={`mobile-nav-bar-button-container ${handleNavItemActiveClass("/circles")}`} onClick={() => {handleNavItemClick('/circles')}}>
+          <div className={`mobile-nav-bar-button-container ${handleNavItemActiveClass("/circles")}`} onClick={() => {
+            handleNavItemClick('/circles')
+          }}>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd"
                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
                     clipRule="evenodd"/>
             </svg>
           </div>
-          <div className={`mobile-nav-bar-button-container ${handleNavItemActiveClass("/")}`} onClick={() => {handleNavItemClick('/')}}>
+          <div className={`mobile-nav-bar-button-container ${handleNavItemActiveClass("/")}`} onClick={() => {
+            handleNavItemClick('/')
+          }}>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path
                 d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
             </svg>
           </div>
-          <div className={`mobile-nav-bar-button-container ${handleNavItemActiveClass("/notifications")}`} onClick={() => {handleNavItemClick('/notifications')}}>
+          <div className={`mobile-nav-bar-button-container ${handleNavItemActiveClass("/notifications")}`}
+               onClick={() => {
+                 handleNavItemClick('/notifications')
+               }}>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path
                 d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
             </svg>
           </div>
-          <div className={`mobile-nav-bar-button-container ${handleNavItemActiveClass("/profile")}`} onClick={() => {handleNavItemClick('/profile')}}>
+          <div className={`mobile-nav-bar-button-container ${handleNavItemActiveClass("/profile")}`} onClick={() => {
+            handleNavItemClick('/profile')
+          }}>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd"
                     d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
@@ -120,37 +132,6 @@ export default (props) => {
         </div>
       </div>)
   }
-  const NavBarElem = () => {
-    const {width} = useViewport();
-
-    return width < breakpoint ? <MobileNavBarElem/> : <WebNavBarElem/>
-  }
-  const viewportContext = React.createContext({});
-
-  const ViewportProvider = ({children}) => {
-    const [width, setWidth] = React.useState(window.innerWidth);
-    const [height, setHeight] = React.useState(window.innerHeight);
-    const handleWindowResize = () => {
-      setWidth(window.innerWidth);
-      setHeight(window.innerHeight);
-    };
-
-    React.useEffect(() => {
-      window.addEventListener("resize", handleWindowResize);
-      return () => window.removeEventListener("resize", handleWindowResize);
-    }, []);
-
-    return (
-      <viewportContext.Provider value={{width, height}}>
-        {children}
-      </viewportContext.Provider>
-    );
-  };
-
-  const useViewport = () => {
-    const {width, height} = React.useContext(viewportContext);
-    return {width, height};
-  };
 
   const handleNavItemClick = (path) => {
     props.updateRedirectTo(path)
@@ -166,8 +147,6 @@ export default (props) => {
   }
 
   return (
-    <ViewportProvider>
-      <NavBarElem/>
-    </ViewportProvider>
+    isTabletOrMobile ? <MobileNavBarElem/> : <WebNavBarElem/>
   )
 }
