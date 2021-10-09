@@ -8,7 +8,6 @@
     background: #333333;
     box-shadow: 2px 2px 1px 1px rgba(42, 42, 42, 1);
     color: white;
-    cursor: pointer;
 }
 
 @media only screen and (max-width: 750px) {

@@ -93,7 +93,8 @@
 }
 
 .new-post-post-btn-loading {
-    cursor: wait;
+    background-color: #767676;
+    cursor: none;
 }
 
 /* Reshare Preview */
