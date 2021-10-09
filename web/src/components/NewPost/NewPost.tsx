@@ -147,7 +147,7 @@ export default (props: Props) => {
       className.push("new-post-post-btn-invalid")
     }
     if (posting) {
-      className.push("new-post-post-btn-loading ")
+      className.push("new-post-post-btn-loading")
     }
     return className.join(" ")
   }
