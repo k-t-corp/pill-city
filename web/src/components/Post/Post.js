@@ -134,7 +134,7 @@ export default (props) => {
             <RoundAvatar user={!nestedComment.deleted ? nestedComment.author : null}/>
           </div>
           <div className="post-name nested-comment-name">
-            <ClickableId user={!nestedComment.deleted ? nestedComment.author : null} />:&nbsp;
+            <ClickableId user={!nestedComment.deleted ? nestedComment.author : null}/>:&nbsp;
           </div>
           <div className="post-nested-comment-content">
             {
@@ -144,20 +144,26 @@ export default (props) => {
             }
             {
               !nestedComment.deleted && nestedComment.media_urls.length > 0 &&
-                <div>
-                  <img src={nestedComment.media_urls[0]} alt="" className='comment-media'/>
-                </div>
+              <div>
+                <MediaPreview
+                  mediaUrls={[nestedComment.media_urls[0]]}
+                  oneRowHeight='200px'
+                  twoRowHeight=''
+                  threeRowHeight=''
+                  forCommentPreview={true}
+                />
+              </div>
             }
             <span className="post-time post-nested-comment-time">{timePosted(nestedComment.created_at_seconds)}</span>
             {
               !nestedComment.deleting && !nestedComment.deleted && !comment.deleted &&
-                <span className="post-comment-reply-btn" onClick={replyNestedCommentOnClick}>
+              <span className="post-comment-reply-btn" onClick={replyNestedCommentOnClick}>
                   Reply
                 </span>
             }
             {
               !nestedComment.deleting && !nestedComment.deleted && nestedComment.author.id === props.me.id &&
-                <span className="post-comment-delete-btn" onClick={deleteNestedCommentOnClick}>
+              <span className="post-comment-delete-btn" onClick={deleteNestedCommentOnClick}>
                   Delete
                 </span>
             }
@@ -218,7 +224,7 @@ export default (props) => {
         <div className="post-comment-main-content">
           <div className="post-comment-info">
             <div className="post-name post-comment-name">
-              <ClickableId user={!comment.deleted ? comment.author : null} />
+              <ClickableId user={!comment.deleted ? comment.author : null}/>
             </div>
             <div className="post-time">
               {timePosted(comment.created_at_seconds)}
@@ -232,19 +238,25 @@ export default (props) => {
             }
             {
               !comment.deleted && comment.media_urls.length > 0 &&
-                <div>
-                  <img src={comment.media_urls[0]} alt="" className='comment-media'/>
-                </div>
+              <div>
+                <MediaPreview
+                  mediaUrls={[comment.media_urls[0]]}
+                  oneRowHeight='200px'
+                  twoRowHeight=''
+                  threeRowHeight=''
+                  forCommentPreview={true}
+                />
+              </div>
             }
             {
               !comment.deleting && !comment.deleted &&
-                <span className="post-comment-reply-btn" onClick={replyCommentButtonOnclick}>
+              <span className="post-comment-reply-btn" onClick={replyCommentButtonOnclick}>
                   Reply
                 </span>
             }
             {
               !comment.deleting && !comment.deleted && comment.author.id === props.me.id &&
-                <span className="post-comment-delete-btn" onClick={deleteCommentButtonOnclick}>
+              <span className="post-comment-delete-btn" onClick={deleteCommentButtonOnclick}>
                   Delete
                 </span>
             }
@@ -296,9 +308,9 @@ export default (props) => {
       // if sent using ctrl+enter, there should be an extra newline at the end
       updateCommentContent(commentContent.substring(0, commentContent.length - 1))
     }
-  if (isCommentValid()) {
-    await postCommentButtonOnClick()
-  }
+    if (isCommentValid()) {
+      await postCommentButtonOnClick()
+    }
   }, {
     enableOnTags: ['TEXTAREA']
   })
@@ -426,31 +438,32 @@ export default (props) => {
           <div className="post-op-info-right">
             {
               props.me.id === props.data.author.id && !deleted &&
-                <DropdownMenu
-                  items={
-                    mediaUrls.length > 0 && props.data.content ? [
-                      {
-                        text: 'Delete all media',
-                        callback: deletePostMedia
-                      },
-                      {
-                        text: 'Delete post',
-                        callback: deletePost
-                      }
-                    ] : [
-                      {
-                        text: 'Delete post',
-                        callback: deletePost
-                      }
-                    ]
-                  }
-                >
-                  <div className="post-more-actions-trigger">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                    </svg>
-                  </div>
-                </DropdownMenu>
+              <DropdownMenu
+                items={
+                  mediaUrls.length > 0 && props.data.content ? [
+                    {
+                      text: 'Delete all media',
+                      callback: deletePostMedia
+                    },
+                    {
+                      text: 'Delete post',
+                      callback: deletePost
+                    }
+                  ] : [
+                    {
+                      text: 'Delete post',
+                      callback: deletePost
+                    }
+                  ]
+                }
+              >
+                <div className="post-more-actions-trigger">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                      d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"/>
+                  </svg>
+                </div>
+              </DropdownMenu>
             }
             <div className="post-op-info-time" onClick={navigateToPostPage} style={{
               cursor: disableNavigateToPostPage ? 'auto' : 'pointer'
@@ -465,29 +478,30 @@ export default (props) => {
               !props.data.is_update_avatar ?
                 parseContent(props.data.content, `post-content ${props.detail ? '' : 'post-content-summary'}`)
                 :
-                <div className='post-content' style={{fontStyle: 'italic'}}>@{props.data.author.id} has a new avatar!</div>
+                <div className='post-content' style={{fontStyle: 'italic'}}>@{props.data.author.id} has a new
+                  avatar!</div>
               :
               <div className='post-content' style={{fontStyle: 'italic'}}>This post has been deleted</div>
           }
         </div>
         {props.data.reshared_from &&
-          <ResharedPost
-            resharedFrom={props.data.reshared_from}
-            showDetail={props.detail}
-            api={props.api}
-          />
+        <ResharedPost
+          resharedFrom={props.data.reshared_from}
+          showDetail={props.detail}
+          api={props.api}
+        />
         }
         {!deleted &&
-          <MediaPreview
-            mediaUrls={mediaUrls}
-            threeRowHeight="130px"
-            twoRowHeight="150px"
-            oneRowHeight={isTabletOrMobile ? "200px" : "280px"}
-          />
+        <MediaPreview
+          mediaUrls={mediaUrls}
+          threeRowHeight="130px"
+          twoRowHeight="150px"
+          oneRowHeight={isTabletOrMobile ? "200px" : "280px"}
+        />
         }
         {
           !deleted &&
-            <LinkPreview post={props.data} api={props.api}/>
+          <LinkPreview post={props.data} api={props.api}/>
         }
         {
           !deleting && !deleted &&
@@ -560,10 +574,11 @@ export default (props) => {
             </div>
             {
               commentMedia.length > 0 &&
-              <img
-                className='new-comment-attachment-preview'
-                src={URL.createObjectURL(commentMedia[0])}
-                alt=""
+              <MediaPreview
+                mediaUrls={[URL.createObjectURL(commentMedia[0])]}
+                oneRowHeight='300px'
+                twoRowHeight=''
+                threeRowHeight=''
               />
             }
             <div className="post-comment-box-buttons">
@@ -572,9 +587,10 @@ export default (props) => {
                   isCommentValid() && !afterCommentLoading ?
                     "post-comment-box-post-button" :
                     "post-comment-box-post-button post-comment-box-post-button-invalid"
-                  }
+                }
                 onClick={postCommentButtonOnClick}
-              >Comment</div>
+              >Comment
+              </div>
             </div>
           </div> : null}
       </div>

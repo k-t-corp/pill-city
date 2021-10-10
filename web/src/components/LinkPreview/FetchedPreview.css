@@ -18,11 +18,15 @@
 
 .fetched-preview-title {
     font-size: large;
+    overflow-wrap: break-word;
+    white-space: pre-line;
 }
 
 .fetched-preview-subtitle {
     margin-top: 10px;
     font-size: small;
+    overflow-wrap: break-word;
+    white-space: pre-line;
 }
 
 .fetched-preview-link {
