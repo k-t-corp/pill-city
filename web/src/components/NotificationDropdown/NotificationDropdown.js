@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import "./NotificationDropdown.css"
-import NotificationComponents from "./NotificationList";
+import NotificationList from "./NotificationList";
 
 export default (props) => {
   const [notifications, updateNotifications] = useState([])
@@ -31,7 +31,7 @@ export default (props) => {
           </svg>
         </div>
       </div>
-      <NotificationComponents
+      <NotificationList
         notifications={notifications}
         updateNotifications={updateNotifications}
         api={props.api}/>

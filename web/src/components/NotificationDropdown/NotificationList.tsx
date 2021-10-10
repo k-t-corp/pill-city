@@ -1,4 +1,4 @@
-import NotificationComponent from "./NotificaitonItem";
+import NotificationItem from "./NotificaitonItem";
 import React, {useEffect, useState} from "react";
 import Notification from "../../models/Notification";
 import {useInterval} from "react-interval-hook";
@@ -77,7 +77,7 @@ export default (props: Props) => {
   const res = []
   for (let i = 0; i < notifications.length; i++) {
     const notification = notifications[i]
-    res.push(<NotificationComponent
+    res.push(<NotificationItem
       notification={notification}
       key={i}
       api={props.api}

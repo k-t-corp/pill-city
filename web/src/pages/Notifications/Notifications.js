@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import "./Notifications.css"
-import NotificationComponents from "../../components/NotificationDropdown/NotificationList";
+import NotificationList from "../../components/NotificationDropdown/NotificationList";
 
 export default (props) => {
   const [notifications, updateNotifications] = useState([])
@@ -23,7 +23,7 @@ export default (props) => {
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"/>
       </svg>
 
-      <NotificationComponents
+      <NotificationList
         notifications={notifications}
         updateNotifications={updateNotifications}
         api={props.api}/>
