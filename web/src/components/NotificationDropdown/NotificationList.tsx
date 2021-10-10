@@ -1,4 +1,4 @@
-import NotificationComponent from "./NotificaitonComponent";
+import NotificationComponent from "./NotificaitonItem";
 import React, {useEffect, useState} from "react";
 import Notification from "../../models/Notification";
 import {useInterval} from "react-interval-hook";

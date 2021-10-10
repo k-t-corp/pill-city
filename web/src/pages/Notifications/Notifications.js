@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import "./Notifications.css"
-import NotificationComponents from "../../components/NotificationDropdown/NotificationComponents";
+import NotificationComponents from "../../components/NotificationDropdown/NotificationList";
 
 export default (props) => {
   const [notifications, updateNotifications] = useState([])

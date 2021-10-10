@@ -4,6 +4,7 @@ import timePosted from "../../timePosted";
 import summary from "../../summary";
 import React from "react";
 import Notification from "../../models/Notification";
+import './NotificationItem.css'
 import {useHistory} from "react-router-dom";
 
 interface Props {
