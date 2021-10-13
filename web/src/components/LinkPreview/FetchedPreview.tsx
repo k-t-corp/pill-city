@@ -4,6 +4,7 @@ import LinkPreview from "../../models/LinkPreview";
 import MediaPreview from "../MediaPreview/MediaPreview";
 import {useMediaQuery} from "react-responsive";
 import './FetchedPreview.css'
+import summary from "../../summary";
 
 interface Props {
   api: any,
@@ -55,8 +56,8 @@ export default (props: Props) => {
               }}
               className={preview.image_urls.length === 0 ? "fetched-preview" : "fetched-preview fetched-preview-with-image"}
             >
-              <div className='fetched-preview-title'>{preview.title}</div>
-              <div className='fetched-preview-subtitle'>{preview.subtitle}</div>
+              <div className='fetched-preview-title'>{summary(preview.title, 100)}</div>
+              <div className='fetched-preview-subtitle'>{summary(preview.subtitle, 150)}</div>
             </div>
         }
       </>
