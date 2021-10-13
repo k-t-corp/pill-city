@@ -4,7 +4,7 @@ from mini_gplus.daos.user import find_user
 from mini_gplus.daos.user_cache import get_in_user_cache_by_user_id
 from mini_gplus.daos.circle import find_circle
 from mini_gplus.daos.post import dangerously_get_post, create_post, sees_post, retrieves_posts_on_home, \
-    retrieves_posts_on_profile, delete_post, delete_post_media
+    retrieves_posts_on_profile, delete_post, delete_post_media, poll_latest_posts_on_home
 from mini_gplus.daos.post_cache import get_in_post_cache
 from mini_gplus.daos.circle_cache import get_in_circle_cache
 from mini_gplus.daos.exceptions import UnauthorizedAccess, BadRequest
@@ -143,9 +143,11 @@ class Home(Resource):
         user = find_user(user_id)
 
         args = pagination_parser.parse_args()
-        posts = retrieves_posts_on_home(user, args['from_id'])
-
-        return posts, 200
+        to_id = args.get('to_id', None)
+        if to_id:
+            return poll_latest_posts_on_home(user, to_id), 200
+        from_id = args.get('from_id', None)
+        return retrieves_posts_on_home(user, from_id), 200
 
 
 class Post(Resource):
