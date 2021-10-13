@@ -216,6 +216,22 @@ export default class Api {
     return res.data
   }
 
+  async pollHome(toId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.get(
+      `/home`,
+      {
+        params: {
+          'to_id': toId
+        }
+      }
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
+
   async getPost(postId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
