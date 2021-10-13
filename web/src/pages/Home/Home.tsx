@@ -8,6 +8,7 @@ import MobileNewPost from "../../components/MobileNewPost/MobileNewPost";
 import About from "../../components/About/About";
 import PostModel from "../../models/Post"
 import User from "../../models/User";
+import {useInterval} from "react-interval-hook";
 
 interface Props {
   api: any
@@ -30,6 +31,17 @@ export default (props: Props) => {
       updateLoading(false)
     })()
   }, [])
+
+  useInterval(async () => {
+    if (loading || posts.length === 0) {
+      return
+    }
+    const newPosts = await props.api.pollHome(posts[0].id)
+    if (newPosts.length === 0) {
+      return
+    }
+    updatePosts([...newPosts, ...posts])
+  }, 5000)
 
   const loadMorePosts = async () => {
     if (loadingMorePosts) {
