@@ -21,6 +21,7 @@ export default (props: Props) => {
   const [resharePostData, updateResharePostData] = useState<PostModel | null>(null)
   const [mobileNewPostOpened, updateMobileNewPostOpened] = useState(false)
   const [loadingMorePosts, updateLoadingMorePosts] = useState(false)
+  const [pollingNewPosts, updatePollingNewPosts] = useState(false)
 
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
 
@@ -32,16 +33,17 @@ export default (props: Props) => {
     })()
   }, [])
 
-  useInterval(async () => {
-    if (loading || posts.length === 0) {
+  const pollNewPosts = async () => {
+    if (posts.length === 0 || loading || pollingNewPosts) {
       return
     }
+    updatePollingNewPosts(true)
     const newPosts = await props.api.pollHome(posts[0].id)
-    if (newPosts.length === 0) {
-      return
-    }
     updatePosts([...newPosts, ...posts])
-  }, 5000)
+    updatePollingNewPosts(false)
+  }
+
+  useInterval(pollNewPosts, 5000)
 
   const loadMorePosts = async () => {
     if (loadingMorePosts) {
@@ -118,9 +120,7 @@ export default (props: Props) => {
           beforePosting={() => {
             updateMobileNewPostOpened(false)
           }}
-          afterPosting={(post: PostModel) => {
-            updatePosts([post, ...posts])
-          }}
+          afterPosting={pollNewPosts}
         />
       }
       {!isTabletOrMobile &&
@@ -130,9 +130,7 @@ export default (props: Props) => {
             resharePostData={resharePostData}
             updateResharePostData={updateResharePostData}
             beforePosting={() => {}}
-            afterPosting={(post) => {
-              updatePosts([post, ...posts])
-            }}
+            afterPosting={pollNewPosts}
           />
           <NotificationDropdown api={props.api}/>
           <About api={props.api}/>
