@@ -3,7 +3,7 @@ from freezegun import freeze_time
 from mini_gplus.models import Post
 from mini_gplus.daos.user import sign_up, find_user
 from mini_gplus.daos.post import create_post, dangerously_get_post, sees_post
-from mini_gplus.daos.pagination import get_page
+from mini_gplus.daos.pagination import get_page, poll_latest
 
 
 class PaginationTest(BaseTestCase):
@@ -32,6 +32,16 @@ class PaginationTest(BaseTestCase):
         self.assertEqual(all_paged_posts, get_page(Post, {}, self._post_filter_noop, None, 5))
         last_post = all_paged_posts[-1]
         self.assertEqual([], get_page(Post, {}, self._post_filter_noop, last_post.eid, 5))
+
+    def test_poll_latest_no_time_collision_no_filter(self):
+        self.assertTrue(sign_up('user1', '1234'))
+        user1 = find_user('user1')
+        all_posts = []
+        for i in range(4):
+            all_posts.append(dangerously_get_post(create_post(user1, str(i), True, [], False, None, [], [], False).eid))
+        all_posts = list(reversed(all_posts))
+
+        self.assertEqual(all_posts[: 2], poll_latest(Post, {}, self._post_filter_noop, all_posts[2].eid))
 
     def test_one_page_no_time_collision_and_filter(self):
         self.assertTrue(sign_up('user1', '1234'))

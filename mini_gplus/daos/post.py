@@ -7,7 +7,7 @@ from mini_gplus.daos.exceptions import UnauthorizedAccess
 from .circle import check_member
 from .notification import create_notification, nullify_notifications
 from .mention import mention
-from .pagination import get_page
+from .pagination import get_page, poll_latest
 from .post_cache import set_in_post_cache, get_in_post_cache, exists_in_post_cache
 from .circle_cache import get_in_circle_cache
 
@@ -144,13 +144,13 @@ def sees_post(self, post, context_home_or_profile):
 
 
 @timer
-def retrieves_posts_on_home(self, from_id):
+def retrieves_posts_on_home(self: User, from_id: Optional[str]) -> List[Post]:
     """
-    All posts that are visible to the user on home
+    All posts that are visible to the user on home, reverse chronologically ordered
 
-    :param (User) self: The acting user
-    :param (str|None) from_id: The acting Post_id from which home posts should be retrieved
-    :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
+    :param self: The acting user
+    :param from_id: The Post ID from which home posts should be retrieved
+    :return: All posts that are visible to the user, reverse chronologically ordered
     """
     def _filter_post(p):
         return sees_post(self, p, context_home_or_profile=True)
@@ -161,6 +161,26 @@ def retrieves_posts_on_home(self, from_id):
         extra_filter_func=_filter_post,
         from_id=from_id,
         page_count=HomePostsPageSize
+    )
+
+
+@timer
+def poll_latest_posts_on_home(self: User, to_id: str) -> List[Post]:
+    """
+    All posts that are visible to the user on home since the to_id Post, reverse chronologically ordered
+
+    :param self: The acting user
+    :param to_id: The Post ID to which home posts should be retrieved
+    :return All posts that are visible to the user since the to_id Post, reverse chronologically ordered
+    """
+    def _filter_post(p):
+        return sees_post(self, p, context_home_or_profile=True)
+
+    return poll_latest(
+        mongoengine_model=Post,
+        extra_query_args={},
+        extra_filter_func=_filter_post,
+        to_id=to_id
     )
 
 
