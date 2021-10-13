@@ -40,6 +40,24 @@
     color: white;
 }
 
+.mobile-nav-bar-notification-indicator-wrapper {
+    position: relative;
+    width: 0;
+    height: 0;
+    bottom: 14px;
+    left: 24px;
+}
+
+.mobile-nav-bar-notification-indicator {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #ff6969;
+    right: 0;
+    top: 0;
+}
+
 @media only screen and (max-width: 750px) {
     .faq-semantic-container {
         width: 100%;
