@@ -11,6 +11,8 @@ import User from "../../models/User";
 import {useInterval} from "react-interval-hook";
 import useInView from 'react-cool-inview'
 
+const InfiniteScrollFactor = 0.8
+
 interface Props {
   api: any
 }
@@ -81,12 +83,12 @@ export default (props: Props) => {
         const post = posts[i]
         postElements.push(
           <div
+            // need to use post ID instead of index as key
+            // otherwise comments and reactions will be shifted after a new post is prepended
             key={post.id}
-            ref={i === posts.length - 1 ? observe : null}
+            ref={i === Math.floor(posts.length * InfiniteScrollFactor) - 1 ? observe : null}
           >
             <Post
-              // need to use post ID instead of index as key
-              // otherwise comments and reactions will be shifted after a new post is prepended
               data={post}
               me={me}
               api={props.api}
