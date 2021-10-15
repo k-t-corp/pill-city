@@ -6,18 +6,25 @@ import getProfilePicUrl from "../../api/getProfilePicUrl";
 import getAvatarUrl from "../../api/getAvatarUrl";
 import ApiError from "../../api/ApiError";
 import "./Profile.css"
+import User from "../../models/User";
+import PostModel from "../../models/Post"
 
-export default (props) => {
-  const [user, updateUser] = useState(null)
-  const [me, updateMe] = useState(null)
+interface Props {
+  api: any
+  userId?: string
+}
+
+export default (props: Props) => {
+  const [user, updateUser] = useState<User | null>(null)
+  const [me, updateMe] = useState<User | null>(null)
   const [userNotFound, updateUserNotFound] = useState(false)
 
   const [postsLoading, updatePostsLoading] = useState(true)
-  const [posts, updatePosts] = useState([])
+  const [posts, updatePosts] = useState<PostModel[]>([])
   const [loadingMorePosts, updateLoadingMorePosts] = useState(false)
 
   const [newPostOpened, updateNewPostOpened] = useState(false)
-  const [resharePostData, updateResharePostData] = useState(null)
+  const [resharePost, updateResharePost] = useState<PostModel | null>(null)
 
   const [isFollowing, updateIsFollowing] = useState(false)
   const [followLoading, updateFollowLoading] = useState(true)
@@ -31,35 +38,37 @@ export default (props) => {
     }
   }
 
-  useEffect(async () => {
-    const me = await props.api.getMe()
-    updateMe(me)
-    if (!props.userId) {
-      updateUser(me)
-      updatePosts(await props.api.getProfile(me.id))
-      updatePostsLoading(false)
-      updateFollowLoading(false)
-    } else {
-      let user
-      try {
-        user = await props.api.getUser(props.userId)
-        updateUser(user)
-        updateIsFollowing(user.is_following)
-        updatePosts(await props.api.getProfile(props.userId))
+  useEffect(() => {
+    (async () => {
+      const me = await props.api.getMe()
+      updateMe(me)
+      if (!props.userId) {
+        updateUser(me)
+        updatePosts(await props.api.getProfile(me.id))
         updatePostsLoading(false)
         updateFollowLoading(false)
-      } catch (e) {
-        if (e instanceof ApiError && e.statusCode === 404) {
-          updateUserNotFound(true)
-        } else {
-          throw e
+      } else {
+        let user
+        try {
+          user = await props.api.getUser(props.userId)
+          updateUser(user)
+          updateIsFollowing(user.is_following)
+          updatePosts(await props.api.getProfile(props.userId))
+          updatePostsLoading(false)
+          updateFollowLoading(false)
+        } catch (e) {
+          if (e instanceof ApiError && e.statusCode === 404) {
+            updateUserNotFound(true)
+          } else {
+            throw e
+          }
         }
       }
-    }
+    })()
   }, [])
 
   const loadMorePosts = async () => {
-    if (loadingMorePosts) {
+    if (loadingMorePosts || user === null) {
       return
     }
     updateLoadingMorePosts(true)
@@ -92,7 +101,7 @@ export default (props) => {
             data={post}
             api={props.api}
             me={me}
-            updateResharePostData={updateResharePostData}
+            updateResharePostData={updateResharePost}
             hasNewPostModal={true}
             newPostOpened={newPostOpened}
             updateNewPostOpened={updateNewPostOpened}
@@ -183,8 +192,8 @@ export default (props) => {
         <div className="post-detail-new-post-modal-content">
           <NewPost
             api={props.api}
-            resharePostData={resharePostData}
-            updateResharePostData={updateResharePostData}
+            resharePostData={resharePost}
+            updateResharePostData={updateResharePost}
             beforePosting={() => {
               updateNewPostOpened(false)
             }}
