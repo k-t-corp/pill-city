@@ -8,6 +8,7 @@ import ApiError from "../../api/ApiError";
 import "./Profile.css"
 import User from "../../models/User";
 import PostModel from "../../models/Post"
+import useInView from "react-cool-inview";
 
 interface Props {
   api: any
@@ -22,6 +23,7 @@ export default (props: Props) => {
   const [postsLoading, updatePostsLoading] = useState(true)
   const [posts, updatePosts] = useState<PostModel[]>([])
   const [loadingMorePosts, updateLoadingMorePosts] = useState(false)
+  const [noMoreNewPosts, updateNoMoreNewPosts] = useState(false)
 
   const [newPostOpened, updateNewPostOpened] = useState(false)
   const [resharePost, updateResharePost] = useState<PostModel | null>(null)
@@ -77,10 +79,19 @@ export default (props: Props) => {
     if (newPosts.length !== 0) {
       updatePosts(posts.concat(newPosts))
     } else {
-      alert('You have reached the end.')
+      updateNoMoreNewPosts(true)
     }
     updateLoadingMorePosts(false)
   }
+
+  const { observe } = useInView({
+    rootMargin: "50px 0px",
+    onEnter: async ({ unobserve, observe }) => {
+      unobserve()
+      await loadMorePosts()
+      observe()
+    }
+  })
 
   const profilePosts = () => {
     if (userNotFound) {
@@ -94,22 +105,34 @@ export default (props: Props) => {
       for (let i = 0; i < posts.length; i++) {
         const post = posts[i]
         postElements.push(
-          <PostComponent
-            // need to use post ID instead of index as key
-            // otherwise comments and reactions will be shifted after a new post is prepended
+          <div
             key={post.id}
-            data={post}
-            api={props.api}
-            me={me}
-            updateResharePostData={updateResharePost}
-            hasNewPostModal={true}
-            newPostOpened={newPostOpened}
-            updateNewPostOpened={updateNewPostOpened}
-          />
+            ref={i === posts.length - 1 ? observe : null}
+          >
+            <PostComponent
+              // need to use post ID instead of index as key
+              // otherwise comments and reactions will be shifted after a new post is prepended
+              data={post}
+              api={props.api}
+              me={me}
+              updateResharePostData={updateResharePost}
+              hasNewPostModal={true}
+              newPostOpened={newPostOpened}
+              updateNewPostOpened={updateNewPostOpened}
+            />
+          </div>
         )
       }
-      if (!loadingMorePosts) {
-        postElements.push(
+      let endElem
+      if (noMoreNewPosts) {
+        endElem = (
+          <div
+            key={posts.length}
+            className='profile-load-more profile-load-more-disable'
+          >No more new posts</div>
+        )
+      } else if (loadingMorePosts) {
+        endElem = (
           <div
             key={posts.length}
             className='profile-load-more'
@@ -117,13 +140,14 @@ export default (props: Props) => {
           >Load more</div>
         )
       } else {
-        postElements.push(
+        endElem = (
           <div
             key={posts.length}
             className='profile-load-more profile-load-more-disable'
           >Loading...</div>
         )
       }
+      postElements.push(endElem)
       return postElements
     }
   }
