@@ -6,18 +6,27 @@ import getProfilePicUrl from "../../api/getProfilePicUrl";
 import getAvatarUrl from "../../api/getAvatarUrl";
 import ApiError from "../../api/ApiError";
 import "./Profile.css"
+import User from "../../models/User";
+import PostModel from "../../models/Post"
+import useInView from "react-cool-inview";
 
-export default (props) => {
-  const [user, updateUser] = useState(null)
-  const [me, updateMe] = useState(null)
+interface Props {
+  api: any
+  userId?: string
+}
+
+export default (props: Props) => {
+  const [user, updateUser] = useState<User | null>(null)
+  const [me, updateMe] = useState<User | null>(null)
   const [userNotFound, updateUserNotFound] = useState(false)
 
   const [postsLoading, updatePostsLoading] = useState(true)
-  const [posts, updatePosts] = useState([])
+  const [posts, updatePosts] = useState<PostModel[]>([])
   const [loadingMorePosts, updateLoadingMorePosts] = useState(false)
+  const [noMoreNewPosts, updateNoMoreNewPosts] = useState(false)
 
   const [newPostOpened, updateNewPostOpened] = useState(false)
-  const [resharePostData, updateResharePostData] = useState(null)
+  const [resharePost, updateResharePost] = useState<PostModel | null>(null)
 
   const [isFollowing, updateIsFollowing] = useState(false)
   const [followLoading, updateFollowLoading] = useState(true)
@@ -31,35 +40,37 @@ export default (props) => {
     }
   }
 
-  useEffect(async () => {
-    const me = await props.api.getMe()
-    updateMe(me)
-    if (!props.userId) {
-      updateUser(me)
-      updatePosts(await props.api.getProfile(me.id))
-      updatePostsLoading(false)
-      updateFollowLoading(false)
-    } else {
-      let user
-      try {
-        user = await props.api.getUser(props.userId)
-        updateUser(user)
-        updateIsFollowing(user.is_following)
-        updatePosts(await props.api.getProfile(props.userId))
+  useEffect(() => {
+    (async () => {
+      const me = await props.api.getMe()
+      updateMe(me)
+      if (!props.userId) {
+        updateUser(me)
+        updatePosts(await props.api.getProfile(me.id))
         updatePostsLoading(false)
         updateFollowLoading(false)
-      } catch (e) {
-        if (e instanceof ApiError && e.statusCode === 404) {
-          updateUserNotFound(true)
-        } else {
-          throw e
+      } else {
+        let user
+        try {
+          user = await props.api.getUser(props.userId)
+          updateUser(user)
+          updateIsFollowing(user.is_following)
+          updatePosts(await props.api.getProfile(props.userId))
+          updatePostsLoading(false)
+          updateFollowLoading(false)
+        } catch (e) {
+          if (e instanceof ApiError && e.statusCode === 404) {
+            updateUserNotFound(true)
+          } else {
+            throw e
+          }
         }
       }
-    }
+    })()
   }, [])
 
   const loadMorePosts = async () => {
-    if (loadingMorePosts) {
+    if (loadingMorePosts || user === null) {
       return
     }
     updateLoadingMorePosts(true)
@@ -68,10 +79,19 @@ export default (props) => {
     if (newPosts.length !== 0) {
       updatePosts(posts.concat(newPosts))
     } else {
-      alert('You have reached the end.')
+      updateNoMoreNewPosts(true)
     }
     updateLoadingMorePosts(false)
   }
+
+  const { observe } = useInView({
+    rootMargin: "50px 0px",
+    onEnter: async ({ unobserve, observe }) => {
+      unobserve()
+      await loadMorePosts()
+      observe()
+    }
+  })
 
   const profilePosts = () => {
     if (userNotFound) {
@@ -85,22 +105,34 @@ export default (props) => {
       for (let i = 0; i < posts.length; i++) {
         const post = posts[i]
         postElements.push(
-          <PostComponent
-            // need to use post ID instead of index as key
-            // otherwise comments and reactions will be shifted after a new post is prepended
+          <div
             key={post.id}
-            data={post}
-            api={props.api}
-            me={me}
-            updateResharePostData={updateResharePostData}
-            hasNewPostModal={true}
-            newPostOpened={newPostOpened}
-            updateNewPostOpened={updateNewPostOpened}
-          />
+            ref={i === posts.length - 1 ? observe : null}
+          >
+            <PostComponent
+              // need to use post ID instead of index as key
+              // otherwise comments and reactions will be shifted after a new post is prepended
+              data={post}
+              api={props.api}
+              me={me}
+              updateResharePostData={updateResharePost}
+              hasNewPostModal={true}
+              newPostOpened={newPostOpened}
+              updateNewPostOpened={updateNewPostOpened}
+            />
+          </div>
         )
       }
-      if (!loadingMorePosts) {
-        postElements.push(
+      let endElem
+      if (noMoreNewPosts) {
+        endElem = (
+          <div
+            key={posts.length}
+            className='profile-load-more profile-load-more-disable'
+          >No more new posts</div>
+        )
+      } else if (loadingMorePosts) {
+        endElem = (
           <div
             key={posts.length}
             className='profile-load-more'
@@ -108,13 +140,14 @@ export default (props) => {
           >Load more</div>
         )
       } else {
-        postElements.push(
+        endElem = (
           <div
             key={posts.length}
             className='profile-load-more profile-load-more-disable'
           >Loading...</div>
         )
       }
+      postElements.push(endElem)
       return postElements
     }
   }
@@ -183,8 +216,8 @@ export default (props) => {
         <div className="post-detail-new-post-modal-content">
           <NewPost
             api={props.api}
-            resharePostData={resharePostData}
-            updateResharePostData={updateResharePostData}
+            resharePostData={resharePost}
+            updateResharePostData={updateResharePost}
             beforePosting={() => {
               updateNewPostOpened(false)
             }}

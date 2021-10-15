@@ -1,6 +1,8 @@
 import {AxiosResponse} from "axios";
 
 export default class ApiError extends Error {
+  statusCode: number;
+
   constructor(response: AxiosResponse) {
     super()
     this.name = 'ApiError'
@@ -11,5 +13,6 @@ export default class ApiError extends Error {
     } else {
       this.message = `${response.statusText} (${response.status})`
     }
+    this.statusCode = response.status
   }
 }
