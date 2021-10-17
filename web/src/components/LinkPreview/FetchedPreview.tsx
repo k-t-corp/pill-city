@@ -39,7 +39,7 @@ export default (props: Props) => {
     return (
       <>
         {
-          preview.image_urls.length !== 0 &&
+          (preview.image_urls || []).length !== 0 &&
             <MediaPreview
               mediaUrls={preview.image_urls}
               threeRowHeight={isTabletOrMobile ? "30px" : "80px"}
