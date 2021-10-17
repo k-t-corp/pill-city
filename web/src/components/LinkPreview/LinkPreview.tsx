@@ -3,6 +3,7 @@ import {WithContent} from "../../models/Post";
 import InstantPreview, {getInstantPreview} from "./InstantPreview";
 import './LinkPreview.css'
 import FetchedPreview from "./FetchedPreview";
+import {useState} from "react";
 
 interface Props {
   post: WithContent
@@ -22,6 +23,8 @@ export default (props: Props) => {
   if (urls.length === 0) {
     return null
   }
+
+  const [showInstantPreview, updateShowInstantPreview] = useState<boolean[]>(urls.map(_ => false))
   const linkPreviewElems = []
   for (let i = 0; i < urls.length; ++i) {
     const url = urls[i]
@@ -33,15 +36,32 @@ export default (props: Props) => {
       continue
     }
 
-    let preview
+    let instantPreviewElem
     const instantPreview = getInstantPreview(parsedUrl)
     if (instantPreview) {
-      preview = <InstantPreview instantPreview={instantPreview}/>
-    } else {
-      preview = <FetchedPreview url={url} api={props.api}/>
+      instantPreviewElem = <InstantPreview instantPreview={instantPreview}/>
     }
+    const fetchedPreviewElem = (
+      <FetchedPreview
+        url={url}
+        api={props.api}
+        onClick={() => {
+          if (instantPreview) {
+            updateShowInstantPreview(showInstantPreview.map((s, ii) => {
+              if (ii !== i) {
+                return s
+              }
+              return true
+            }))
+          } else {
+            window.open(url, '_blank')
+          }
+        }}
+      />
+    )
+    const previewElem = !showInstantPreview[i] ? fetchedPreviewElem : (instantPreview && instantPreviewElem)
     linkPreviewElems.push(
-      <div key={i}>{preview}</div>
+      <div key={i}>{previewElem}</div>
     )
   }
   return (

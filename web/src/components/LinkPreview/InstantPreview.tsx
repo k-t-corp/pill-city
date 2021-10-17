@@ -5,7 +5,8 @@ import './InstantPreview.css'
 const youtubeDomains = [
   "youtube.com",
   "www.youtube.com",
-  "m.youtube.com"
+  "m.youtube.com",
+  "youtu.be"
 ]
 
 interface YouTubeVideoInstantPreview {
