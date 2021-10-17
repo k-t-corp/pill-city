@@ -9,6 +9,7 @@ import summary from "../../summary";
 interface Props {
   api: any,
   url: string
+  onClick: () => void
 }
 
 export default (props: Props) => {
@@ -39,7 +40,7 @@ export default (props: Props) => {
     return (
       <>
         {
-          preview.image_urls.length !== 0 &&
+          (preview.image_urls || []).length !== 0 &&
             <MediaPreview
               mediaUrls={preview.image_urls}
               threeRowHeight={isTabletOrMobile ? "30px" : "80px"}
@@ -51,9 +52,7 @@ export default (props: Props) => {
         {
           (preview.title || preview.subtitle) &&
             <div
-              onClick={() => {
-                window.open(props.url, '_blank')
-              }}
+              onClick={props.onClick}
               className={preview.image_urls.length === 0 ? "fetched-preview" : "fetched-preview fetched-preview-with-image"}
             >
               <div className='fetched-preview-title'>{summary(preview.title, 100)}</div>
