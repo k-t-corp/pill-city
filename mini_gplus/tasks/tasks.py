@@ -1,5 +1,4 @@
 import os
-import re
 import urllib.parse
 import mongoengine
 import linkpreview
@@ -13,17 +12,12 @@ twitter_domains = [
     "www.twitter.com",
     "mobile.twitter.com"
 ]
-twitter_status_regex = re.compile('^/([a-zA-Z0-9_]{1,15})/status/(\d+)$')
-twitter_profile_regex = re.compile('^/([a-zA-Z0-9_]{1,15})$')
 
 
 def _is_twitter(url: str) -> bool:
     parsed_url = urllib.parse.urlparse(url)
     if parsed_url.netloc in twitter_domains:
-        if re.match(twitter_status_regex, parsed_url.path):
-            return True
-        if re.match(twitter_profile_regex, parsed_url.path):
-            return True
+        return True
     return False
 
 
