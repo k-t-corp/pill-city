@@ -6,6 +6,9 @@ const youtubeDomains = [
   "youtube.com",
   "www.youtube.com",
   "m.youtube.com",
+]
+
+const youtubeShortDomains = [
   "youtu.be"
 ]
 
@@ -24,6 +27,10 @@ export const getInstantPreview = (parsedUrl: URL): InstantPreviews | undefined =
           youtubeVideoId: vid
         }
       }
+    }
+  } else if (youtubeShortDomains.indexOf(parsedUrl.hostname) !== -1) {
+    return {
+      youtubeVideoId: parsedUrl.pathname.split('/')[1]
     }
   }
 }
