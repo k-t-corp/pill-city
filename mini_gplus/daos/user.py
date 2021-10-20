@@ -1,5 +1,5 @@
 import os
-from typing import Union
+from typing import Union, Optional
 from mongoengine import NotUniqueError
 from werkzeug.security import generate_password_hash, check_password_hash
 from mini_gplus.models import User, Media
@@ -10,18 +10,19 @@ from .user_cache import set_in_user_cache, get_users_in_user_cache, get_in_user_
 AvailableProfilePics = ["pill1.png", "pill2.png", "pill3.png", "pill4.png", "pill5.png", "pill6.png"]
 
 
-def sign_up(user_id, password):
+def sign_up(user_id: str, password: str, display_name: Optional[str] = None) -> bool:
     """
     Signs up a user
 
-    :param (str) user_id: user id
-    :param (str) password: password
-    :return (bool): Whether creation is successful.
-        If False, id is already taken
+    :param user_id: Unique user ID
+    :param password: Password
+    :param display_name: Display name
+    :return: Whether creation is successful. If False, id is already taken
     """
     new_user = User()
     new_user.user_id = user_id
     new_user.password = generate_password_hash(password)
+    new_user.display_name = display_name
     try:
         new_user.save()
         if os.getenv('OFFICIAL', None):

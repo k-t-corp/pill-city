@@ -1,6 +1,7 @@
 import React from 'react'
 import User from "../../models/User";
 import {useHistory} from "react-router-dom";
+import './ClickableId.css'
 
 interface Props {
   user: User | null
@@ -8,18 +9,38 @@ interface Props {
 
 export default (props: Props) => {
   const history = useHistory()
+  const { user } = props
+
+  let mainText
+  let subText
+  if (user) {
+    if (user.display_name) {
+      mainText = user.display_name
+      subText = `@${user.id}`
+    } else {
+      mainText = user.id
+      subText = ''
+    }
+  } else {
+    mainText = ''
+    subText = ''
+  }
 
   return (
     <span
-      style={{cursor: props.user ? 'pointer' : 'default'}}
+      style={{cursor: user ? 'pointer' : 'default'}}
       onClick={e => {
         // This component is sometimes nested in other clickable places so need this
         e.stopPropagation()
-        if (!props.user) {
+        if (!user) {
           return
         }
-        history.push(`/profile/${props.user.id}`)
+        history.push(`/profile/${user.id}`)
       }}
-    >{props.user ? props.user.id : ''}</span>
+    >
+      <span>{mainText}</span>
+      {' '}
+      <span className='clickable-id-subtext'>{subText}</span>
+    </span>
   )
 }
