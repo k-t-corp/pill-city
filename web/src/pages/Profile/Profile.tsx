@@ -190,6 +190,29 @@ export default (props: Props) => {
     }
   }
 
+  let profileDisplayName
+  if (props.userId) {
+    if (user !== null) {
+      if (user.display_name) {
+        profileDisplayName = user.display_name
+      } else {
+        profileDisplayName = user.id
+      }
+    } else {
+      profileDisplayName = '...'
+    }
+  } else {
+    if (me !== null) {
+      if (me.display_name) {
+        profileDisplayName = me.display_name
+      } else {
+        profileDisplayName = me.id
+      }
+    } else {
+      profileDisplayName = '...'
+    }
+  }
+
   return (
     <div className="profile-wrapper">
       <div className="profile-user-info">
@@ -206,7 +229,7 @@ export default (props: Props) => {
           />
         </div>
         <div className="profile-user-name">
-          {props.userId ? props.userId : me !== null ? me.id : '...'}
+          {profileDisplayName}
         </div>
         {userInfoButton()}
       </div>
