@@ -141,7 +141,7 @@ export default class SignUp extends Component {
                     <Input
                       fluid
                       name='invitationCode'
-                      placeholder='Invitation code'
+                      placeholder='* Invitation code'
                       errorLabel={errorLabel}
                     />
                 }
