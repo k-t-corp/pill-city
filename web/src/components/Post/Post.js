@@ -1,11 +1,11 @@
 import React, {useEffect, useRef, useState} from 'react'
 import _ from 'lodash'
 import "./Post.css"
-import parseContent from "../../parseContent";
-import timePosted from "../../timePosted";
+import parseContent from "../../utils/parseContent";
+import timePosted from "../../utils/timePosted";
 import MediaPreview from "../MediaPreview/MediaPreview";
 import DropdownMenu from "../DropdownMenu/DropdownMenu"
-import parseMentioned from "../../parseMentioned";
+import parseMentioned from "../../utils/parseMentioned";
 import {useHotkeys} from "react-hotkeys-hook";
 import {useMediaQuery} from "react-responsive";
 import {useHistory} from "react-router-dom";

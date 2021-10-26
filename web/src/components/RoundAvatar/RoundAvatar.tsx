@@ -1,7 +1,7 @@
 import * as React from "react";
 import {useHistory} from "react-router-dom";
 import User from '../../models/User'
-import getAvatarUrl from '../../api/getAvatarUrl'
+import getAvatarUrl from '../../utils/getAvatarUrl'
 import './RoundAvatar.css'
 
 interface Props {

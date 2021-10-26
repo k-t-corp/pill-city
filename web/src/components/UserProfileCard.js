@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import "./UserProfileCard.css"
-import getAvatarUrl from "../api/getAvatarUrl";
+import getAvatarUrl from "../utils/getAvatarUrl";
 
 export default (props) => {
   const [deleted, updateDeleted] = useState(false)

@@ -1,6 +1,6 @@
 import React from 'react'
 import "./DraggableCard.css"
-import getAvatarUrl from "../../api/getAvatarUrl";
+import getAvatarUrl from "../../utils/getAvatarUrl";
 
 export default (props) => {
   const onDragStart = e => {

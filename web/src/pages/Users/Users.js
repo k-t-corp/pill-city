@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {useHistory} from "react-router-dom";
-import getAvatarUrl from "../../api/getAvatarUrl";
+import getAvatarUrl from "../../utils/getAvatarUrl";
 import "./Users.css"
 
 export default (props) => {
