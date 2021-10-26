@@ -191,10 +191,12 @@ export default (props: Props) => {
   }
 
   let profileDisplayName
+  let profileDisplayId
   if (props.userId) {
     if (user !== null) {
       if (user.display_name) {
         profileDisplayName = user.display_name
+        profileDisplayId = user.id
       } else {
         profileDisplayName = user.id
       }
@@ -205,6 +207,7 @@ export default (props: Props) => {
     if (me !== null) {
       if (me.display_name) {
         profileDisplayName = me.display_name
+        profileDisplayId = me.id
       } else {
         profileDisplayName = me.id
       }
@@ -228,9 +231,9 @@ export default (props: Props) => {
             alt=""
           />
         </div>
-        <div className="profile-user-name">
-          {profileDisplayName}
-        </div>
+        <span className="profile-user-name">{profileDisplayName}</span>
+        {' '}
+        {profileDisplayId && <span className='profile-user-id'>{`@${profileDisplayId}`}</span>}
         {userInfoButton()}
       </div>
       <div className="profile-posts">

@@ -39,6 +39,8 @@ export default (props: Props) => {
       }}
     >
       <span title={subText}>{mainText}</span>
+      {' '}
+      <span className='clickable-id-subtext'>{subText}</span>
     </span>
   )
 }
