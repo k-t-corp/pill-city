@@ -1,6 +1,7 @@
 import React from 'react'
 import "./DraggableCard.css"
 import getAvatarUrl from "../../utils/getAvatarUrl";
+import getNameAndSubName from "../../utils/getNameAndSubName";
 
 export default (props) => {
   const onDragStart = e => {
@@ -12,6 +13,8 @@ export default (props) => {
   const onDragOver = e => {
     e.preventDefault()
   }
+
+  const { name } = getNameAndSubName(props.user)
 
   return (
     <div
@@ -25,9 +28,7 @@ export default (props) => {
       <div className="draggable-card-avatar" draggable={false}>
         <img className="draggable-card-avatar-img" draggable={false} src={getAvatarUrl(props.user)} alt=""/>
       </div>
-      <div className="draggable-card-name">
-        {props.user.id}
-      </div>
+      <div className="draggable-card-name">{name}</div>
     </div>
   )
 }
