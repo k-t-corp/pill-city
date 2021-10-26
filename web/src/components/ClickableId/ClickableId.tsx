@@ -28,7 +28,7 @@ export default (props: Props) => {
     >
       <span>{name}</span>
       {' '}
-      <span className='clickable-id-subtext'>{`@${subName}`}</span>
+      {subName && <span className='clickable-id-subtext'>{`@${subName}`}</span>}
     </span>
   )
 }
