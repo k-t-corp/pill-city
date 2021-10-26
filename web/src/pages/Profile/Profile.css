@@ -46,6 +46,12 @@
     margin-top: 20px;
 }
 
+.profile-user-id {
+    font-size: medium;
+    margin-top: 12px;
+    color: #a6a6a6;
+}
+
 .profile-info-button {
     margin-top: 20px;
     padding: 8px 10px;

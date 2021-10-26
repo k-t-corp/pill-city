@@ -45,7 +45,7 @@ export default class SignUp extends Component {
 
   handleSubmit = (inputForm) => {
     const idRegex = /^[A-Za-z0-9_-]+$/i;
-    const {id, password, confirmPassword, invitationCode} = inputForm
+    const {id, displayName, password, confirmPassword, invitationCode} = inputForm
     if (id === undefined || id.trim() === "" || id.trim().length > 15 || !id.trim().match(idRegex)) {
       this.refs.form.updateInputsWithError({
         'id': 'Please enter a valid id. An valid id is max 15 characters long, and only consists of numbers, ' +
@@ -71,7 +71,7 @@ export default class SignUp extends Component {
     }
 
     this.setState({'loading': true})
-    this.props.api.signUp(id.trim(), password, invitationCode)
+    this.props.api.signUp(id.trim(), displayName, password, invitationCode)
       .then(() => {
         this.setState({'redirectToSignIn': true})
       })
@@ -112,20 +112,26 @@ export default class SignUp extends Component {
                 <Input
                   fluid
                   name='id'
-                  placeholder='ID. For example, it can as short as "kt"'
+                  placeholder='* ID, e.g. kt'
+                  errorLabel={errorLabel}
+                />
+                <Input
+                  fluid
+                  name='displayName'
+                  placeholder='Display name, e.g. 大 KT'
                   errorLabel={errorLabel}
                 />
                 <Input
                   fluid
                   name='password'
-                  placeholder='Password'
+                  placeholder='* Password'
                   type='password'
                   errorLabel={errorLabel}
                 />
                 <Input
                   fluid
                   name='confirmPassword'
-                  placeholder='Confirm password'
+                  placeholder='* Confirm password'
                   type='password'
                   errorLabel={errorLabel}
                 />

@@ -2,7 +2,7 @@ import React from 'react'
 import {useHistory} from "react-router-dom";
 import {useMediaQuery} from "react-responsive";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
-import parseContent from "../../parseContent";
+import parseContent from "../../utils/parseContent";
 import MediaPreview from "../MediaPreview/MediaPreview";
 import {ResharedPost} from "../../models/Post";
 import './ResharedPost.css'

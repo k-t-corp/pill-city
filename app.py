@@ -142,6 +142,7 @@ def _sign_up():
     """
     user_id = request.json.get('id', None)
     password = request.json.get('password', None)
+    display_name = request.json.get('display_name', None)
     if not user_id:
         return jsonify({"message": {"id": "id is required"}}), 400
     if not check_user_id(user_id):
@@ -156,7 +157,7 @@ def _sign_up():
             return jsonify({"message": {"invitation_code": "invalid invitation code"}}), 403
         if not claim_invitation_code(invitation_code):
             return jsonify({"message": {"invitation_code": "failed to claim invitation code"}}), 500
-    successful = sign_up(user_id, password)
+    successful = sign_up(user_id, password, display_name)
     if successful:
         return {'id': user_id}, 201
     else:

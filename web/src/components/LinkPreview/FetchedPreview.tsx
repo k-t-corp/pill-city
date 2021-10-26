@@ -4,7 +4,7 @@ import LinkPreview from "../../models/LinkPreview";
 import MediaPreview from "../MediaPreview/MediaPreview";
 import {useMediaQuery} from "react-responsive";
 import './FetchedPreview.css'
-import summary from "../../summary";
+import summary from "../../utils/summary";
 
 interface Props {
   api: any,

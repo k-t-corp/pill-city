@@ -28,11 +28,12 @@ export default class Api {
     }
   }
 
-  async signUp(id, password, invitationCode) {
+  async signUp(id, displayName, password, invitationCode) {
     const res = await this.axiosInstance.post(
       `/signUp`,
       {
         'id': id,
+        'display_name': displayName,
         'password': password,
         'invitation_code': invitationCode
       }

@@ -3,9 +3,9 @@ import {Dropdown, Popup, Icon, Checkbox} from 'semantic-ui-react'
 import FormData from "form-data";
 import {useMediaQuery} from "react-responsive";
 import {useHotkeys} from "react-hotkeys-hook";
-import parseContent from "../../parseContent";
+import parseContent from "../../utils/parseContent";
 import MediaPreview from "../MediaPreview/MediaPreview";
-import parseMentioned from "../../parseMentioned";
+import parseMentioned from "../../utils/parseMentioned";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
 import User from "../../models/User";

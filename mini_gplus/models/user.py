@@ -10,3 +10,4 @@ class User(Document, CreatedAtMixin):
     followings = ListField(LazyReferenceField('User', reverse_delete_rule=PULL), default=[])  # type: List[User]
     avatar = LazyReferenceField(Media, reverse_delete_rule=NULLIFY)
     profile_pic = StringField(required=False, default="pill1.png")
+    display_name = StringField(required=False)

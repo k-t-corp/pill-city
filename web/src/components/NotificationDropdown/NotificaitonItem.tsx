@@ -1,7 +1,7 @@
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
-import timePosted from "../../timePosted";
-import summary from "../../summary";
+import timePosted from "../../utils/timePosted";
+import summary from "../../utils/summary";
 import React from "react";
 import Notification from "../../models/Notification";
 import './NotificationItem.css'

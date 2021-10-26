@@ -22,10 +22,11 @@ class User(object):
         }
         self.access_token = None
 
-    def sign_up(self):
+    def sign_up(self, display_name: Optional[str] = None):
         self.sess.post('/api/signUp', json={
             'id': self.user_id,
-            'password': '1234'
+            'password': '1234',
+            'display_name': display_name
         })
 
     def sign_in(self):
@@ -170,9 +171,9 @@ class User(object):
         self.sess.delete(f"/api/posts/{post_id}/comment/{comment_id}")
 
 
-def signup_user(user_id, avatar):
+def signup_user(user_id: str, avatar: Optional[str] = None, display_name: Optional[str] = None):
     user = User(user_id)
-    user.sign_up()
+    user.sign_up(display_name)
     user.sign_in()
     if avatar:
         user.update_avatar(avatar)
@@ -204,20 +205,20 @@ def main():
 
     print("Dumping dummy data")
     # Sign up some users
-    ghost = signup_user('ghost', None)
-    official = signup_user('official', None)
-    kt = signup_user('kt', 'kt.jpeg')
-    ika = signup_user('ika', 'ika.jpeg')
-    soybean = signup_user('soybean', 'soybean.png')
-    xiaolaba = signup_user('xiaolaba', 'xiaolaba.png')
-    buki = signup_user('buki', 'buki.png')
-    kyo = signup_user('kyo', 'kyo.png')
-    duff = signup_user('duff', 'duff.jpg')
-    kele = signup_user('kele', 'kele.jpg')
-    ahuhu = signup_user('ahuhu', 'ahuhu.png')
-    luxiyuan = signup_user('luxiyuan', 'luxiyuan.jpeg')
-    roddyzhang = signup_user('roddyzhang', 'roddyzhang.png')
-    mawei = signup_user('mawei', 'mawei.jpg')
+    signup_user('ghost')
+    official = signup_user('official')
+    kt = signup_user('kt', 'kt.jpeg', 'big KT')
+    ika = signup_user('ika', 'ika.jpeg', 'SMALL ika')
+    soybean = signup_user('soybean', 'soybean.png', '騷豆')
+    xiaolaba = signup_user('xiaolaba', 'xiaolaba.png', '小喇叭')
+    buki = signup_user('buki', 'buki.png', '付不起')
+    kyo = signup_user('kyo', 'kyo.png', '許工')
+    duff = signup_user('duff', 'duff.jpg', '豆腐老師')
+    kele = signup_user('kele', 'kele.jpg', '可樂')
+    ahuhu = signup_user('ahuhu', 'ahuhu.png', '啊呼呼')
+    luxiyuan = signup_user('luxiyuan', 'luxiyuan.jpeg', '陸西圓')
+    roddyzhang = signup_user('roddyzhang', 'roddyzhang.png', 'Roddy Zhang')
+    mawei = signup_user('mawei', 'mawei.jpg', '馬尾')
     horo = signup_user('horo', 'horo.png')
     everybody = ['kt', 'soybean', 'xiaolaba', 'buki', 'kyo', 'duff', 'kele', 'ahuhu', 'luxiyuan', 'roddyzhang', 'mawei',
                  'horo']

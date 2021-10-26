@@ -33,12 +33,17 @@ class UserProfilePic(fields.Raw):
         return get_in_user_cache_by_oid(value).profile_pic
 
 
+class UserDisplayName(fields.Raw):
+    def format(self, value):
+        return get_in_user_cache_by_oid(value).display_name
+
+
 user_fields = {
     'id': UserId(attribute='id'),
     'created_at_seconds': UserCreatedAtSeconds(attribute='id'),
-    # todo: following not included is this a problem?
     'avatar_url': UserAvatar(attribute='id'),
-    'profile_pic': UserProfilePic(attribute='id')
+    'profile_pic': UserProfilePic(attribute='id'),
+    'display_name': UserDisplayName(attribute='id')
 }
 
 

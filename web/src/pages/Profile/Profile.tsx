@@ -2,13 +2,14 @@ import React, {useEffect, useState} from 'react'
 import {useHistory} from "react-router-dom";
 import PostComponent from "../../components/Post/Post";
 import NewPost from "../../components/NewPost/NewPost";
-import getProfilePicUrl from "../../api/getProfilePicUrl";
-import getAvatarUrl from "../../api/getAvatarUrl";
+import getProfilePicUrl from "../../utils/getProfilePicUrl";
+import getAvatarUrl from "../../utils/getAvatarUrl";
 import ApiError from "../../api/ApiError";
 import "./Profile.css"
 import User from "../../models/User";
 import PostModel from "../../models/Post"
 import useInView from "react-cool-inview";
+import getNameAndSubName from "../../utils/getNameAndSubName";
 
 const InfiniteScrollFactor = 0.8
 
@@ -190,6 +191,8 @@ export default (props: Props) => {
     }
   }
 
+  const { name, subName } = getNameAndSubName(props.userId ? user : me)
+
   return (
     <div className="profile-wrapper">
       <div className="profile-user-info">
@@ -205,9 +208,9 @@ export default (props: Props) => {
             alt=""
           />
         </div>
-        <div className="profile-user-name">
-          {props.userId ? props.userId : me !== null ? me.id : '...'}
-        </div>
+        <span className="profile-user-name">{name}</span>
+        {' '}
+        {subName && <span className='profile-user-id'>{`@${subName}`}</span>}
         {userInfoButton()}
       </div>
       <div className="profile-posts">
