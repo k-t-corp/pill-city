@@ -2,16 +2,29 @@ import React, {useEffect, useState} from 'react'
 import {useHistory} from "react-router-dom";
 import getAvatarUrl from "../../utils/getAvatarUrl";
 import "./Users.css"
+import User from "../../models/User";
+import getNameAndSubName from "../../utils/getNameAndSubName";
 
-export default (props) => {
-  const [users, updateUsers] = useState([])
+interface Props {
+  api: any
+}
+
+type UserWithLoadingState = {
+  _follow_loading: boolean,
+  is_following: boolean
+} & User
+
+export default (props: Props) => {
+  const [users, updateUsers] = useState<UserWithLoadingState[]>([])
   const history = useHistory()
 
-  useEffect(async () => {
-    const users = await props.api.getUsers()
-    updateUsers(users.map(u => {
-      return {...u, _follow_loading: false}
-    }))
+  useEffect(() => {
+    (async () => {
+      const users = await props.api.getUsers()
+      updateUsers(users.map((u: User) => {
+        return {...u, _follow_loading: false}
+      }))
+    })()
   }, [])
 
   let userCardElements = []
@@ -21,6 +34,7 @@ export default (props) => {
       history.push(`/profile/${user.id}`)
     }
     const createdAtDate = new Date(user['created_at_seconds'] * 1000)
+    const { name, subName } = getNameAndSubName(user)
     userCardElements.push(
       <div className="users-user-card-wrapper" key={i} onClick={userCardOnClick}>
         <div className="users-user-card-avatar">
@@ -28,9 +42,8 @@ export default (props) => {
         </div>
         <div className='users-user-card-right'>
           <div>
-            <div className="users-user-card-name">
-              {user.id}
-            </div>
+            <div className="users-user-card-name">{name}</div>
+            {subName && <div className="users-user-card-join-time">{`@${subName}`}</div>}
             <div className="users-user-card-join-time">
               Joined on {createdAtDate.toLocaleDateString(undefined, {year: '2-digit', month: 'short', day: 'numeric'})}
             </div>

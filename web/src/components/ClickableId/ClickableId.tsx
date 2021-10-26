@@ -2,6 +2,7 @@ import React from 'react'
 import User from "../../models/User";
 import {useHistory} from "react-router-dom";
 import './ClickableId.css'
+import getNameAndSubName from "../../utils/getNameAndSubName";
 
 interface Props {
   user: User | null
@@ -11,20 +12,7 @@ export default (props: Props) => {
   const history = useHistory()
   const { user } = props
 
-  let mainText
-  let subText
-  if (user) {
-    if (user.display_name) {
-      mainText = user.display_name
-      subText = `@${user.id}`
-    } else {
-      mainText = user.id
-      subText = ''
-    }
-  } else {
-    mainText = ''
-    subText = ''
-  }
+  const { name, subName } = getNameAndSubName(props.user)
 
   return (
     <span
@@ -38,9 +26,9 @@ export default (props: Props) => {
         history.push(`/profile/${user.id}`)
       }}
     >
-      <span title={subText}>{mainText}</span>
+      <span>{name}</span>
       {' '}
-      <span className='clickable-id-subtext'>{subText}</span>
+      <span className='clickable-id-subtext'>{`@${subName}`}</span>
     </span>
   )
 }

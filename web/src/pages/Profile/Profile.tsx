@@ -9,6 +9,7 @@ import "./Profile.css"
 import User from "../../models/User";
 import PostModel from "../../models/Post"
 import useInView from "react-cool-inview";
+import getNameAndSubName from "../../utils/getNameAndSubName";
 
 const InfiniteScrollFactor = 0.8
 
@@ -190,31 +191,7 @@ export default (props: Props) => {
     }
   }
 
-  let profileDisplayName
-  let profileDisplayId
-  if (props.userId) {
-    if (user !== null) {
-      if (user.display_name) {
-        profileDisplayName = user.display_name
-        profileDisplayId = user.id
-      } else {
-        profileDisplayName = user.id
-      }
-    } else {
-      profileDisplayName = '...'
-    }
-  } else {
-    if (me !== null) {
-      if (me.display_name) {
-        profileDisplayName = me.display_name
-        profileDisplayId = me.id
-      } else {
-        profileDisplayName = me.id
-      }
-    } else {
-      profileDisplayName = '...'
-    }
-  }
+  const { name, subName } = getNameAndSubName(props.userId ? user : me)
 
   return (
     <div className="profile-wrapper">
@@ -231,9 +208,9 @@ export default (props: Props) => {
             alt=""
           />
         </div>
-        <span className="profile-user-name">{profileDisplayName}</span>
+        <span className="profile-user-name">{name}</span>
         {' '}
-        {profileDisplayId && <span className='profile-user-id'>{`@${profileDisplayId}`}</span>}
+        {subName && <span className='profile-user-id'>{`@${subName}`}</span>}
         {userInfoButton()}
       </div>
       <div className="profile-posts">
