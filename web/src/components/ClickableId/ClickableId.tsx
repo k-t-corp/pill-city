@@ -38,9 +38,7 @@ export default (props: Props) => {
         history.push(`/profile/${user.id}`)
       }}
     >
-      <span>{mainText}</span>
-      {' '}
-      <span className='clickable-id-subtext'>{subText}</span>
+      <span title={subText}>{mainText}</span>
     </span>
   )
 }
