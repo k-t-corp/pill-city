@@ -145,6 +145,18 @@ def update_avatar(self, avatar_media):
     set_in_user_cache(self)
 
 
+def update_display_name(self: User, display_name: str):
+    """
+    Update a user's display name
+
+    :param self: The acting user
+    :param display_name: New display name
+    """
+    self.display_name = display_name
+    self.save()
+    set_in_user_cache(self)
+
+
 def find_ghost_user_or_raise() -> User:
     ghost_user_id = os.environ['GHOST']
     ghost_user = find_user(ghost_user_id)

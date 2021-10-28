@@ -13,7 +13,7 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 from mini_gplus.daos.user import sign_in, sign_up
 from mini_gplus.daos.user_cache import populate_user_cache
 from mini_gplus.daos.invitation_code import check_invitation_code, claim_invitation_code
-from mini_gplus.resources.users import Users, User, MyAvatar, MyProfilePic, Me
+from mini_gplus.resources.users import Users, User, MyAvatar, MyProfilePic, MyDisplayName, Me
 from mini_gplus.resources.posts import Profile, Home, Posts, Post, PostMedia
 from mini_gplus.resources.comments import NestedComments, Comments, NestedComment, Comment
 from mini_gplus.resources.media import Media, MaxMediaCount
@@ -193,6 +193,7 @@ api = Api(app, errors={
 
 api.add_resource(MyAvatar, '/api/me/avatar')
 api.add_resource(MyProfilePic, '/api/me/profilePic/<string:user_profile_pic>')
+api.add_resource(MyDisplayName, '/api/me/displayName')
 api.add_resource(Me, '/api/me')
 
 api.add_resource(Users, '/api/users')
