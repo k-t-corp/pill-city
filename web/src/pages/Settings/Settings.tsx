@@ -5,20 +5,25 @@ import About from "../../components/About/About";
 import {useHistory} from "react-router-dom";
 import './Settings.css'
 import UpdateAvatarModal from "../../components/UpdateAvatarModal/UpdateAvatarModal";
+import User from "../../models/User";
 
-export default (props) => {
+interface Props {
+  api: any
+}
+
+export default (props: Props) => {
   const [loading, updateLoading] = useState(true)
-  const [me, updateMe] = useState("")
+  const [me, updateMe] = useState<User | null>(null)
 
-  const [avatarUrl, updateAvatarUrl] = useState()
-  const [uploadedAvatarObjectUrl, updateUploadedAvatarObjectUrl] = useState()
+  const [avatarUrl, updateAvatarUrl] = useState<string | undefined>()
+  const [uploadedAvatarObjectUrl, updateUploadedAvatarObjectUrl] = useState("")
   const [avatarModalOpened, updateAvatarModalOpened] = useState(false)
   const [updatingAvatar, updateUpdatingAvatar] = useState(false)
 
   const profilePicOptions = ["pill1.png", "pill2.png", "pill3.png", "pill4.png", "pill5.png", "pill6.png"]
-  const [profilePic, updateProfilePic] = useState()
+  const [profilePic, updateProfilePic] = useState<string | null>(null)
   const [profileModalOpened, updateProfileModalOpened] = useState(false)
-  const [profileModalSelectedPic, updateProfileModalSelectedPic] = useState()
+  const [profileModalSelectedPic, updateProfileModalSelectedPic] = useState<string | null>(null)
 
   const history = useHistory()
 
@@ -27,8 +32,13 @@ export default (props) => {
     for (let i = 0; i < profilePicOptions.length; i++) {
       const selected = profileModalSelectedPic === profilePicOptions[i] ? "settings-profile-selection-option-selected" : null
       optionElem.push(
-        <div className={`settings-profile-selection-option ${selected}`} key={i}
-             onClick={() => updateProfileModalSelectedPic(profilePicOptions[i])}>
+        <div
+          key={i}
+          className={`settings-profile-selection-option ${selected}`}
+          onClick={() => {
+            updateProfileModalSelectedPic(profilePicOptions[i])
+          }}
+        >
           <img className="settings-profile-selection-option-img"
                src={`${process.env.PUBLIC_URL}/${profilePicOptions[i]}`} alt=""/>
         </div>
@@ -37,16 +47,18 @@ export default (props) => {
     return optionElem
   }
 
-  useEffect(async () => {
-    const meProfile = await props.api.getMe()
-    updateMe(meProfile)
-    updateAvatarUrl(meProfile.avatar_url)
-    updateProfilePic(meProfile.profile_pic)
-    updateProfileModalSelectedPic(meProfile.profile_pic)
-    updateLoading(false)
+  useEffect(() => {
+    (async () => {
+      const meProfile = await props.api.getMe()
+      updateMe(meProfile)
+      updateAvatarUrl(meProfile.avatar_url)
+      updateProfilePic(meProfile.profile_pic)
+      updateProfileModalSelectedPic(meProfile.profile_pic)
+      updateLoading(false)
+    })()
   }, [])
 
-  const changeAvatarOnClick = (event) => {
+  const changeAvatarOnClick = (event: any) => {
     if (event.target.files && event.target.files[0]) {
       let img = event.target.files[0];
       updateUploadedAvatarObjectUrl(URL.createObjectURL(img))
@@ -107,7 +119,7 @@ export default (props) => {
             </label>
           </div>
           <div className="settings-user-name">
-            {me.id}
+            {(me as User).id}
           </div>
           <div className="settings-signout-button" onClick={() => {handleSignOut()}}>
             <div className="settings-signout-button-label">
