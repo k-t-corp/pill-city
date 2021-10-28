@@ -464,6 +464,19 @@ export default class Api {
     }
   }
 
+  async updateDisplayName(newDisplayName) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.post(
+      `/me/displayName`,
+      {
+        display_name: newDisplayName
+      }
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+  }
+
   async getNotifications(fromId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(

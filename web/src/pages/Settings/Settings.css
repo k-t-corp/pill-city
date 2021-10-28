@@ -107,6 +107,12 @@ input[type="file"] {
     font-weight: bold;
 }
 
+.settings-user-name-rename {
+    border-color: black;
+    border-width: 0 0 2px;
+    text-align: center;
+}
+
 .settings-user-add-name {
     font-style: italic;
     color: #a6a6a6;

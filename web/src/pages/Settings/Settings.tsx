@@ -25,6 +25,9 @@ export default (props: Props) => {
   const [profileModalOpened, updateProfileModalOpened] = useState(false)
   const [profileModalSelectedPic, updateProfileModalSelectedPic] = useState<string | null>(null)
 
+  const [displayName, updateDisplayName] = useState<string | undefined>()
+  const [updatingDisplayName, updateUpdatingDisplayName] = useState(false)
+
   const history = useHistory()
 
   const profileModalOptionsElem = () => {
@@ -49,11 +52,12 @@ export default (props: Props) => {
 
   useEffect(() => {
     (async () => {
-      const meProfile = await props.api.getMe()
-      updateMe(meProfile)
-      updateAvatarUrl(meProfile.avatar_url)
-      updateProfilePic(meProfile.profile_pic)
-      updateProfileModalSelectedPic(meProfile.profile_pic)
+      const myProfile = await props.api.getMe()
+      updateMe(myProfile)
+      updateDisplayName(myProfile.display_name)
+      updateAvatarUrl(myProfile.avatar_url)
+      updateProfilePic(myProfile.profile_pic)
+      updateProfileModalSelectedPic(myProfile.profile_pic)
       updateLoading(false)
     })()
   }, [])
@@ -120,19 +124,47 @@ export default (props: Props) => {
           </div>
           <div className="settings-user-name-wrapper">
             {
-              (me as User).display_name ?
-                <div className="settings-user-name">{(me as User).display_name}</div>
-                :
-                <div className="settings-user-name settings-user-add-name">Add display name</div>
+              !updatingDisplayName &&
+                (displayName ?
+                  <div className="settings-user-name">{displayName}</div>
+                  :
+                  <div className="settings-user-name settings-user-add-name" onClick={() => {
+                    updateUpdatingDisplayName(true)
+                  }}>Add display name</div>
+                )
             }
-            <div className='settings-user-name-edit'>
-              <svg className="settings-user-name-edit-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
-                   viewBox="0 0 24 24"
-                   stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                      d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-              </svg>
-            </div>
+            {
+              updatingDisplayName &&
+                <input
+                  className="settings-user-name settings-user-name-rename"
+                  type="text"
+                  value={displayName}
+                  onChange={e => updateDisplayName(e.target.value)}
+                />
+            }
+            {
+              !updatingDisplayName ?
+                <div className='settings-user-name-edit' onClick={() => {
+                  updateUpdatingDisplayName(true)
+                }}>
+                  <svg className="settings-user-name-edit-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
+                       viewBox="0 0 24 24"
+                       stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                          d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                  </svg>
+                </div> :
+                <div className='settings-user-name-edit' onClick={async () => {
+                  updateLoading(true)
+                  await props.api.updateDisplayName(displayName)
+                  updateUpdatingDisplayName(false)
+                  updateLoading(false)
+                }}>
+                  <svg className="settings-user-name-edit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
+            }
           </div>
           <div className="settings-user-id">{`@${(me as User).id}`}</div>
           <div className="settings-signout-button" onClick={() => {handleSignOut()}}>
