@@ -118,9 +118,23 @@ export default (props: Props) => {
               </svg>
             </label>
           </div>
-          <div className="settings-user-name">
-            {(me as User).id}
+          <div className="settings-user-name-wrapper">
+            {
+              (me as User).display_name ?
+                <div className="settings-user-name">{(me as User).display_name}</div>
+                :
+                <div className="settings-user-name settings-user-add-name">Add display name</div>
+            }
+            <div className='settings-user-name-edit'>
+              <svg className="settings-user-name-edit-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                      d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+              </svg>
+            </div>
           </div>
+          <div className="settings-user-id">{`@${(me as User).id}`}</div>
           <div className="settings-signout-button" onClick={() => {handleSignOut()}}>
             <div className="settings-signout-button-label">
               Sign out
