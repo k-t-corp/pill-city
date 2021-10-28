@@ -5,20 +5,28 @@ import About from "../../components/About/About";
 import {useHistory} from "react-router-dom";
 import './Settings.css'
 import UpdateAvatarModal from "../../components/UpdateAvatarModal/UpdateAvatarModal";
+import User from "../../models/User";
 
-export default (props) => {
+interface Props {
+  api: any
+}
+
+export default (props: Props) => {
   const [loading, updateLoading] = useState(true)
-  const [me, updateMe] = useState("")
+  const [me, updateMe] = useState<User | null>(null)
 
-  const [avatarUrl, updateAvatarUrl] = useState()
-  const [uploadedAvatarObjectUrl, updateUploadedAvatarObjectUrl] = useState()
+  const [avatarUrl, updateAvatarUrl] = useState<string | undefined>()
+  const [uploadedAvatarObjectUrl, updateUploadedAvatarObjectUrl] = useState("")
   const [avatarModalOpened, updateAvatarModalOpened] = useState(false)
   const [updatingAvatar, updateUpdatingAvatar] = useState(false)
 
   const profilePicOptions = ["pill1.png", "pill2.png", "pill3.png", "pill4.png", "pill5.png", "pill6.png"]
-  const [profilePic, updateProfilePic] = useState()
+  const [profilePic, updateProfilePic] = useState<string | null>(null)
   const [profileModalOpened, updateProfileModalOpened] = useState(false)
-  const [profileModalSelectedPic, updateProfileModalSelectedPic] = useState()
+  const [profileModalSelectedPic, updateProfileModalSelectedPic] = useState<string | null>(null)
+
+  const [displayName, updateDisplayName] = useState<string | undefined>()
+  const [updatingDisplayName, updateUpdatingDisplayName] = useState(false)
 
   const history = useHistory()
 
@@ -27,8 +35,13 @@ export default (props) => {
     for (let i = 0; i < profilePicOptions.length; i++) {
       const selected = profileModalSelectedPic === profilePicOptions[i] ? "settings-profile-selection-option-selected" : null
       optionElem.push(
-        <div className={`settings-profile-selection-option ${selected}`} key={i}
-             onClick={() => updateProfileModalSelectedPic(profilePicOptions[i])}>
+        <div
+          key={i}
+          className={`settings-profile-selection-option ${selected}`}
+          onClick={() => {
+            updateProfileModalSelectedPic(profilePicOptions[i])
+          }}
+        >
           <img className="settings-profile-selection-option-img"
                src={`${process.env.PUBLIC_URL}/${profilePicOptions[i]}`} alt=""/>
         </div>
@@ -37,16 +50,19 @@ export default (props) => {
     return optionElem
   }
 
-  useEffect(async () => {
-    const meProfile = await props.api.getMe()
-    updateMe(meProfile)
-    updateAvatarUrl(meProfile.avatar_url)
-    updateProfilePic(meProfile.profile_pic)
-    updateProfileModalSelectedPic(meProfile.profile_pic)
-    updateLoading(false)
+  useEffect(() => {
+    (async () => {
+      const myProfile = await props.api.getMe()
+      updateMe(myProfile)
+      updateDisplayName(myProfile.display_name)
+      updateAvatarUrl(myProfile.avatar_url)
+      updateProfilePic(myProfile.profile_pic)
+      updateProfileModalSelectedPic(myProfile.profile_pic)
+      updateLoading(false)
+    })()
   }, [])
 
-  const changeAvatarOnClick = (event) => {
+  const changeAvatarOnClick = (event: any) => {
     if (event.target.files && event.target.files[0]) {
       let img = event.target.files[0];
       updateUploadedAvatarObjectUrl(URL.createObjectURL(img))
@@ -106,9 +122,51 @@ export default (props) => {
               </svg>
             </label>
           </div>
-          <div className="settings-user-name">
-            {me.id}
+          <div className="settings-user-name-wrapper">
+            {
+              !updatingDisplayName &&
+                (displayName ?
+                  <div className="settings-user-name">{displayName}</div>
+                  :
+                  <div className="settings-user-name settings-user-add-name" onClick={() => {
+                    updateUpdatingDisplayName(true)
+                  }}>Add display name</div>
+                )
+            }
+            {
+              updatingDisplayName &&
+                <input
+                  className="settings-user-name settings-user-name-rename"
+                  type="text"
+                  value={displayName}
+                  onChange={e => updateDisplayName(e.target.value)}
+                />
+            }
+            {
+              !updatingDisplayName ?
+                <div className='settings-user-name-edit' onClick={() => {
+                  updateUpdatingDisplayName(true)
+                }}>
+                  <svg className="settings-user-name-edit-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
+                       viewBox="0 0 24 24"
+                       stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                          d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                  </svg>
+                </div> :
+                <div className='settings-user-name-edit' onClick={async () => {
+                  updateLoading(true)
+                  await props.api.updateDisplayName(displayName)
+                  updateUpdatingDisplayName(false)
+                  updateLoading(false)
+                }}>
+                  <svg className="settings-user-name-edit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
+            }
           </div>
+          <div className="settings-user-id">{`@${(me as User).id}`}</div>
           <div className="settings-signout-button" onClick={() => {handleSignOut()}}>
             <div className="settings-signout-button-label">
               Sign out

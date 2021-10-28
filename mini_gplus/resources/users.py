@@ -3,7 +3,7 @@ import werkzeug
 from bson import ObjectId
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from mini_gplus.daos.user import find_user, update_profile_pic, update_avatar, get_users
+from mini_gplus.daos.user import find_user, update_profile_pic, update_avatar, get_users, update_display_name
 from mini_gplus.daos.user_cache import get_in_user_cache_by_oid
 from mini_gplus.daos.post import create_post
 from mini_gplus.utils.now_ms import now_seconds
@@ -56,10 +56,10 @@ class Me(Resource):
         return user
 
 
-user_avatar_parser = reqparse.RequestParser()
-user_avatar_parser.add_argument('file', type=werkzeug.datastructures.FileStorage, location='files', required=True)
+my_avatar_parser = reqparse.RequestParser()
+my_avatar_parser.add_argument('file', type=werkzeug.datastructures.FileStorage, location='files', required=True)
 # use str 1 as True to avoid form data boolean messiness
-user_avatar_parser.add_argument('update_post', type=str, required=True)
+my_avatar_parser.add_argument('update_post', type=str, required=True)
 
 
 class MyAvatar(Resource):
@@ -71,7 +71,7 @@ class MyAvatar(Resource):
         if not user:
             return {'msg': f'User {user_id} is not found'}, 404
 
-        args = user_avatar_parser.parse_args()
+        args = my_avatar_parser.parse_args()
         file = args['file']
         update_post = args['update_post']
 
@@ -112,6 +112,23 @@ class MyProfilePic(Resource):
             return {'msg': f'User {user_id} is not found'}, 404
 
         update_profile_pic(user, user_profile_pic)
+
+
+my_display_name_parser = reqparse.RequestParser()
+my_display_name_parser.add_argument('display_name', type=str, required=True)
+
+
+class MyDisplayName(Resource):
+    @jwt_required()
+    def post(self):
+        user_id = get_jwt_identity()
+        user = find_user(user_id)
+        if not user:
+            return {'msg': f'User {user_id} is not found'}, 404
+
+        args = my_display_name_parser.parse_args()
+        display_name = args['display_name']
+        update_display_name(user, display_name)
 
 
 class IsFollowing(fields.Raw):
