@@ -40,17 +40,8 @@ services:
       retries: 3
   minio-bootstrap:
     image: minio/mc:RELEASE.2021-06-13T17-48-22Z
-    entrypoint: >
-      /bin/sh -c "
-      /usr/bin/mc alias set local http://minio:9000 minioadmin minioadmin;
-      /usr/bin/mc mb --ignore-existing local/minigplus;
-      /usr/bin/mc admin user add local stsadmin stsadmin-secret;
-      /usr/bin/mc admin policy add local rwall /root/dev-rwall-role-policy.json;
-      /usr/bin/mc admin policy set local rwall user=stsadmin;
-      /usr/bin/mc policy set-json /root/dev-public-read-bucket-policy.json local/minigplus;
-      "
+    entrypoint: /root/minio-bootstrap.sh
     volumes:
+      - ${PWD}/scripts/minio-bootstrap.sh:/root/minio-bootstrap.sh
       - ${PWD}/scripts/dev-rwall-role-policy.json:/root/dev-rwall-role-policy.json
       - ${PWD}/scripts/dev-public-read-bucket-policy.json:/root/dev-public-read-bucket-policy.json
-    depends_on:
-      - minio
