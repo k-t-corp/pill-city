@@ -1,4 +1,5 @@
 from typing import Optional
+from mongoengine.errors import ValidationError
 from mini_gplus.models import LinkPreview, LinkPreviewState
 from mini_gplus.tasks.tasks import generate_link_preview
 
@@ -15,5 +16,5 @@ def get_link_preview(url: str) -> Optional[LinkPreview]:
             generate_link_preview.delay(url)
             return new_link_preview
         return link_preview[0]
-    except ValueError:
+    except (ValueError, ValidationError):
         return None
