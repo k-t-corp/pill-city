@@ -204,34 +204,6 @@
     margin-top: 3px;
 }
 
-.post-nested-comment-avatar {
-    height: 25px;
-    width: 25px;
-}
-
-.post-nested-comment {
-    display: flex;
-    margin-bottom: 3px;
-}
-
-.nested-comment-name {
-    font-size: small;
-    margin-right: 0;
-    margin-top: 3px;
-}
-
-.post-nested-comment-content {
-    overflow-wrap: break-word;
-    flex: 1;
-    min-width: 0;
-    margin-top: 3px;
-    white-space: pre-line;
-}
-
-.post-nested-comment-time {
-    margin-left: 10px;
-}
-
 /*Comment Box*/
 
 .post-comment-box-wrapper {
