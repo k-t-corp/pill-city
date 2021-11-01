@@ -9,6 +9,7 @@ import ApiError from "../../api/ApiError";
 import Post, {Comment, NestedComment} from "../../models/Post";
 import {useToast} from "../Toast/ToastProvider";
 import './CommentBox.css'
+import summary from "../../utils/summary";
 
 interface Props {
   api: any
@@ -16,7 +17,7 @@ interface Props {
   post: Post,
   content: string
   updateContent: (newContent: string) => void
-  replyNestedCommentId?: string
+  replyingToComment?: Comment
   addComment: (comment: Comment) => void
   addNestedComment: (nestedComment: NestedComment) => void
   afterSendingComment: () => void
@@ -74,13 +75,13 @@ export default (props: Props) => {
       mediaData.append(`media${i}`, blob)
     }
 
-    if (props.replyNestedCommentId) {
+    if (props.replyingToComment) {
       // reply nested comment
       try {
         const newNestedComment = await props.api.postNestedComment(
           content,
           props.post.id,
-          props.replyNestedCommentId,
+          props.replyingToComment.id,
           parseMentioned(content),
           mediaData
         )
@@ -115,6 +116,13 @@ export default (props: Props) => {
     props.afterSendingComment()
   }
 
+  let contentPlaceholder
+  if (props.replyingToComment) {
+    contentPlaceholder = `Replying to "${summary(props.replyingToComment.content, 10)}"`
+  } else {
+    contentPlaceholder = `Replying to "${summary(props.post.content, 20)}"`
+  }
+
   return (
     <div className="post-comment-box-wrapper fade-in">
       <div className="post-comment-box-input-area">
@@ -123,7 +131,7 @@ export default (props: Props) => {
         </div>
         <textarea
           id="post-comment-box-input"
-          placeholder="Add comment"
+          placeholder={contentPlaceholder}
           value={content}
           onChange={e => {
             e.preventDefault()

@@ -23,8 +23,8 @@ export default (props) => {
   const [comments, updateComments] = useState(props.data.comments)
   // whether the comment box is expanded
   const [addingComment, updateAddingComment] = useState(false)
-  // currently replying to comment ID
-  const [replyNestedCommentId, updateReplyNestedCommentId] = useState("")
+  // currently replying to comment
+  const [replyingToComment, updateReplyingToComment] = useState(null)
 
   const [mediaUrls, updateMediaUrls] = useState(props.data.media_urls)
 
@@ -54,11 +54,11 @@ export default (props) => {
         highlightCommentRef={highlightCommentRef}
         onReply={() => {
           updateAddingComment(true)
-          updateReplyNestedCommentId(comment.id)
+          updateReplyingToComment(comment)
         }}
         onNestedCommentReply={(nestedComment) => {
           updateAddingComment(true)
-          updateReplyNestedCommentId(comment.id)
+          updateReplyingToComment(comment)
           updateCommentContent(`@${nestedComment.author.id} `)
         }}
       />
@@ -119,6 +119,7 @@ export default (props) => {
 
   const commentButtonOnClick = () => {
     updateAddingComment(!addingComment)
+    updateReplyingToComment(null)
   }
 
   return (
@@ -249,13 +250,13 @@ export default (props) => {
           post={props.data}
           content={commentContent}
           updateContent={updateCommentContent}
-          replyNestedCommentId={replyNestedCommentId}
+          replyingToComment={replyingToComment}
           addComment={(newComment) => {
             updateComments([...comments, newComment])
           }}
           addNestedComment={(newNestedComment) => {
             updateComments(comments.map(c => {
-              if (c.id !== replyNestedCommentId) {
+              if (c.id !== replyingToComment.id) {
                 return c
               }
               return {
@@ -266,7 +267,7 @@ export default (props) => {
           }}
           afterSendingComment={() => {
             updateAddingComment(false)
-            updateReplyNestedCommentId("")
+            updateReplyingToComment(null)
           }}
         />}
       </div>
