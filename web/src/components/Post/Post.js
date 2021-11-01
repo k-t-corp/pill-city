@@ -1,63 +1,37 @@
 import React, {useEffect, useRef, useState} from 'react'
-import _ from 'lodash'
-import "./Post.css"
 import parseContent from "../../utils/parseContent";
 import timePosted from "../../utils/timePosted";
 import MediaPreview from "../MediaPreview/MediaPreview";
 import DropdownMenu from "../DropdownMenu/DropdownMenu"
-import parseMentioned from "../../utils/parseMentioned";
-import {useHotkeys} from "react-hotkeys-hook";
 import {useMediaQuery} from "react-responsive";
 import {useHistory} from "react-router-dom";
-import FormData from "form-data";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import LinkPreview from "../LinkPreview/LinkPreview";
 import Reactions from "./Reactions";
 import ResharedPost from "./ResharedPost";
 import ClickableId from "../ClickableId/ClickableId";
-import ApiError from "../../api/ApiError";
-import {useToast} from "../Toast/ToastProvider";
+import Comment from "./Comment";
+import CommentBox from "./CommentBox";
+import "./Post.css"
 
 export default (props) => {
   const [deleted, updateDeleted] = useState(props.data.deleted)
   const [deleting, updateDeleting] = useState(false)
+  const [ commentContent, updateCommentContent ] = useState('')
 
   // existing comment data cached in state
-  const [comments, updateComments] = useState(
-    _.cloneDeep(props.data.comments).map(c => {
-      return {
-        ...c,
-        deleting: false,
-        comments: c.comments.map(cc => {
-          return {
-            ...cc,
-            deleting: false
-          }
-        })
-      }
-    })
-  )
+  const [comments, updateComments] = useState(props.data.comments)
   // whether the comment box is expanded
   const [addingComment, updateAddingComment] = useState(false)
-  // comment box content
-  const [commentContent, updateCommentContent] = useState('')
-  // comment media
-  const [commentMedia, updateCommentMedia] = useState([])
-  // currently replying to comment ID
-  const [replyNestedCommentId, updateReplyNestedCommentId] = useState("")
-  // is loading after a comment is posted
-  const [afterCommentLoading, updateAfterCommentLoading] = useState(false)
+  // currently replying to comment
+  const [replyingToComment, updateReplyingToComment] = useState(null)
 
   const [mediaUrls, updateMediaUrls] = useState(props.data.media_urls)
 
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
-  const { addToast } = useToast()
   const history = useHistory()
 
   const highlightCommentId = props.highlightCommentId
-  const isHighlightComment = (commentId) => {
-    return highlightCommentId === commentId
-  }
   const highlightCommentRef = useRef(null)
   useEffect(() => {
     if (highlightCommentId) {
@@ -65,207 +39,29 @@ export default (props) => {
     }
   }, [highlightCommentRef])
 
-  let commentElements = []
+  let commentElems = []
   for (let i = 0; i < comments.length; i++) {
     const comment = comments[i]
 
-    let nestedCommentElements = []
-    for (let i = 0; i < comment.comments.length; i++) {
-      const nestedComment = comment.comments[i]
-      const replyNestedCommentOnClick = () => {
-        if (nestedComment.deleting) {
-          return
-        }
-        // reply nested comment
-        updateAddingComment(true)
-        updateReplyNestedCommentId(comment.id)
-        updateCommentContent(`@${nestedComment.author.id} `)
-      }
-
-      const deleteNestedCommentOnClick = async () => {
-        if (nestedComment.deleting) {
-          return
-        }
-        if (!window.confirm('Are you sure you want to delete this comment?')) {
-          return
-        }
-        // mark as deleting
-        updateComments(comments.map(c => {
-          return {
-            ...c,
-            comments: c.comments.map(cc => {
-              if (cc.id === nestedComment.id) {
-                return {
-                  ...cc,
-                  deleting: true
-                }
-              }
-              return {...cc}
-            })
-          }
-        }))
-        await props.api.deleteNestedComment(props.data.id, comment.id, nestedComment.id)
-        // mark as deleted and not deleting
-        updateComments(comments.map(c => {
-          return {
-            ...c,
-            comments: c.comments.map(cc => {
-              if (cc.id === nestedComment.id) {
-                return {
-                  ...cc,
-                  deleted: true,
-                  deleting: false
-                }
-              }
-              return {...cc}
-            })
-          }
-        }))
-      }
-
-      nestedCommentElements.push(
-        <div
-          id={nestedComment.id}
-          ref={isHighlightComment(nestedComment.id) ? highlightCommentRef : null}
-          key={i}
-          className={`post-nested-comment ${isHighlightComment(nestedComment.id) ? "highlight-comment" : ""}`}
-        >
-          <div className="post-avatar post-nested-comment-avatar">
-            <RoundAvatar user={!nestedComment.deleted ? nestedComment.author : null}/>
-          </div>
-          <div className="post-name nested-comment-name">
-            <ClickableId user={!nestedComment.deleted ? nestedComment.author : null}/>:&nbsp;
-          </div>
-          <div className="post-nested-comment-content">
-            {
-              !nestedComment.deleted ?
-                parseContent(nestedComment.content, "") :
-                <div style={{fontStyle: 'italic'}}>This comment has been deleted</div>
-            }
-            {
-              !nestedComment.deleted && nestedComment.media_urls.length > 0 &&
-              <div>
-                <MediaPreview
-                  mediaUrls={[nestedComment.media_urls[0]]}
-                  oneRowHeight='200px'
-                  twoRowHeight=''
-                  threeRowHeight=''
-                  forCommentPreview={true}
-                />
-              </div>
-            }
-            <span className="post-time post-nested-comment-time">{timePosted(nestedComment.created_at_seconds)}</span>
-            {
-              !nestedComment.deleting && !nestedComment.deleted && !comment.deleted &&
-              <span className="post-comment-reply-btn" onClick={replyNestedCommentOnClick}>
-                  Reply
-                </span>
-            }
-            {
-              !nestedComment.deleting && !nestedComment.deleted && nestedComment.author.id === props.me.id &&
-              <span className="post-comment-delete-btn" onClick={deleteNestedCommentOnClick}>
-                  Delete
-                </span>
-            }
-          </div>
-        </div>
-      )
-    }
-
-    const replyCommentButtonOnclick = () => {
-      if (comment.deleting) {
-        return
-      }
-      updateAddingComment(true)
-      updateReplyNestedCommentId(comment.id)
-    }
-
-    const deleteCommentButtonOnclick = async () => {
-      if (comment.deleting) {
-        return
-      }
-      if (!window.confirm('Are you sure you want to delete this comment?')) {
-        return
-      }
-      // mark as deleting
-      updateComments(comments.map(c => {
-        if (comment.id === c.id) {
-          return {
-            ...c,
-            deleting: true
-          }
-        }
-        return {...c}
-      }))
-      await props.api.deleteComment(props.data.id, comment.id)
-      // marked as deleted and not deleting
-      updateComments(comments.map(c => {
-        if (comment.id === c.id) {
-          return {
-            ...c,
-            deleted: true,
-            deleting: false
-          }
-        }
-        return {...c}
-      }))
-    }
-
-    commentElements.push(
-      <div
-        id={comment.id}
-        ref={isHighlightComment(comment.id) ? highlightCommentRef : null}
-        key={i}
-        className={`post-comment ${isHighlightComment(comment.id) ? "highlight-comment" : ""}`}
-      >
-        <div className="post-avatar post-comment-avatar">
-          <RoundAvatar user={!comment.deleted ? comment.author : null}/>
-        </div>
-        <div className="post-comment-main-content">
-          <div className="post-comment-info">
-            <div className="post-name post-comment-name">
-              <ClickableId user={!comment.deleted ? comment.author : null}/>
-            </div>
-            <div className="post-time">
-              {timePosted(comment.created_at_seconds)}
-            </div>
-          </div>
-          <div className={`post-content comment-content ${props.detail ? '' : 'post-content-summary'}`}>
-            {
-              !comment.deleted ?
-                parseContent(comment.content, "") :
-                <div style={{fontStyle: 'italic'}}>This comment has been deleted</div>
-            }
-            {
-              !comment.deleted && comment.media_urls.length > 0 &&
-              <div>
-                <MediaPreview
-                  mediaUrls={[comment.media_urls[0]]}
-                  oneRowHeight='200px'
-                  twoRowHeight=''
-                  threeRowHeight=''
-                  forCommentPreview={true}
-                />
-              </div>
-            }
-            {
-              !comment.deleting && !comment.deleted &&
-              <span className="post-comment-reply-btn" onClick={replyCommentButtonOnclick}>
-                  Reply
-                </span>
-            }
-            {
-              !comment.deleting && !comment.deleted && comment.author.id === props.me.id &&
-              <span className="post-comment-delete-btn" onClick={deleteCommentButtonOnclick}>
-                  Delete
-                </span>
-            }
-          </div>
-          <div className="post-nested-comment-wrapper">
-            {nestedCommentElements}
-          </div>
-        </div>
-      </div>
+    commentElems.push(
+      <Comment
+        api={props.api}
+        me={props.me}
+        comment={comment}
+        post={props.data}
+        detail={props.detail}
+        highlightCommentId={highlightCommentId}
+        highlightCommentRef={highlightCommentRef}
+        onReply={() => {
+          updateAddingComment(true)
+          updateReplyingToComment(comment)
+        }}
+        onNestedCommentReply={(nestedComment) => {
+          updateAddingComment(true)
+          updateReplyingToComment(comment)
+          updateCommentContent(`@${nestedComment.author.id} `)
+        }}
+      />
     )
   }
 
@@ -291,88 +87,6 @@ export default (props) => {
     }
     updateMediaUrls([])
     await props.api.deletePostMedia(props.data.id)
-  }
-
-  const commentButtonOnClick = () => {
-    updateAddingComment(!addingComment)
-  }
-
-  const isCommentValid = () => {
-    return commentContent.trim().length > 0 || commentMedia.length > 0
-  }
-
-  // TODO: there is a subtle bug (feature?) that if multiple comment boxes are expanded and filled, multiple comments will be sent
-  useHotkeys('ctrl+enter', async () => {
-    console.log('Post ctrl+enter')
-    if (commentContent.endsWith('\n')) {
-      // if sent using ctrl+enter, there should be an extra newline at the end
-      updateCommentContent(commentContent.substring(0, commentContent.length - 1))
-    }
-    if (isCommentValid()) {
-      await postCommentButtonOnClick()
-    }
-  }, {
-    enableOnTags: ['TEXTAREA']
-  })
-
-  const postCommentButtonOnClick = async () => {
-    updateAfterCommentLoading(true)
-
-    // upload media
-    let mediaData = new FormData()
-    for (let i = 0; i < commentMedia.length; i++) {
-      const blob = new Blob([commentMedia[i]], {type: 'image/*'})
-      mediaData.append(`media${i}`, blob, blob.name)
-    }
-
-    if (replyNestedCommentId !== "") {
-      // reply nested comment
-      try {
-        const newNestedComment = await props.api.postNestedComment(
-          commentContent,
-          props.data.id,
-          replyNestedCommentId,
-          parseMentioned(commentContent),
-          mediaData
-        )
-        updateComments(comments.map(c => {
-          if (c.id !== replyNestedCommentId) {
-            return c
-          }
-          return {
-            ...c,
-            comments: [...c.comments, newNestedComment]
-          }
-        }))
-      } catch (e) {
-        if (e instanceof ApiError) {
-          addToast(e.message)
-        } else {
-          addToast('Unknown error')
-        }
-      }
-    } else {
-      try {
-        const newComment = await props.api.postComment(
-          commentContent,
-          props.data.id,
-          parseMentioned(commentContent),
-          mediaData
-        )
-        updateComments([...comments, newComment])
-      } catch (e) {
-        if (e instanceof ApiError) {
-          addToast(e.message)
-        } else {
-          addToast('Unknown error')
-        }
-      }
-    }
-    updateAfterCommentLoading(false)
-    updateAddingComment(false)
-    updateCommentContent('')
-    updateReplyNestedCommentId("")
-    updateCommentMedia([])
   }
 
   const reshareButtonOnClick = () => {
@@ -403,21 +117,9 @@ export default (props) => {
     }
   }
 
-  const onCommentMediaOnClick = (e) => {
-    if (afterCommentLoading) {
-      return
-    }
-    if (e.target.files && e.target.files[0]) {
-      if (e.target.files.length > 1) {
-        alert(`Only allowed to upload 1 image`);
-      } else {
-        let selectedMedias = []
-        for (let i = 0; i < e.target.files.length; i++) {
-          selectedMedias.push(e.target.files[i])
-        }
-        updateCommentMedia(selectedMedias)
-      }
-    }
+  const commentButtonOnClick = () => {
+    updateAddingComment(!addingComment)
+    updateReplyingToComment(null)
   }
 
   return (
@@ -542,61 +244,36 @@ export default (props) => {
             </div>
           </div>
         }
-        {addingComment ?
-          <div className="post-comment-box-wrapper fade-in">
-            <div className="post-comment-box-input-area">
-              <div className="post-avatar post-comment-avatar">
-                <RoundAvatar user={props.me}/>
-              </div>
-              <textarea
-                id="post-comment-box-input"
-                placeholder="Add comment"
-                value={commentContent}
-                onChange={e => {
-                  e.preventDefault()
-                  updateCommentContent(e.target.value)
-                }}
-              />
-              <label className="new-comment-attachment-button">
-                <input
-                  accept="image/*"
-                  type="file"
-                  onChange={onCommentMediaOnClick}
-                  multiple={false}
-                  disabled={afterCommentLoading}
-                />
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd"
-                        d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                        clipRule="evenodd"/>
-                </svg>
-              </label>
-            </div>
-            {
-              commentMedia.length > 0 &&
-              <MediaPreview
-                mediaUrls={[URL.createObjectURL(commentMedia[0])]}
-                oneRowHeight='300px'
-                twoRowHeight=''
-                threeRowHeight=''
-              />
-            }
-            <div className="post-comment-box-buttons">
-              <div
-                className={
-                  isCommentValid() && !afterCommentLoading ?
-                    "post-comment-box-post-button" :
-                    "post-comment-box-post-button post-comment-box-post-button-invalid"
-                }
-                onClick={postCommentButtonOnClick}
-              >Comment
-              </div>
-            </div>
-          </div> : null}
+        {addingComment && <CommentBox
+          api={props.api}
+          me={props.me}
+          post={props.data}
+          content={commentContent}
+          updateContent={updateCommentContent}
+          replyingToComment={replyingToComment}
+          addComment={(newComment) => {
+            updateComments([...comments, newComment])
+          }}
+          addNestedComment={(newNestedComment) => {
+            updateComments(comments.map(c => {
+              if (c.id !== replyingToComment.id) {
+                return c
+              }
+              return {
+                ...c,
+                comments: [...c.comments, newNestedComment]
+              }
+            }))
+          }}
+          afterSendingComment={() => {
+            updateAddingComment(false)
+            updateReplyingToComment(null)
+          }}
+        />}
       </div>
       {comments.length === 0 ? null :
         <div className="post-comments-wrapper">
-          {commentElements}
+          {commentElems}
         </div>
       }
     </div>
