@@ -14,13 +14,14 @@ interface Props {
   nestedComment: NestedComment
   parentComment: Comment
   post: Post
-  isHighlightComment: boolean
+  highlightCommentId?: string
   highlightCommentRef: any
-  onReply: () => void
+  onReply: (nestedComment: NestedComment) => void
 }
 
 export default (props: Props) => {
-  const { nestedComment, parentComment, post, isHighlightComment } = props
+  const { nestedComment, parentComment, post } = props
+  const isHighlightComment = props.highlightCommentId === nestedComment.id
   const [ deleted, updateDeleted ] = useState(nestedComment.deleted)
   const [ deleting, updateDeleting ] = useState(false)
 
@@ -28,7 +29,7 @@ export default (props: Props) => {
     if (deleting) {
       return
     }
-    props.onReply()
+    props.onReply(nestedComment)
   }
 
   const onDelete = async () => {
@@ -50,12 +51,12 @@ export default (props: Props) => {
     <div
       id={nestedComment.id}
       ref={isHighlightComment ? props.highlightCommentRef : null}
-      className={`post-nested-comment ${props.isHighlightComment ? "highlight-comment" : ""}`}
+      className={`post-nested-comment ${isHighlightComment ? "highlight-comment" : ""}`}
     >
-      <div className="post-avatar post-nested-comment-avatar">
+      <div className="post-nested-comment-avatar">
         <RoundAvatar user={!deleted ? nestedComment.author : null}/>
       </div>
-      <div className="post-name post-nested-comment-name">
+      <div className="post-nested-comment-name">
         <ClickableId user={!deleted ? nestedComment.author : null}/>:&nbsp;
       </div>
       <div className="post-nested-comment-content">
@@ -76,7 +77,7 @@ export default (props: Props) => {
             />
           </div>
         }
-        <span className="post-time post-nested-comment-time">{timePosted(nestedComment.created_at_seconds)}</span>
+        <span className="post-nested-comment-time">{timePosted(nestedComment.created_at_seconds)}</span>
         {
           !deleting && !deleted && !parentComment.deleted &&
           <span className="post-comment-reply-btn" onClick={onReply}>

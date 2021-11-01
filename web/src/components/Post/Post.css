@@ -70,14 +70,6 @@
     margin: 15px 0;
 }
 
-.post-content-summary {
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 10;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
 /*Reactions*/
 
 .post-reactions-wrapper {
@@ -123,89 +115,7 @@
     background-color: lightpink;
 }
 
-/*Comments*/
-
-.post-comments-wrapper {
-    margin-top: 10px;
-}
-
-.post-comment-info {
-    display: flex;
-    align-items: center;
-}
-
-.post-comment {
-    display: flex;
-    padding: 3px 0;
-}
-
-.highlight-comment {
-    background: #f0f0f0;
-    border: 2px solid #f0f0f0;
-    border-radius: 2px;
-}
-
-.post-comment-name {
-    font-size: medium;
-}
-
-.post-comment-avatar {
-    width: 35px;
-    height: 35px;
-}
-
-.post-comment-main-content {
-    flex: 1;
-    min-width: 0;
-}
-
-.comment-content {
-    margin: 0 0 2px 10px;
-    max-width: 100%;
-}
-
-.comment-media {
-    height: 200px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-
-.post-comment-reply-btn {
-    margin-left: 10px;
-    font-size: smaller;
-    background-color: #f0f0f0;
-    padding: 2px 5px;
-    border-radius: 2px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.post-comment-reply-btn:hover {
-    background-color: #e7e7e7;
-}
-
-.post-comment-delete-btn {
-    margin-left: 10px;
-    font-size: smaller;
-    background-color: pink;
-    padding: 2px 5px;
-    border-radius: 2px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.post-comment-delete-btn:hover {
-    background-color: lightpink;
-}
-
-/*Nested Comment*/
-
-.post-nested-comment-wrapper {
-    margin-top: 3px;
-}
-
 /*Comment Box*/
-
 .post-comment-box-wrapper {
     margin-top: 20px;
     padding-top: 5px;
