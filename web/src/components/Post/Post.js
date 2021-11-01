@@ -81,6 +81,7 @@ export default (props) => {
           me={props.me}
           nestedComment={nestedComment}
           parentComment={comment}
+          post={props.data}
           isHighlightComment={isHighlightComment(nestedComment.id)}
           highlightCommentRef={highlightCommentRef}
           onReply={() => {

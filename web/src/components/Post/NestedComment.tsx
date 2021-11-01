@@ -4,7 +4,7 @@ import parseContent from "../../utils/parseContent";
 import MediaPreview from "../MediaPreview/MediaPreview";
 import timePosted from "../../utils/timePosted";
 import React, {useState} from "react";
-import {NestedComment, Comment} from "../../models/Post";
+import Post, {NestedComment, Comment} from "../../models/Post";
 import User from "../../models/User";
 import './NestedComment.css'
 
@@ -13,13 +13,14 @@ interface Props {
   me: User
   nestedComment: NestedComment
   parentComment: Comment
+  post: Post
   isHighlightComment: boolean
   highlightCommentRef: any
   onReply: () => void
 }
 
 export default (props: Props) => {
-  const { nestedComment, parentComment, isHighlightComment } = props
+  const { nestedComment, parentComment, post, isHighlightComment } = props
   const [ deleted, updateDeleted ] = useState(nestedComment.deleted)
   const [ deleting, updateDeleting ] = useState(false)
 
@@ -39,7 +40,7 @@ export default (props: Props) => {
     }
     // mark as deleting
     updateDeleting(true)
-    await props.api.deleteNestedComment(nestedComment.id, parentComment.id, nestedComment.id)
+    await props.api.deleteNestedComment(post.id, parentComment.id, nestedComment.id)
     // mark as deleted and not deleting
     updateDeleted(true)
     updateDeleting(false)
