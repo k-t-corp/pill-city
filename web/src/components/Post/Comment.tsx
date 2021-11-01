@@ -84,7 +84,7 @@ export default (props: Props) => {
             {timePosted(comment.created_at_seconds)}
           </div>
         </div>
-        <div className={`post-content post-comment-content ${props.detail ? '' : 'post-content-summary'}`}>
+        <div className={`post-comment-content ${props.detail ? '' : 'post-comment-content-summary'}`}>
           {
             !deleted ?
               parseContent(comment.content, "") :

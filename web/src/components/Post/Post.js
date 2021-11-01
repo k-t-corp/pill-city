@@ -1,58 +1,34 @@
 import React, {useEffect, useRef, useState} from 'react'
-import _ from 'lodash'
-import "./Post.css"
 import parseContent from "../../utils/parseContent";
 import timePosted from "../../utils/timePosted";
 import MediaPreview from "../MediaPreview/MediaPreview";
 import DropdownMenu from "../DropdownMenu/DropdownMenu"
-import parseMentioned from "../../utils/parseMentioned";
-import {useHotkeys} from "react-hotkeys-hook";
 import {useMediaQuery} from "react-responsive";
 import {useHistory} from "react-router-dom";
-import FormData from "form-data";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import LinkPreview from "../LinkPreview/LinkPreview";
 import Reactions from "./Reactions";
 import ResharedPost from "./ResharedPost";
 import ClickableId from "../ClickableId/ClickableId";
-import ApiError from "../../api/ApiError";
-import {useToast} from "../Toast/ToastProvider";
 import Comment from "./Comment";
+import CommentBox from "./CommentBox";
+import "./Post.css"
 
 export default (props) => {
   const [deleted, updateDeleted] = useState(props.data.deleted)
   const [deleting, updateDeleting] = useState(false)
+  const [ commentContent, updateCommentContent ] = useState('')
 
   // existing comment data cached in state
-  const [comments, updateComments] = useState(
-    _.cloneDeep(props.data.comments).map(c => {
-      return {
-        ...c,
-        deleting: false,
-        comments: c.comments.map(cc => {
-          return {
-            ...cc,
-            deleting: false
-          }
-        })
-      }
-    })
-  )
+  const [comments, updateComments] = useState(props.data.comments)
   // whether the comment box is expanded
   const [addingComment, updateAddingComment] = useState(false)
-  // comment box content
-  const [commentContent, updateCommentContent] = useState('')
-  // comment media
-  const [commentMedia, updateCommentMedia] = useState([])
   // currently replying to comment ID
   const [replyNestedCommentId, updateReplyNestedCommentId] = useState("")
-  // is loading after a comment is posted
-  const [afterCommentLoading, updateAfterCommentLoading] = useState(false)
 
   const [mediaUrls, updateMediaUrls] = useState(props.data.media_urls)
 
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
-  const { addToast } = useToast()
   const history = useHistory()
 
   const highlightCommentId = props.highlightCommentId
@@ -113,88 +89,6 @@ export default (props) => {
     await props.api.deletePostMedia(props.data.id)
   }
 
-  const commentButtonOnClick = () => {
-    updateAddingComment(!addingComment)
-  }
-
-  const isCommentValid = () => {
-    return commentContent.trim().length > 0 || commentMedia.length > 0
-  }
-
-  // TODO: there is a subtle bug (feature?) that if multiple comment boxes are expanded and filled, multiple comments will be sent
-  useHotkeys('ctrl+enter', async () => {
-    console.log('Post ctrl+enter')
-    if (commentContent.endsWith('\n')) {
-      // if sent using ctrl+enter, there should be an extra newline at the end
-      updateCommentContent(commentContent.substring(0, commentContent.length - 1))
-    }
-    if (isCommentValid()) {
-      await postCommentButtonOnClick()
-    }
-  }, {
-    enableOnTags: ['TEXTAREA']
-  })
-
-  const postCommentButtonOnClick = async () => {
-    updateAfterCommentLoading(true)
-
-    // upload media
-    let mediaData = new FormData()
-    for (let i = 0; i < commentMedia.length; i++) {
-      const blob = new Blob([commentMedia[i]], {type: 'image/*'})
-      mediaData.append(`media${i}`, blob, blob.name)
-    }
-
-    if (replyNestedCommentId !== "") {
-      // reply nested comment
-      try {
-        const newNestedComment = await props.api.postNestedComment(
-          commentContent,
-          props.data.id,
-          replyNestedCommentId,
-          parseMentioned(commentContent),
-          mediaData
-        )
-        updateComments(comments.map(c => {
-          if (c.id !== replyNestedCommentId) {
-            return c
-          }
-          return {
-            ...c,
-            comments: [...c.comments, newNestedComment]
-          }
-        }))
-      } catch (e) {
-        if (e instanceof ApiError) {
-          addToast(e.message)
-        } else {
-          addToast('Unknown error')
-        }
-      }
-    } else {
-      try {
-        const newComment = await props.api.postComment(
-          commentContent,
-          props.data.id,
-          parseMentioned(commentContent),
-          mediaData
-        )
-        updateComments([...comments, newComment])
-      } catch (e) {
-        if (e instanceof ApiError) {
-          addToast(e.message)
-        } else {
-          addToast('Unknown error')
-        }
-      }
-    }
-    updateAfterCommentLoading(false)
-    updateAddingComment(false)
-    updateCommentContent('')
-    updateReplyNestedCommentId("")
-    updateCommentMedia([])
-  }
-
   const reshareButtonOnClick = () => {
     if (props.hasNewPostModal) {
       props.updateNewPostOpened(true)
@@ -223,21 +117,8 @@ export default (props) => {
     }
   }
 
-  const onCommentMediaOnClick = (e) => {
-    if (afterCommentLoading) {
-      return
-    }
-    if (e.target.files && e.target.files[0]) {
-      if (e.target.files.length > 1) {
-        alert(`Only allowed to upload 1 image`);
-      } else {
-        let selectedMedias = []
-        for (let i = 0; i < e.target.files.length; i++) {
-          selectedMedias.push(e.target.files[i])
-        }
-        updateCommentMedia(selectedMedias)
-      }
-    }
+  const commentButtonOnClick = () => {
+    updateAddingComment(!addingComment)
   }
 
   return (
@@ -362,57 +243,32 @@ export default (props) => {
             </div>
           </div>
         }
-        {addingComment ?
-          <div className="post-comment-box-wrapper fade-in">
-            <div className="post-comment-box-input-area">
-              <div className="post-avatar post-comment-avatar">
-                <RoundAvatar user={props.me}/>
-              </div>
-              <textarea
-                id="post-comment-box-input"
-                placeholder="Add comment"
-                value={commentContent}
-                onChange={e => {
-                  e.preventDefault()
-                  updateCommentContent(e.target.value)
-                }}
-              />
-              <label className="new-comment-attachment-button">
-                <input
-                  accept="image/*"
-                  type="file"
-                  onChange={onCommentMediaOnClick}
-                  multiple={false}
-                  disabled={afterCommentLoading}
-                />
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd"
-                        d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                        clipRule="evenodd"/>
-                </svg>
-              </label>
-            </div>
-            {
-              commentMedia.length > 0 &&
-              <MediaPreview
-                mediaUrls={[URL.createObjectURL(commentMedia[0])]}
-                oneRowHeight='300px'
-                twoRowHeight=''
-                threeRowHeight=''
-              />
-            }
-            <div className="post-comment-box-buttons">
-              <div
-                className={
-                  isCommentValid() && !afterCommentLoading ?
-                    "post-comment-box-post-button" :
-                    "post-comment-box-post-button post-comment-box-post-button-invalid"
-                }
-                onClick={postCommentButtonOnClick}
-              >Comment
-              </div>
-            </div>
-          </div> : null}
+        {addingComment && <CommentBox
+          api={props.api}
+          me={props.me}
+          post={props.data}
+          content={commentContent}
+          updateContent={updateCommentContent}
+          replyNestedCommentId={replyNestedCommentId}
+          addComment={(newComment) => {
+            updateComments([...comments, newComment])
+          }}
+          addNestedComment={(newNestedComment) => {
+            updateComments(comments.map(c => {
+              if (c.id !== replyNestedCommentId) {
+                return c
+              }
+              return {
+                ...c,
+                comments: [...c.comments, newNestedComment]
+              }
+            }))
+          }}
+          afterSendingComment={() => {
+            updateAddingComment(false)
+            updateReplyNestedCommentId("")
+          }}
+        />}
       </div>
       {comments.length === 0 ? null :
         <div className="post-comments-wrapper">
