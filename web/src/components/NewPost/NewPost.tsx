@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react'
-import {Dropdown, Popup, Icon, Checkbox} from 'semantic-ui-react'
+import {Dropdown, Popup, Icon, Checkbox, TextArea} from 'semantic-ui-react'
 import FormData from "form-data";
 import {useMediaQuery} from "react-responsive";
 import {useHotkeys} from "react-hotkeys-hook";
+import ReactTextareaAutocomplete from "@webscopeio/react-textarea-autocomplete";
 import parseContent from "../../utils/parseContent";
 import MediaPreview from "../MediaPreview/MediaPreview";
 import parseMentioned from "../../utils/parseMentioned";
@@ -14,6 +15,18 @@ import Post from "../../models/Post";
 import "./NewPost.css"
 import {useToast} from "../Toast/ToastProvider";
 import ApiError from "../../api/ApiError";
+import "@webscopeio/react-textarea-autocomplete/style.css";
+
+interface MentionUserItemProps {
+  selected: boolean
+  entity: User
+}
+
+const MentionUserItem = (props: MentionUserItemProps) => <div>{props.entity.display_name} @{props.entity.id}</div>;
+
+const MentionAutoCompleteLoading = () => {
+  return <div>Loading...</div>
+}
 
 interface Props {
   api: any
@@ -37,9 +50,9 @@ export default (props: Props) => {
   const [posting, updatePosting] = useState(false)
 
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
-  const { addToast, removeToast } = useToast()
+  const {addToast, removeToast} = useToast()
 
-  useEffect( () => {
+  useEffect(() => {
     (async () => {
       updateMe(await props.api.getMe())
       updateMyCircles(await props.api.getCircles())
@@ -139,7 +152,7 @@ export default (props: Props) => {
   }
 
   const contentOnChange = (e: any) => {
-    e.preventDefault();
+    // e.preventDefault();
     if (posting) {
       return
     }
@@ -229,11 +242,34 @@ export default (props: Props) => {
                     clipRule="evenodd"/>
             </svg>
           </label> : null}
-        <textarea
+        <ReactTextareaAutocomplete<User>
           className="new-post-text-box"
           value={newPostContent}
           onChange={contentOnChange}
           disabled={posting}
+          loadingComponent={MentionAutoCompleteLoading}
+          trigger={{
+            "@": {
+              dataProvider: (keyword) => props.api.searchUsers(keyword),
+              component: MentionUserItem,
+              output: (item, trigger) => trigger+item.id,
+              allowWhitespace: true
+            }
+          }}
+          style={{
+            fontSize: '13.333px'
+          }}
+          itemStyle={{
+            fontSize: '13.333px'
+          }}
+          dropdownStyle={{
+            zIndex: 999
+          }}
+          loaderStyle={{
+            zIndex: 999,
+            fontSize: '13.333px',
+            height: '15px',
+          }}
         />
       </div>
 

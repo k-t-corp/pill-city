@@ -81,6 +81,8 @@ def search_users(keyword: str) -> List[User]:
     :param keyword: The keyword
     :return: List of matching users
     """
+    if not keyword:
+        return []
     matched_users = []
     for user in get_users_in_user_cache():
         if keyword in user.user_id or (user.display_name and keyword in user.display_name):

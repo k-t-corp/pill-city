@@ -126,8 +126,19 @@ export default class Api {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
       `/users`,
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
+
+  async searchUsers(keyword) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.post(
+      '/users/search',
       {
-        headers: Api.authorizedHeaders()
+        keyword
       }
     )
     if (res.status !== 200) {
