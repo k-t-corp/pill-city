@@ -1,5 +1,6 @@
 import React from "react";
 import User from "../../models/User";
+import './MentionAutoCompleteUserItem.css'
 
 interface Props {
   selected: boolean
@@ -7,5 +8,7 @@ interface Props {
 }
 
 export default (props: Props) => {
-  return <div>{props.entity.display_name} @{props.entity.id}</div>;
+  return (
+    <div className='mention-auto-complete-user-item'>{props.entity.display_name} @{props.entity.id}</div>
+  )
 }
