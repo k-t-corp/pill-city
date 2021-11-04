@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from 'react'
-import {Dropdown, Popup, Icon, Checkbox, TextArea} from 'semantic-ui-react'
+import {Dropdown, Popup, Icon, Checkbox} from 'semantic-ui-react'
 import FormData from "form-data";
 import {useMediaQuery} from "react-responsive";
 import {useHotkeys} from "react-hotkeys-hook";
-import ReactTextareaAutocomplete from "@webscopeio/react-textarea-autocomplete";
 import parseContent from "../../utils/parseContent";
 import MediaPreview from "../MediaPreview/MediaPreview";
 import parseMentioned from "../../utils/parseMentioned";
@@ -15,9 +14,7 @@ import Post from "../../models/Post";
 import "./NewPost.css"
 import {useToast} from "../Toast/ToastProvider";
 import ApiError from "../../api/ApiError";
-import "@webscopeio/react-textarea-autocomplete/style.css";
-import MentionAutoCompleteUserItem from "../MentionAutoComplete/MentionAutoCompleteUserItem";
-import MentionAutoCompleteLoading from "../MentionAutoComplete/MentionAutoCompleteLoading";
+import ContentTextarea from "../ContentTextarea/ContentTextarea";
 
 interface Props {
   api: any
@@ -142,14 +139,6 @@ export default (props: Props) => {
     }
   }
 
-  const contentOnChange = (e: any) => {
-    // e.preventDefault();
-    if (posting) {
-      return
-    }
-    updateNewPostContent(e.target.value)
-  }
-
   const sharingScopeOnChange = (e: any, {value}: any) => {
     e.preventDefault();
     if (posting) {
@@ -233,29 +222,14 @@ export default (props: Props) => {
                     clipRule="evenodd"/>
             </svg>
           </label> : null}
-        <ReactTextareaAutocomplete<User>
-          className="new-post-text-box"
-          value={newPostContent}
-          onChange={contentOnChange}
+        <ContentTextarea
+          api={props.api}
+          content={newPostContent}
+          onChange={(newContent) => {
+            updateNewPostContent(newContent)
+          }}
           disabled={posting}
-          loadingComponent={MentionAutoCompleteLoading}
-          trigger={{
-            "@": {
-              dataProvider: (keyword) => props.api.searchUsers(keyword),
-              component: MentionAutoCompleteUserItem,
-              output: (item, trigger) => trigger+item.id,
-              allowWhitespace: true
-            }
-          }}
-          style={{
-            fontSize: '13.333px'
-          }}
-          itemStyle={{
-            fontSize: '13.333px'
-          }}
-          dropdownStyle={{
-            zIndex: 999
-          }}
+          textAreaClassName='new-post-text-box'
         />
       </div>
 
