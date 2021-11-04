@@ -16,17 +16,8 @@ import "./NewPost.css"
 import {useToast} from "../Toast/ToastProvider";
 import ApiError from "../../api/ApiError";
 import "@webscopeio/react-textarea-autocomplete/style.css";
-
-interface MentionUserItemProps {
-  selected: boolean
-  entity: User
-}
-
-const MentionUserItem = (props: MentionUserItemProps) => <div>{props.entity.display_name} @{props.entity.id}</div>;
-
-const MentionAutoCompleteLoading = () => {
-  return <div>Loading...</div>
-}
+import MentionAutoCompleteUserItem from "../MentionAutoComplete/MentionAutoCompleteUserItem";
+import MentionAutoCompleteLoading from "../MentionAutoComplete/MentionAutoCompleteLoading";
 
 interface Props {
   api: any
@@ -251,7 +242,7 @@ export default (props: Props) => {
           trigger={{
             "@": {
               dataProvider: (keyword) => props.api.searchUsers(keyword),
-              component: MentionUserItem,
+              component: MentionAutoCompleteUserItem,
               output: (item, trigger) => trigger+item.id,
               allowWhitespace: true
             }
@@ -264,11 +255,6 @@ export default (props: Props) => {
           }}
           dropdownStyle={{
             zIndex: 999
-          }}
-          loaderStyle={{
-            zIndex: 999,
-            fontSize: '13.333px',
-            height: '15px',
           }}
         />
       </div>
