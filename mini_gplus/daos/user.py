@@ -83,9 +83,10 @@ def search_users(keyword: str) -> List[User]:
     """
     if not keyword:
         return []
+    keyword = keyword.lower()
     matched_users = []
     for user in get_users_in_user_cache():
-        if keyword in user.user_id or (user.display_name and keyword in user.display_name):
+        if keyword in user.user_id.lower() or (user.display_name and keyword in user.display_name.lower()):
             matched_users.append(user)
     return matched_users
 
