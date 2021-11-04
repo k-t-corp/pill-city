@@ -10,6 +10,7 @@ import Post, {Comment, NestedComment} from "../../models/Post";
 import {useToast} from "../Toast/ToastProvider";
 import './CommentBox.css'
 import summary from "../../utils/summary";
+import ContentTextarea from "../ContentTextarea/ContentTextarea";
 
 interface Props {
   api: any
@@ -129,14 +130,15 @@ export default (props: Props) => {
         <div className="post-comment-box-avatar">
           <RoundAvatar user={props.me}/>
         </div>
-        <textarea
-          id="post-comment-box-input"
-          placeholder={contentPlaceholder}
-          value={content}
-          onChange={e => {
-            e.preventDefault()
-            updateContent(e.target.value)
+        <ContentTextarea
+          api={props.api}
+          content={content}
+          onChange={(newContent) => {
+            updateContent(newContent)
           }}
+          disabled={false}
+          textAreaClassName='post-comment-box-input'
+          placeholder={contentPlaceholder}
         />
         <label className="post-comment-box-attachment-button">
           <input

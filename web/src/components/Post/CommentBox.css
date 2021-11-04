@@ -14,7 +14,7 @@
     flex-shrink: 0;
 }
 
-#post-comment-box-input {
+.post-comment-box-input {
     border: none;
     flex: 1;
     resize: none;
@@ -23,7 +23,7 @@
     height: auto;
 }
 
-#post-comment-box-input:focus {
+.post-comment-box-input:focus {
     outline: none !important;
 }
 
@@ -32,6 +32,7 @@
     right: 5px;
     width: 20px;
     cursor: pointer;
+    z-index: 999;
 }
 
 .post-comment-box-buttons {

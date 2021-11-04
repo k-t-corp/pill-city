@@ -3,7 +3,8 @@ import werkzeug
 from bson import ObjectId
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from mini_gplus.daos.user import find_user, update_profile_pic, update_avatar, get_users, update_display_name
+from mini_gplus.daos.user import find_user, update_profile_pic, update_avatar, get_users, update_display_name, \
+    search_users
 from mini_gplus.daos.user_cache import get_in_user_cache_by_oid
 from mini_gplus.daos.post import create_post
 from mini_gplus.utils.now_ms import now_seconds
@@ -155,6 +156,22 @@ class Users(Resource):
         user_id = get_jwt_identity()
         # TODO: pretty inefficient because all Users needs to call get user by oid once more lol
         return get_users(user_id), 200
+
+
+searched_user_parser = reqparse.RequestParser()
+searched_user_parser.add_argument('keyword', type=str, required=True)
+
+
+class SearchedUsers(Resource):
+    @jwt_required()
+    @marshal_with(user_with_following_fields)
+    def post(self):
+        """
+        Get all users that match a keyword to the search criteria
+        Currently the search criteria is either the user ID or the display name contains the keyword
+        """
+        args = searched_user_parser.parse_args()
+        return search_users(args['keyword'])
 
 
 class User(Resource):

@@ -1,5 +1,5 @@
 import os
-from typing import Union, Optional
+from typing import Union, Optional, List
 from mongoengine import NotUniqueError
 from werkzeug.security import generate_password_hash, check_password_hash
 from mini_gplus.models import User, Media
@@ -72,6 +72,22 @@ def get_users(user_id):
     :return (List[User]): All other users besides the current user
     """
     return list(filter(lambda u: u.user_id != user_id, get_users_in_user_cache()))
+
+
+def search_users(keyword: str) -> List[User]:
+    """
+    Search for users by a keyword.
+
+    :param keyword: The keyword
+    :return: List of matching users
+    """
+    if not keyword:
+        return []
+    matched_users = []
+    for user in get_users_in_user_cache():
+        if keyword in user.user_id or (user.display_name and keyword in user.display_name):
+            matched_users.append(user)
+    return matched_users
 
 
 def add_following(self, user):

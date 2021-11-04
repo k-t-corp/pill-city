@@ -14,6 +14,7 @@ import Post from "../../models/Post";
 import "./NewPost.css"
 import {useToast} from "../Toast/ToastProvider";
 import ApiError from "../../api/ApiError";
+import ContentTextarea from "../ContentTextarea/ContentTextarea";
 
 interface Props {
   api: any
@@ -37,9 +38,9 @@ export default (props: Props) => {
   const [posting, updatePosting] = useState(false)
 
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
-  const { addToast, removeToast } = useToast()
+  const {addToast, removeToast} = useToast()
 
-  useEffect( () => {
+  useEffect(() => {
     (async () => {
       updateMe(await props.api.getMe())
       updateMyCircles(await props.api.getCircles())
@@ -138,14 +139,6 @@ export default (props: Props) => {
     }
   }
 
-  const contentOnChange = (e: any) => {
-    e.preventDefault();
-    if (posting) {
-      return
-    }
-    updateNewPostContent(e.target.value)
-  }
-
   const sharingScopeOnChange = (e: any, {value}: any) => {
     e.preventDefault();
     if (posting) {
@@ -229,11 +222,14 @@ export default (props: Props) => {
                     clipRule="evenodd"/>
             </svg>
           </label> : null}
-        <textarea
-          className="new-post-text-box"
-          value={newPostContent}
-          onChange={contentOnChange}
+        <ContentTextarea
+          api={props.api}
+          content={newPostContent}
+          onChange={(newContent) => {
+            updateNewPostContent(newContent)
+          }}
           disabled={posting}
+          textAreaClassName='new-post-text-box'
         />
       </div>
 

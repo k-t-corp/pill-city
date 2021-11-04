@@ -45,6 +45,17 @@
     padding: 10px 20px 10px 10px;
 }
 
+/* Hide scrollbar for Chrome, Safari and Opera */
+.new-post-text-box::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.new-post-text-box {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
 .new-post-text-box:focus {
     outline: none !important;
     border: 1px #b4b4b4 solid;
@@ -133,17 +144,6 @@
     -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
     overflow: hidden;
-}
-
-/* Hide scrollbar for Chrome, Safari and Opera */
-.new-post-text-box::-webkit-scrollbar {
-    display: none;
-}
-
-/* Hide scrollbar for IE, Edge and Firefox */
-.new-post-text-box {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
 }
 
 /* Post Loading Modal */
