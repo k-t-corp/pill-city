@@ -67,6 +67,7 @@
     right: 5px;
     width: 20px;
     cursor: pointer;
+    z-index: 999;
 }
 
 .new-post-circles-dropdown-wrapper {
