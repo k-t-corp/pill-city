@@ -10,7 +10,8 @@ interface Props {
   content: string
   onChange: (newContent: string) => void
   disabled: boolean
-  textAreaClassName: string
+  textAreaClassName?: string
+  placeholder?: string
 }
 
 export default (props: Props) => {
@@ -22,6 +23,7 @@ export default (props: Props) => {
         props.onChange(e.target.value)
       }}
       disabled={props.disabled}
+      placeholder={props.placeholder}
       loadingComponent={MentionAutoCompleteLoading}
       trigger={{
         "@": {
