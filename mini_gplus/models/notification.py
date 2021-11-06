@@ -9,6 +9,7 @@ class NotifyingAction(Enum):
     Mention = "mention"
     Reaction = "reaction"
     Reshare = "reshare"
+    Follow = "follow"
 
 
 class Notification(Document, CreatedAtMixin):
