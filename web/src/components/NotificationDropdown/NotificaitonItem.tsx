@@ -12,15 +12,15 @@ interface Props {
   api: any
 }
 
+const notificationSummary = (notification: Notification) => {
+  const notification_summary = notification.notifying_summary
+  return summary(notification_summary, 100)
+}
+
 export default (props: Props) => {
   let notifier
   const notification = props.notification
   const history = useHistory()
-
-  const notificationSummary = (notification: Notification) => {
-    const notification_summary = notification.notifying_summary
-    return summary(notification_summary, 100)
-  }
 
   if (notification.notifying_action !== "mention") {
     notifier = !notification.notifying_deleted ? notification.notifier : null
@@ -33,6 +33,7 @@ export default (props: Props) => {
   if (notification.notifying_action === "reshare") action = "reshared"
   if (notification.notifying_action === "comment") action = "commented"
   if (notification.notifying_action === "reaction") action =  "reacted"
+  if (notification.notifying_action === 'follow') action = "followed"
 
   let notifiedLocationPronoun
   if (notification.notifying_action === "mention") notifiedLocationPronoun = "their"
@@ -64,18 +65,16 @@ export default (props: Props) => {
               {action}
               {' '}
               {
-                notification.notifying_action === "mention" ?
+                notification.notifying_action === "mention" || notification.notifying_action === "follow" ?
                   "you" :
                   <div className="notification-summary">
                     "{notificationSummary(notification)}"
                   </div>
               }
-              {' '}
-              on
-              {' '}
-              {notifiedLocationPronoun}
-              {' '}
-              {notifiedLocationType}
+              {
+                notification.notifying_action !== 'follow' &&
+                  ` on ${notifiedLocationPronoun} ${notifiedLocationType}`
+              }
             </div>
           </div>
         </div>

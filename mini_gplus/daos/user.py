@@ -4,8 +4,10 @@ from mongoengine import NotUniqueError
 from werkzeug.security import generate_password_hash, check_password_hash
 from mini_gplus.models import User, Media
 from mini_gplus.utils.profiling import timer
+from mini_gplus.models import NotifyingAction
 from .exceptions import UnauthorizedAccess
 from .user_cache import set_in_user_cache, get_users_in_user_cache, get_in_user_cache_by_user_id
+from .notification import create_notification
 
 AvailableProfilePics = ["pill1.png", "pill2.png", "pill3.png", "pill4.png", "pill5.png", "pill6.png"]
 
@@ -104,6 +106,15 @@ def add_following(self, user):
     self.followings.append(user)
     self.save()
     set_in_user_cache(self)
+    create_notification(
+        self=self,
+        notifying_href='',
+        notifying_summary='',
+        notifying_action=NotifyingAction.Follow,
+        notified_href='',
+        notified_summary='',
+        owner=user
+    )
     return True
 
 
