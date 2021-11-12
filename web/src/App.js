@@ -5,7 +5,7 @@ import {
   Switch,
   Redirect
 } from 'react-router-dom'
-import Api from './api/Api'
+import api from './api/Api'
 import withAuthRedirect from './hoc/withAuthRedirect'
 import withNoAuthRedirect from './hoc/withNoAuthRedirect'
 import withNavBar from './hoc/withNavBar/withNavBar'
@@ -23,8 +23,6 @@ import Post from './pages/Post/Post'
 import Notifications from "./pages/Notifications/Notifications";
 import Admin from "./pages/Admin/Admin";
 import ToastProvider from "./components/Toast/ToastProvider";
-
-const api = new Api(process.env.REACT_APP_API_ENDPOINT)
 
 export default class App extends Component {
   render() {

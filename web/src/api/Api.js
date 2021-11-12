@@ -2,7 +2,7 @@ import axios from 'axios'
 import ApiError from './ApiError'
 import {getAccessToken, setAccessToken, accessTokenExists} from "./AuthStorage";
 
-export default class Api {
+class Api {
   constructor(endpoint) {
     this.axiosInstance = axios.create({
       baseURL: endpoint,
@@ -580,3 +580,6 @@ export default class Api {
     return res.data
   }
 }
+
+const api = new Api(process.env.REACT_APP_API_ENDPOINT)
+export default api
