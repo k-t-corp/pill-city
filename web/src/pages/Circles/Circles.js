@@ -2,8 +2,12 @@ import React, {useEffect, useState} from 'react'
 import "./Circles.css"
 import DraggableUserProfileCards from "../../components/DraggableUserProfileCards/DraggableUserProfileCards";
 import CircleBoards from "../../components/CircleBoards/CircleBoards";
+import withApi from "../../hoc/withApi";
+import withAuthRedirect from "../../hoc/withAuthRedirect";
+import withNavBar from "../../hoc/withNavBar/withNavBar";
+import api from "../../api/Api";
 
-export default (props) => {
+const Circles = (props) => {
   const [userData, updateUserData] = useState([])
   const [loadingUserData, updateLoadingUserData] = useState(true)
   const [circleData, updateCircleData] = useState([])
@@ -30,5 +34,6 @@ export default (props) => {
         />}
     </div>
   )
-
 }
+
+export default withApi(withAuthRedirect(withNavBar(Circles, '/circles')), api)

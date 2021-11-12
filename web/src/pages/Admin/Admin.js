@@ -1,7 +1,10 @@
 import React, {useEffect, useState} from 'react'
 import './Admin.css'
+import withApi from "../../hoc/withApi";
+import withAuthRedirect from "../../hoc/withAuthRedirect";
+import api from "../../api/Api";
 
-export default (props) => {
+const Admin = (props) => {
   const [invitationCodes, updateInvitationCodes] = useState([])
 
   useEffect(async () => {
@@ -57,3 +60,5 @@ export default (props) => {
     </div>
   )
 }
+
+export default withApi(withAuthRedirect(Admin, '/admin'), api)

@@ -6,12 +6,16 @@ import {useHistory} from "react-router-dom";
 import './Settings.css'
 import UpdateAvatarModal from "../../components/UpdateAvatarModal/UpdateAvatarModal";
 import User from "../../models/User";
+import withApi from "../../hoc/withApi";
+import withAuthRedirect from "../../hoc/withAuthRedirect";
+import withNavBar from "../../hoc/withNavBar/withNavBar";
+import api from "../../api/Api";
 
 interface Props {
   api: any
 }
 
-export default (props: Props) => {
+const Settings = (props: Props) => {
   const [loading, updateLoading] = useState(true)
   const [me, updateMe] = useState<User | null>(null)
 
@@ -224,3 +228,5 @@ export default (props: Props) => {
     )
   }
 }
+
+export default withApi(withAuthRedirect(withNavBar(Settings, '/settings')), api)

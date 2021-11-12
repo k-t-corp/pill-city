@@ -4,6 +4,10 @@ import getAvatarUrl from "../../utils/getAvatarUrl";
 import "./Users.css"
 import User from "../../models/User";
 import getNameAndSubName from "../../utils/getNameAndSubName";
+import withApi from "../../hoc/withApi";
+import withAuthRedirect from "../../hoc/withAuthRedirect";
+import withNavBar from "../../hoc/withNavBar/withNavBar";
+import api from "../../api/Api";
 
 interface Props {
   api: any
@@ -14,7 +18,7 @@ type UserWithLoadingState = {
   is_following: boolean
 } & User
 
-export default (props: Props) => {
+const Users = (props: Props) => {
   const [users, updateUsers] = useState<UserWithLoadingState[]>([])
   const history = useHistory()
 
@@ -116,3 +120,5 @@ export default (props: Props) => {
     </div>
   )
 }
+
+export default withApi(withAuthRedirect(withNavBar(Users, '/users')), api)

@@ -10,6 +10,10 @@ import PostModel from "../../models/Post"
 import User from "../../models/User";
 import {useInterval} from "react-interval-hook";
 import useInView from 'react-cool-inview'
+import withApi from "../../hoc/withApi";
+import withAuthRedirect from "../../hoc/withAuthRedirect";
+import withNavBar from "../../hoc/withNavBar/withNavBar";
+import api from "../../api/Api";
 
 const InfiniteScrollFactor = 0.8
 
@@ -17,7 +21,7 @@ interface Props {
   api: any
 }
 
-export default (props: Props) => {
+const Home = (props: Props) => {
   const [loading, updateLoading] = useState(true)
   const [posts, updatePosts] = useState<PostModel[]>([])
   const [me, updateMe] = useState<User | null>(null)
@@ -165,3 +169,5 @@ export default (props: Props) => {
     </div>
   )
 }
+
+export default withApi(withAuthRedirect(withNavBar(Home, '/')), api)

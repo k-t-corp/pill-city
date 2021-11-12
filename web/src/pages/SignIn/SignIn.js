@@ -4,10 +4,11 @@ import {Button, Grid, Message, Label} from "semantic-ui-react";
 import {Form, Input} from 'formsy-semantic-ui-react'
 import HomePage from "../../components/HomePage/HomePage";
 import "./SignIn.css"
+import withApi from "../../hoc/withApi";
+import withNoAuthRedirect from "../../hoc/withNoAuthRedirect";
+import api from "../../api/Api";
 
-require('promise.prototype.finally').shim();
-
-export default class SignIn extends Component {
+class SignIn extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -115,3 +116,5 @@ export default class SignIn extends Component {
     )
   }
 }
+
+export default withApi(withNoAuthRedirect(SignIn), api)

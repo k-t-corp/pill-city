@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {useHistory} from "react-router-dom";
+import {useHistory, useParams} from "react-router-dom";
 import PostComponent from "../../components/Post/Post";
 import NewPost from "../../components/NewPost/NewPost";
 import getProfilePicUrl from "../../utils/getProfilePicUrl";
@@ -10,6 +10,10 @@ import User from "../../models/User";
 import PostModel from "../../models/Post"
 import useInView from "react-cool-inview";
 import getNameAndSubName from "../../utils/getNameAndSubName";
+import withApi from "../../hoc/withApi";
+import withAuthRedirect from "../../hoc/withAuthRedirect";
+import withNavBar from "../../hoc/withNavBar/withNavBar";
+import api from "../../api/Api";
 
 const InfiniteScrollFactor = 0.8
 
@@ -18,7 +22,9 @@ interface Props {
   userId?: string
 }
 
-export default (props: Props) => {
+const Profile = (props: Props) => {
+  const { id: userId } = useParams<{id?: string}>()
+
   const [user, updateUser] = useState<User | null>(null)
   const [me, updateMe] = useState<User | null>(null)
   const [userNotFound, updateUserNotFound] = useState(false)
@@ -47,7 +53,7 @@ export default (props: Props) => {
     (async () => {
       const me = await props.api.getMe()
       updateMe(me)
-      if (!props.userId) {
+      if (!userId) {
         updateUser(me)
         updatePosts(await props.api.getProfile(me.id))
         updatePostsLoading(false)
@@ -55,10 +61,10 @@ export default (props: Props) => {
       } else {
         let user
         try {
-          user = await props.api.getUser(props.userId)
+          user = await props.api.getUser(userId)
           updateUser(user)
           updateIsFollowing(user.is_following)
-          updatePosts(await props.api.getProfile(props.userId))
+          updatePosts(await props.api.getProfile(userId))
           updatePostsLoading(false)
           updateFollowLoading(false)
         } catch (e) {
@@ -161,16 +167,16 @@ export default (props: Props) => {
     }
     updateFollowLoading(true)
     if (isFollowing) {
-      await props.api.unfollow(props.userId)
+      await props.api.unfollow(userId)
     } else {
-      await props.api.follow(props.userId)
+      await props.api.follow(userId)
     }
     updateIsFollowing(!isFollowing)
     updateFollowLoading(false)
   }
 
   const userInfoButton = () => {
-    if (!props.userId) {
+    if (!userId) {
       return (
         <div
           className="profile-info-button"
@@ -191,7 +197,7 @@ export default (props: Props) => {
     }
   }
 
-  const { name, subName } = getNameAndSubName(props.userId ? user : me)
+  const { name, subName } = getNameAndSubName(userId ? user : me)
 
   return (
     <div className="profile-wrapper">
@@ -227,7 +233,7 @@ export default (props: Props) => {
               updateNewPostOpened(false)
             }}
             afterPosting={(post) => {
-              if (!props.userId) {
+              if (!userId) {
                 updatePosts([post, ...posts])
               }
             }}
@@ -238,3 +244,5 @@ export default (props: Props) => {
     </div>
   )
 }
+
+export default withApi(withAuthRedirect(withNavBar(Profile, '/profile')), api)

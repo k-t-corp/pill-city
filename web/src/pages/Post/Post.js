@@ -1,10 +1,16 @@
 import React, {useEffect, useState} from 'react'
-import {useLocation} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import PostComponent from "../../components/Post/Post";
 import NewPost from "../../components/NewPost/NewPost";
+import withApi from "../../hoc/withApi";
+import withAuthRedirect from "../../hoc/withAuthRedirect";
+import withNavBar from "../../hoc/withNavBar/withNavBar";
+import api from "../../api/Api";
 import './Post.css'
 
-export default (props) => {
+const Post = (props) => {
+  const { id: postId } = useParams()
+
   const [loading, updateLoading] = useState(true)
   const [post, updatePost] = useState(null)
   const [me, updateMe] = useState(null)
@@ -13,7 +19,7 @@ export default (props) => {
 
   useEffect(async () => {
     updateMe(await props.api.getMe())
-    updatePost(await props.api.getPost(props.postId))
+    updatePost(await props.api.getPost(postId))
     updateLoading(false)
   }, [])
 
@@ -83,3 +89,5 @@ export default (props) => {
     </div>
   )
 }
+
+export default withApi(withAuthRedirect(withNavBar(Post, '/post')), api)
