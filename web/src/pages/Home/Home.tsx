@@ -8,7 +8,6 @@ import MobileNewPost from "../../components/MobileNewPost/MobileNewPost";
 import About from "../../components/About/About";
 import PostModel from "../../models/Post"
 import User from "../../models/User";
-import {useInterval} from "react-interval-hook";
 import useInView from 'react-cool-inview'
 import withApi from "../../hoc/withApi";
 import withAuthRedirect from "../../hoc/withAuthRedirect";
@@ -19,24 +18,29 @@ const InfiniteScrollFactor = 0.8
 
 interface Props {
   api: any
+  postsLoading: boolean,
+  posts: PostModel[],
+  postsLoadingMore: boolean
+  postsPolling: boolean,
+  postsNoMore: boolean,
+  pollPosts: () => Promise<void>,
+  loadMorePosts: () => Promise<void>
 }
 
 const Home = (props: Props) => {
-  const [loading, updateLoading] = useState(true)
-  const [posts, updatePosts] = useState<PostModel[]>([])
+  const { posts } = props
+
   const [me, updateMe] = useState<User | null>(null)
+  const [meLoading, updateMeLoading] = useState(true)
   const [resharePostData, updateResharePostData] = useState<PostModel | null>(null)
   const [mobileNewPostOpened, updateMobileNewPostOpened] = useState(false)
-  const [loadingMorePosts, updateLoadingMorePosts] = useState(false)
-  const [pollingNewPosts, updatePollingNewPosts] = useState(false)
-  const [noMoreNewPosts, updateNoMoreNewPosts] = useState(false)
 
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
   const { observe } = useInView({
     rootMargin: "50px 0px",
     onEnter: async ({ unobserve, observe }) => {
       unobserve()
-      await loadMorePosts()
+      await props.loadMorePosts()
       observe()
     }
   })
@@ -44,40 +48,12 @@ const Home = (props: Props) => {
   useEffect(() => {
     (async () => {
       updateMe(await props.api.getMe())
-      updatePosts(await props.api.getHome())
-      updateLoading(false)
+      updateMeLoading(false)
     })()
   }, [])
 
-  const pollNewPosts = async () => {
-    if (posts.length === 0 || loading || pollingNewPosts) {
-      return
-    }
-    updatePollingNewPosts(true)
-    const newPosts = await props.api.pollHome(posts[0].id)
-    updatePosts([...newPosts, ...posts])
-    updatePollingNewPosts(false)
-  }
-
-  useInterval(pollNewPosts, 5000)
-
-  const loadMorePosts = async () => {
-    if (loadingMorePosts) {
-      return
-    }
-    updateLoadingMorePosts(true)
-    const lastPost = posts[posts.length - 1]
-    const newPosts = await props.api.getHome(lastPost['id'])
-    if (newPosts.length !== 0) {
-      updatePosts(posts.concat(newPosts))
-    } else {
-      updateNoMoreNewPosts(true)
-    }
-    updateLoadingMorePosts(false)
-  }
-
   let homePostElement = () => {
-    if (loading) {
+    if (props.postsLoading || meLoading) {
       return (<div className="home-status">Loading...</div>)
     } else if (posts.length === 0) {
       return (<div className="home-status">No posts here</div>)
@@ -106,7 +82,7 @@ const Home = (props: Props) => {
         )
       }
       let endElem;
-      if (noMoreNewPosts) {
+      if (props.postsNoMore) {
         endElem = (
           <div
             key={posts.length}
@@ -114,7 +90,7 @@ const Home = (props: Props) => {
           >No more new posts</div>
         )
       }
-      else if (loadingMorePosts) {
+      else if (props.postsLoadingMore) {
         endElem = (
           <div
             key={posts.length}
@@ -126,7 +102,7 @@ const Home = (props: Props) => {
           <div
             key={posts.length}
             className='home-load-more'
-            onClick={loadMorePosts}
+            onClick={props.loadMorePosts}
           >Load more</div>
         )
       }
@@ -150,7 +126,7 @@ const Home = (props: Props) => {
           beforePosting={() => {
             updateMobileNewPostOpened(false)
           }}
-          afterPosting={pollNewPosts}
+          afterPosting={props.pollPosts}
         />
       }
       {!isTabletOrMobile &&
@@ -160,7 +136,7 @@ const Home = (props: Props) => {
             resharePostData={resharePostData}
             updateResharePostData={updateResharePostData}
             beforePosting={() => {}}
-            afterPosting={pollNewPosts}
+            afterPosting={props.pollPosts}
           />
           <NotificationDropdown api={props.api}/>
           <About api={props.api}/>
