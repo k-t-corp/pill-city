@@ -8,8 +8,13 @@ import MobileNewPost from "../../components/MobileNewPost/MobileNewPost";
 import About from "../../components/About/About";
 import PostModel from "../../models/Post"
 import User from "../../models/User";
-import {useInterval} from "react-interval-hook";
 import useInView from 'react-cool-inview'
+import withApi from "../../hoc/withApi";
+import withAuthRedirect from "../../hoc/withAuthRedirect";
+import withNavBar from "../../hoc/withNavBar/withNavBar";
+import api from "../../api/Api";
+import {useAppDispatch, useAppSelector} from "../../store/hooks";
+import {loadMorePosts, pollPosts} from "../../store/homeSlice";
 
 const InfiniteScrollFactor = 0.8
 
@@ -17,22 +22,25 @@ interface Props {
   api: any
 }
 
-export default (props: Props) => {
-  const [loading, updateLoading] = useState(true)
-  const [posts, updatePosts] = useState<PostModel[]>([])
+const Home = (props: Props) => {
+  const dispatch = useAppDispatch()
+  const posts = useAppSelector(state => state.home.posts)
+  const loading = useAppSelector(state => state.home.loading)
+  const loadingMore = useAppSelector(state => state.home.loadingMore)
+  const noMore = useAppSelector(state => state.home.noMore)
+
   const [me, updateMe] = useState<User | null>(null)
+  const [meLoading, updateMeLoading] = useState(true)
   const [resharePostData, updateResharePostData] = useState<PostModel | null>(null)
   const [mobileNewPostOpened, updateMobileNewPostOpened] = useState(false)
-  const [loadingMorePosts, updateLoadingMorePosts] = useState(false)
-  const [pollingNewPosts, updatePollingNewPosts] = useState(false)
-  const [noMoreNewPosts, updateNoMoreNewPosts] = useState(false)
 
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
   const { observe } = useInView({
     rootMargin: "50px 0px",
     onEnter: async ({ unobserve, observe }) => {
       unobserve()
-      await loadMorePosts()
+      // @ts-ignore
+      await dispatch(loadMorePosts())
       observe()
     }
   })
@@ -40,40 +48,12 @@ export default (props: Props) => {
   useEffect(() => {
     (async () => {
       updateMe(await props.api.getMe())
-      updatePosts(await props.api.getHome())
-      updateLoading(false)
+      updateMeLoading(false)
     })()
   }, [])
 
-  const pollNewPosts = async () => {
-    if (posts.length === 0 || loading || pollingNewPosts) {
-      return
-    }
-    updatePollingNewPosts(true)
-    const newPosts = await props.api.pollHome(posts[0].id)
-    updatePosts([...newPosts, ...posts])
-    updatePollingNewPosts(false)
-  }
-
-  useInterval(pollNewPosts, 5000)
-
-  const loadMorePosts = async () => {
-    if (loadingMorePosts) {
-      return
-    }
-    updateLoadingMorePosts(true)
-    const lastPost = posts[posts.length - 1]
-    const newPosts = await props.api.getHome(lastPost['id'])
-    if (newPosts.length !== 0) {
-      updatePosts(posts.concat(newPosts))
-    } else {
-      updateNoMoreNewPosts(true)
-    }
-    updateLoadingMorePosts(false)
-  }
-
   let homePostElement = () => {
-    if (loading) {
+    if (loading || meLoading) {
       return (<div className="home-status">Loading...</div>)
     } else if (posts.length === 0) {
       return (<div className="home-status">No posts here</div>)
@@ -102,7 +82,7 @@ export default (props: Props) => {
         )
       }
       let endElem;
-      if (noMoreNewPosts) {
+      if (noMore) {
         endElem = (
           <div
             key={posts.length}
@@ -110,7 +90,7 @@ export default (props: Props) => {
           >No more new posts</div>
         )
       }
-      else if (loadingMorePosts) {
+      else if (loadingMore) {
         endElem = (
           <div
             key={posts.length}
@@ -122,7 +102,10 @@ export default (props: Props) => {
           <div
             key={posts.length}
             className='home-load-more'
-            onClick={loadMorePosts}
+            onClick={async () => {
+              // @ts-ignore
+              await dispatch(loadMorePosts())
+            }}
           >Load more</div>
         )
       }
@@ -146,7 +129,10 @@ export default (props: Props) => {
           beforePosting={() => {
             updateMobileNewPostOpened(false)
           }}
-          afterPosting={pollNewPosts}
+          afterPosting={async () => {
+            // @ts-ignore
+            dispatch(pollPosts())
+          }}
         />
       }
       {!isTabletOrMobile &&
@@ -156,7 +142,10 @@ export default (props: Props) => {
             resharePostData={resharePostData}
             updateResharePostData={updateResharePostData}
             beforePosting={() => {}}
-            afterPosting={pollNewPosts}
+            afterPosting={async () => {
+              // @ts-ignore
+              dispatch(pollPosts())
+            }}
           />
           <NotificationDropdown api={props.api}/>
           <About api={props.api}/>
@@ -165,3 +154,5 @@ export default (props: Props) => {
     </div>
   )
 }
+
+export default withApi(withAuthRedirect(withNavBar(Home, '/')), api)

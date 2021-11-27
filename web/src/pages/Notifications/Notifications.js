@@ -1,10 +1,13 @@
 import React, {useState} from 'react';
 import "./Notifications.css"
 import NotificationList from "../../components/NotificationDropdown/NotificationList";
+import withApi from "../../hoc/withApi";
+import withAuthRedirect from "../../hoc/withAuthRedirect";
+import withNavBar from "../../hoc/withNavBar/withNavBar";
+import api from "../../api/Api";
 
-export default (props) => {
+const Notifications = (props) => {
   const [notifications, updateNotifications] = useState([])
-
 
   return (
     <div>
@@ -28,6 +31,7 @@ export default (props) => {
         updateNotifications={updateNotifications}
         api={props.api}/>
     </div>
-
   )
 }
+
+export default withApi(withAuthRedirect(withNavBar(Notifications, '/notifications')), api)

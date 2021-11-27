@@ -4,8 +4,11 @@ import {Form, Input} from 'formsy-semantic-ui-react'
 import {Redirect} from "react-router-dom";
 import HomePage from "../../components/HomePage/HomePage";
 import "./SignUp.css";
+import withApi from "../../hoc/withApi";
+import withNoAuthRedirect from "../../hoc/withNoAuthRedirect";
+import api from "../../api/Api";
 
-export default class SignUp extends Component {
+class SignUp extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -179,3 +182,5 @@ export default class SignUp extends Component {
     )
   }
 }
+
+export default withApi(withNoAuthRedirect(SignUp), api)

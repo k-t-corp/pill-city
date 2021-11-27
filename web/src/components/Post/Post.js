@@ -45,6 +45,7 @@ export default (props) => {
 
     commentElems.push(
       <Comment
+        key={comment.id}
         api={props.api}
         me={props.me}
         comment={comment}

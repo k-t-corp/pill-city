@@ -2,16 +2,19 @@ import React, {useEffect, useState} from 'react'
 import {removeAccessToken} from "../../api/AuthStorage";
 import LoadingModal from "../../components/LoadingModal/LoadingModal";
 import About from "../../components/About/About";
-import {useHistory} from "react-router-dom";
 import './Settings.css'
 import UpdateAvatarModal from "../../components/UpdateAvatarModal/UpdateAvatarModal";
 import User from "../../models/User";
+import withApi from "../../hoc/withApi";
+import withAuthRedirect from "../../hoc/withAuthRedirect";
+import withNavBar from "../../hoc/withNavBar/withNavBar";
+import api from "../../api/Api";
 
 interface Props {
   api: any
 }
 
-export default (props: Props) => {
+const Settings = (props: Props) => {
   const [loading, updateLoading] = useState(true)
   const [me, updateMe] = useState<User | null>(null)
 
@@ -27,8 +30,6 @@ export default (props: Props) => {
 
   const [displayName, updateDisplayName] = useState<string | undefined>()
   const [updatingDisplayName, updateUpdatingDisplayName] = useState(false)
-
-  const history = useHistory()
 
   const profileModalOptionsElem = () => {
     let optionElem = []
@@ -72,7 +73,9 @@ export default (props: Props) => {
 
   const handleSignOut = () => {
     removeAccessToken()
-    history.push("/signin")
+    // This is needed so that the App component is fully reloaded
+    // so that getting the first home page and auto refresh is disabled
+    window.location.href = '/signin'
   }
 
   const dismissAvatarModal = () => {
@@ -224,3 +227,5 @@ export default (props: Props) => {
     )
   }
 }
+
+export default withApi(withAuthRedirect(withNavBar(Settings, '/settings')), api)

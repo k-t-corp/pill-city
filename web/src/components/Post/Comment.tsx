@@ -33,7 +33,7 @@ export default (props: Props) => {
     const nestedComment = comment.comments[i]
     nestedCommentElems.push(
       <NestedComment
-        key={i}
+        key={nestedComment.id}
         api={props.api}
         me={props.me}
         nestedComment={nestedComment}

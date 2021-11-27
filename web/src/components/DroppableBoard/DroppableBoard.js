@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import "./DroppableBoard.css"
-import UserProfileCard from "../UserProfileCard";
+import UserProfileCard from "../UserProfileCard/UserProfileCard";
 import getAvatarUrl from "../../utils/getAvatarUrl";
 import { useMediaQuery } from 'react-responsive'
 import {useHotkeys} from "react-hotkeys-hook";

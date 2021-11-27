@@ -1,20 +1,19 @@
 import React, {Component} from 'react';
-import {Redirect} from 'react-router-dom'
 import {Button, Grid, Message, Label} from "semantic-ui-react";
 import {Form, Input} from 'formsy-semantic-ui-react'
 import HomePage from "../../components/HomePage/HomePage";
 import "./SignIn.css"
+import withApi from "../../hoc/withApi";
+import withNoAuthRedirect from "../../hoc/withNoAuthRedirect";
+import api from "../../api/Api";
 
-require('promise.prototype.finally').shim();
-
-export default class SignIn extends Component {
+class SignIn extends Component {
   constructor(props) {
     super(props)
     this.state = {
       'error': '',
       'loading': false,
       'buttonEnabled': false,
-      'redirectToHome': false
     }
   }
 
@@ -34,7 +33,9 @@ export default class SignIn extends Component {
     this.props.api.signIn(
       id, password
     ).then(() => {
-      this.setState({'redirectToHome': true})
+      // This is needed so that the App component is fully reloaded
+      // so that getting the first home page and auto refresh is enabled
+      window.location.href = '/'
     }).catch( e => {
         if (e.response.status === 401) {
           this.refs.form.updateInputsWithError({
@@ -48,10 +49,6 @@ export default class SignIn extends Component {
   }
 
   render() {
-    if (this.state.redirectToHome) {
-      return <Redirect to='/'/>
-    }
-
     const errorLabel = <Label color="red" pointing/>
 
     const loginForm = () => {
@@ -115,3 +112,5 @@ export default class SignIn extends Component {
     )
   }
 }
+
+export default withApi(withNoAuthRedirect(SignIn), api)
