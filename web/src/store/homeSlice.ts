@@ -1,39 +1,93 @@
-import { createSlice } from "@reduxjs/toolkit";
+import {AnyAction, createSlice, ThunkAction} from "@reduxjs/toolkit";
+import Post from "../models/Post";
+import api from "../api/Api";
+import {RootState} from "./store";
 
 interface HomeState {
-  homePostsLoadingMore: boolean
-  homePostsNoMore: boolean
+  posts: Post[]
+  loading: boolean
+  loadingMore: boolean
+  polling: boolean
+  noMore: boolean
 }
 
 const initialState: HomeState = {
-  homePostsLoadingMore: false,
-  homePostsNoMore: false
+  posts: [],
+  loading: true,
+  loadingMore: false,
+  polling: false,
+  noMore: false
 }
 
 const homeSlice = createSlice({
   name: 'home',
   initialState,
   reducers: {
-    setHomePostsLoadingMore: state => {
-      state.homePostsLoadingMore = true
+    setPosts: (state, action) => {
+      state.posts = action.payload
     },
-    unsetHomePostsLoadingMore: state => {
-      state.homePostsLoadingMore = false
+    unsetLoading: state => {
+      state.loading = false
     },
-    setHomePostsNoMore: state => {
-      state.homePostsNoMore = true
+    setLoadingMore: state => {
+      state.loadingMore = true
     },
-    unsetHomePostsNoMore: state => {
-      state.homePostsNoMore = false
+    unsetLoadingMore: state => {
+      state.loadingMore = false
+    },
+    setPolling: state => {
+      state.polling = true
+    },
+    unsetPolling: state => {
+      state.polling = false
+    },
+    setNoMore: state => {
+      state.noMore = true
     }
   }
 })
 
-export const {
-  setHomePostsLoadingMore,
-  unsetHomePostsLoadingMore,
-  setHomePostsNoMore,
-  unsetHomePostsNoMore
+const {
+  setPosts, unsetLoading, setLoadingMore, unsetLoadingMore, setPolling, unsetPolling, setNoMore
 } = homeSlice.actions
+
+
+export const loadPosts = (): ThunkAction<void, RootState, unknown, AnyAction> => {
+  return async (dispatch) => {
+    dispatch(setPosts(await api.getHome()))
+    dispatch(unsetLoading())
+  }
+}
+
+export const loadMorePosts = (): ThunkAction<void, RootState, unknown, AnyAction> => {
+  return async (dispatch, getState) => {
+    if (getState().home.loadingMore) {
+      return
+    }
+    dispatch(setLoadingMore())
+    const homePosts = getState().home.posts
+    const lastPost = homePosts[homePosts.length - 1]
+    const newPosts = await api.getHome(lastPost['id'])
+    if (newPosts.length !== 0) {
+      dispatch(setPosts(homePosts.concat(newPosts)))
+    } else {
+      dispatch(setNoMore())
+    }
+    dispatch(unsetLoadingMore())
+  }
+}
+
+export const pollPosts = (): ThunkAction<void, RootState, unknown, AnyAction> => {
+  return async (dispatch, getState) => {
+    const homePosts = getState().home.posts
+    if (homePosts.length === 0 || getState().home.loading || getState().home.polling) {
+      return
+    }
+    dispatch(setPolling())
+    const newPosts = await api.pollHome(homePosts[0].id)
+    dispatch(setPosts([...newPosts, ...homePosts]))
+    dispatch(unsetPolling())
+  }
+}
 
 export default homeSlice.reducer

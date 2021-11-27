@@ -13,22 +13,21 @@ import withApi from "../../hoc/withApi";
 import withAuthRedirect from "../../hoc/withAuthRedirect";
 import withNavBar from "../../hoc/withNavBar/withNavBar";
 import api from "../../api/Api";
+import {useAppDispatch, useAppSelector} from "../../store/hooks";
+import {loadMorePosts, pollPosts} from "../../store/homeSlice";
 
 const InfiniteScrollFactor = 0.8
 
 interface Props {
   api: any
-  postsLoading: boolean,
-  posts: PostModel[],
-  postsLoadingMore: boolean
-  postsPolling: boolean,
-  postsNoMore: boolean,
-  pollPosts: () => Promise<void>,
-  loadMorePosts: () => Promise<void>
 }
 
 const Home = (props: Props) => {
-  const { posts } = props
+  const dispatch = useAppDispatch()
+  const posts = useAppSelector(state => state.home.posts)
+  const loading = useAppSelector(state => state.home.loading)
+  const loadingMore = useAppSelector(state => state.home.loadingMore)
+  const noMore = useAppSelector(state => state.home.noMore)
 
   const [me, updateMe] = useState<User | null>(null)
   const [meLoading, updateMeLoading] = useState(true)
@@ -40,7 +39,8 @@ const Home = (props: Props) => {
     rootMargin: "50px 0px",
     onEnter: async ({ unobserve, observe }) => {
       unobserve()
-      await props.loadMorePosts()
+      // @ts-ignore
+      await dispatch(loadMorePosts())
       observe()
     }
   })
@@ -53,7 +53,7 @@ const Home = (props: Props) => {
   }, [])
 
   let homePostElement = () => {
-    if (props.postsLoading || meLoading) {
+    if (loading || meLoading) {
       return (<div className="home-status">Loading...</div>)
     } else if (posts.length === 0) {
       return (<div className="home-status">No posts here</div>)
@@ -82,7 +82,7 @@ const Home = (props: Props) => {
         )
       }
       let endElem;
-      if (props.postsNoMore) {
+      if (noMore) {
         endElem = (
           <div
             key={posts.length}
@@ -90,7 +90,7 @@ const Home = (props: Props) => {
           >No more new posts</div>
         )
       }
-      else if (props.postsLoadingMore) {
+      else if (loadingMore) {
         endElem = (
           <div
             key={posts.length}
@@ -102,7 +102,10 @@ const Home = (props: Props) => {
           <div
             key={posts.length}
             className='home-load-more'
-            onClick={props.loadMorePosts}
+            onClick={async () => {
+              // @ts-ignore
+              await dispatch(loadMorePosts())
+            }}
           >Load more</div>
         )
       }
@@ -126,7 +129,10 @@ const Home = (props: Props) => {
           beforePosting={() => {
             updateMobileNewPostOpened(false)
           }}
-          afterPosting={props.pollPosts}
+          afterPosting={async () => {
+            // @ts-ignore
+            dispatch(pollPosts())
+          }}
         />
       }
       {!isTabletOrMobile &&
@@ -136,7 +142,10 @@ const Home = (props: Props) => {
             resharePostData={resharePostData}
             updateResharePostData={updateResharePostData}
             beforePosting={() => {}}
-            afterPosting={props.pollPosts}
+            afterPosting={async () => {
+              // @ts-ignore
+              dispatch(pollPosts())
+            }}
           />
           <NotificationDropdown api={props.api}/>
           <About api={props.api}/>

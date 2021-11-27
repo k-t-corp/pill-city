@@ -2,7 +2,7 @@ import axios from 'axios'
 import ApiError from './ApiError'
 import {getAccessToken, setAccessToken, accessTokenExists} from "./AuthStorage";
 
-class Api {
+export class Api {
   constructor(endpoint) {
     this.axiosInstance = axios.create({
       baseURL: endpoint,
@@ -14,6 +14,10 @@ class Api {
         return status < 500; // Resolve only if the status code is less than 500
       }
     })
+  }
+
+  static isUnauthorized() {
+    return !accessTokenExists()
   }
 
   static throwOnUnauthorized() {
