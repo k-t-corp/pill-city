@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react'
 import {removeAccessToken} from "../../api/AuthStorage";
 import LoadingModal from "../../components/LoadingModal/LoadingModal";
 import About from "../../components/About/About";
-import {useHistory} from "react-router-dom";
 import './Settings.css'
 import UpdateAvatarModal from "../../components/UpdateAvatarModal/UpdateAvatarModal";
 import User from "../../models/User";
@@ -31,8 +30,6 @@ const Settings = (props: Props) => {
 
   const [displayName, updateDisplayName] = useState<string | undefined>()
   const [updatingDisplayName, updateUpdatingDisplayName] = useState(false)
-
-  const history = useHistory()
 
   const profileModalOptionsElem = () => {
     let optionElem = []
@@ -76,7 +73,9 @@ const Settings = (props: Props) => {
 
   const handleSignOut = () => {
     removeAccessToken()
-    history.push("/signin")
+    // This is needed so that the App component is fully reloaded
+    // so that getting the first home page and auto refresh is disabled
+    window.location.href = '/signin'
   }
 
   const dismissAvatarModal = () => {

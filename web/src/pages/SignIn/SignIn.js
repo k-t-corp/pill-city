@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {Redirect} from 'react-router-dom'
 import {Button, Grid, Message, Label} from "semantic-ui-react";
 import {Form, Input} from 'formsy-semantic-ui-react'
 import HomePage from "../../components/HomePage/HomePage";
@@ -15,7 +14,6 @@ class SignIn extends Component {
       'error': '',
       'loading': false,
       'buttonEnabled': false,
-      'redirectToHome': false
     }
   }
 
@@ -35,7 +33,9 @@ class SignIn extends Component {
     this.props.api.signIn(
       id, password
     ).then(() => {
-      this.setState({'redirectToHome': true})
+      // This is needed so that the App component is fully reloaded
+      // so that getting the first home page and auto refresh is enabled
+      window.location.href = '/'
     }).catch( e => {
         if (e.response.status === 401) {
           this.refs.form.updateInputsWithError({
@@ -49,10 +49,6 @@ class SignIn extends Component {
   }
 
   render() {
-    if (this.state.redirectToHome) {
-      return <Redirect to='/'/>
-    }
-
     const errorLabel = <Label color="red" pointing/>
 
     const loginForm = () => {

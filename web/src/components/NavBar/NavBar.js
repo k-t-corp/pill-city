@@ -120,7 +120,7 @@ export default (props) => {
                  handleNavItemClick('/notifications')
                }}>
 
-            {hasNewNotifications && <div className='mobile-nav-bar-notification-indicator-wrapper'><div className='mobile-nav-bar-notification-indicator'></div></div>}
+            {hasNewNotifications && <div className='mobile-nav-bar-notification-indicator-wrapper'><div className='mobile-nav-bar-notification-indicator' /></div>}
 
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path
@@ -153,7 +153,9 @@ export default (props) => {
 
   const handleSignOut = () => {
     removeAccessToken()
-    props.updateRedirectTo('/signin')
+    // This is needed so that the App component is fully reloaded
+    // so that getting the first home page and auto refresh is disabled
+    window.location.href = '/signin'
   }
 
   return (
