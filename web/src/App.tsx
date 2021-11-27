@@ -20,8 +20,6 @@ import {useInterval} from "react-interval-hook";
 import {useAppDispatch} from "./store/hooks";
 import {loadPosts, pollPosts} from "./store/homeSlice";
 import {Api} from "./api/Api";
-//@ts-ignore
-import ScrollMemory from 'react-router-scroll-memory';
 
 export default () => {
   const dispatch = useAppDispatch()
@@ -43,7 +41,6 @@ export default () => {
   return (
     <ToastProvider>
       <Router>
-        <ScrollMemory />
         <Switch>
           <Route exact={true} path='/'>
             <Home />
