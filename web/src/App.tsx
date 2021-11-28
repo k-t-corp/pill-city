@@ -19,6 +19,7 @@ import ToastProvider from "./components/Toast/ToastProvider";
 import {useInterval} from "react-interval-hook";
 import {useAppDispatch} from "./store/hooks";
 import {loadPosts, pollPosts} from "./store/homeSlice";
+import {loadMe} from "./store/meSlice";
 import {Api} from "./api/Api";
 
 export default () => {
@@ -27,6 +28,7 @@ export default () => {
   useEffect(() => {
     if (!Api.isUnauthorized()) {
       // @ts-ignore
+      dispatch(loadMe())
       dispatch(loadPosts())
     }
   }, [])

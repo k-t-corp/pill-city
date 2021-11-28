@@ -14,6 +14,7 @@ import withApi from "../../hoc/withApi";
 import withAuthRedirect from "../../hoc/withAuthRedirect";
 import withNavBar from "../../hoc/withNavBar/withNavBar";
 import api from "../../api/Api";
+import {useAppSelector} from "../../store/hooks";
 
 const InfiniteScrollFactor = 0.8
 
@@ -24,9 +25,10 @@ interface Props {
 
 const Profile = (props: Props) => {
   const { id: userId } = useParams<{id?: string}>()
+  const me = useAppSelector(state => state.me.me)
+  const meLoading = useAppSelector(state => state.me.loading)
 
   const [user, updateUser] = useState<User | null>(null)
-  const [me, updateMe] = useState<User | null>(null)
   const [userNotFound, updateUserNotFound] = useState(false)
 
   const [postsLoading, updatePostsLoading] = useState(true)
@@ -51,11 +53,12 @@ const Profile = (props: Props) => {
 
   useEffect(() => {
     (async () => {
-      const me = await props.api.getMe()
-      updateMe(me)
+      if (meLoading) {
+        return
+      }
       if (!userId) {
         updateUser(me)
-        updatePosts(await props.api.getProfile(me.id))
+        updatePosts(await props.api.getProfile((me as User).id))
         updatePostsLoading(false)
         updateFollowLoading(false)
       } else {
@@ -76,7 +79,7 @@ const Profile = (props: Props) => {
         }
       }
     })()
-  }, [])
+  }, [meLoading])
 
   const loadMorePosts = async () => {
     if (loadingMorePosts || user === null) {

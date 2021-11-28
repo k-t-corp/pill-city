@@ -8,13 +8,13 @@ import MediaPreview from "../MediaPreview/MediaPreview";
 import parseMentioned from "../../utils/parseMentioned";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
-import User from "../../models/User";
 import Circle from "../../models/Circle";
 import Post from "../../models/Post";
 import "./NewPost.css"
 import {useToast} from "../Toast/ToastProvider";
 import ApiError from "../../api/ApiError";
 import ContentTextarea from "../ContentTextarea/ContentTextarea";
+import {useAppSelector} from "../../store/hooks";
 
 interface Props {
   api: any
@@ -27,7 +27,7 @@ interface Props {
 type CircleIdOrPublic = string | true
 
 export default (props: Props) => {
-  const [me, updateMe] = useState<User | null>(null)
+  const me = useAppSelector(state => state.me.me)
   const [myCircles, updateMyCircles] = useState<Circle[]>([])
 
   const [newPostContent, updateNewPostContent] = useState<string>("")
@@ -42,7 +42,6 @@ export default (props: Props) => {
 
   useEffect(() => {
     (async () => {
-      updateMe(await props.api.getMe())
       updateMyCircles(await props.api.getCircles())
     })()
   }, [])

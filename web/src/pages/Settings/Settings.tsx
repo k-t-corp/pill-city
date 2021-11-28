@@ -9,6 +9,8 @@ import withApi from "../../hoc/withApi";
 import withAuthRedirect from "../../hoc/withAuthRedirect";
 import withNavBar from "../../hoc/withNavBar/withNavBar";
 import api from "../../api/Api";
+import {useAppDispatch, useAppSelector} from "../../store/hooks";
+import {loadMe} from "../../store/meSlice";
 
 interface Props {
   api: any
@@ -16,7 +18,8 @@ interface Props {
 
 const Settings = (props: Props) => {
   const [loading, updateLoading] = useState(true)
-  const [me, updateMe] = useState<User | null>(null)
+  const me = useAppSelector(state => state.me.me)
+  const meLoading = useAppSelector(state => state.me.loading)
 
   const [avatarUrl, updateAvatarUrl] = useState<string | undefined>()
   const [uploadedAvatarObjectUrl, updateUploadedAvatarObjectUrl] = useState("")
@@ -53,15 +56,17 @@ const Settings = (props: Props) => {
 
   useEffect(() => {
     (async () => {
-      const myProfile = await props.api.getMe()
-      updateMe(myProfile)
+      if (meLoading) {
+        return
+      }
+      const myProfile = me as User
       updateDisplayName(myProfile.display_name)
       updateAvatarUrl(myProfile.avatar_url)
       updateProfilePic(myProfile.profile_pic)
       updateProfileModalSelectedPic(myProfile.profile_pic)
       updateLoading(false)
     })()
-  }, [])
+  }, [meLoading])
 
   const changeAvatarOnClick = (event: any) => {
     if (event.target.files && event.target.files[0]) {
@@ -81,6 +86,8 @@ const Settings = (props: Props) => {
   const dismissAvatarModal = () => {
     updateAvatarModalOpened(false)
   }
+
+  const dispatch = useAppDispatch()
 
   if (loading) {
     return <LoadingModal title="Loading..."/>
@@ -160,6 +167,7 @@ const Settings = (props: Props) => {
                 <div className='settings-user-name-edit' onClick={async () => {
                   updateLoading(true)
                   await props.api.updateDisplayName(displayName)
+                  await dispatch(loadMe())
                   updateUpdatingDisplayName(false)
                   updateLoading(false)
                 }}>
@@ -201,13 +209,14 @@ const Settings = (props: Props) => {
                   </div>
                   <div
                     onClick={async () => {
-                     try {
-                       await props.api.updateProfilePic(profileModalSelectedPic)
-                       updateProfileModalOpened(false)
-                       updateProfilePic(profileModalSelectedPic)
-                     } catch (e) {
-                       console.log(e)
-                     }}
+                      try {
+                        await props.api.updateProfilePic(profileModalSelectedPic)
+                        await dispatch(loadMe())
+                        updateProfileModalOpened(false)
+                        updateProfilePic(profileModalSelectedPic)
+                      } catch (e) {
+                        console.log(e)
+                      }}
                     }>Update</div>
                 </div>
               </div>

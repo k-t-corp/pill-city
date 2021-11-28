@@ -7,18 +7,18 @@ import withAuthRedirect from "../../hoc/withAuthRedirect";
 import withNavBar from "../../hoc/withNavBar/withNavBar";
 import api from "../../api/Api";
 import './Post.css'
+import {useAppSelector} from "../../store/hooks";
 
 const Post = (props) => {
   const { id: postId } = useParams()
+  const me = useAppSelector(state => state.me.me)
 
   const [loading, updateLoading] = useState(true)
   const [post, updatePost] = useState(null)
-  const [me, updateMe] = useState(null)
   const [resharePost, updateResharePost] = useState(null)
   const [newPostOpened, updateNewPostOpened] = useState(false)
 
   useEffect(async () => {
-    updateMe(await props.api.getMe())
     updatePost(await props.api.getPost(postId))
     updateLoading(false)
   }, [])
