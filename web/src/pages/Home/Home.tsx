@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import Post from "../../components/Post/Post";
 import "./Home.css"
 import NewPost from "../../components/NewPost/NewPost";
@@ -7,7 +7,6 @@ import {useMediaQuery} from "react-responsive";
 import MobileNewPost from "../../components/MobileNewPost/MobileNewPost";
 import About from "../../components/About/About";
 import PostModel from "../../models/Post"
-import User from "../../models/User";
 import useInView from 'react-cool-inview'
 import withApi from "../../hoc/withApi";
 import withAuthRedirect from "../../hoc/withAuthRedirect";
@@ -28,9 +27,9 @@ const Home = (props: Props) => {
   const loading = useAppSelector(state => state.home.loading)
   const loadingMore = useAppSelector(state => state.home.loadingMore)
   const noMore = useAppSelector(state => state.home.noMore)
+  const me = useAppSelector(state => state.me.me)
+  const meLoading = useAppSelector(state => state.me.loading)
 
-  const [me, updateMe] = useState<User | null>(null)
-  const [meLoading, updateMeLoading] = useState(true)
   const [resharePostData, updateResharePostData] = useState<PostModel | null>(null)
   const [mobileNewPostOpened, updateMobileNewPostOpened] = useState(false)
 
@@ -44,13 +43,6 @@ const Home = (props: Props) => {
       observe()
     }
   })
-
-  useEffect(() => {
-    (async () => {
-      updateMe(await props.api.getMe())
-      updateMeLoading(false)
-    })()
-  }, [])
 
   let homePostElement = () => {
     if (loading || meLoading) {

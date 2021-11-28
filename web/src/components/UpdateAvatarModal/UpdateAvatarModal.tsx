@@ -3,6 +3,8 @@ import FormData from "form-data";
 import ReactCrop, {Crop} from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import './UpdateAvatarModal.css'
+import {useAppDispatch} from "../../store/hooks";
+import {loadMe} from "../../store/meSlice";
 
 const getCroppedImg = async (image: HTMLImageElement, crop: Crop): Promise<Blob> => {
   const canvas = document.createElement('canvas');
@@ -65,6 +67,8 @@ export default (props: Props) => {
     avatarImageRef.current = img;
   }, []);
 
+  const dispatch = useAppDispatch()
+
   return (
     <div className="settings-avatar-modal">
       <div className="settings-avatar-modal-content">
@@ -97,6 +101,7 @@ export default (props: Props) => {
               data.append('file', croppedImg, 'new-avatar');
               data.append('update_post', sendPost ? '1' : '0')
               await props.api.updateAvatar(data)
+              await dispatch(loadMe())
 
               props.updateAvatarUrl(URL.createObjectURL(croppedImg))
               props.dismiss()
