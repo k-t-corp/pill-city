@@ -38,7 +38,6 @@ const Home = (props: Props) => {
     rootMargin: "50px 0px",
     onEnter: async ({ unobserve, observe }) => {
       unobserve()
-      // @ts-ignore
       await dispatch(loadMorePosts())
       observe()
     }
@@ -95,7 +94,6 @@ const Home = (props: Props) => {
             key={posts.length}
             className='home-load-more'
             onClick={async () => {
-              // @ts-ignore
               await dispatch(loadMorePosts())
             }}
           >Load more</div>
@@ -122,8 +120,7 @@ const Home = (props: Props) => {
             updateMobileNewPostOpened(false)
           }}
           afterPosting={async () => {
-            // @ts-ignore
-            dispatch(pollPosts())
+            await dispatch(pollPosts())
           }}
         />
       }
@@ -135,11 +132,10 @@ const Home = (props: Props) => {
             updateResharePostData={updateResharePostData}
             beforePosting={() => {}}
             afterPosting={async () => {
-              // @ts-ignore
-              dispatch(pollPosts())
+              await dispatch(pollPosts())
             }}
           />
-          <NotificationDropdown api={props.api}/>
+          <NotificationDropdown />
           <About api={props.api}/>
         </div>
       }

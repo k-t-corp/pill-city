@@ -1,18 +1,21 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import "./NavBar.css"
 import {Menu, MenuItem} from "semantic-ui-react";
 import {removeAccessToken} from "../../api/AuthStorage";
 import {useMediaQuery} from "react-responsive";
+import {useAppSelector} from "../../store/hooks";
 
-export default (props) => {
+interface Props {
+  path: string,
+  wrappedComponent: any
+  updateRedirectTo: (newPath: string) => void
+}
+
+export default (props: Props) => {
+  const hasNewNotifications = useAppSelector(state => state.notifications.notifications.filter(n => n.unread).length > 0)
+
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
-  const [hasNewNotifications, updateHasNewNotifications] = useState(false)
 
-  useEffect(async () => {
-    let newNotifications = await props.wrappedComponent.props.api.getNotifications()
-    newNotifications = newNotifications.filter(n => n.unread)
-    updateHasNewNotifications(newNotifications.length > 0)
-  }, [])
   const WebNavBarElem = () => {
     return (
       <div>
@@ -143,11 +146,11 @@ export default (props) => {
       </div>)
   }
 
-  const handleNavItemClick = (path) => {
+  const handleNavItemClick = (path: string) => {
     props.updateRedirectTo(path)
   }
 
-  const handleNavItemActiveClass = (path) => {
+  const handleNavItemActiveClass = (path: string) => {
     return props.path === path ? "mobile-nav-bar-button-active" : null
   }
 

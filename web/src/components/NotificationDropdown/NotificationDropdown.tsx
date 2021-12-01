@@ -1,11 +1,14 @@
-import React, {useState} from 'react';
+import React from 'react';
 import "./NotificationDropdown.css"
 import NotificationList from "./NotificationList";
+import {useAppDispatch, useAppSelector} from "../../store/hooks";
+import {markAllNotificationsAsRead} from "../../store/notificationsSlice";
 
-export default (props) => {
-  const [notifications, updateNotifications] = useState([])
+interface Props {}
 
-  const unreadNotificationsCount = notifications ? notifications.filter(n => n.unread).length : 0
+export default (_: Props) => {
+  const dispatch = useAppDispatch()
+  const unreadNotificationsCount = useAppSelector(state => state.notifications.notifications.filter(n => n.unread).length)
 
   return (
     <div className="notification-container">
@@ -18,23 +21,14 @@ export default (props) => {
             stroke="currentColor"
             onClick={async (e) => {
               e.preventDefault()
-              await props.api.markAllNotificationsAsRead()
-              updateNotifications(notifications.map(n => {
-                return {
-                  ...n,
-                  unread: false
-                }
-              }))
+              await dispatch(markAllNotificationsAsRead())
             }}
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"/>
           </svg>
         </div>
       </div>
-      <NotificationList
-        notifications={notifications}
-        updateNotifications={updateNotifications}
-        api={props.api}/>
+      <NotificationList />
     </div>
   )
 }

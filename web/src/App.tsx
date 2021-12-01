@@ -20,6 +20,7 @@ import {useInterval} from "react-interval-hook";
 import {useAppDispatch} from "./store/hooks";
 import {loadPosts, pollPosts} from "./store/homeSlice";
 import {loadMe} from "./store/meSlice";
+import {loadNotifications, pollNotifications} from "./store/notificationsSlice";
 import {Api} from "./api/Api";
 
 export default () => {
@@ -27,16 +28,18 @@ export default () => {
 
   useEffect(() => {
     if (!Api.isUnauthorized()) {
-      // @ts-ignore
+      // those dispatches are intentionally left not async so that they can run in parallel maybe?
       dispatch(loadMe())
       dispatch(loadPosts())
+      dispatch(loadNotifications())
     }
   }, [])
 
   useInterval(() => {
     if (!Api.isUnauthorized()) {
-      // @ts-ignore
+      // those dispatches are intentionally left not async so that they can run in parallel maybe?
       dispatch(pollPosts())
+      dispatch(pollNotifications())
     }
   }, 5000)
 
