@@ -165,7 +165,6 @@ export default (props: Props) => {
     return className.join(" ")
   }
 
-  // @ts-ignore
   return (
     <div className="new-post">
       <div className="new-post-user-info">

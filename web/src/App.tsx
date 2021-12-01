@@ -28,7 +28,7 @@ export default () => {
 
   useEffect(() => {
     if (!Api.isUnauthorized()) {
-      // @ts-ignore
+      // those dispatches are intentionally left not async so that they can run in parallel maybe?
       dispatch(loadMe())
       dispatch(loadPosts())
       dispatch(loadNotifications())
@@ -37,8 +37,14 @@ export default () => {
 
   useInterval(() => {
     if (!Api.isUnauthorized()) {
-      // @ts-ignore
+      // those dispatches are intentionally left not async so that they can run in parallel maybe?
       dispatch(pollPosts())
+    }
+  }, 5000)
+
+  useInterval(() => {
+    if (!Api.isUnauthorized()) {
+      // those dispatches are intentionally left not async so that they can run in parallel maybe?
       dispatch(pollNotifications())
     }
   }, 5000)
