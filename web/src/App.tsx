@@ -20,6 +20,7 @@ import {useInterval} from "react-interval-hook";
 import {useAppDispatch} from "./store/hooks";
 import {loadPosts, pollPosts} from "./store/homeSlice";
 import {loadMe} from "./store/meSlice";
+import {loadNotifications, pollNotifications} from "./store/notificationsSlice";
 import {Api} from "./api/Api";
 
 export default () => {
@@ -30,6 +31,7 @@ export default () => {
       // @ts-ignore
       dispatch(loadMe())
       dispatch(loadPosts())
+      dispatch(loadNotifications())
     }
   }, [])
 
@@ -37,6 +39,7 @@ export default () => {
     if (!Api.isUnauthorized()) {
       // @ts-ignore
       dispatch(pollPosts())
+      dispatch(pollNotifications())
     }
   }, 5000)
 

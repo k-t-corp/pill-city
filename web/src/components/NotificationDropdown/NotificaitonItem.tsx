@@ -6,10 +6,11 @@ import React from "react";
 import Notification from "../../models/Notification";
 import './NotificationItem.css'
 import {useHistory} from "react-router-dom";
+import {useAppDispatch} from "../../store/hooks";
+import {markNotificationAsRead} from "../../store/notificationsSlice";
 
 interface Props {
   notification: Notification
-  api: any
 }
 
 const notificationSummary = (notification: Notification) => {
@@ -21,6 +22,7 @@ export default (props: Props) => {
   let notifier
   const notification = props.notification
   const history = useHistory()
+  const dispatch = useAppDispatch()
 
   if (notification.notifying_action !== "mention") {
     notifier = !notification.notifying_deleted ? notification.notifier : null
@@ -44,7 +46,7 @@ export default (props: Props) => {
   else if (notification.notified_href.indexOf("/post/") !== -1) notifiedLocationType = 'post'
 
   const notificationOnClick = async () => {
-    await props.api.markNotificationAsRead(notification.id)
+    await dispatch(markNotificationAsRead(notification.id))
     history.push(notification.notified_href)
   }
 

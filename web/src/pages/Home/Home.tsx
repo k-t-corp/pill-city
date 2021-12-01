@@ -139,7 +139,7 @@ const Home = (props: Props) => {
               dispatch(pollPosts())
             }}
           />
-          <NotificationDropdown api={props.api}/>
+          <NotificationDropdown />
           <About api={props.api}/>
         </div>
       }
