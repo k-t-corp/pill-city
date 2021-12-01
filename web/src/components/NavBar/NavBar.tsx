@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import "./NavBar.css"
 import {Menu, MenuItem} from "semantic-ui-react";
 import {removeAccessToken} from "../../api/AuthStorage";
@@ -12,19 +12,10 @@ interface Props {
 }
 
 export default (props: Props) => {
-  const notifications = useAppSelector(state => state.notifications.notifications)
-  const loading = useAppSelector(state => state.notifications.loading)
+  const hasNewNotifications = useAppSelector(state => state.notifications.notifications.filter(n => n.unread).length > 0)
 
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
-  const [hasNewNotifications, updateHasNewNotifications] = useState(false)
 
-  useEffect(() => {
-    if (loading) {
-      return
-    }
-    const newNotifications = notifications.filter(n => n.unread)
-    updateHasNewNotifications(newNotifications.length > 0)
-  }, [notifications, loading])
   const WebNavBarElem = () => {
     return (
       <div>

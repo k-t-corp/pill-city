@@ -38,7 +38,7 @@ export default () => {
   useInterval(() => {
     if (!Api.isUnauthorized()) {
       // those dispatches are intentionally left not async so that they can run in parallel maybe?
-      // dispatch(pollPosts())
+      dispatch(pollPosts())
       dispatch(pollNotifications())
     }
   }, 5000)

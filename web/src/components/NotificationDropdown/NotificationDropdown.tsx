@@ -8,8 +8,7 @@ interface Props {}
 
 export default (_: Props) => {
   const dispatch = useAppDispatch()
-  const notifications = useAppSelector(state => state.notifications.notifications)
-  const unreadNotificationsCount = notifications ? notifications.filter(n => n.unread).length : 0
+  const unreadNotificationsCount = useAppSelector(state => state.notifications.notifications.filter(n => n.unread).length)
 
   return (
     <div className="notification-container">
