@@ -91,6 +91,9 @@ export const pollNotifications = (): ThunkAction<void, RootState, unknown, AnyAc
         break
       }
     }
+    if (newNotifications.length === 0) {
+      return
+    }
     dispatch(setNotifications([...newNotifications, ...notifications]))
     dispatch(unsetPolling())
   }
