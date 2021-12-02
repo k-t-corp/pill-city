@@ -124,7 +124,8 @@ export default (props: Props) => {
     }
     reactionElems.push(
       <div className={className} key={emoji} onClick={() => toggleEmoji(emoji)}>
-        <span className="post-emoji">{emoji}</span><span>&nbsp;{reactionsWithEmoji.length}</span>
+        <span className="post-emoji" role="img">{emoji}</span>
+        <span>&nbsp;{reactionsWithEmoji.length}</span>
       </div>
     )
   }

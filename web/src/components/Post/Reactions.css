@@ -36,6 +36,7 @@
 
 .post-emoji {
     font-size: large;
+    font-weight: 400;
 }
 
 #post-reaction-emoji-picker-wrapper {
