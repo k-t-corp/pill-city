@@ -6,6 +6,27 @@
     height: 100vh;
 }
 
+.settings-row {
+    width: 60%;
+    padding: 12px;
+    border-radius: 2px;
+}
+
+.settings-row:hover {
+    background-color: #e8e8e8;
+    cursor: pointer;
+}
+
+.settings-row-header {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.settings-row-content {
+    margin-top: 4px;
+    color: #555555;
+}
+
 .settings-user-info {
     display: flex;
     flex-direction: column;
@@ -268,5 +289,9 @@ input[type="file"] {
         width: 100%;
         height: calc(100vh - 50px);
     }
-}
 
+    .settings-row {
+        min-width: 0;
+        width: 100%;
+    }
+}

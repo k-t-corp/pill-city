@@ -187,7 +187,7 @@ const Profile = (props: Props) => {
             history.push(`/settings`)
           }}
         >
-          Edit profile
+          Edit profile & settings
         </div>
       )
     } else {

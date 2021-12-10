@@ -47,7 +47,6 @@ const getCroppedImg = async (image: HTMLImageElement, crop: Crop): Promise<Blob>
 interface Props {
   uploadedAvatarObjectUrl: string
   api: any
-  updateUpdatingAvatar: (updating: boolean) => void
   updateAvatarUrl: (url: string) => void
   dismiss: () => void
 }
@@ -94,7 +93,6 @@ export default (props: Props) => {
               if (!avatarImageRef.current) {
                 return
               }
-              props.updateUpdatingAvatar(true)
 
               const croppedImg = await getCroppedImg(avatarImageRef.current, crop);
               const data = new FormData();
@@ -105,7 +103,6 @@ export default (props: Props) => {
 
               props.updateAvatarUrl(URL.createObjectURL(croppedImg))
               props.dismiss()
-              props.updateUpdatingAvatar(false)
             }}
           >Update</div>
           <input
