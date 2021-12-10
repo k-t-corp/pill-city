@@ -1,6 +1,7 @@
+from typing import List
 from mini_gplus.models import Notification, User, NotifyingAction
 from mini_gplus.utils.make_uuid import make_uuid
-from .pagination import get_page
+from .pagination import get_page, poll_latest
 
 
 NotificationPageSize = 10
@@ -66,6 +67,27 @@ def get_notifications(self, from_id):
         extra_filter_func=_filter_noop,
         from_id=from_id,
         page_count=NotificationPageSize
+    )
+
+
+def poll_notifications(self: User, to_id: str) -> List[Notification]:
+    """
+    Poll notifications since the to_id Notification, reverse chronologically ordered
+
+    :param self: The acting user
+    :param to_id: The notification ID to which notifications should be polled
+    :return: All notifications since the to_id Notification, reverse chronologically ordered
+    """
+    def _filter_noop(_):
+        return True
+
+    return poll_latest(
+        mongoengine_model=Notification,
+        extra_query_args={
+            'owner': self
+        },
+        extra_filter_func=_filter_noop,
+        to_id=to_id
     )
 
 

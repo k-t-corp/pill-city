@@ -1,7 +1,8 @@
 from flask_restful import Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from mini_gplus.daos.user import find_user
-from mini_gplus.daos.notification import get_notifications, mark_notification_as_read, mark_all_notifications_as_read
+from mini_gplus.daos.notification import get_notifications, mark_notification_as_read, mark_all_notifications_as_read, \
+    poll_notifications
 from .users import user_fields
 from .pagination import pagination_parser
 
@@ -37,7 +38,11 @@ class Notifications(Resource):
         user = find_user(user_id)
 
         args = pagination_parser.parse_args()
-        return get_notifications(user, args['from_id'])
+        to_id = args.get('to_id', None)
+        if to_id:
+            return poll_notifications(user, to_id), 200
+        from_id = args.get('from_id', None)
+        return get_notifications(user, from_id), 200
 
 
 class NotificationRead(Resource):
