@@ -508,6 +508,22 @@ export class Api {
     return res.data
   }
 
+  async pollNotifications(toId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.get(
+      `/notifications`,
+      {
+        params: {
+          'to_id': toId
+        }
+      }
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
+
   async markNotificationAsRead(notificationId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.put(
