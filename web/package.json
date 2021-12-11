@@ -17,6 +17,7 @@
     "react-hotkeys-hook": "^3.4.0",
     "react-image-crop": "^8.6.12",
     "react-interval-hook": "^1.1.3",
+    "react-modal": "^3.14.4",
     "react-redux": "^7.2.6",
     "react-responsive": "^9.0.0-beta.4",
     "react-router-dom": "^5.3.0",
@@ -43,6 +44,7 @@
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.2",
     "@types/react-image-crop": "^8.1.3",
+    "@types/react-modal": "^3.13.1",
     "@types/react-router-dom": "^5.3.0",
     "@types/webscopeio__react-textarea-autocomplete": "^4.7.2",
     "redux-devtools": "^3.7.0"

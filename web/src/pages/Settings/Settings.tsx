@@ -2,26 +2,29 @@ import React, {useEffect, useState} from 'react'
 import {removeAccessToken} from "../../api/AuthStorage";
 import About from "../../components/About/About";
 import './Settings.css'
-import UpdateAvatarModal from "../../components/UpdateAvatarModal/UpdateAvatarModal";
+import UpdateAvatar from "../../components/UpdateAvatar/UpdateAvatar";
 import User from "../../models/User";
 import withApi from "../../hoc/withApi";
 import withAuthRedirect from "../../hoc/withAuthRedirect";
 import withNavBar from "../../hoc/withNavBar/withNavBar";
 import api from "../../api/Api";
 import {useAppDispatch, useAppSelector} from "../../store/hooks";
-import {loadMe} from "../../store/meSlice";
+import Modal from 'react-modal';
+import {Simulate} from "react-dom/test-utils";
+
+Modal.setAppElement('#root');
 
 interface Props {
   api: any
 }
 
 const Settings = (props: Props) => {
+  const [loading, updateLoading] = useState(false)
   const me = useAppSelector(state => state.me.me)
   const meLoading = useAppSelector(state => state.me.loading)
 
-  const [avatarUrl, updateAvatarUrl] = useState<string | undefined>()
-  const [uploadedAvatarObjectUrl, updateUploadedAvatarObjectUrl] = useState("")
   const [avatarModalOpened, updateAvatarModalOpened] = useState(false)
+  const [avatarUpdating, updateAvatarUpdating] = useState(false)
 
   const profilePicOptions = ["pill1.png", "pill2.png", "pill3.png", "pill4.png", "pill5.png", "pill6.png"]
   const [profilePic, updateProfilePic] = useState<string | null>(null)
@@ -58,19 +61,12 @@ const Settings = (props: Props) => {
       }
       const myProfile = me as User
       updateDisplayName(myProfile.display_name)
-      updateAvatarUrl(myProfile.avatar_url)
       updateProfilePic(myProfile.profile_pic)
       updateProfileModalSelectedPic(myProfile.profile_pic)
     })()
   }, [meLoading])
 
-  const changeAvatarOnClick = (event: any) => {
-    if (event.target.files && event.target.files[0]) {
-      let img = event.target.files[0];
-      updateUploadedAvatarObjectUrl(URL.createObjectURL(img))
-      updateAvatarModalOpened(true)
-    }
-  }
+
 
   const handleSignOut = () => {
     removeAccessToken()
@@ -79,13 +75,9 @@ const Settings = (props: Props) => {
     window.location.href = '/signin'
   }
 
-  const dismissAvatarModal = () => {
-    updateAvatarModalOpened(false)
-  }
-
   const dispatch = useAppDispatch()
 
-  if (meLoading) {
+  if (meLoading || loading) {
     return <div>Loading...</div>
   }
   return (
@@ -98,8 +90,8 @@ const Settings = (props: Props) => {
         <div className="settings-row-header">Email</div>
         <div className="settings-row-content">{}</div>
       </div>
-      <div className="settings-row">
-        <div className="settings-row-header">Avatar</div>
+      <div className="settings-row" onClick={() => {updateAvatarModalOpened(true)}}>
+        <div className="settings-row-header"> Avatar</div>
         <div className="settings-row-content">Click to update</div>
       </div>
       <div className="settings-row">
@@ -110,6 +102,21 @@ const Settings = (props: Props) => {
         <div className="settings-row-header">Sign out</div>
       </div>
       <About api={props.api}/>
+      <Modal isOpen={avatarModalOpened}>
+        <UpdateAvatar
+          api={props.api}
+          dismiss={() => {
+            updateAvatarModalOpened(false)
+          }}
+          beforeUpdate={() => {
+            updateLoading(true)
+          }}
+          afterUpdate={() => {
+            updateLoading(false)
+            updateAvatarModalOpened(false)
+          }}
+        />
+      </Modal>
       {/*<div className="settings-user-info">*/}
       {/*  <div className="settings-banner-wrapper" style={{*/}
       {/*    backgroundColor: "#9dd0ff",*/}
@@ -232,13 +239,6 @@ const Settings = (props: Props) => {
       {/*      </div>*/}
       {/*    </div>*/}
       {/*    : null}*/}
-      {/*  {avatarModalOpened &&*/}
-      {/*    <UpdateAvatarModal*/}
-      {/*      uploadedAvatarObjectUrl={uploadedAvatarObjectUrl}*/}
-      {/*      api={props.api}*/}
-      {/*      updateAvatarUrl={updateAvatarUrl}*/}
-      {/*      dismiss={dismissAvatarModal}*/}
-      {/*    />*/}
       {/*  }*/}
       {/*</div>*/}
     </div>
