@@ -1,10 +1,11 @@
 import React, {useCallback, useRef, useState} from "react";
 import FormData from "form-data";
 import ReactCrop, {Crop} from 'react-image-crop';
-import 'react-image-crop/dist/ReactCrop.css';
-import './UpdateAvatar.css'
 import {useAppDispatch} from "../../store/hooks";
 import {loadMe} from "../../store/meSlice";
+import 'react-image-crop/dist/ReactCrop.css';
+import './UpdateAvatar.css'
+
 
 const getCroppedImg = async (image: HTMLImageElement, crop: Crop): Promise<Blob> => {
   const canvas = document.createElement('canvas');

@@ -1,15 +1,16 @@
 import React, {useEffect, useState} from 'react'
 import {removeAccessToken} from "../../api/AuthStorage";
 import About from "../../components/About/About";
-import './Settings.css'
 import UpdateAvatar from "../../components/UpdateAvatar/UpdateAvatar";
 import User from "../../models/User";
 import withApi from "../../hoc/withApi";
 import withAuthRedirect from "../../hoc/withAuthRedirect";
 import withNavBar from "../../hoc/withNavBar/withNavBar";
 import api from "../../api/Api";
-import {useAppDispatch, useAppSelector} from "../../store/hooks";
+import {useAppSelector} from "../../store/hooks";
 import Modal from 'react-modal';
+import './Settings.css'
+import UpdateBanner from "../../components/UpdateBanner/UpdateBanner";
 
 Modal.setAppElement('#root');
 
@@ -23,35 +24,9 @@ const Settings = (props: Props) => {
   const meLoading = useAppSelector(state => state.me.loading)
 
   const [avatarModalOpened, updateAvatarModalOpened] = useState(false)
-  const [avatarUpdating, updateAvatarUpdating] = useState(false)
-
-  const profilePicOptions = ["pill1.png", "pill2.png", "pill3.png", "pill4.png", "pill5.png", "pill6.png"]
-  const [profilePic, updateProfilePic] = useState<string | null>(null)
-  const [profileModalOpened, updateProfileModalOpened] = useState(false)
-  const [profileModalSelectedPic, updateProfileModalSelectedPic] = useState<string | null>(null)
+  const [bannerModalOpened, updateBannerModalOpened] = useState(false)
 
   const [displayName, updateDisplayName] = useState<string | undefined>()
-  const [updatingDisplayName, updateUpdatingDisplayName] = useState(false)
-
-  const profileModalOptionsElem = () => {
-    let optionElem = []
-    for (let i = 0; i < profilePicOptions.length; i++) {
-      const selected = profileModalSelectedPic === profilePicOptions[i] ? "settings-profile-selection-option-selected" : null
-      optionElem.push(
-        <div
-          key={i}
-          className={`settings-profile-selection-option ${selected}`}
-          onClick={() => {
-            updateProfileModalSelectedPic(profilePicOptions[i])
-          }}
-        >
-          <img className="settings-profile-selection-option-img"
-               src={`${process.env.PUBLIC_URL}/${profilePicOptions[i]}`} alt=""/>
-        </div>
-      )
-    }
-    return optionElem
-  }
 
   useEffect(() => {
     (async () => {
@@ -60,8 +35,6 @@ const Settings = (props: Props) => {
       }
       const myProfile = me as User
       updateDisplayName(myProfile.display_name)
-      updateProfilePic(myProfile.profile_pic)
-      updateProfileModalSelectedPic(myProfile.profile_pic)
     })()
   }, [meLoading])
 
@@ -71,8 +44,6 @@ const Settings = (props: Props) => {
     // so that getting the first home page and auto refresh is disabled
     window.location.href = '/signin'
   }
-
-  const dispatch = useAppDispatch()
 
   if (meLoading || loading) {
     return <div className="settings-wrapper">Loading...</div>
@@ -91,7 +62,7 @@ const Settings = (props: Props) => {
         <div className="settings-row-header"> Avatar</div>
         <div className="settings-row-content">Click to update</div>
       </div>
-      <div className="settings-row">
+      <div className="settings-row" onClick={() => {updateBannerModalOpened(true)}}>
         <div className="settings-row-header">Banner</div>
         <div className="settings-row-content">Click to update</div>
       </div>
@@ -111,6 +82,21 @@ const Settings = (props: Props) => {
           afterUpdate={() => {
             updateLoading(false)
             updateAvatarModalOpened(false)
+          }}
+        />
+      </Modal>
+      <Modal isOpen={bannerModalOpened}>
+        <UpdateBanner
+          api={props.api}
+          dismiss={() => {
+            updateBannerModalOpened(false)
+          }}
+          beforeUpdate={() => {
+            updateLoading(true)
+          }}
+          afterUpdate={() => {
+            updateLoading(false)
+            updateBannerModalOpened(false)
           }}
         />
       </Modal>
@@ -204,39 +190,6 @@ const Settings = (props: Props) => {
       {/*            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>*/}
       {/*    </svg>*/}
       {/*  </div>*/}
-      {/*  {profileModalOpened ?*/}
-      {/*    <div className="settings-profile-pic-modal">*/}
-      {/*      <div className="settings-profile-pic-modal-content">*/}
-      {/*        <div id="settings-profile-pic-modal-preview" style={{*/}
-      {/*          backgroundColor: "#9dd0ff",*/}
-      {/*          backgroundImage: `url(${process.env.PUBLIC_URL}/${profileModalSelectedPic})`,*/}
-      {/*        }}/>*/}
-      {/*        <div className="settings-profile-pic-modal-selections">*/}
-      {/*          {profileModalOptionsElem()}*/}
-      {/*        </div>*/}
-      {/*        <div className="settings-modal-buttons">*/}
-      {/*          <div className="settings-modal-cancel-button"*/}
-      {/*               onClick={() => {*/}
-      {/*                 updateProfileModalOpened(false)*/}
-      {/*               }}>*/}
-      {/*            Cancel*/}
-      {/*          </div>*/}
-      {/*          <div*/}
-      {/*            onClick={async () => {*/}
-      {/*              try {*/}
-      {/*                await props.api.updateProfilePic(profileModalSelectedPic)*/}
-      {/*                await dispatch(loadMe())*/}
-      {/*                updateProfileModalOpened(false)*/}
-      {/*                updateProfilePic(profileModalSelectedPic)*/}
-      {/*              } catch (e) {*/}
-      {/*                console.log(e)*/}
-      {/*              }}*/}
-      {/*            }>Update</div>*/}
-      {/*        </div>*/}
-      {/*      </div>*/}
-      {/*    </div>*/}
-      {/*    : null}*/}
-      {/*  }*/}
       {/*</div>*/}
     </div>
   )
