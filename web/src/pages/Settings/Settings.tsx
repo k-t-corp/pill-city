@@ -10,7 +10,6 @@ import withNavBar from "../../hoc/withNavBar/withNavBar";
 import api from "../../api/Api";
 import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import Modal from 'react-modal';
-import {Simulate} from "react-dom/test-utils";
 
 Modal.setAppElement('#root');
 
@@ -66,8 +65,6 @@ const Settings = (props: Props) => {
     })()
   }, [meLoading])
 
-
-
   const handleSignOut = () => {
     removeAccessToken()
     // This is needed so that the App component is fully reloaded
@@ -78,7 +75,7 @@ const Settings = (props: Props) => {
   const dispatch = useAppDispatch()
 
   if (meLoading || loading) {
-    return <div>Loading...</div>
+    return <div className="settings-wrapper">Loading...</div>
   }
   return (
     <div className="settings-wrapper">
