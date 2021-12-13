@@ -43,17 +43,19 @@ export default (props: Props) => {
       <div className="settings-profile-pic-selections">
         {optionElems}
       </div>
-      <div className="settings-buttons">
-        <div className="settings-cancel-button" onClick={props.dismiss}>
-          Cancel
-        </div>
+      <div className="settings-controls">
         <div
+          className="settings-controls-button settings-profile-button-cancel"
+          onClick={props.dismiss}
+        >Cancel</div>
+        <div
+          className="settings-controls-button settings-profile-button-confirm"
           onClick={async () => {
             props.beforeUpdate()
             await props.api.updateProfilePic(selectedOption)
             await dispatch(loadMe())
             props.afterUpdate()
-          }}>Update</div>
+          }}>Confirm</div>
       </div>
     </div>
   )

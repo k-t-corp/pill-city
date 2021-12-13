@@ -15,35 +15,16 @@
     border-radius: 4px;
 }
 
-.settings-avatar-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-}
-
-.settings-avatar-button {
-    padding: 8px 10px;
-    font-weight: bold;
-    font-size: medium;
-    color: white;
-    border-radius: 5px;
-    width: auto;
-    cursor: pointer;
-}
-
-.settings-avatar-cancel-button {
+.settings-avatar-button-cancel {
     background-color: #727272;
 }
 
-.settings-avatar-upload-button {
+.settings-avatar-button-upload {
     background-color: #0d71bb;
-    margin-left: 20px;
 }
 
-.settings-avatar-confirm-button {
+.settings-avatar-button-confirm {
     background-color: #E05140;
-    margin-left: 20px;
 }
 
 .settings-avatar-send-post-checkbox {

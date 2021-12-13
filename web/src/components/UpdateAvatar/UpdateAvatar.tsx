@@ -96,14 +96,14 @@ export default (props: Props) => {
           }}
         />
       }
-      <div className="settings-avatar-controls">
+      <div className="settings-controls">
         <div
-          className="settings-avatar-button settings-avatar-cancel-button"
+          className="settings-controls-button settings-avatar-button-cancel"
           onClick={props.dismiss}
         >Cancel</div>
         <label
           htmlFor="avatar"
-          className="settings-avatar-button settings-avatar-upload-button"
+          className="settings-controls-button settings-avatar-button-upload"
         >
           Upload
         </label>
@@ -115,7 +115,7 @@ export default (props: Props) => {
           onChange={onUpload}
         />
         <div
-          className="settings-avatar-button settings-avatar-confirm-button"
+          className="settings-controls-button settings-avatar-button-confirm"
           onClick={async () => {
             if (!avatarImageRef.current) {
               return

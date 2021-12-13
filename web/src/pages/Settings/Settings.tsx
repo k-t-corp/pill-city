@@ -23,6 +23,7 @@ const Settings = (props: Props) => {
   const me = useAppSelector(state => state.me.me)
   const meLoading = useAppSelector(state => state.me.loading)
 
+  const [displayNameModalOpened, updateDisplayNameModalOpened] = useState(false)
   const [avatarModalOpened, updateAvatarModalOpened] = useState(false)
   const [bannerModalOpened, updateBannerModalOpened] = useState(false)
 
@@ -50,7 +51,7 @@ const Settings = (props: Props) => {
   }
   return (
     <div className="settings-wrapper">
-      <div className="settings-row">
+      <div className="settings-row" onClick={() => {updateDisplayNameModalOpened(true)}}>
         <div className="settings-row-header">Display name</div>
         <div className="settings-row-content">{displayName || 'Click to update'}</div>
       </div>
@@ -70,6 +71,14 @@ const Settings = (props: Props) => {
         <div className="settings-row-header">Sign out</div>
       </div>
       <About api={props.api}/>
+      <Modal isOpen={displayNameModalOpened}>
+        <input
+          // className="settings-user-name settings-user-name-rename"
+          type="text"
+          value={displayName}
+          onChange={e => updateDisplayName(e.target.value)}
+        />
+      </Modal>
       <Modal isOpen={avatarModalOpened}>
         <UpdateAvatar
           api={props.api}
