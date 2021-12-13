@@ -7,12 +7,25 @@ import withApi from "../../hoc/withApi";
 import withAuthRedirect from "../../hoc/withAuthRedirect";
 import withNavBar from "../../hoc/withNavBar/withNavBar";
 import api from "../../api/Api";
-import {useAppSelector} from "../../store/hooks";
+import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import Modal from 'react-modal';
 import './Settings.css'
 import UpdateBanner from "../../components/UpdateBanner/UpdateBanner";
+import {loadMe} from "../../store/meSlice";
 
 Modal.setAppElement('#root');
+
+const modalStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+    width: '800px'
+  },
+}
 
 interface Props {
   api: any
@@ -49,6 +62,9 @@ const Settings = (props: Props) => {
   if (meLoading || loading) {
     return <div className="settings-wrapper">Loading...</div>
   }
+
+  const dispatch = useAppDispatch()
+
   return (
     <div className="settings-wrapper">
       <div className="settings-row" onClick={() => {updateDisplayNameModalOpened(true)}}>
@@ -71,15 +87,31 @@ const Settings = (props: Props) => {
         <div className="settings-row-header">Sign out</div>
       </div>
       <About api={props.api}/>
-      <Modal isOpen={displayNameModalOpened}>
+      <Modal isOpen={displayNameModalOpened} style={modalStyles}>
         <input
-          // className="settings-user-name settings-user-name-rename"
+          className="settings-display-name"
           type="text"
           value={displayName}
           onChange={e => updateDisplayName(e.target.value)}
         />
+        <div className="settings-controls">
+          <div
+            className="settings-controls-button settings-display-name-button-cancel"
+            onClick={() => {updateDisplayNameModalOpened(false)}}
+          >Cancel</div>
+          <div
+            className="settings-controls-button settings-display-name-button-confirm"
+            onClick={async () => {
+              updateLoading(true)
+              await props.api.updateDisplayName(displayName)
+              await dispatch(loadMe())
+              updateLoading(false)
+              updateDisplayNameModalOpened(false)
+            }}
+          >Confirm</div>
+        </div>
       </Modal>
-      <Modal isOpen={avatarModalOpened}>
+      <Modal isOpen={avatarModalOpened} style={modalStyles}>
         <UpdateAvatar
           api={props.api}
           dismiss={() => {
@@ -94,7 +126,7 @@ const Settings = (props: Props) => {
           }}
         />
       </Modal>
-      <Modal isOpen={bannerModalOpened}>
+      <Modal isOpen={bannerModalOpened} style={modalStyles}>
         <UpdateBanner
           api={props.api}
           dismiss={() => {
