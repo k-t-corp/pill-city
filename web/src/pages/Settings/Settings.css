@@ -58,11 +58,30 @@
     margin-right: auto;
 }
 
+.settings-email {
+    font-size: x-large;
+    font-weight: bold;
+    border-color: black;
+    border-width: 0 0 2px;
+    text-align: center;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .settings-display-name-button-cancel {
     background-color: #727272;
 }
 
 .settings-display-name-button-confirm {
+    background-color: #E05140;
+}
+
+.settings-email-button-cancel {
+    background-color: #727272;
+}
+
+.settings-email-button-confirm {
     background-color: #E05140;
 }
 

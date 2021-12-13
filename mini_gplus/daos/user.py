@@ -197,6 +197,18 @@ def update_email(self: User, email: str):
     set_in_user_cache(self)
 
 
+def get_email(self: User) -> Optional[str]:
+    """
+    Get a user's email
+
+    :param self: The acting user
+    """
+    user = get_in_user_cache_by_user_id(self.user_id)
+    if not user:
+        return
+    return user.email
+
+
 def find_ghost_user_or_raise() -> User:
     ghost_user_id = os.environ['GHOST']
     ghost_user = find_user(ghost_user_id)
