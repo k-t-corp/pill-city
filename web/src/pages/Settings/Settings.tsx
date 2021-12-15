@@ -13,19 +13,12 @@ import './Settings.css'
 import UpdateBanner from "../../components/UpdateBanner/UpdateBanner";
 import {loadMe} from "../../store/meSlice";
 import {useMediaQuery} from "react-responsive";
+import {validateEmail} from "../../utils/validators";
 
 Modal.setAppElement('#root');
 
 interface Props {
   api: any
-}
-
-const validateEmail = (email: any) => {
-  return String(email)
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    );
 }
 
 const Settings = (props: Props) => {

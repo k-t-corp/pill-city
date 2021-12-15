@@ -18,7 +18,7 @@ class Reactions(Resource):
         user = find_user(user_id)
         post = dangerously_get_post(post_id)
         if not post:
-            return {"msg": "post is not found"}, 404
+            return {"msg": "Post is not found"}, 404
         reaction_args = reaction_parser.parse_args()
         reaction_id = create_reaction(user, reaction_args['emoji'], post)
         return {'id': reaction_id}, 201
@@ -34,7 +34,7 @@ class Reaction(Resource):
         user = find_user(user_id)
         post = dangerously_get_post(post_id)
         if not post:
-            return {"msg": "post is not found"}, 404
+            return {"msg": "Post is not found"}, 404
         reaction_to_delete = get_reaction(reaction_id, post)
         if not reaction_to_delete:
             return {'msg': f'Reaction {reaction_to_delete} is already not in post {post_id}'}, 409

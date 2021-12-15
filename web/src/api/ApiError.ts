@@ -6,8 +6,8 @@ export default class ApiError extends Error {
   constructor(response: AxiosResponse) {
     super()
     this.name = 'ApiError'
-    if (response.data && response.data.message) {
-      this.message = `${response.data.message} (${response.status})`
+    if (response.data && response.data.msg) {
+      this.message = `${response.data.msg} (${response.status})`
     } else if (response.data) {
       this.message = `${JSON.stringify(response.data)} (${response.status})`
     } else {
