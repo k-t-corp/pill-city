@@ -12,19 +12,26 @@ from .notification import create_notification
 AvailableProfilePics = ["pill1.png", "pill2.png", "pill3.png", "pill4.png", "pill5.png", "pill6.png"]
 
 
-def sign_up(user_id: str, password: str, display_name: Optional[str] = None) -> bool:
+def sign_up(
+    user_id: str,
+    password: str,
+    display_name: Optional[str] = None,
+    email: Optional[str] = None
+) -> bool:
     """
     Signs up a user
 
     :param user_id: Unique user ID
     :param password: Password
     :param display_name: Display name
+    :param email Email
     :return: Whether creation is successful. If False, id is already taken
     """
     new_user = User()
     new_user.user_id = user_id
     new_user.password = generate_password_hash(password)
     new_user.display_name = display_name
+    new_user.email = email
     try:
         new_user.save()
         if os.getenv('OFFICIAL', None):

@@ -7,7 +7,7 @@ export const validateId = (id) => {
 const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
 export const validateEmail = (email) => {
-  return email.toLowerCase().match(emailRegex)
+  return String(email).toLowerCase().match(emailRegex)
 }
 
 export const validatePassword = (password) => {

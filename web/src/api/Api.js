@@ -32,14 +32,15 @@ export class Api {
     }
   }
 
-  async signUp(id, displayName, password, invitationCode) {
+  async signUp(id, displayName, password, invitationCode, email) {
     const res = await this.axiosInstance.post(
       `/signUp`,
       {
         'id': id,
         'display_name': displayName,
         'password': password,
-        'invitation_code': invitationCode
+        'invitation_code': invitationCode,
+        'email': email
       }
     )
     if (res.status !== 201) {

@@ -56,7 +56,7 @@ const SignUpForm = () => {
       return
     }
     updateSignUpLoading(true)
-    api.signUp(id, displayName, password, invitationCode)
+    api.signUp(id, displayName, password, invitationCode, email)
       .then(() => {
         history.push('/signin')
       })
