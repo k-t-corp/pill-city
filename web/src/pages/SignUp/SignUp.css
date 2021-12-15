@@ -42,8 +42,16 @@
     font-size: medium;
 }
 
+.login-form-button-disabled {
+    background-color: #727272;
+}
+
 .login-form-button:hover {
     cursor: pointer;
+}
+
+.login-form-button-disabled:hover {
+    cursor: default;
 }
 
 .signup-form-wrapper {

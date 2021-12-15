@@ -113,16 +113,16 @@ def _sign_in():
     Signs in a user by giving out access token
     """
     if not request.is_json:
-        return jsonify({"message": "missing JSON in request"}), 400
+        return jsonify({"msg": "Missing JSON in request"}), 400
     user_id = request.json.get('id', None)
     password = request.json.get('password', None)
     if not user_id:
-        return jsonify({"message": {"id": "id is required"}}), 400
+        return jsonify({"msg": "ID is required"}), 400
     if not password:
-        return jsonify({"message": {"password": "password is required"}}), 400
+        return jsonify({"msg": "Password is required"}), 400
     user = sign_in(user_id, password)
     if not user:
-        return jsonify({"message": "invalid id or password"}), 401
+        return jsonify({"msg": "Invalid id or password"}), 401
     access_token = create_access_token(identity=user_id)
     return jsonify(access_token=access_token), 200
 
@@ -144,19 +144,19 @@ def _sign_up():
     password = request.json.get('password', None)
     display_name = request.json.get('display_name', None)
     if not user_id:
-        return jsonify({"message": {"id": "id is required"}}), 400
+        return jsonify({"msg": "ID is required"}), 400
     if not check_user_id(user_id):
-        return jsonify({"message": {"id": "illegal id"}}), 400
+        return jsonify({"msg": "Invalid ID"}), 400
     if not password:
-        return jsonify({"message": {"password": "password is required"}}), 400
+        return jsonify({"msg": "Password is required"}), 400
     if not is_open_registration:
         invitation_code = request.json.get('invitation_code', None)
         if not invitation_code:
-            return jsonify({"message": {"invitation_code": "invitation code is required"}}), 403
+            return jsonify({"msg: Invitation code is required"}), 403
         if not check_invitation_code(invitation_code):
-            return jsonify({"message": {"invitation_code": "invalid invitation code"}}), 403
+            return jsonify({"msg": "Invalid invitation code"}), 403
         if not claim_invitation_code(invitation_code):
-            return jsonify({"message": {"invitation_code": "failed to claim invitation code"}}), 500
+            return jsonify({"msg": "Failed to claim invitation code"}), 500
     successful = sign_up(user_id, password, display_name)
     if successful:
         return {'id': user_id}, 201
