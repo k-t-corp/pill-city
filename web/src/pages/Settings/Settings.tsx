@@ -31,6 +31,14 @@ interface Props {
   api: any
 }
 
+const validateEmail = (email: any) => {
+  return String(email)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+}
+
 const Settings = (props: Props) => {
   const me = useAppSelector(state => state.me.me)
   const meLoading = useAppSelector(state => state.me.loading)
@@ -43,6 +51,14 @@ const Settings = (props: Props) => {
   const [loading, updateLoading] = useState(true)
   const [displayName, updateDisplayName] = useState<string | undefined>()
   const [email, updateEmail] = useState<string | undefined>()
+  const [emailValidated, updateEmailValidated] = useState(false)
+  useEffect(() => {
+    if (validateEmail(email)) {
+      updateEmailValidated(true)
+    } else {
+      updateEmailValidated(false)
+    }
+  }, [email])
 
   useEffect(() => {
     (async () => {
@@ -129,8 +145,11 @@ const Settings = (props: Props) => {
             onClick={() => {updateEmailModalOpened(false)}}
           >Cancel</div>
           <div
-            className="settings-controls-button settings-email-button-confirm"
+            className={`settings-controls-button ${emailValidated ? 'settings-email-button-confirm' : 'settings-email-button-confirm-disabled'}`}
             onClick={async () => {
+              if (!validateEmail(email)) {
+                return
+              }
               updateLoading(true)
               await props.api.updateEmail(email)
               await dispatch(loadMe())

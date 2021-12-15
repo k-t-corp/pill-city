@@ -85,6 +85,11 @@
     background-color: #E05140;
 }
 
+.settings-email-button-confirm-disabled {
+    background-color: #727272;
+    cursor: default;
+}
+
 /* Mobile */
 @media only screen and (max-width: 750px) {
     .settings-wrapper {
