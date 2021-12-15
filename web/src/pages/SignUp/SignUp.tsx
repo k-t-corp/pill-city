@@ -51,25 +51,23 @@ const SignUpForm = () => {
     updateFormValidated(true)
   }, [id, displayName, email, password, confirmPassword, invitationCode, requireInvitationCode])
 
-  const signUp = () => {
+  const signUp = async () => {
     if (!formValidated) {
       return
     }
     updateSignUpLoading(true)
-    api.signUp(id, displayName, password, invitationCode, email)
-      .then(() => {
-        history.push('/signin')
-      })
-      .catch((e) => {
-        if (e.message) {
-          alert(e.message)
-        } else {
-          console.error(e)
-        }
-      })
-      .finally(() => {
-        updateSignUpLoading(false)
-      })
+    try {
+      await api.signUp(id, displayName, password, invitationCode, email)
+      history.push('/signin')
+    } catch (e: any) {
+      if (e.message) {
+        alert(e.message)
+      } else {
+        console.error(e)
+      }
+    } finally {
+      updateSignUpLoading(false)
+    }
   }
 
   return (

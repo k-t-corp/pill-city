@@ -10,7 +10,7 @@ from flask_restful import Api
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token
 from sentry_sdk.integrations.flask import FlaskIntegration
-from mini_gplus.daos.user import sign_in, sign_up
+from mini_gplus.daos.user import sign_in, sign_up, check_email
 from mini_gplus.daos.user_cache import populate_user_cache
 from mini_gplus.daos.invitation_code import check_invitation_code, claim_invitation_code
 from mini_gplus.resources.users import Users, User, MyAvatar, MyProfilePic, MyDisplayName, Me, SearchedUsers, MyEmail
@@ -158,6 +158,8 @@ def _sign_up():
             return jsonify({"msg": "Invalid invitation code"}), 403
         if not claim_invitation_code(invitation_code):
             return jsonify({"msg": "Failed to claim invitation code"}), 500
+    if email and not check_email(email):
+        return {'msg': f'Email {email} is already taken'}, 409
     successful = sign_up(user_id, password, display_name, email)
     if successful:
         return {'id': user_id}, 201
