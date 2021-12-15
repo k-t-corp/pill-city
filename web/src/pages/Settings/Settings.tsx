@@ -156,10 +156,19 @@ const Settings = (props: Props) => {
                 return
               }
               updateLoading(true)
-              await props.api.updateEmail(email)
-              await dispatch(loadMe())
-              updateLoading(false)
-              updateEmailModalOpened(false)
+              try {
+                await props.api.updateEmail(email)
+              } catch (e: any) {
+                if (e.message) {
+                  alert(e.message)
+                } else {
+                  console.error(e)
+                }
+              } finally {
+                await dispatch(loadMe())
+                updateLoading(false)
+                updateEmailModalOpened(false)
+              }
             }}
           >Confirm</div>
         </div>

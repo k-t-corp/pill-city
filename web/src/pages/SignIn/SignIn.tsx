@@ -24,27 +24,25 @@ const SignInForm = () => {
     updateFormValidated(true)
   }, [id, password])
 
-  const signIn = () => {
+  const signIn = async () => {
     if (!formValidated) {
       return
     }
     updateSignInLoading(true)
-    api.signIn(id, password)
-      .then(() => {
-        // This is needed so that the App component is fully reloaded
-        // so that getting the first home page and auto refresh is enabled
-        window.location.href = '/'
-      })
-      .catch( e => {
-        if (e.message) {
-          alert(e.message)
-        } else {
-          console.error(e)
-        }
+    try {
+      await api.signIn(id, password)
+      // This is needed so that the App component is fully reloaded
+      // so that getting the first home page and auto refresh is enabled
+      window.location.href = '/'
+    } catch (e: any) {
+      if (e.message) {
+        alert(e.message)
+      } else {
+        console.error(e)
       }
-    ).finally(() => {
+    } finally {
       updateSignInLoading(false)
-    })
+    }
   }
 
   return (

@@ -159,7 +159,10 @@ class MyEmail(Resource):
         args = my_email_parser.parse_args()
         email = args['email']
         if re.fullmatch(r'(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))', email):
-            update_email(user, email)
+            if not update_email(user, email):
+                return {'msg': 'Email taken'}, 409
+            else:
+                return {'msg': 'Success'}, 201
         else:
             return {'msg': 'Invalid email'}, 400
 

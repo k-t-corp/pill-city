@@ -501,7 +501,7 @@ export class Api {
         email: newEmail
       }
     )
-    if (res.status !== 200) {
+    if (res.status !== 201) {
       throw new ApiError(res)
     }
   }

@@ -24,14 +24,16 @@ def sign_up(
     :param user_id: Unique user ID
     :param password: Password
     :param display_name: Display name
-    :param email Email
+    :param email: Email
     :return: Whether creation is successful. If False, id is already taken
     """
     new_user = User()
     new_user.user_id = user_id
     new_user.password = generate_password_hash(password)
-    new_user.display_name = display_name
-    new_user.email = email
+    if display_name:
+        new_user.display_name = display_name
+    if email:
+        new_user.email = email
     try:
         new_user.save()
         if os.getenv('OFFICIAL', None):
@@ -192,16 +194,34 @@ def update_display_name(self: User, display_name: str):
     set_in_user_cache(self)
 
 
-def update_email(self: User, email: str):
+def check_email(email: str) -> bool:
+    """
+    Check whether an email address is available
+
+    :param email: Checked email
+    :return: Whether an email address is available
+    """
+    users = get_users_in_user_cache()
+    for user in users:
+        if user.email == email:
+            return False
+    return True
+
+
+def update_email(self: User, email: str) -> bool:
     """
     Update a user's email
 
     :param self: The acting user
     :param email: New email
+    :return Whether this email is already taken
     """
+    if not check_email(email):
+        return False
     self.email = email
     self.save()
     set_in_user_cache(self)
+    return True
 
 
 def get_email(self: User) -> Optional[str]:
