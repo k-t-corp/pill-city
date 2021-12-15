@@ -7,7 +7,7 @@ import "./SignUp.css";
 import {validateEmail, validateId, validatePassword} from "../../utils/validators";
 import {useHistory} from "react-router-dom";
 
-const LoginForm = () => {
+const SignUpForm = () => {
   const [id, updateId] = useState('')
   const [displayName, updateDisplayName] = useState('')
   const [email, updateEmail] = useState('')
@@ -73,38 +73,38 @@ const LoginForm = () => {
   }
 
   return (
-    <div className='login-form'>
-      <h1 className='login-form-title'>Sign up</h1>
+    <div className='sign-up'>
+      <h1 className='sign-up-title'>Sign up</h1>
       <input
-        className="login-form-input"
+        className="sign-up-input"
         type="text"
         placeholder="* ID, only letters & numbers"
         value={id}
         onChange={e => updateId(e.target.value)}
       />
       <input
-        className="login-form-input"
+        className="sign-up-input"
         type="text"
         placeholder="Display name (optional)"
         value={displayName}
         onChange={e => updateDisplayName(e.target.value)}
       />
       <input
-        className="login-form-input"
+        className="sign-up-input"
         type="email"
         placeholder="Email (optional for notifications)"
         value={email}
         onChange={e => updateEmail(e.target.value)}
       />
       <input
-        className="login-form-input"
+        className="sign-up-input"
         type="password"
         placeholder="* Password"
         value={password}
         onChange={e => updatePassword(e.target.value)}
       />
       <input
-        className="login-form-input"
+        className="sign-up-input"
         type="password"
         placeholder="* Confirm password"
         value={confirmPassword}
@@ -112,7 +112,7 @@ const LoginForm = () => {
       />
       {requireInvitationCode &&
         <input
-          className="login-form-input"
+          className="sign-up-input"
           type="text"
           placeholder="* Invitation code"
           value={invitationCode}
@@ -120,10 +120,10 @@ const LoginForm = () => {
         />
       }
       <div
-        className={`login-form-button${formValidated ? '' : ' login-form-button-disabled'}`}
+        className={`sign-up-button${!signUpLoading && formValidated ? '' : ' sign-up-button-disabled'}`}
         onClick={signUp}
       >Sign up</div>
-      <div className="message-box-sign-in">
+      <div className="sign-in-message">
         Already have an account? <a className="sign-in-link" href='/signin'>Sign in here</a>
       </div>
     </div>
@@ -132,7 +132,7 @@ const LoginForm = () => {
 
 const SignUp = () => {
   return (
-    <HomePage formElement={<LoginForm />}/>
+    <HomePage formElement={<SignUpForm />}/>
   )
 }
 

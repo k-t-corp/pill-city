@@ -1,12 +1,4 @@
-#root {
-    height: 100%;
-}
-
-.home-page-wrapper {
-    min-height: 100%;
-}
-
-.login-form {
+.sign-up {
     padding: 40px 40px 40px 40px;
     border-radius: 20px;
     background-color: rgba(255, 255, 255, .15);
@@ -16,12 +8,11 @@
     align-items: center;
 }
 
-.login-form-title {
+.sign-up-title {
     margin-bottom: 24px;
-
 }
 
-.login-form-input {
+.sign-up-input {
     margin-bottom: 12px;
     width: 240px;
     height: 3em;
@@ -31,7 +22,7 @@
     border-color: #86989B;
 }
 
-.login-form-button {
+.sign-up-button {
     margin-bottom: 12px;
     background-color: #E05140;
     width: 240px;
@@ -42,30 +33,19 @@
     font-size: medium;
 }
 
-.login-form-button-disabled {
+.sign-up-button-disabled {
     background-color: #727272;
 }
 
-.login-form-button:hover {
+.sign-up-button:hover {
     cursor: pointer;
 }
 
-.login-form-button-disabled:hover {
+.sign-up-button-disabled:hover {
     cursor: default;
 }
 
-.signup-form-wrapper {
-    background-color: rgba(255, 255, 255, 0);
-}
-
-.sign-up-title {
-    margin-bottom: 50px;
-    font-size: xx-large;
-    text-align: center;
-    font-weight: bold;
-}
-
-.message-box-sign-in {
+.sign-in-message {
     cursor: default;
 }
 
