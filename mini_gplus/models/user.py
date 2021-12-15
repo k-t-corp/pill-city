@@ -1,5 +1,5 @@
 from typing import List
-from mongoengine import Document, ListField, LazyReferenceField, StringField, PULL, NULLIFY
+from mongoengine import Document, ListField, LazyReferenceField, StringField, PULL, NULLIFY, EmailField
 from .created_at_mixin import CreatedAtMixin
 from .media import Media
 
@@ -11,3 +11,4 @@ class User(Document, CreatedAtMixin):
     avatar = LazyReferenceField(Media, reverse_delete_rule=NULLIFY)
     profile_pic = StringField(required=False, default="pill1.png")
     display_name = StringField(required=False)
+    email = EmailField(required=False)

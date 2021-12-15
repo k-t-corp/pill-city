@@ -6,267 +6,99 @@
     height: 100vh;
 }
 
-.settings-user-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #ffffff;
-    border-radius: 5px;
-    box-shadow: 2px 2px 1px 1px #e0e0e0;
+.settings-row {
     width: 60%;
-    min-width: 600px;
-    max-width: 1000px;
-    margin: 0 auto 0 auto;
-    height: 100%;
+    padding: 12px;
+    border-radius: 2px;
 }
 
-.settings-banner-wrapper {
-    width: 100%;
-    height: 250px;
-    background-color: #9dd0ff;
-    /*background-image: url("../../../public/pill2.png") ;*/
-    background-size: 100px;
-    position: relative;
-}
-
-.settings-change-profile-pic-button-wrapper {
-    width: 100%;
-    height: 100%;
-    position: relative;
-}
-
-.settings-change-profile-pic-button {
-    border-radius: 50%;
-    width: 25px;
-    height: 25px;
+.settings-row:hover {
+    background-color: #e8e8e8;
     cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: black;
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
 }
 
-.settings-avatar-wrapper {
-    width: 120px;
-    height: 120px;
-    flex-shrink: 0;
-    margin-top: -80px;
-    z-index: 1;
-}
-
-.settings-avatar-img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    border: white 3px solid;
-}
-
-/* Avatar Upload Button */
-input[type="file"] {
-    display: none;
-}
-
-.settings-change-avatar-button-wrapper {
-    border-radius: 50%;
-    width: 25px;
-    height: 25px;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: black;
-    margin-left: -30px;
-    margin-top: -10px;
-    z-index: 2;
-}
-
-.settings-change-avatar-button-icon {
-    width: 100%;
-    height: 100%;
-    padding: 5px;
-    color: white;
-}
-
-.settings-avatar-box {
-    display: flex;
-    align-items: flex-end;
-    margin-top: 20px;
-}
-
-/* User Name */
-.settings-user-name-wrapper {
-    display: flex;
-    margin-top: 20px;
-}
-
-.settings-user-name {
-    font-size: x-large;
+.settings-row-header {
+    font-size: 16px;
     font-weight: bold;
 }
 
-.settings-user-name-rename {
-    border-color: black;
-    border-width: 0 0 2px;
-    text-align: center;
+.settings-row-content {
+    margin-top: 4px;
+    color: #555555;
 }
 
-.settings-user-add-name {
-    font-style: italic;
-    color: #a6a6a6;
-}
-
-.settings-user-add-name:hover {
-    cursor: pointer;
-}
-
-.settings-user-name-edit {
-    border-radius: 50%;
-    width: 25px;
-    height: 25px;
-    cursor: pointer;
-    background-color: black;
-    margin-left: 10px;
-}
-
-.settings-user-name-edit-icon {
-    width: 100%;
-    height: 100%;
-    padding: 5px;
-    color: white;
-}
-
-.settings-user-id {
-    font-size: medium;
-    margin-top: 12px;
-    color: #a6a6a6;
-}
-
-/* Modal Buttons */
-.settings-modal-buttons {
+/* TODO: this is shared among all the settings modals*/
+.settings-controls {
     display: flex;
     justify-content: center;
+    align-items: center;
+    margin-top: 20px;
 }
 
-.settings-modal-buttons > * {
-    margin-top: 20px;
+/* TODO: this is shared among all the settings modals*/
+.settings-controls-button {
     padding: 8px 10px;
     font-weight: bold;
     font-size: medium;
-    background-color: #E05140;
     color: white;
     border-radius: 5px;
     width: auto;
     cursor: pointer;
+    margin-right: 20px;
 }
 
-.settings-modal-cancel-button {
+.settings-display-name {
+    font-size: x-large;
+    font-weight: bold;
+    border-color: black;
+    border-width: 0 0 2px;
+    text-align: center;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.settings-email {
+    font-size: x-large;
+    font-weight: bold;
+    border-color: black;
+    border-width: 0 0 2px;
+    text-align: center;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.settings-display-name-button-cancel {
     background-color: #727272;
-    margin-right: 20px;
 }
 
-/* The Modal (background) */
-.settings-profile-pic-modal {
-    position: fixed; /* Stay in place */
-    z-index: 4; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0, 0, 0); /* Fallback color */
-    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+.settings-display-name-button-confirm {
+    background-color: #E05140;
 }
 
-/* Modal Content/Box */
-.settings-profile-pic-modal-content {
-    background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
-    padding: 50px 20px 20px 20px;
-    border: 1px solid #888;
-    border-radius: 5px;
-    min-width: 300px;
-    max-width: 1000px;
-    width: 80%; /* Could be more or less, depending on screen size */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+.settings-email-button-cancel {
+    background-color: #727272;
 }
 
-#settings-profile-pic-modal-preview {
-    width: 100%;
-    height: 250px;
-    background-size: 100px;
-    position: relative;
+.settings-email-button-confirm {
+    background-color: #E05140;
 }
 
-
-.settings-profile-pic-modal-selections {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.settings-profile-selection-option {
-    margin-right: 20px;
-    margin-top: 20px;
-    width: 50px;
-    height: 50px;
-    border: 2px solid #e0e0e0;
-    background-color: #e0e0e0;
-    border-radius: 3px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 3px;
-    cursor: pointer;
-}
-
-.settings-profile-selection-option-selected {
-    border: 2px solid #9dd0ff;
-    background-color: #e0e0e0;
-}
-
-.settings-profile-selection-option-img {
-    max-width: 100%;
-    max-height: 100%;
-}
-
-/* Signout button */
-
-.settings-signout-button {
-    display: flex;
-    justify-content: center;
-    margin-top: 40px;
-    color: #767676;
-}
-
-.settings-signout-button-label {
-    text-decoration: underline;
-}
-
-.settings-signout-button-svg {
-    width: 20px;
-    height: 20px;
+.settings-email-button-confirm-disabled {
+    background-color: #727272;
+    cursor: default;
 }
 
 /* Mobile */
 @media only screen and (max-width: 750px) {
     .settings-wrapper {
         height: 100vh;
-    }
-
-    .settings-wrapper {
         margin-top: 0;
     }
 
-    .settings-user-info {
+    .settings-row {
         min-width: 0;
         width: 100%;
-        height: calc(100vh - 50px);
     }
 }
-

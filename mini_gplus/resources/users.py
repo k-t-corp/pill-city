@@ -1,10 +1,12 @@
 import os
+import re
+
 import werkzeug
 from bson import ObjectId
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from mini_gplus.daos.user import find_user, update_profile_pic, update_avatar, get_users, update_display_name, \
-    search_users
+    search_users, update_email, get_email
 from mini_gplus.daos.user_cache import get_in_user_cache_by_oid
 from mini_gplus.daos.post import create_post
 from mini_gplus.utils.now_ms import now_seconds
@@ -130,6 +132,36 @@ class MyDisplayName(Resource):
         args = my_display_name_parser.parse_args()
         display_name = args['display_name']
         update_display_name(user, display_name)
+
+
+my_email_parser = reqparse.RequestParser()
+my_email_parser.add_argument('email', type=str, required=True)
+
+
+class MyEmail(Resource):
+    @jwt_required()
+    def get(self):
+        user_id = get_jwt_identity()
+        user = find_user(user_id)
+        if not user:
+            return {'msg': f'User {user_id} is not found'}, 404
+        return {
+            "email": get_email(user)
+        }
+
+    @jwt_required()
+    def post(self):
+        user_id = get_jwt_identity()
+        user = find_user(user_id)
+        if not user:
+            return {'msg': f'User {user_id} is not found'}, 404
+
+        args = my_email_parser.parse_args()
+        email = args['email']
+        if re.fullmatch(r'(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))', email):
+            update_email(user, email)
+        else:
+            return {'msg': 'Invalid email'}, 400
 
 
 class IsFollowing(fields.Raw):

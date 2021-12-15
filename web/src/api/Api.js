@@ -492,6 +492,30 @@ export class Api {
     }
   }
 
+  async updateEmail(newEmail) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.post(
+      `/me/email`,
+      {
+        email: newEmail
+      }
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+  }
+
+  async getEmail() {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.get(
+      `/me/email`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    return res.data.email
+  }
+
   async getNotifications(fromId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(

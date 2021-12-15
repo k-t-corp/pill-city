@@ -22,6 +22,7 @@ import {loadPosts, pollPosts} from "./store/homeSlice";
 import {loadMe} from "./store/meSlice";
 import {loadNotifications, pollNotifications} from "./store/notificationsSlice";
 import {Api} from "./api/Api";
+import './App.css'
 
 export default () => {
   const dispatch = useAppDispatch()
