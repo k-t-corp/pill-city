@@ -624,6 +624,28 @@ export class Api {
     }
     return res.data
   }
+
+  async forgetPassword(email) {
+    const res = await this.axiosInstance.post(
+      `/forgetPassword`,
+      { email }
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
+
+  async resetPassword(code, password) {
+    const res = await this.axiosInstance.post(
+      `/resetPassword`,
+      { code, password }
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
 }
 
 const api = new Api(process.env.REACT_APP_API_ENDPOINT)

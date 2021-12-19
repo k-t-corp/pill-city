@@ -1,6 +1,6 @@
 from typing import List
 from mini_gplus.models import InvitationCode
-from mini_gplus.utils.make_uuid import make_uuid
+from mini_gplus.utils.make_uuid import make_dashless_uuid
 
 
 def create_invitation_code() -> str:
@@ -9,7 +9,7 @@ def create_invitation_code() -> str:
 
     :return: The new invitation code
     """
-    code = make_uuid().replace("-", "")
+    code = make_dashless_uuid()
     new_code = InvitationCode()
     new_code.code = code
     new_code.claimed = False

@@ -5,3 +5,4 @@ from .post import Post, Reaction, Comment
 from .media import Media
 from .invitation_code import InvitationCode
 from .link_preview import LinkPreview, LinkPreviewState
+from .password_reset_claim import PasswordResetClaim
