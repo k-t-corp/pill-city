@@ -23,7 +23,7 @@ from mini_gplus.resources.followings import Following
 from mini_gplus.resources.notifications import Notifications, NotificationRead, NotificationsAllRead
 from mini_gplus.resources.invitations_codes import InvitationCode, InvitationCodes, ClearMediaUrlCache
 from mini_gplus.resources.link_preview import LinkPreview
-from mini_gplus.resources.password_reset import PasswordResetClaim, PasswordReset
+from mini_gplus.resources.password_reset import ForgetPassword, ResetPassword
 
 # sentry
 if os.getenv('SENTRY_DSN'):
@@ -236,8 +236,8 @@ api.add_resource(ClearMediaUrlCache, '/api/clearMediaUrlCache')
 
 api.add_resource(LinkPreview, '/api/linkPreview')
 
-api.add_resource(PasswordResetClaim, '/api/passwordResetClaim')
-api.add_resource(PasswordReset, '/api/passwordReset')
+api.add_resource(ForgetPassword, '/api/forgetPassword')
+api.add_resource(ResetPassword, '/api/resetPassword')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

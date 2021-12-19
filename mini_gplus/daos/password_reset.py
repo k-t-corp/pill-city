@@ -9,7 +9,7 @@ from .user_cache import get_users_in_user_cache, set_in_user_cache
 CLAIM_EXPIRATION_SECONDS = 60
 
 
-def check_password_reset_claim(email: str) -> Optional[str]:
+def forget_password(email: str) -> Optional[str]:
     """
     Check whether a password reset claim for an email
     If email does not exist, fails

@@ -69,6 +69,9 @@ const SignInForm = () => {
       <div className="sign-up-message">
         Don't have an account? <a className="sign-up-link" href='/signup'>Sign up here</a>
       </div>
+      <div className="sign-up-message">
+        <a className="sign-up-link" href='/forget'>Forget password?</a>
+      </div>
     </div>
   )
 }

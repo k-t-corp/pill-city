@@ -23,6 +23,8 @@ import {loadMe} from "./store/meSlice";
 import {loadNotifications, pollNotifications} from "./store/notificationsSlice";
 import {Api} from "./api/Api";
 import './App.css'
+import ForgetPassword from "./pages/ForgetPassword/ForgetPassword";
+import ResetPassword from "./pages/ResetPassword/ResetPassword";
 
 export default () => {
   const dispatch = useAppDispatch()
@@ -80,6 +82,12 @@ export default () => {
           </Route>
           <Route path="/admin">
             <Admin />
+          </Route>
+          <Route path="/forget">
+            <ForgetPassword />
+          </Route>
+          <Route path="/reset">
+            <ResetPassword />
           </Route>
           <Redirect to='/'/>
         </Switch>

@@ -2,7 +2,7 @@ import smtplib
 import os
 from email.mime.text import MIMEText
 from flask_restful import Resource, reqparse
-from mini_gplus.daos.password_reset import check_password_reset_claim, reset_password
+from mini_gplus.daos.password_reset import forget_password, reset_password
 
 
 CLAIM_EXPIRATION_SECONDS = 60
@@ -36,15 +36,15 @@ Go to https://{domain}/reset?code={code} to reset your password
     s.quit()
 
 
-password_reset_claim_args = reqparse.RequestParser()
-password_reset_claim_args.add_argument('email', type=str, required=True)
+forget_password_args = reqparse.RequestParser()
+forget_password_args.add_argument('email', type=str, required=True)
 
 
-class PasswordResetClaim(Resource):
+class ForgetPassword(Resource):
     def post(self):
-        args = password_reset_claim_args.parse_args()
+        args = forget_password_args.parse_args()
         email = args.get('email')
-        code = check_password_reset_claim(email)
+        code = forget_password(email)
         if code:
             _send_password_reset_email(email, code)
             return {'msg': 'Password reset email sent'}, 200
@@ -53,14 +53,14 @@ class PasswordResetClaim(Resource):
                            ' has not been expired yet'}, 401
 
 
-password_reset_args = reqparse.RequestParser()
-password_reset_args.add_argument('code', type=str, required=True)
-password_reset_args.add_argument('password', type=str, required=True)
+reset_password_args = reqparse.RequestParser()
+reset_password_args.add_argument('code', type=str, required=True)
+reset_password_args.add_argument('password', type=str, required=True)
 
 
-class PasswordReset(Resource):
+class ResetPassword(Resource):
     def post(self):
-        args = password_reset_args.parse_args()
+        args = reset_password_args.parse_args()
         code = args.get('code')
         password = args.get('password')
         if reset_password(code, password):
