@@ -56,7 +56,6 @@ const Settings = (props: Props) => {
   }, [meLoading])
 
   const isTabletOrMobile = useMediaQuery({ query: '(max-width: 750px)' })
-  console.log(isTabletOrMobile)
   let modalStyles
   if (isTabletOrMobile) {
     modalStyles = {
