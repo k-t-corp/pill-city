@@ -1,3 +1,9 @@
+.post-reactions-wrapper {
+    display: flex;
+    max-width: 80%;
+    flex-wrap: wrap;
+}
+
 .post-reaction {
     padding: 2px 8px;
     margin-right: 5px;
@@ -49,4 +55,52 @@
 .post-reaction-emoji-picker {
     position: absolute;
     top: 10px;
+}
+
+.post-reactions-detail-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.post-reactions-detail-title {
+    font-size: 1.5em;
+}
+
+.post-reactions-detail-close-button {
+    width: 20px;
+    height: 20px;
+}
+
+.post-reactions-detail-close-button:hover {
+    cursor: pointer;
+}
+
+.post-reactions-detail-emoji {
+    font-size: 1.2em;
+    margin-bottom: 8px;
+    padding: 2px;
+    border-bottom: 2px #f0f0f0 solid;
+}
+
+.post-reactions-detail-author-wrapper {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.post-reactions-detail-author-avatar {
+    width: 30px;
+    height: 30px;
+    align-self: flex-start;
+    flex-shrink: 0;
+}
+
+.post-reactions-detail-author {
+    padding-left: 3px;
+    width: 100%;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    color: #0d71bb;
+    font-weight: bold;
 }

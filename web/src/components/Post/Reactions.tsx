@@ -2,7 +2,11 @@ import React, {useEffect, useRef, useState} from "react";
 import Picker from "emoji-picker-react";
 import {Reaction} from "../../models/Post";
 import User from "../../models/User";
+import {useMediaQuery} from "react-responsive";
+import Modal from 'react-modal';
 import './Reactions.css'
+import RoundAvatar from "../RoundAvatar/RoundAvatar";
+import ClickableId from "../ClickableId/ClickableId";
 
 const groupReactions = (reactions: Reaction[]) => {
   const groupedReactions: {[emoji: string]: {key: number, author: User, reactionId: string}[]} = {}
@@ -34,11 +38,36 @@ interface Props {
   postId: string
 }
 
+Modal.setAppElement('#root');
+
 export default (props: Props) => {
-  const [showEmojiPicker, updateShowEmojiPicker] = useState(false)
+  const [emojiPickerOpened, updateEmojiPickerOpened] = useState(false)
+  const [detailNodalOpened, updateDetailNodalOpened] = useState(false)
   const [reactions, updateReactions] = useState<Reaction[]>(props.reactions)
-  const [reactionLoading, updateReactionLoading] = useState(false)
+  const [loading, updateLoading] = useState(false)
   const emojiPickerRef = useRef(null);
+
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 750px)' })
+  let modalStyles
+  if (isTabletOrMobile) {
+    modalStyles = {
+      content: {
+        bottom: 'auto',
+      },
+    }
+  } else {
+    modalStyles = {
+      content: {
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)',
+        width: '800px'
+      },
+    }
+  }
 
   const myReactionId = (emoji: string): string | undefined => {
     // Returns reaction id if I reacted with emoji, undefined otherwise
@@ -52,10 +81,10 @@ export default (props: Props) => {
   }
 
   const toggleEmoji = async (emoji: string) => {
-    if (reactionLoading) {
+    if (loading) {
       return
     }
-    updateReactionLoading(true)
+    updateLoading(true)
     let reactionId = myReactionId(emoji)
     if (!reactionId) {
       // add reaction
@@ -71,28 +100,28 @@ export default (props: Props) => {
         return r.id !== reactionId
       }))
     }
-    updateReactionLoading(false)
+    updateLoading(false)
   }
 
   const addEmoji = async (event: any, emojiObject: any) => {
-    updateShowEmojiPicker(false)
-    if (reactionLoading) {
+    updateEmojiPickerOpened(false)
+    if (loading) {
       return
     }
-    updateReactionLoading(true)
+    updateLoading(true)
     const emoji = emojiObject.emoji
     const res = await props.api.addReaction(emoji, props.postId)
     updateReactions([
       ...reactions,
       { id: res.id, emoji: emoji, author: props.me }
     ])
-    updateReactionLoading(false)
+    updateLoading(false)
   }
 
   useEffect(() => {
     const handleClickOutside = (event: any) => {
       if (emojiPickerRef.current && !(emojiPickerRef.current as any).contains(event.target)) {
-        updateShowEmojiPicker(false)
+        updateEmojiPickerOpened(false)
       }
     }
 
@@ -104,20 +133,33 @@ export default (props: Props) => {
     };
   }, [emojiPickerRef]);
 
-  const _showEmojiPicker = () => {
-    if (reactionLoading) {
+  const showEmojiPicker = () => {
+    if (loading) {
       return
     }
-    updateShowEmojiPicker(true)
+    updateEmojiPickerOpened(true)
+  }
+
+  const showReactionsDetailModal = () => {
+    if (loading) {
+      return
+    }
+    updateDetailNodalOpened(true)
+  }
+
+  let addReactionClassName = "post-reaction"
+  if (loading) {
+    addReactionClassName += " post-reaction-loading"
   }
 
   let reactionElems = []
+
   for (const [emoji, reactionsWithEmoji] of Object.entries(groupReactions(reactions))) {
     if (reactionsWithEmoji.length === 0) {
       continue
     }
     let className = "post-reaction"
-    if (reactionLoading) {
+    if (loading) {
       className += " post-reaction-loading"
     } else if (myReactionId(emoji)) {
       className += " post-reaction-active"
@@ -125,22 +167,29 @@ export default (props: Props) => {
     reactionElems.push(
       <div className={className} key={emoji} onClick={() => toggleEmoji(emoji)}>
         <span className="post-emoji" role="img">{emoji}</span>
-        <span>&nbsp;{reactionsWithEmoji.length}</span>
+        {/*<span>&nbsp;{reactionsWithEmoji.length}</span>*/}
       </div>
     )
   }
 
-  let addReactionClassName = "post-reaction"
-  if (reactionLoading) {
-    addReactionClassName += " post-reaction-loading"
+  const totalReactions = reactions.length
+  if (totalReactions !== 0) {
+    reactionElems.push(
+      <div key='reactions-detail'>
+        <div className={addReactionClassName} onClick={showReactionsDetailModal}>
+          <span aria-label="Reactions detail">{totalReactions}</span>
+        </div>
+      </div>
+    )
   }
+
   reactionElems.push(
-    <div key={'add-reaction'}>
-      <div className={addReactionClassName} onClick={_showEmojiPicker}>
+    <div key='add-reaction'>
+      <div className={addReactionClassName} onClick={showEmojiPicker}>
         <span className="post-emoji" role="img" aria-label="Add Reaction">➕</span>
         {reactions.length === 0 ? "Add Reaction" : null}
       </div>
-      {showEmojiPicker &&
+      {emojiPickerOpened &&
         <div id="post-reaction-emoji-picker-wrapper" ref={emojiPickerRef}>
           <div className="post-reaction-emoji-picker">
             <Picker onEmojiClick={addEmoji} preload={true} native={true}/>
@@ -149,5 +198,46 @@ export default (props: Props) => {
       }
     </div>
   )
-  return reactionElems
+
+  const detailElems = []
+  for (const [emoji, reactionsWithEmoji] of Object.entries(groupReactions(reactions))) {
+    detailElems.push(
+      <div
+        key={emoji}
+        className='post-reactions-detail-emoji'
+      >{reactionsWithEmoji.length} {emoji}</div>
+    )
+    for (const r of reactionsWithEmoji) {
+      detailElems.push(
+        <div className="post-reactions-detail-author-wrapper">
+          <div className="post-avatar post-reactions-detail-author-avatar">
+            <RoundAvatar user={r.author}/>
+          </div>
+          <div className="post-reactions-detail-author">
+            <ClickableId user={r.author}/>{' '}
+          </div>
+        </div>
+      )
+    }
+  }
+
+  return (
+    <div className="post-reactions-wrapper">
+      {reactionElems}
+      <Modal isOpen={detailNodalOpened} style={modalStyles}>
+        <div className='post-reactions-detail-header'>
+          <div className='post-reactions-detail-title'>Reactions</div>
+          <div
+            className='post-reactions-detail-close-button'
+            onClick={() => {updateDetailNodalOpened(false)}}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </div>
+        </div>
+        {detailElems}
+      </Modal>
+    </div>
+  )
 }

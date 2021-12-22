@@ -209,14 +209,12 @@ export default (props) => {
         {
           !deleting && !deleted &&
           <div className="post-interactions-wrapper">
-            <div className="post-reactions-wrapper">
-              <Reactions
-                reactions={props.data.reactions}
-                api={props.api}
-                me={props.me}
-                postId={props.data.id}
-              />
-            </div>
+            <Reactions
+              reactions={props.data.reactions}
+              api={props.api}
+              me={props.me}
+              postId={props.data.id}
+            />
             <div className="post-interactions">
               <div className="post-circle-button" onClick={commentButtonOnClick}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">

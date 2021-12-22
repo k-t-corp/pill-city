@@ -65,13 +65,6 @@
     margin: 15px 0;
 }
 
-/*Reactions*/
-.post-reactions-wrapper {
-    display: flex;
-    max-width: 80%;
-    flex-wrap: wrap;
-}
-
 /*Post Interactions*/
 .post-interactions-wrapper {
     width: 100%;
