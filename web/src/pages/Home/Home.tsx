@@ -14,6 +14,8 @@ import withNavBar from "../../hoc/withNavBar/withNavBar";
 import api from "../../api/Api";
 import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import {loadMorePosts, pollPosts} from "../../store/homeSlice";
+import User from "../../models/User";
+import {ResharedPost} from "../../models/Post";
 
 const InfiniteScrollFactor = 0.8
 
@@ -30,7 +32,7 @@ const Home = (props: Props) => {
   const me = useAppSelector(state => state.me.me)
   const meLoading = useAppSelector(state => state.me.loading)
 
-  const [resharePostData, updateResharePostData] = useState<PostModel | null>(null)
+  const [resharePostData, updateResharePostData] = useState<PostModel | ResharedPost | null>(null)
   const [mobileNewPostOpened, updateMobileNewPostOpened] = useState(false)
 
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
@@ -61,12 +63,11 @@ const Home = (props: Props) => {
           >
             <Post
               data={post}
-              me={me}
+              me={me as User}
               api={props.api}
               detail={false}
               hasNewPostModal={isTabletOrMobile}
               updateResharePostData={updateResharePostData}
-              newPostOpened={mobileNewPostOpened}
               updateNewPostOpened={updateMobileNewPostOpened}
             />
           </div>

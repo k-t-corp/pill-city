@@ -1,41 +1,52 @@
 import React, {useEffect, useRef, useState} from 'react'
 import parseContent from "../../utils/parseContent";
 import timePosted from "../../utils/timePosted";
-import MediaPreview from "../MediaPreview/MediaPreview";
 import DropdownMenu from "../DropdownMenu/DropdownMenu"
-import {useMediaQuery} from "react-responsive";
 import {useHistory} from "react-router-dom";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
-import LinkPreview from "../LinkPreview/LinkPreview";
 import Reactions from "./Reactions";
 import ResharedPost from "./ResharedPost";
 import ClickableId from "../ClickableId/ClickableId";
 import Comment from "./Comment";
 import CommentBox from "./CommentBox";
 import "./Post.css"
+import Post, {Comment as CommentModel, ResharedPost as ResharedPostModel} from "../../models/Post";
+import User from "../../models/User";
+import Previews from "./Previews";
 
-export default (props) => {
+interface Props {
+  data: Post
+  highlightCommentId?: string
+  api: any
+  me: User
+  detail: boolean
+  hasNewPostModal: boolean,
+  updateNewPostOpened: (arg0: boolean) => void
+  updateResharePostData: (arg0: Post | ResharedPostModel | null) => void
+  disableNavigateToPostPage?: true
+}
+
+export default (props: Props) => {
   const [deleted, updateDeleted] = useState(props.data.deleted)
   const [deleting, updateDeleting] = useState(false)
-  const [ commentContent, updateCommentContent ] = useState('')
+  const [commentContent, updateCommentContent] = useState('')
 
   // existing comment data cached in state
   const [comments, updateComments] = useState(props.data.comments)
   // whether the comment box is expanded
   const [addingComment, updateAddingComment] = useState(false)
   // currently replying to comment
-  const [replyingToComment, updateReplyingToComment] = useState(null)
+  const [replyingToComment, updateReplyingToComment] = useState<CommentModel | null>(null)
 
   const [mediaUrls, updateMediaUrls] = useState(props.data.media_urls)
 
-  const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
   const history = useHistory()
 
   const highlightCommentId = props.highlightCommentId
   const highlightCommentRef = useRef(null)
   useEffect(() => {
-    if (highlightCommentId) {
-      highlightCommentRef.current.scrollIntoView({behavior: 'smooth'})
+    if (highlightCommentId && highlightCommentRef) {
+      (highlightCommentRef as any).current.scrollIntoView({behavior: 'smooth'})
     }
   }, [highlightCommentRef])
 
@@ -111,7 +122,7 @@ export default (props) => {
   }
 
   const disableNavigateToPostPage = props.disableNavigateToPostPage === true
-  const navigateToPostPage = e => {
+  const navigateToPostPage = (e: any) => {
     e.preventDefault();
     if (!disableNavigateToPostPage) {
       history.push(`/post/${props.data.id}`)
@@ -194,18 +205,7 @@ export default (props) => {
           api={props.api}
         />
         }
-        {!deleted &&
-        <MediaPreview
-          mediaUrls={mediaUrls}
-          threeRowHeight="130px"
-          twoRowHeight="150px"
-          oneRowHeight={isTabletOrMobile ? "200px" : "280px"}
-        />
-        }
-        {
-          !deleted &&
-          <LinkPreview post={props.data} api={props.api}/>
-        }
+        <Previews post={props.data} api={props.api}/>
         {
           !deleting && !deleted &&
           <div className="post-interactions-wrapper">
@@ -255,7 +255,7 @@ export default (props) => {
           }}
           addNestedComment={(newNestedComment) => {
             updateComments(comments.map(c => {
-              if (c.id !== replyingToComment.id) {
+              if (replyingToComment && c.id !== replyingToComment.id) {
                 return c
               }
               return {
