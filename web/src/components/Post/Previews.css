@@ -1,0 +1,19 @@
+.previews-nav-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.previews-nav {
+    width: 20px;
+    height: 20px;
+}
+
+.previews-nav:hover {
+    cursor: pointer;
+}
+
+.previews-nav-hidden {
+    visibility: hidden;
+}
