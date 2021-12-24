@@ -15,6 +15,7 @@ import withAuthRedirect from "../../hoc/withAuthRedirect";
 import withNavBar from "../../hoc/withNavBar/withNavBar";
 import api from "../../api/Api";
 import {useAppSelector} from "../../store/hooks";
+import {ResharedPost} from "../../models/Post";
 
 const InfiniteScrollFactor = 0.8
 
@@ -37,7 +38,7 @@ const Profile = (props: Props) => {
   const [noMoreNewPosts, updateNoMoreNewPosts] = useState(false)
 
   const [newPostOpened, updateNewPostOpened] = useState(false)
-  const [resharePost, updateResharePost] = useState<PostModel | null>(null)
+  const [resharePost, updateResharePost] = useState<PostModel | ResharedPost | null>(null)
 
   const [isFollowing, updateIsFollowing] = useState(false)
   const [followLoading, updateFollowLoading] = useState(true)
@@ -126,11 +127,11 @@ const Profile = (props: Props) => {
             <PostComponent
               data={post}
               api={props.api}
-              me={me}
+              me={me as User}
               updateResharePostData={updateResharePost}
               hasNewPostModal={true}
-              newPostOpened={newPostOpened}
               updateNewPostOpened={updateNewPostOpened}
+              detail={false}
             />
           </div>
         )

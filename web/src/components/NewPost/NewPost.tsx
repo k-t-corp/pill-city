@@ -9,7 +9,7 @@ import parseMentioned from "../../utils/parseMentioned";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
 import Circle from "../../models/Circle";
-import Post from "../../models/Post";
+import Post, {ResharedPost} from "../../models/Post";
 import "./NewPost.css"
 import {useToast} from "../Toast/ToastProvider";
 import ApiError from "../../api/ApiError";
@@ -20,7 +20,7 @@ interface Props {
   api: any
   beforePosting: () => void
   afterPosting: (post: Post) => void
-  resharePostData: Post | null
+  resharePostData: Post | ResharedPost | null
   updateResharePostData: (post: Post | null) => void
 }
 

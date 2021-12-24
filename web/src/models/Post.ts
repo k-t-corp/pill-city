@@ -20,28 +20,27 @@ export interface Reaction {
   author: User
 }
 
-export interface WithContent {
-  content: string
-}
-
-export interface ResharedPost extends WithContent {
-  id: string
-  created_at_seconds: number
-  author: User
-  media_urls: string[],
+export interface Previewable {
+  media_urls: string[]
+  content: string,
   deleted: boolean
 }
 
-export default interface Post extends WithContent {
+export interface ResharedPost extends Previewable {
+  id: string
+  created_at_seconds: number
+  author: User
+}
+
+export default interface Post extends Previewable {
   id: string
   created_at_seconds: number
   author: User
   is_public: boolean
   reshareable: boolean
   reshared_from: ResharedPost | null,
-  media_urls: string[],
   reactions: Reaction[],
   comments: Comment[],
   circles: Circle[],
-  deleted: boolean
+  is_update_avatar: boolean
 }

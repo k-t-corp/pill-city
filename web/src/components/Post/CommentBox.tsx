@@ -18,7 +18,7 @@ interface Props {
   post: Post,
   content: string
   updateContent: (newContent: string) => void
-  replyingToComment?: Comment
+  replyingToComment: Comment | null
   addComment: (comment: Comment) => void
   addNestedComment: (nestedComment: NestedComment) => void
   afterSendingComment: () => void
