@@ -2,11 +2,10 @@ import React, {useEffect, useRef, useState} from "react";
 import Picker from "emoji-picker-react";
 import {Reaction} from "../../models/Post";
 import User from "../../models/User";
-import {useMediaQuery} from "react-responsive";
-import Modal from 'react-modal';
 import './Reactions.css'
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
+import MyModal from "../MyModal/MyModal";
 
 const groupReactions = (reactions: Reaction[]) => {
   const groupedReactions: {[emoji: string]: {key: number, author: User, reactionId: string}[]} = {}
@@ -38,36 +37,12 @@ interface Props {
   postId: string
 }
 
-Modal.setAppElement('#root');
-
 export default (props: Props) => {
   const [emojiPickerOpened, updateEmojiPickerOpened] = useState(false)
   const [detailNodalOpened, updateDetailNodalOpened] = useState(false)
   const [reactions, updateReactions] = useState<Reaction[]>(props.reactions)
   const [loading, updateLoading] = useState(false)
   const emojiPickerRef = useRef(null);
-
-  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 750px)' })
-  let modalStyles
-  if (isTabletOrMobile) {
-    modalStyles = {
-      content: {
-        bottom: 'auto',
-      },
-    }
-  } else {
-    modalStyles = {
-      content: {
-        top: '50%',
-        left: '50%',
-        right: 'auto',
-        bottom: 'auto',
-        marginRight: '-50%',
-        transform: 'translate(-50%, -50%)',
-        width: '800px'
-      },
-    }
-  }
 
   const myReactionId = (emoji: string): string | undefined => {
     // Returns reaction id if I reacted with emoji, undefined otherwise
@@ -224,7 +199,10 @@ export default (props: Props) => {
   return (
     <div className="post-reactions-wrapper">
       {reactionElems}
-      <Modal isOpen={detailNodalOpened} style={modalStyles}>
+      <MyModal
+        isOpen={detailNodalOpened}
+        onClose={() => {updateDetailNodalOpened(false)}}
+      >
         <div className='post-reactions-detail-header'>
           <div className='post-reactions-detail-title'>Reactions</div>
           <div
@@ -237,7 +215,7 @@ export default (props: Props) => {
           </div>
         </div>
         {detailElems}
-      </Modal>
+      </MyModal>
     </div>
   )
 }

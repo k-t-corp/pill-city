@@ -74,18 +74,41 @@ export default (props: Props) => {
     y: 0,
     width: 100,
   });
+
   const [sendPost, updateSendPost] = useState(true)
+
+  const onDrop = (e: any) => {
+    e.preventDefault()
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      let img = e.dataTransfer.files[0];
+      const newObjectUrl = URL.createObjectURL(img)
+      updateObjectUrl(newObjectUrl)
+    }
+  }
 
   const dispatch = useAppDispatch()
 
   return (
     <div className="settings-avatar-content">
-      {objectUrl === "" &&
-        <div className="settings-avatar-placeholder">
-          Click "Upload"
-        </div>
-      }
-      {objectUrl !== "" &&
+      {objectUrl === "" ?
+        <>
+          <label
+            htmlFor="upload"
+            className="settings-avatar-drop-zone"
+            onDragOver={(e: any) => {e.preventDefault()}}
+            onDragEnter={(e: any) => {e.preventDefault()}}
+            onDragLeave={(e: any) => {e.preventDefault()}}
+            onDrop={onDrop}
+          >
+            Drop or click here to upload media
+          </label>
+          <input
+            id="upload"
+            accept="image/*"
+            type="file"
+            onChange={onUpload}
+          />
+        </> :
         <ReactCrop
           src={objectUrl}
           crop={crop}
@@ -101,19 +124,7 @@ export default (props: Props) => {
           className="settings-controls-button settings-avatar-button-cancel"
           onClick={props.dismiss}
         >Cancel</div>
-        <label
-          htmlFor="avatar"
-          className="settings-controls-button settings-avatar-button-upload"
-        >
-          Upload
-        </label>
-        <input
-          id="avatar"
-          accept="image/*"
-          type="file"
-          name="new-avatar"
-          onChange={onUpload}
-        />
+
         <div
           className="settings-controls-button settings-avatar-button-confirm"
           onClick={async () => {
