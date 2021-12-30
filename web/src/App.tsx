@@ -25,6 +25,9 @@ import {Api} from "./api/Api";
 import './App.css'
 import ForgetPassword from "./pages/ForgetPassword/ForgetPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
+import Modal from "react-modal";
+
+Modal.setAppElement('#root');
 
 export default () => {
   const dispatch = useAppDispatch()

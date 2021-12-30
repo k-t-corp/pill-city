@@ -8,14 +8,11 @@ import withAuthRedirect from "../../hoc/withAuthRedirect";
 import withNavBar from "../../hoc/withNavBar/withNavBar";
 import api from "../../api/Api";
 import {useAppDispatch, useAppSelector} from "../../store/hooks";
-import Modal from 'react-modal';
 import './Settings.css'
 import UpdateBanner from "../../components/UpdateBanner/UpdateBanner";
 import {loadMe} from "../../store/meSlice";
-import {useMediaQuery} from "react-responsive";
 import {validateEmail} from "../../utils/validators";
-
-Modal.setAppElement('#root');
+import MyModal from "../../components/MyModal/MyModal";
 
 interface Props {
   api: any
@@ -55,28 +52,6 @@ const Settings = (props: Props) => {
     })()
   }, [meLoading])
 
-  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 750px)' })
-  let modalStyles
-  if (isTabletOrMobile) {
-    modalStyles = {
-      content: {
-        bottom: 'auto',
-      },
-    }
-  } else {
-    modalStyles = {
-      content: {
-        top: '50%',
-        left: '50%',
-        right: 'auto',
-        bottom: 'auto',
-        marginRight: '-50%',
-        transform: 'translate(-50%, -50%)',
-        width: '800px'
-      },
-    }
-  }
-
   const handleSignOut = () => {
     removeAccessToken()
     // This is needed so that the App component is fully reloaded
@@ -112,7 +87,10 @@ const Settings = (props: Props) => {
         <div className="settings-row-header">Sign out</div>
       </div>
       <About api={props.api}/>
-      <Modal isOpen={displayNameModalOpened} style={modalStyles}>
+      <MyModal
+        isOpen={displayNameModalOpened}
+        onClose={() => {updateDisplayNameModalOpened(false)}}
+      >
         <input
           className="settings-display-name"
           type="text"
@@ -135,8 +113,11 @@ const Settings = (props: Props) => {
             }}
           >Confirm</div>
         </div>
-      </Modal>
-      <Modal isOpen={emailModalOpened} style={modalStyles}>
+      </MyModal>
+      <MyModal
+        isOpen={emailModalOpened}
+        onClose={() => {updateEmailModalOpened(false)}}
+      >
         <input
           className="settings-email"
           type="email"
@@ -171,8 +152,11 @@ const Settings = (props: Props) => {
             }}
           >Confirm</div>
         </div>
-      </Modal>
-      <Modal isOpen={avatarModalOpened} style={modalStyles}>
+      </MyModal>
+      <MyModal
+        isOpen={avatarModalOpened}
+        onClose={() => {updateAvatarModalOpened(false)}}
+      >
         <UpdateAvatar
           api={props.api}
           dismiss={() => {
@@ -186,8 +170,11 @@ const Settings = (props: Props) => {
             updateAvatarModalOpened(false)
           }}
         />
-      </Modal>
-      <Modal isOpen={bannerModalOpened} style={modalStyles}>
+      </MyModal>
+      <MyModal
+        isOpen={bannerModalOpened}
+        onClose={() => {updateBannerModalOpened(false)}}
+      >
         <UpdateBanner
           api={props.api}
           dismiss={() => {
@@ -201,7 +188,7 @@ const Settings = (props: Props) => {
             updateBannerModalOpened(false)
           }}
         />
-      </Modal>
+      </MyModal>
     </div>
   )
 
