@@ -8,11 +8,11 @@ import withAuthRedirect from "../../hoc/withAuthRedirect";
 import withNavBar from "../../hoc/withNavBar/withNavBar";
 import api from "../../api/Api";
 import {useAppDispatch, useAppSelector} from "../../store/hooks";
-import './Settings.css'
 import UpdateBanner from "../../components/UpdateBanner/UpdateBanner";
 import {loadMe} from "../../store/meSlice";
 import {validateEmail} from "../../utils/validators";
 import MyModal from "../../components/MyModal/MyModal";
+import './Settings.css'
 
 interface Props {
   api: any

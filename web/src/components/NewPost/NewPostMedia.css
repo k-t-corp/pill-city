@@ -1,0 +1,14 @@
+.new-post-media-drop-zone {
+    display: block;
+    background-color: #f0f0f0;
+    width: 100%;
+    padding: 40px;
+    text-align: center;
+    color: #838383;
+    font-size: xx-large;
+    border-radius: 4px;
+}
+
+.new-post-media-drop-zone:hover {
+    cursor: pointer;
+}

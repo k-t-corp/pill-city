@@ -55,8 +55,8 @@ export default (_: Props) => {
     )
   }
   return (
-    <React.Fragment>
+    <div>
       {res}
-    </React.Fragment>
+    </div>
   )
 }

@@ -5,7 +5,8 @@
     flex-direction: column;
 }
 
-.settings-avatar-placeholder {
+.settings-avatar-drop-zone {
+    display: block;
     background-color: #f0f0f0;
     width: 100%;
     padding: 40px;
@@ -13,6 +14,10 @@
     color: #838383;
     font-size: xx-large;
     border-radius: 4px;
+}
+
+.settings-avatar-drop-zone:hover {
+    cursor: pointer;
 }
 
 .settings-avatar-button-cancel {

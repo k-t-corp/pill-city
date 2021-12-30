@@ -15,6 +15,9 @@ import {useToast} from "../Toast/ToastProvider";
 import ApiError from "../../api/ApiError";
 import ContentTextarea from "../ContentTextarea/ContentTextarea";
 import {useAppSelector} from "../../store/hooks";
+import {PhotographIcon} from "@heroicons/react/solid";
+import MyModal from "../MyModal/MyModal";
+import NewPostMedia from "./NewPostMedia";
 
 interface Props {
   api: any
@@ -33,7 +36,8 @@ export default (props: Props) => {
   const [newPostContent, updateNewPostContent] = useState<string>("")
   const [newPostCircleIds, updateNewPostCircleIds] = useState<CircleIdOrPublic[]>([])
   const [newPostResharable, updateNewPostResharable] = useState(true)
-  const [newPostMedias, updateNewPostMedias] = useState<string[]>([])
+  const [newPostMedias, updateNewPostMedias] = useState<File[]>([])
+  const [newPostMediaOpened, updateNewPostMediaOpened] = useState(false)
 
   const [posting, updatePosting] = useState(false)
 
@@ -121,17 +125,17 @@ export default (props: Props) => {
     updatePosting(false)
   }
 
-  const changeMediasOnClick = (event: any) => {
+  const onChangeMedias = (fl: FileList) => {
     if (posting) {
       return
     }
-    if (event.target.files && event.target.files[0]) {
-      if (event.target.files.length > 4) {
+    if (fl && fl[0]) {
+      if (fl.length > 4) {
         alert(`Only allowed to upload 4 images`);
       } else {
         let selectedMedias = []
-        for (let i = 0; i < event.target.files.length; i++) {
-          selectedMedias.push(event.target.files[i])
+        for (let i = 0; i < fl.length; i++) {
+          selectedMedias.push(fl[i])
         }
         updateNewPostMedias(selectedMedias)
       }
@@ -204,22 +208,27 @@ export default (props: Props) => {
         />
         : null}
       <div className="new-post-text-box-container">
-        {props.resharePostData === null ?
-          <label className="new-post-attachment-button">
-            <input
-              id="new-post-change-medias-button"
-              accept="image/*"
-              type="file"
-              onChange={changeMediasOnClick}
-              multiple={true}
-              disabled={posting}
+        {props.resharePostData === null &&
+          <>
+            <PhotographIcon
+              className='new-post-attachment-button'
+              onClick={() => {
+                if (!posting) {
+                  updateNewPostMediaOpened(true)
+                }
+              }}
             />
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd"
-                    d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                    clipRule="evenodd"/>
-            </svg>
-          </label> : null}
+            <MyModal
+              isOpen={newPostMediaOpened}
+              onClose={() => {updateNewPostMediaOpened(false)}}
+            >
+              <NewPostMedia
+                onChangeMedias={onChangeMedias}
+                onClose={() => {updateNewPostMediaOpened(false)}}
+              />
+            </MyModal>
+          </>
+        }
         <ContentTextarea
           api={props.api}
           content={newPostContent}

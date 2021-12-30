@@ -126,7 +126,7 @@ const Home = (props: Props) => {
         {homePostElement()}
       </div>
       {isTabletOrMobile ?
-        <React.Fragment>
+        <>
           <PencilIcon
             className='mobile-new-post-button'
             onClick={() => updateMobileNewPostOpened(true)}
@@ -137,7 +137,7 @@ const Home = (props: Props) => {
           >
             {newPostElem}
           </MyModal>
-        </React.Fragment> :
+        </> :
         <div className="home-right-column-container">
           <div className="home-right-column-new-post-wrapper">
             {newPostElem}
