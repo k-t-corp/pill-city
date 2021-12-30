@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "license": "MIT",
   "dependencies": {
+    "@heroicons/react": "^1.0.5",
     "@reduxjs/toolkit": "^1.6.2",
     "@webscopeio/react-textarea-autocomplete": "^4.8.1",
     "axios": "^0.21.1",

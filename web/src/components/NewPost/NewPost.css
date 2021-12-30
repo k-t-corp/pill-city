@@ -1,15 +1,3 @@
-.new-post {
-    padding: 13px;
-    background-color: #ffffff;
-    width: 100%;
-    max-width: 700px;
-    border-radius: 5px;
-    box-shadow: 2px 2px 1px 1px #e0e0e0;
-    resize: none;
-    margin-bottom: 20px;
-    max-height: 70vh;
-}
-
 .new-post-avatar {
     width: 50px;
     height: 50px;
@@ -179,11 +167,6 @@
 
 
 @media only screen and (max-width: 750px) {
-    .new-post {
-        margin-bottom: 0;
-        max-height: calc(100vh - 150px);
-    }
-
     .new-post-avatar {
         width: 30px;
         height: 30px;

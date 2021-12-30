@@ -4,7 +4,6 @@ import "./Home.css"
 import NewPost from "../../components/NewPost/NewPost";
 import NotificationDropdown from "../../components/NotificationDropdown/NotificationDropdown";
 import {useMediaQuery} from "react-responsive";
-import MobileNewPost from "../../components/MobileNewPost/MobileNewPost";
 import About from "../../components/About/About";
 import PostModel from "../../models/Post"
 import useInView from 'react-cool-inview'
@@ -16,6 +15,8 @@ import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import {loadMorePosts, pollPosts} from "../../store/homeSlice";
 import User from "../../models/User";
 import {ResharedPost} from "../../models/Post";
+import MyModal from "../../components/MyModal/MyModal";
+import { PencilIcon } from '@heroicons/react/solid'
 
 const InfiniteScrollFactor = 0.8
 
@@ -105,37 +106,42 @@ const Home = (props: Props) => {
     }
   }
 
+  const newPostElem = (
+    <NewPost
+      api={props.api}
+      resharePostData={resharePostData}
+      updateResharePostData={updateResharePostData}
+      beforePosting={() => {
+        updateMobileNewPostOpened(false)
+      }}
+      afterPosting={async () => {
+        await dispatch(pollPosts())
+      }}
+    />
+  )
+
   return (
     <div className="home-wrapper">
       <div className="home-posts-wrapper">
         {homePostElement()}
       </div>
-      {isTabletOrMobile &&
-        <MobileNewPost
-          api={props.api}
-          resharePostData={resharePostData}
-          updateResharePostData={updateResharePostData}
-          newPostOpened={mobileNewPostOpened}
-          updateNewPostOpened={updateMobileNewPostOpened}
-          beforePosting={() => {
-            updateMobileNewPostOpened(false)
-          }}
-          afterPosting={async () => {
-            await dispatch(pollPosts())
-          }}
-        />
-      }
-      {!isTabletOrMobile &&
-        <div className="home-right-column-container">
-          <NewPost
-            api={props.api}
-            resharePostData={resharePostData}
-            updateResharePostData={updateResharePostData}
-            beforePosting={() => {}}
-            afterPosting={async () => {
-              await dispatch(pollPosts())
-            }}
+      {isTabletOrMobile ?
+        <React.Fragment>
+          <PencilIcon
+            className='mobile-new-post-button'
+            onClick={() => updateMobileNewPostOpened(true)}
           />
+          <MyModal
+            isOpen={mobileNewPostOpened}
+            onClose={() => {updateMobileNewPostOpened(false)}}
+          >
+            {newPostElem}
+          </MyModal>
+        </React.Fragment> :
+        <div className="home-right-column-container">
+          <div className="home-right-column-new-post-wrapper">
+            {newPostElem}
+          </div>
           <NotificationDropdown />
           <About api={props.api}/>
         </div>

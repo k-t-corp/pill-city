@@ -9,32 +9,38 @@ interface Props {
 }
 
 export default (props: Props) => {
+  let styles: any = {
+    backgroundColor: '#ffffff',
+    borderRadius: '5px',
+    boxShadow: '2px 2px 1px 1px #e0e0e0',
+    resize: 'none'
+  }
+
   const isTabletOrMobile = useMediaQuery({ query: '(max-width: 750px)' })
-  let modalStyles
   if (isTabletOrMobile) {
-    modalStyles = {
-      content: {
-        overflow: 'scroll'
-      },
+    styles = {
+      ...styles,
+      overflow: 'auto',
     }
   } else {
-    modalStyles = {
-      content: {
-        top: '50%',
-        left: '50%',
-        right: 'auto',
-        bottom: 'auto',
-        marginRight: '-50%',
-        transform: 'translate(-50%, -50%)',
-        width: '800px'
-      },
+    styles = {
+      ...styles,
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+      width: '800px'
     }
   }
 
   return (
     <Modal
       isOpen={props.isOpen}
-      style={modalStyles}
+      style={{
+        content: styles
+      }}
       onRequestClose={props.onClose}
       shouldCloseOnOverlayClick={true}
       shouldCloseOnEsc={true}
