@@ -5,7 +5,6 @@ import NewPost from "../../components/NewPost/NewPost";
 import getProfilePicUrl from "../../utils/getProfilePicUrl";
 import getAvatarUrl from "../../utils/getAvatarUrl";
 import ApiError from "../../api/ApiError";
-import "./Profile.css"
 import User from "../../models/User";
 import PostModel from "../../models/Post"
 import useInView from "react-cool-inview";
@@ -16,6 +15,8 @@ import withNavBar from "../../hoc/withNavBar/withNavBar";
 import api from "../../api/Api";
 import {useAppSelector} from "../../store/hooks";
 import {ResharedPost} from "../../models/Post";
+import MyModal from "../../components/MyModal/MyModal";
+import "./Profile.css"
 
 const InfiniteScrollFactor = 0.8
 
@@ -44,13 +45,6 @@ const Profile = (props: Props) => {
   const [followLoading, updateFollowLoading] = useState(true)
 
   const history = useHistory()
-
-  window.onclick = function(event) {
-    let modal = document.getElementById("profile-new-post-modal");
-    if (event.target === modal) {
-      updateNewPostOpened(false)
-    }
-  }
 
   useEffect(() => {
     (async () => {
@@ -229,25 +223,24 @@ const Profile = (props: Props) => {
       <div className="profile-posts">
         {profilePosts()}
       </div>
-      {newPostOpened &&
-      <div id="profile-new-post-modal" className="post-detail-new-post-modal">
-        <div className="post-detail-new-post-modal-content">
-          <NewPost
-            api={props.api}
-            resharePostData={resharePost}
-            updateResharePostData={updateResharePost}
-            beforePosting={() => {
-              updateNewPostOpened(false)
-            }}
-            afterPosting={(post) => {
-              if (!userId || userId === (me as User).id) {
-                updatePosts([post, ...posts])
-              }
-            }}
-          />
-        </div>
-      </div>
-      }
+      <MyModal
+        isOpen={newPostOpened}
+        onClose={() => {updateNewPostOpened(false)}}
+      >
+        <NewPost
+          api={props.api}
+          resharePostData={resharePost}
+          updateResharePostData={updateResharePost}
+          beforePosting={() => {
+            updateNewPostOpened(false)
+          }}
+          afterPosting={(post) => {
+            if (!userId || userId === (me as User).id) {
+              updatePosts([post, ...posts])
+            }
+          }}
+        />
+      </MyModal>
     </div>
   )
 }
