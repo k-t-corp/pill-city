@@ -200,6 +200,37 @@ const Profile = (props: Props) => {
 
   const { name, subName } = getNameAndSubName(userId ? user : me)
 
+  const [followingCounts, updateFollowingCounts] = useState<{following_count: number, follower_count: number} | null>(null)
+  useEffect(() => {
+    (async () => {
+      if (meLoading) {
+        return
+      }
+      if (!userId || userId === (me as User).id) {
+        updateFollowingCounts(await props.api.getFollowingCounts())
+      }
+    })()
+  }, [meLoading])
+
+  const userFollowingCounts = () => {
+    if (meLoading) {
+      return null
+    }
+    if (!userId || userId === (me as User).id) {
+      if (followingCounts === null) {
+        return null
+      }
+      const data = followingCounts as {following_count: number, follower_count: number}
+      return (
+        <div className='profile-user-following-counts'>
+          <b>{data.following_count}</b> Following, <b>{data.follower_count}</b> Followers
+        </div>
+      )
+    } else {
+      return null
+    }
+  }
+
   return (
     <div className="profile-wrapper">
       <div className="profile-user-info">
@@ -218,6 +249,7 @@ const Profile = (props: Props) => {
         <span className="profile-user-name">{name}</span>
         {' '}
         {subName && <span className='profile-user-id'>{`@${subName}`}</span>}
+        {userFollowingCounts()}
         {userInfoButton()}
       </div>
       <div className="profile-posts">
