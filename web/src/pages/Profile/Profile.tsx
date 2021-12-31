@@ -180,7 +180,10 @@ const Profile = (props: Props) => {
   }
 
   const userInfoButton = () => {
-    if (!userId) {
+    if (meLoading) {
+      return null
+    }
+    if (!userId || userId === (me as User).id) {
       return (
         <div
           className="profile-info-button"
@@ -237,7 +240,7 @@ const Profile = (props: Props) => {
               updateNewPostOpened(false)
             }}
             afterPosting={(post) => {
-              if (!userId) {
+              if (!userId || userId === (me as User).id) {
                 updatePosts([post, ...posts])
               }
             }}
