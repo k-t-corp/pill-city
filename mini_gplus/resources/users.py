@@ -7,7 +7,7 @@ from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from mini_gplus.daos.user import find_user, update_profile_pic, update_avatar, get_users, update_display_name, \
     search_users, update_email, get_email
-from mini_gplus.daos.user_cache import get_in_user_cache_by_oid
+from mini_gplus.daos.user_cache import get_in_user_cache_by_oid, get_users_in_user_cache
 from mini_gplus.daos.post import create_post
 from mini_gplus.utils.now_ms import now_seconds
 from .s3 import upload_to_s3
@@ -219,4 +219,33 @@ class User(Resource):
         user = find_user(user_id)
         if not user:
             return {'msg': f'User {user_id} is not found'}, 404
+        return user
+
+
+class UserFollowingCount(fields.Raw):
+    def format(self, value):
+        return len(get_in_user_cache_by_oid(value).followings)
+
+
+class UserFollowerCount(fields.Raw):
+    def format(self, value):
+        count = 0
+        for user in get_users_in_user_cache():
+            if value in map(lambda u: u.id, user.followings):
+                count += 1
+        return count
+
+
+user_following_counts_fields = {
+    "following_count": UserFollowingCount(attribute='id'),
+    "follower_count": UserFollowerCount(attribute='id')
+}
+
+
+class MyFollowingCounts(Resource):
+    @jwt_required()
+    @marshal_with(user_following_counts_fields)
+    def get(self):
+        user_id = get_jwt_identity()
+        user = find_user(user_id)
         return user

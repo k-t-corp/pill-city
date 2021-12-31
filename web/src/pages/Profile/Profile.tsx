@@ -5,7 +5,6 @@ import NewPost from "../../components/NewPost/NewPost";
 import getProfilePicUrl from "../../utils/getProfilePicUrl";
 import getAvatarUrl from "../../utils/getAvatarUrl";
 import ApiError from "../../api/ApiError";
-import "./Profile.css"
 import User from "../../models/User";
 import PostModel from "../../models/Post"
 import useInView from "react-cool-inview";
@@ -16,6 +15,8 @@ import withNavBar from "../../hoc/withNavBar/withNavBar";
 import api from "../../api/Api";
 import {useAppSelector} from "../../store/hooks";
 import {ResharedPost} from "../../models/Post";
+import MyModal from "../../components/MyModal/MyModal";
+import "./Profile.css"
 
 const InfiniteScrollFactor = 0.8
 
@@ -44,13 +45,6 @@ const Profile = (props: Props) => {
   const [followLoading, updateFollowLoading] = useState(true)
 
   const history = useHistory()
-
-  window.onclick = function(event) {
-    let modal = document.getElementById("profile-new-post-modal");
-    if (event.target === modal) {
-      updateNewPostOpened(false)
-    }
-  }
 
   useEffect(() => {
     (async () => {
@@ -180,7 +174,10 @@ const Profile = (props: Props) => {
   }
 
   const userInfoButton = () => {
-    if (!userId) {
+    if (meLoading) {
+      return null
+    }
+    if (!userId || userId === (me as User).id) {
       return (
         <div
           className="profile-info-button"
@@ -203,6 +200,37 @@ const Profile = (props: Props) => {
 
   const { name, subName } = getNameAndSubName(userId ? user : me)
 
+  const [followingCounts, updateFollowingCounts] = useState<{following_count: number, follower_count: number} | null>(null)
+  useEffect(() => {
+    (async () => {
+      if (meLoading) {
+        return
+      }
+      if (!userId || userId === (me as User).id) {
+        updateFollowingCounts(await props.api.getFollowingCounts())
+      }
+    })()
+  }, [meLoading])
+
+  const userFollowingCounts = () => {
+    if (meLoading) {
+      return null
+    }
+    if (!userId || userId === (me as User).id) {
+      if (followingCounts === null) {
+        return null
+      }
+      const data = followingCounts as {following_count: number, follower_count: number}
+      return (
+        <div className='profile-user-following-counts'>
+          <b>{data.following_count}</b> Following, <b>{data.follower_count}</b> Followers
+        </div>
+      )
+    } else {
+      return null
+    }
+  }
+
   return (
     <div className="profile-wrapper">
       <div className="profile-user-info">
@@ -221,30 +249,30 @@ const Profile = (props: Props) => {
         <span className="profile-user-name">{name}</span>
         {' '}
         {subName && <span className='profile-user-id'>{`@${subName}`}</span>}
+        {userFollowingCounts()}
         {userInfoButton()}
       </div>
       <div className="profile-posts">
         {profilePosts()}
       </div>
-      {newPostOpened &&
-      <div id="profile-new-post-modal" className="post-detail-new-post-modal">
-        <div className="post-detail-new-post-modal-content">
-          <NewPost
-            api={props.api}
-            resharePostData={resharePost}
-            updateResharePostData={updateResharePost}
-            beforePosting={() => {
-              updateNewPostOpened(false)
-            }}
-            afterPosting={(post) => {
-              if (!userId) {
-                updatePosts([post, ...posts])
-              }
-            }}
-          />
-        </div>
-      </div>
-      }
+      <MyModal
+        isOpen={newPostOpened}
+        onClose={() => {updateNewPostOpened(false)}}
+      >
+        <NewPost
+          api={props.api}
+          resharePostData={resharePost}
+          updateResharePostData={updateResharePost}
+          beforePosting={() => {
+            updateNewPostOpened(false)
+          }}
+          afterPosting={(post) => {
+            if (!userId || userId === (me as User).id) {
+              updatePosts([post, ...posts])
+            }
+          }}
+        />
+      </MyModal>
     </div>
   )
 }
