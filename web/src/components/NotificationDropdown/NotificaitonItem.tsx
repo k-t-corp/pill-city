@@ -18,36 +18,49 @@ const notificationSummary = (notification: Notification) => {
   return summary(notification_summary, 100)
 }
 
+const notifyingActionToWord = {
+  "mention": "mentioned",
+  "reshare": "reshared",
+  "comment": "commented",
+  "reaction": "reacted",
+  "follow": "followed"
+}
+
 export default (props: Props) => {
-  let notifier
   const notification = props.notification
   const history = useHistory()
   const dispatch = useAppDispatch()
 
+  const notificationOnClick = async () => {
+    await dispatch(markNotificationAsRead(notification.id))
+    history.push(notification.notified_href)
+  }
+
+  // todo: this is all duplicate with backend lol
+  let notifier
   if (notification.notifying_action !== "mention") {
     notifier = !notification.notifying_deleted ? notification.notifier : null
   } else {
     notifier = !notification.notified_deleted ? notification.notifier : null
   }
 
-  let action
-  if (notification.notifying_action === "mention") action = "mentioned"
-  if (notification.notifying_action === "reshare") action = "reshared"
-  if (notification.notifying_action === "comment") action = "commented"
-  if (notification.notifying_action === "reaction") action =  "reacted"
-  if (notification.notifying_action === 'follow') action = "followed"
+  let action = ''
+  if (notifyingActionToWord[notification.notifying_action]) {
+    action = notifyingActionToWord[notification.notifying_action]
+  }
 
   let notifiedLocationPronoun
-  if (notification.notifying_action === "mention") notifiedLocationPronoun = "their"
-  else notifiedLocationPronoun = "your"
+  if (notification.notifying_action === "mention") {
+    notifiedLocationPronoun = "their"
+  } else {
+    notifiedLocationPronoun = "your"
+  }
 
   let notifiedLocationType
-  if (notification.notified_href.indexOf("#comment-") !== -1) notifiedLocationType = 'comment'
-  else if (notification.notified_href.indexOf("/post/") !== -1) notifiedLocationType = 'post'
-
-  const notificationOnClick = async () => {
-    await dispatch(markNotificationAsRead(notification.id))
-    history.push(notification.notified_href)
+  if (notification.notified_href.indexOf("#comment-") !== -1) {
+    notifiedLocationType = 'comment'
+  } else if (notification.notified_href.indexOf("/post/") !== -1) {
+    notifiedLocationType = 'post'
   }
 
   return (
@@ -62,8 +75,9 @@ export default (props: Props) => {
           <div className="notification-notifier">
             <div className="notification-notifier-wrapper">
               <b className="notification-notifier-id">
-                <ClickableId user={notifier}/>{' '}
+                <ClickableId user={notifier}/>
               </b>
+              {' '}
               {action}
               {' '}
               {
