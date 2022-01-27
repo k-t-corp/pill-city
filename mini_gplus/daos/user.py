@@ -4,6 +4,7 @@ from mongoengine import NotUniqueError
 from werkzeug.security import generate_password_hash, check_password_hash
 from mini_gplus.models import User, Media
 from mini_gplus.utils.profiling import timer
+from mini_gplus.utils.make_uuid import make_dashless_uuid
 from mini_gplus.models import NotifyingAction
 from .exceptions import UnauthorizedAccess
 from .user_cache import set_in_user_cache, get_users_in_user_cache, get_in_user_cache_by_user_id
@@ -234,6 +235,44 @@ def get_email(self: User) -> Optional[str]:
     if not user:
         return
     return user.email
+
+
+def get_rss_token(self: User) -> Optional[str]:
+    """
+    Get a user's RSS token
+
+    :param self: The acting user
+    :return: The user's RSS token
+    """
+    user = get_in_user_cache_by_user_id(self.user_id)
+    if not user:
+        return
+    return user.rss_token
+
+
+def rotate_rss_token(self: User) -> str:
+    """
+    Rotate a user's RSS token
+
+    :param self: The acting user
+    :return: The new RSS token
+    """
+    new_token = make_dashless_uuid()
+    self.rss_token = new_token
+    self.save()
+    set_in_user_cache(self)
+    return new_token
+
+
+def delete_rss_token(self: User):
+    """
+    Rotate a user's RSS token
+
+    :param self: The acting user
+    """
+    self.rss_token = None
+    self.save()
+    set_in_user_cache(self)
 
 
 def find_ghost_user_or_raise() -> User:

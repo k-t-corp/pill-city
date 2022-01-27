@@ -14,7 +14,7 @@ from mini_gplus.daos.user import sign_in, sign_up, check_email
 from mini_gplus.daos.user_cache import populate_user_cache
 from mini_gplus.daos.invitation_code import check_invitation_code, claim_invitation_code
 from mini_gplus.resources.users import Users, User, MyAvatar, MyProfilePic, MyDisplayName, Me, SearchedUsers, MyEmail, \
-    MyFollowingCounts
+    MyFollowingCounts, MyRssToken
 from mini_gplus.resources.posts import Profile, Home, Posts, Post, PostMedia
 from mini_gplus.resources.comments import NestedComments, Comments, NestedComment, Comment
 from mini_gplus.resources.media import Media, MaxMediaCount
@@ -240,6 +240,8 @@ api.add_resource(LinkPreview, '/api/linkPreview')
 
 api.add_resource(ForgetPassword, '/api/forgetPassword')
 api.add_resource(ResetPassword, '/api/resetPassword')
+
+api.add_resource(MyRssToken, '/api/rssToken')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
