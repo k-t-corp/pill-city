@@ -1,4 +1,5 @@
 from mini_gplus.models import Notification, NotifyingAction, User
+from .user_cache import get_in_user_cache_by_oid
 
 # TODO: this is all duplicate with frontend lol
 action_to_word = {
@@ -18,8 +19,7 @@ def plaintext_user(user: User) -> str:
     return user.user_id
 
 
-def plaintext_summary(notification: Notification, length: int) -> str:
-    s = notification.notifying_summary
+def plaintext_summary(s: str, length: int) -> str:
     if len(s) > length:
         return f"{s[: length]}..."
     return s
@@ -32,8 +32,10 @@ def plaintext_notification(notification: Notification) -> str:
         notifier = notification.notifier if not notification.notifying_deleted else None
     else:
         notifier = notification.notifier if not notification.notified_deleted else None
-    res += plaintext_user(notifier)
-    res += ' '
+    if notifier:
+        notifier = get_in_user_cache_by_oid(notifier.id)
+        res += plaintext_user(notifier)
+        res += ' '
 
     res += action_to_word.get(notification.notifying_action, '')
     res += ' '
@@ -41,7 +43,9 @@ def plaintext_notification(notification: Notification) -> str:
     if notification.notifying_action in {NotifyingAction.Mention, NotifyingAction.Follow}:
         res += "you"
     else:
-        res += plaintext_summary(notification, 150)
+        res += '"'
+        res += plaintext_summary(notification.notifying_summary, 150)
+        res += '"'
     res += ' '
 
     if notification.notifying_action != NotifyingAction.Follow:

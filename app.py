@@ -10,12 +10,12 @@ from flask_restful import Api
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token
 from sentry_sdk.integrations.flask import FlaskIntegration
-from feedgen.feed import FeedGenerator
-from mini_gplus.daos.user import sign_in, sign_up, check_email, get_user_by_rss_token, get_rss_notifications_url
+from mini_gplus.daos.user import sign_in, sign_up, check_email, get_user_by_rss_token
 from mini_gplus.daos.user_cache import populate_user_cache
 from mini_gplus.daos.invitation_code import check_invitation_code, claim_invitation_code
 from mini_gplus.resources.users import Users, User, MyAvatar, MyProfilePic, MyDisplayName, Me, SearchedUsers, MyEmail, \
     MyFollowingCounts, MyRssToken
+from mini_gplus.daos.rss import get_rss_notifications_xml
 from mini_gplus.resources.posts import Profile, Home, Posts, Post, PostMedia
 from mini_gplus.resources.comments import NestedComments, Comments, NestedComment, Comment
 from mini_gplus.resources.media import Media, MaxMediaCount
@@ -193,20 +193,7 @@ def _rss_notifications(user_id: str):
     user = get_user_by_rss_token(token)
     if not user or user.user_id != user_id:
         return f'User with RSS token {token} is not found', 404
-
-    domain = os.environ['DOMAIN']
-    protocol = 'https'
-    if 'localhost:' in domain:
-        protocol = 'http'
-
-    fg = FeedGenerator()
-    # todo: duplicate with the path in app.py
-    fg.id(get_rss_notifications_url(user))
-    fg.title(f"@{user_id}'s notifications on {domain}")
-    fg.author({'name': f"@{user_id}@{domain}"})
-    fg.link(href=f'{protocol}://{domain}/notifications', rel='alternate')
-    fg.language('en')
-    return fg.atom_str(pretty=True), 200, {'Content-Type': 'application/atom+xml'}
+    return get_rss_notifications_xml(user), 200, {'Content-Type': 'application/atom+xml; charset=utf-8'}
 
 
 # api
@@ -236,7 +223,8 @@ api.add_resource(SearchedUsers, '/api/users/search')
 api.add_resource(Profile, '/api/profile/<string:profile_user_id>')
 api.add_resource(Home, '/api/home')
 
-api.add_resource(NestedComment, '/api/posts/<string:post_id>/comment/<string:comment_id>/comment/<string:nested_comment_id>')
+api.add_resource(NestedComment, '/api/posts/<string:post_id>/comment/<string:comment_id>/comment'
+                                '/<string:nested_comment_id>')
 api.add_resource(NestedComments, '/api/posts/<string:post_id>/comment/<string:comment_id>/comment')
 api.add_resource(Comment, '/api/posts/<string:post_id>/comment/<string:comment_id>')
 api.add_resource(Comments, '/api/posts/<string:post_id>/comment')
