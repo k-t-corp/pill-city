@@ -274,7 +274,7 @@ class MyRssToken(Resource):
         return {
             "rss_token": rotate_rss_token(user),
             'rss_notifications_url': get_rss_notifications_url(user)
-        }
+        }, 201
 
     @jwt_required()
     def delete(self):

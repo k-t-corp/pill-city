@@ -90,6 +90,11 @@
     cursor: default;
 }
 
+.settings-rss-url {
+    padding: 12px;
+    background: #eeeded;
+}
+
 /* Mobile */
 @media only screen and (max-width: 750px) {
     .settings-wrapper {
