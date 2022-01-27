@@ -258,6 +258,9 @@ def rotate_rss_token(self: User) -> str:
     :return: The new RSS token
     """
     new_token = make_dashless_uuid()
+    if get_user_by_rss_token(new_token):
+        raise Exception('Duplicate RSS token. Please retry.')
+
     self.rss_token = new_token
     self.save()
     set_in_user_cache(self)
@@ -273,6 +276,19 @@ def delete_rss_token(self: User):
     self.rss_token = None
     self.save()
     set_in_user_cache(self)
+
+
+def get_user_by_rss_token(token: str) -> Optional[User]:
+    """
+    Get a user by RSS token
+
+    :param token: The queried RSS token
+    :return: The user found
+    """
+    for user in get_users_in_user_cache():
+        if user.rss_token == token:
+            return user
+    return None
 
 
 def find_ghost_user_or_raise() -> User:
