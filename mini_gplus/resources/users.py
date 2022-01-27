@@ -6,7 +6,7 @@ from bson import ObjectId
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from mini_gplus.daos.user import find_user, update_profile_pic, update_avatar, get_users, update_display_name, \
-    search_users, update_email, get_email, get_rss_token, rotate_rss_token, delete_rss_token
+    search_users, update_email, get_email, get_rss_token, rotate_rss_token, delete_rss_token, get_rss_notifications_url
 from mini_gplus.daos.user_cache import get_in_user_cache_by_oid, get_users_in_user_cache
 from mini_gplus.daos.post import create_post
 from mini_gplus.utils.now_ms import now_seconds
@@ -258,8 +258,10 @@ class MyRssToken(Resource):
         user = find_user(user_id)
         if not user:
             return {'msg': f'User {user_id} is not found'}, 404
+
         return {
-            "rss_token": get_rss_token(user)
+            "rss_token": get_rss_token(user),
+            'rss_notifications_url': get_rss_notifications_url(user)
         }
 
     @jwt_required()
@@ -270,7 +272,8 @@ class MyRssToken(Resource):
             return {'msg': f'User {user_id} is not found'}, 404
 
         return {
-            "rss_token": rotate_rss_token(user)
+            "rss_token": rotate_rss_token(user),
+            'rss_notifications_url': get_rss_notifications_url(user)
         }
 
     @jwt_required()

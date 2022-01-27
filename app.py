@@ -11,7 +11,7 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token
 from sentry_sdk.integrations.flask import FlaskIntegration
 from feedgen.feed import FeedGenerator
-from mini_gplus.daos.user import sign_in, sign_up, check_email, get_user_by_rss_token
+from mini_gplus.daos.user import sign_in, sign_up, check_email, get_user_by_rss_token, get_rss_notifications_url
 from mini_gplus.daos.user_cache import populate_user_cache
 from mini_gplus.daos.invitation_code import check_invitation_code, claim_invitation_code
 from mini_gplus.resources.users import Users, User, MyAvatar, MyProfilePic, MyDisplayName, Me, SearchedUsers, MyEmail, \
@@ -195,14 +195,16 @@ def _rss_notifications(user_id: str):
         return f'User with RSS token {token} is not found', 404
 
     domain = os.environ['DOMAIN']
-    api_domain = os.environ['API_DOMAIN']
+    protocol = 'https'
+    if 'localhost:' in domain:
+        protocol = 'http'
 
     fg = FeedGenerator()
     # todo: duplicate with the path in app.py
-    fg.id(f"https://{api_domain}/rss/{user_id}/notifications")
+    fg.id(get_rss_notifications_url(user))
     fg.title(f"@{user_id}'s notifications on {domain}")
     fg.author({'name': f"@{user_id}@{domain}"})
-    fg.link(href=f'https://{domain}/notifications', rel='alternate')
+    fg.link(href=f'{protocol}://{domain}/notifications', rel='alternate')
     fg.language('en')
     return fg.atom_str(pretty=True), 200, {'Content-Type': 'application/atom+xml'}
 

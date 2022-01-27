@@ -250,6 +250,16 @@ def get_rss_token(self: User) -> Optional[str]:
     return user.rss_token
 
 
+def get_rss_notifications_url(self: User) -> str:
+    api_domain = os.environ['API_DOMAIN']
+    protocol = 'https'
+    # todo: lol so hack
+    if 'localhost:' in api_domain:
+        protocol = 'http'
+    # todo: this is duplicate with the actual path in app.py
+    return f'{protocol}://{api_domain}/rss/{self.user_id}/notifications?token={self.rss_token}'
+
+
 def rotate_rss_token(self: User) -> str:
     """
     Rotate a user's RSS token
