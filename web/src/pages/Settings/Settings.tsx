@@ -13,6 +13,7 @@ import {loadMe} from "../../store/meSlice";
 import {validateEmail} from "../../utils/validators";
 import MyModal from "../../components/MyModal/MyModal";
 import './Settings.css'
+import {useToast} from "../../components/Toast/ToastProvider";
 
 interface Props {
   api: any
@@ -26,11 +27,16 @@ const Settings = (props: Props) => {
   const [emailModalOpened, updateEmailModalOpened] = useState(false)
   const [avatarModalOpened, updateAvatarModalOpened] = useState(false)
   const [bannerModalOpened, updateBannerModalOpened] = useState(false)
+  const [rssTokenModalOpened, updateRssTokenModalOpened] = useState(false)
 
   const [loading, updateLoading] = useState(true)
   const [displayName, updateDisplayName] = useState<string | undefined>()
   const [email, updateEmail] = useState<string | undefined>()
   const [emailValidated, updateEmailValidated] = useState(false)
+  const [rssToken, updateRssToken] = useState<{rss_token: string, rss_notifications_url: string} | undefined>()
+
+  const { addToast } = useToast()
+
   useEffect(() => {
     if (validateEmail(email)) {
       updateEmailValidated(true)
@@ -48,6 +54,7 @@ const Settings = (props: Props) => {
       updateDisplayName(myProfile.display_name)
 
       updateEmail(await props.api.getEmail())
+      updateRssToken(await props.api.getRssToken())
       updateLoading(false)
     })()
   }, [meLoading])
@@ -82,6 +89,10 @@ const Settings = (props: Props) => {
       <div className="settings-row" onClick={() => {updateBannerModalOpened(true)}}>
         <div className="settings-row-header">Banner</div>
         <div className="settings-row-content">Click to update</div>
+      </div>
+      <div className="settings-row" onClick={() => {updateRssTokenModalOpened(true)}}>
+        <div className="settings-row-header">RSS Notifications</div>
+        <div className="settings-row-content">{rssToken && rssToken.rss_token ? 'Enabled' : 'Disabled'}</div>
       </div>
       <div className="settings-row" onClick={handleSignOut}>
         <div className="settings-row-header">Sign out</div>
@@ -188,6 +199,38 @@ const Settings = (props: Props) => {
             updateBannerModalOpened(false)
           }}
         />
+      </MyModal>
+      <MyModal
+        isOpen={rssTokenModalOpened}
+        onClose={() => {updateRssTokenModalOpened(false)}}
+      >
+        {
+          rssToken && rssToken.rss_token ?
+            <div>
+              <p>Your RSS Notification URL is</p>
+              <a href="#" onClick={async () => {
+                await navigator.clipboard.writeText(rssToken.rss_notifications_url)
+                addToast('Copied to clipboard')
+              }}>
+                <code className='settings-rss-url'>{rssToken.rss_notifications_url}</code>
+              </a>
+              <p/>
+              <p>You should <b>not</b> share this URL to anyone else. If you believe this URL is compromised, <a href="#" onClick={async () => {
+                updateRssToken(await props.api.rotateRssToken())
+              }}>click here to rotate RSS token</a></p>
+              <p/>
+              <a href="#" onClick={async () => {
+                await props.api.deleteRssToken()
+                updateRssToken(undefined)
+              }}>Click here to disable</a>
+            </div> :
+            <div>
+              <p>RSS Notifications is disabled</p>
+              <a href="#" onClick={async () => {
+                updateRssToken(await props.api.rotateRssToken())
+              }}>Click here to enable</a>
+            </div>
+        }
       </MyModal>
     </div>
   )

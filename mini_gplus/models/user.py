@@ -12,3 +12,4 @@ class User(Document, CreatedAtMixin):
     profile_pic = StringField(required=False, default="pill1.png")
     display_name = StringField(required=False)
     email = EmailField(required=False)
+    rss_token = StringField(required=False)

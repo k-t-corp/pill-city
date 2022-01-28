@@ -10,11 +10,12 @@ from flask_restful import Api
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token
 from sentry_sdk.integrations.flask import FlaskIntegration
-from mini_gplus.daos.user import sign_in, sign_up, check_email
+from mini_gplus.daos.user import sign_in, sign_up, check_email, get_user_by_rss_token
 from mini_gplus.daos.user_cache import populate_user_cache
 from mini_gplus.daos.invitation_code import check_invitation_code, claim_invitation_code
 from mini_gplus.resources.users import Users, User, MyAvatar, MyProfilePic, MyDisplayName, Me, SearchedUsers, MyEmail, \
-    MyFollowingCounts
+    MyFollowingCounts, MyRssToken
+from mini_gplus.daos.rss import get_rss_notifications_xml
 from mini_gplus.resources.posts import Profile, Home, Posts, Post, PostMedia
 from mini_gplus.resources.comments import NestedComments, Comments, NestedComment, Comment
 from mini_gplus.resources.media import Media, MaxMediaCount
@@ -183,6 +184,18 @@ def _git_commit():
     }
 
 
+# rss
+@app.route('/rss/<string:user_id>/notifications')
+def _rss_notifications(user_id: str):
+    token = request.args.get('token', None)
+    if not token:
+        return f'No RSS token provided', 400
+    user = get_user_by_rss_token(token)
+    if not user or user.user_id != user_id:
+        return f'User with RSS token {token} is not found', 404
+    return get_rss_notifications_xml(user), 200, {'Content-Type': 'application/atom+xml; charset=utf-8'}
+
+
 # api
 api = Api(app, errors={
     'UnauthorizedAccess': {
@@ -210,7 +223,8 @@ api.add_resource(SearchedUsers, '/api/users/search')
 api.add_resource(Profile, '/api/profile/<string:profile_user_id>')
 api.add_resource(Home, '/api/home')
 
-api.add_resource(NestedComment, '/api/posts/<string:post_id>/comment/<string:comment_id>/comment/<string:nested_comment_id>')
+api.add_resource(NestedComment, '/api/posts/<string:post_id>/comment/<string:comment_id>/comment'
+                                '/<string:nested_comment_id>')
 api.add_resource(NestedComments, '/api/posts/<string:post_id>/comment/<string:comment_id>/comment')
 api.add_resource(Comment, '/api/posts/<string:post_id>/comment/<string:comment_id>')
 api.add_resource(Comments, '/api/posts/<string:post_id>/comment')
@@ -240,6 +254,8 @@ api.add_resource(LinkPreview, '/api/linkPreview')
 
 api.add_resource(ForgetPassword, '/api/forgetPassword')
 api.add_resource(ResetPassword, '/api/resetPassword')
+
+api.add_resource(MyRssToken, '/api/rssToken')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

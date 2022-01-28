@@ -657,6 +657,36 @@ export class Api {
     }
     return res.data
   }
+
+  async getRssToken() {
+    const res = await this.axiosInstance.get(
+      `/rssToken`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
+
+  async rotateRssToken() {
+    const res = await this.axiosInstance.post(
+      `/rssToken`
+    )
+    if (res.status !== 201) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
+
+  async deleteRssToken() {
+    const res = await this.axiosInstance.delete(
+      `/rssToken`
+    )
+    if (res.status !== 201) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
 }
 
 const api = new Api(process.env.REACT_APP_API_ENDPOINT)

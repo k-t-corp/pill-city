@@ -4,6 +4,7 @@ from mongoengine import NotUniqueError
 from werkzeug.security import generate_password_hash, check_password_hash
 from mini_gplus.models import User, Media
 from mini_gplus.utils.profiling import timer
+from mini_gplus.utils.make_uuid import make_dashless_uuid
 from mini_gplus.models import NotifyingAction
 from .exceptions import UnauthorizedAccess
 from .user_cache import set_in_user_cache, get_users_in_user_cache, get_in_user_cache_by_user_id
@@ -234,6 +235,70 @@ def get_email(self: User) -> Optional[str]:
     if not user:
         return
     return user.email
+
+
+def get_rss_token(self: User) -> Optional[str]:
+    """
+    Get a user's RSS token
+
+    :param self: The acting user
+    :return: The user's RSS token
+    """
+    user = get_in_user_cache_by_user_id(self.user_id)
+    if not user:
+        return
+    return user.rss_token
+
+
+def get_rss_notifications_url(self: User) -> str:
+    api_domain = os.environ['API_DOMAIN']
+    protocol = 'https'
+    # todo: lol so hack
+    if 'localhost:' in api_domain:
+        protocol = 'http'
+    # todo: this is duplicate with the actual path in app.py
+    return f'{protocol}://{api_domain}/rss/{self.user_id}/notifications?token={self.rss_token}'
+
+
+def rotate_rss_token(self: User) -> str:
+    """
+    Rotate a user's RSS token
+
+    :param self: The acting user
+    :return: The new RSS token
+    """
+    new_token = make_dashless_uuid()
+    if get_user_by_rss_token(new_token):
+        raise Exception('Duplicate RSS token. Please retry.')
+
+    self.rss_token = new_token
+    self.save()
+    set_in_user_cache(self)
+    return new_token
+
+
+def delete_rss_token(self: User):
+    """
+    Rotate a user's RSS token
+
+    :param self: The acting user
+    """
+    self.rss_token = None
+    self.save()
+    set_in_user_cache(self)
+
+
+def get_user_by_rss_token(token: str) -> Optional[User]:
+    """
+    Get a user by RSS token
+
+    :param token: The queried RSS token
+    :return: The user found
+    """
+    for user in get_users_in_user_cache():
+        if user.rss_token == token:
+            return user
+    return None
 
 
 def find_ghost_user_or_raise() -> User:
