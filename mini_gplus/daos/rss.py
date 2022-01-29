@@ -1,14 +1,34 @@
 import os
 import datetime
+from typing import Set
 from dateutil import tz
 from feedgen.feed import FeedGenerator
-from mini_gplus.models import User
+from mini_gplus.models import User, NotifyingAction
 from .user import get_rss_notifications_url
 from .notification import get_notifications
 from .plaintext_notification import plaintext_notification, plaintext_summary
 
 
-def get_rss_notifications_xml(self: User) -> str:
+notifying_action_to_rss_code = {
+    NotifyingAction.Comment: 'c',
+    NotifyingAction.Mention: 'm',
+    NotifyingAction.Reaction: 'r',
+    NotifyingAction.Reshare: 's',
+    NotifyingAction.Follow: 'f'
+}
+# guarantees values are unique
+assert len(notifying_action_to_rss_code.values()) == len(notifying_action_to_rss_code.keys())
+
+rss_code_to_notifying_action = {}
+for a, rc in notifying_action_to_rss_code.items():
+    rss_code_to_notifying_action[rc] = a
+
+notifying_action_value_to_rss_code = {}
+for a, rc in notifying_action_to_rss_code.items():
+    notifying_action_value_to_rss_code[a.value] = rc
+
+
+def get_rss_notifications_xml(self: User, types: Set[NotifyingAction]) -> str:
     domain = os.environ['DOMAIN']
     protocol = 'https'
     if 'localhost:' in domain:
@@ -26,19 +46,20 @@ def get_rss_notifications_xml(self: User) -> str:
     fg_updated = None
 
     # add_entry seems to be reversed... how weird
-    for i, notification in enumerate(reversed(get_notifications(self, None, 50))):
-        notification_dt = datetime.datetime.fromtimestamp(notification.created_at, tz=tz.tzutc())
+    for notification in reversed(get_notifications(self, None, 50)):
+        if notification.notifying_action in types:
+            notification_dt = datetime.datetime.fromtimestamp(notification.created_at, tz=tz.tzutc())
 
-        fe = fg.add_entry()
-        # todo: this is not a valid url lol
-        fe.id(f'{protocol}://{domain}/notification/{notification.eid}')
-        fe.published(notification_dt)
-        fe.updated(notification_dt)
-        fe.title(plaintext_notification(notification))
-        fe.link(href=f"{protocol}://{domain}{notification.notified_href}")
-        fe.description(plaintext_summary(notification.notified_summary, 150))
-        if not fg_updated or notification_dt > fg_updated:
-            fg_updated = notification_dt
+            fe = fg.add_entry()
+            # todo: this is not a valid url lol
+            fe.id(f'{protocol}://{domain}/notification/{notification.eid}')
+            fe.published(notification_dt)
+            fe.updated(notification_dt)
+            fe.title(plaintext_notification(notification))
+            fe.link(href=f"{protocol}://{domain}{notification.notified_href}")
+            fe.description(plaintext_summary(notification.notified_summary, 150))
+            if not fg_updated or notification_dt > fg_updated:
+                fg_updated = notification_dt
 
     fg.updated(fg_updated)
     return fg.atom_str(pretty=True)

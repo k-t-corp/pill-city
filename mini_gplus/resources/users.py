@@ -1,6 +1,5 @@
 import os
 import re
-
 import werkzeug
 from bson import ObjectId
 from flask_restful import reqparse, Resource, fields, marshal_with
@@ -9,6 +8,7 @@ from mini_gplus.daos.user import find_user, update_profile_pic, update_avatar, g
     search_users, update_email, get_email, get_rss_token, rotate_rss_token, delete_rss_token, get_rss_notifications_url
 from mini_gplus.daos.user_cache import get_in_user_cache_by_oid, get_users_in_user_cache
 from mini_gplus.daos.post import create_post
+from mini_gplus.daos.rss import notifying_action_value_to_rss_code
 from mini_gplus.utils.now_ms import now_seconds
 from .s3 import upload_to_s3
 
@@ -261,7 +261,8 @@ class MyRssToken(Resource):
 
         return {
             "rss_token": get_rss_token(user),
-            'rss_notifications_url': get_rss_notifications_url(user)
+            'rss_notifications_url': get_rss_notifications_url(user),
+            'notifying_action_to_rss_code': notifying_action_value_to_rss_code
         }
 
     @jwt_required()
@@ -273,7 +274,8 @@ class MyRssToken(Resource):
 
         return {
             "rss_token": rotate_rss_token(user),
-            'rss_notifications_url': get_rss_notifications_url(user)
+            'rss_notifications_url': get_rss_notifications_url(user),
+            'notifying_action_to_rss_code': notifying_action_value_to_rss_code
         }, 201
 
     @jwt_required()

@@ -13,6 +13,7 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 from mini_gplus.daos.user import sign_in, sign_up, check_email, get_user_by_rss_token
 from mini_gplus.daos.user_cache import populate_user_cache
 from mini_gplus.daos.invitation_code import check_invitation_code, claim_invitation_code
+from mini_gplus.daos.rss import notifying_action_to_rss_code, rss_code_to_notifying_action
 from mini_gplus.resources.users import Users, User, MyAvatar, MyProfilePic, MyDisplayName, Me, SearchedUsers, MyEmail, \
     MyFollowingCounts, MyRssToken
 from mini_gplus.daos.rss import get_rss_notifications_xml
@@ -193,7 +194,15 @@ def _rss_notifications(user_id: str):
     user = get_user_by_rss_token(token)
     if not user or user.user_id != user_id:
         return f'User with RSS token {token} is not found', 404
-    return get_rss_notifications_xml(user), 200, {'Content-Type': 'application/atom+xml; charset=utf-8'}
+    rss_codes = request.args.get('types', None)
+    if not rss_codes:
+        types = notifying_action_to_rss_code.keys()
+    else:
+        types = set(map(
+            lambda rc: rss_code_to_notifying_action[rc],
+            filter(lambda rc: rc in rss_code_to_notifying_action, rss_codes)
+        ))
+    return get_rss_notifications_xml(user, types), 200, {'Content-Type': 'application/atom+xml; charset=utf-8'}
 
 
 # api

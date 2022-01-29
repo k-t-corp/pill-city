@@ -49,7 +49,7 @@ def create_notification(
     new_notification.save()
 
 
-def get_notifications(self: User, from_id: Optional[str], count: int = NotificationPageSize):
+def get_notifications(self: User, from_id: Optional[str], count: int = NotificationPageSize) -> List[Notification]:
     """
     Get all of a user's notifications in reverse chronological order, e.g. latest to earliest
 
