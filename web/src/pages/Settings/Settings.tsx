@@ -208,20 +208,24 @@ const Settings = (props: Props) => {
           rssToken && rssToken.rss_token ?
             <div>
               <p>Your RSS Notification URL is</p>
+              <code className='settings-rss-url'>{rssToken.rss_notifications_url}</code>
+              <p/>
               <a href="#" onClick={async () => {
                 await navigator.clipboard.writeText(rssToken.rss_notifications_url)
                 addToast('Copied to clipboard')
-              }}>
-                <code className='settings-rss-url'>{rssToken.rss_notifications_url}</code>
-              </a>
+              }}>Copy to clipboard</a>
               <p/>
               <p>You should <b>not</b> share this URL to anyone else. If you believe this URL is compromised, <a href="#" onClick={async () => {
-                updateRssToken(await props.api.rotateRssToken())
+                if (confirm('Are you sure you want to rotate RSS token?')) {
+                  updateRssToken(await props.api.rotateRssToken())
+                }
               }}>click here to rotate RSS token</a></p>
               <p/>
               <a href="#" onClick={async () => {
-                await props.api.deleteRssToken()
-                updateRssToken(undefined)
+                if (confirm('Are you sure you want to disable RSS Notifications?')) {
+                  await props.api.deleteRssToken()
+                  updateRssToken(undefined)
+                }
               }}>Click here to disable</a>
             </div> :
             <div>
