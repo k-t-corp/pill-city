@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from mini_gplus.models import Notification, User, NotifyingAction
 from mini_gplus.utils.make_uuid import make_uuid
 from .pagination import get_page, poll_latest
@@ -49,12 +49,13 @@ def create_notification(
     new_notification.save()
 
 
-def get_notifications(self, from_id):
+def get_notifications(self: User, from_id: Optional[str], count: int = NotificationPageSize):
     """
     Get all of a user's notifications in reverse chronological order, e.g. latest to earliest
 
     :param (User) self: The acting user
     :param (str|None) from_id: The acting Post_id from which home posts should be retrieved
+    :param (int) count: Number of notifications to return
     """
     def _filter_noop(_):
         return True
@@ -66,7 +67,7 @@ def get_notifications(self, from_id):
         },
         extra_filter_func=_filter_noop,
         from_id=from_id,
-        page_count=NotificationPageSize
+        page_count=count
     )
 
 

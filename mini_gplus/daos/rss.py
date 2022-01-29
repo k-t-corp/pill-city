@@ -26,7 +26,7 @@ def get_rss_notifications_xml(self: User) -> str:
     fg_updated = None
 
     # add_entry seems to be reversed... how weird
-    for i, notification in enumerate(reversed(get_notifications(self, None))):
+    for i, notification in enumerate(reversed(get_notifications(self, None, 50))):
         notification_dt = datetime.datetime.fromtimestamp(notification.created_at, tz=tz.tzutc())
 
         fe = fg.add_entry()
