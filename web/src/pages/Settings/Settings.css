@@ -93,7 +93,23 @@
 .settings-rss-url {
     padding: 12px;
     background: #eeeded;
+    font-family: monospace;
 }
+
+.settings-rss-code-checkboxes {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+}
+
+.settings-rss-code-checkbox {
+}
+
+.settings-rss-code-checkbox-label {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
 
 /* Mobile */
 @media only screen and (max-width: 750px) {

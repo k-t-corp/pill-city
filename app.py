@@ -202,7 +202,7 @@ def _rss_notifications(user_id: str):
             lambda rc: rss_code_to_notifying_action[rc],
             filter(lambda rc: rc in rss_code_to_notifying_action, rss_codes)
         ))
-    return get_rss_notifications_xml(user, types), 200, {'Content-Type': 'application/atom+xml; charset=utf-8'}
+    return get_rss_notifications_xml(user, types, rss_codes), 200, {'Content-Type': 'application/atom+xml; charset=utf-8'}
 
 
 # api

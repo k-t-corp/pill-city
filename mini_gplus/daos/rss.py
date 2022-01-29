@@ -28,18 +28,21 @@ for a, rc in notifying_action_to_rss_code.items():
     notifying_action_value_to_rss_code[a.value] = rc
 
 
-def get_rss_notifications_xml(self: User, types: Set[NotifyingAction]) -> str:
+def get_rss_notifications_xml(self: User, types: Set[NotifyingAction], types_str: str) -> str:
     domain = os.environ['DOMAIN']
     protocol = 'https'
     if 'localhost:' in domain:
         protocol = 'http'
 
     user_id = self.user_id
+    title_descriptions = 'notifications'
+    if len(types) != len(notifying_action_to_rss_code):
+        title_descriptions = ', '.join(map(lambda t: t.value + 's', types))
 
     fg = FeedGenerator()
     # todo: duplicate with the path in app.py
-    fg.id(get_rss_notifications_url(self))
-    fg.title(f"@{user_id}'s notifications on {domain}")
+    fg.id(get_rss_notifications_url(self, types_str))
+    fg.title(f"@{user_id}'s {title_descriptions} on {domain}")
     fg.author({'name': f"@{user_id}@{domain}"})
     fg.link(href=f'{protocol}://{domain}/notifications', rel='alternate')
     fg.language('en')

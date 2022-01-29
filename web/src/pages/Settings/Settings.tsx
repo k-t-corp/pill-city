@@ -19,6 +19,14 @@ interface Props {
   api: any
 }
 
+type NotifyingActionToRssCode = {[action: string]: string}
+
+interface RssToken {
+  rss_token: string,
+  rss_notifications_url: string,
+  notifying_action_to_rss_code: NotifyingActionToRssCode
+}
+
 const Settings = (props: Props) => {
   const me = useAppSelector(state => state.me.me)
   const meLoading = useAppSelector(state => state.me.loading)
@@ -33,9 +41,8 @@ const Settings = (props: Props) => {
   const [displayName, updateDisplayName] = useState<string | undefined>()
   const [email, updateEmail] = useState<string | undefined>()
   const [emailValidated, updateEmailValidated] = useState(false)
-  const [rssToken, updateRssToken] = useState<{rss_token: string, rss_notifications_url: string} | undefined>()
-
-  const { addToast } = useToast()
+  const [rssToken, updateRssToken] = useState<RssToken | undefined>()
+  const [rssCodesChecked, updateRssCodesChecked] = useState<{[action: string]: boolean} | undefined>(undefined)
 
   useEffect(() => {
     if (validateEmail(email)) {
@@ -54,7 +61,15 @@ const Settings = (props: Props) => {
       updateDisplayName(myProfile.display_name)
 
       updateEmail(await props.api.getEmail())
-      updateRssToken(await props.api.getRssToken())
+      const rssToken = await props.api.getRssToken() as RssToken
+      updateRssToken(rssToken)
+      updateRssCodesChecked(
+        Object.fromEntries(
+          Object.entries(rssToken.notifying_action_to_rss_code).map(([a, _]) => {
+            return [a, true]
+          })
+        )
+      )
       updateLoading(false)
     })()
   }, [meLoading])
@@ -71,6 +86,24 @@ const Settings = (props: Props) => {
   }
 
   const dispatch = useAppDispatch()
+  const { addToast } = useToast()
+
+  let rssUrlTypes = ''
+  if (rssToken && rssCodesChecked &&
+    Object.entries(rssToken.notifying_action_to_rss_code).length
+    !== Object.entries(rssCodesChecked).filter(([_, checked]) => checked).length
+  ) {
+    rssUrlTypes = '&types='
+    for (let [a, checked] of Object.entries(rssCodesChecked)) {
+      if (checked) {
+        rssUrlTypes += rssToken.notifying_action_to_rss_code[a]
+      }
+    }
+  }
+  let rssUrl = ''
+  if (rssToken) {
+    rssUrl = rssToken.rss_notifications_url + rssUrlTypes
+  }
 
   return (
     <div className="settings-wrapper">
@@ -208,10 +241,40 @@ const Settings = (props: Props) => {
           rssToken && rssToken.rss_token ?
             <div>
               <p>Your RSS Notification URL is</p>
-              <code className='settings-rss-url'>{rssToken.rss_notifications_url}</code>
+              <div className='settings-rss-url'>{rssUrl}</div>
+              <p/>
+              {
+                rssCodesChecked &&
+                <div className="settings-rss-code-checkboxes">
+                  {
+                    Object.entries(rssCodesChecked).map(([a, checked]) => {
+                      return (
+                        <>
+                          <input
+                            className="settings-rss-code-checkbox"
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => {
+                              if (Object.entries(rssCodesChecked).filter(([_, checked]) => checked).length === 1 && (Object.entries(rssCodesChecked).filter(([_, checked]) => checked)[0][0] === a)) {
+                                alert('You have to choose at least one type of notifications')
+                              } else {
+                                updateRssCodesChecked({
+                                  ...rssCodesChecked,
+                                  [a]: !checked
+                                })
+                              }
+                            }}
+                          />
+                          <span className="settings-rss-code-checkbox-label">{a}</span>
+                        </>
+                      )
+                    })
+                  }
+                </div>
+              }
               <p/>
               <a href="#" onClick={async () => {
-                await navigator.clipboard.writeText(rssToken.rss_notifications_url)
+                await navigator.clipboard.writeText(rssUrl)
                 addToast('Copied to clipboard')
               }}>Copy to clipboard</a>
               <p/>
