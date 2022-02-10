@@ -1,0 +1,2 @@
+gunicorn==20.1.0
+dnspython==2.1.0

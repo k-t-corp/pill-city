@@ -18,10 +18,6 @@ celery[redis]==5.1.2
 linkpreview==0.2.0
 feedgen==0.9.0
 
-# production
-gunicorn==20.1.0
-dnspython==2.1.0
-
 # testing
 freezegun==1.1.0
 fakeredis==1.6.1
