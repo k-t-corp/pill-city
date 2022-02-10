@@ -37,10 +37,11 @@ COPY mini_gplus/ /home/app/mini_gplus
 COPY app.py .
 COPY release.py .
 COPY entrypoint-worker.sh .
+COPY entrypoint-release.sh .
 
 # pre-compile bytecode and enable PYTHONFAULTHANDLER (catches error in c)
 ENV PATH="./venv/bin:$PATH"
 ENV PYTHONFAULTHANDLER=1
 ENV PORT=5000
 EXPOSE 5000
-ENTRYPOINT python release.py && gunicorn app:app --log-file -
+ENTRYPOINT ["gunicorn", "app:app", "--log-file", "-"]
