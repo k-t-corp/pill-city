@@ -36,6 +36,7 @@ COPY --from=builder /home/app/venv ./venv
 COPY mini_gplus/ /home/app/mini_gplus
 COPY app.py .
 COPY release.py .
+COPY entrypoint-worker.sh .
 
 # pre-compile bytecode and enable PYTHONFAULTHANDLER (catches error in c)
 ENV PATH="./venv/bin:$PATH"
