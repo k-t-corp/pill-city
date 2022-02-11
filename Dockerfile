@@ -33,7 +33,7 @@ WORKDIR /home/app
 COPY --from=builder /home/app/venv ./venv
 
 # copy in only neccessary files
-COPY mini_gplus/ /home/app/mini_gplus
+COPY pillcity/ /home/app/pillcity
 COPY app.py .
 COPY release.py .
 COPY entrypoint-worker.sh .

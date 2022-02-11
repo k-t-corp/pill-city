@@ -10,23 +10,23 @@ from flask_restful import Api
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token
 from sentry_sdk.integrations.flask import FlaskIntegration
-from mini_gplus.daos.user import sign_in, sign_up, check_email, get_user_by_rss_token
-from mini_gplus.daos.user_cache import populate_user_cache
-from mini_gplus.daos.invitation_code import check_invitation_code, claim_invitation_code
-from mini_gplus.daos.rss import notifying_action_to_rss_code, rss_code_to_notifying_action
-from mini_gplus.resources.users import Users, User, MyAvatar, MyProfilePic, MyDisplayName, Me, SearchedUsers, MyEmail, \
+from pillcity.daos.user import sign_in, sign_up, check_email, get_user_by_rss_token
+from pillcity.daos.user_cache import populate_user_cache
+from pillcity.daos.invitation_code import check_invitation_code, claim_invitation_code
+from pillcity.daos.rss import notifying_action_to_rss_code, rss_code_to_notifying_action
+from pillcity.resources.users import Users, User, MyAvatar, MyProfilePic, MyDisplayName, Me, SearchedUsers, MyEmail, \
     MyFollowingCounts, MyRssToken
-from mini_gplus.daos.rss import get_rss_notifications_xml
-from mini_gplus.resources.posts import Profile, Home, Posts, Post, PostMedia
-from mini_gplus.resources.comments import NestedComments, Comments, NestedComment, Comment
-from mini_gplus.resources.media import Media, MaxMediaCount
-from mini_gplus.resources.reactions import Reactions, Reaction
-from mini_gplus.resources.circles import Circles, CircleName, CircleMember, Circle
-from mini_gplus.resources.followings import Following
-from mini_gplus.resources.notifications import Notifications, NotificationRead, NotificationsAllRead
-from mini_gplus.resources.invitations_codes import InvitationCode, InvitationCodes, ClearMediaUrlCache
-from mini_gplus.resources.link_preview import LinkPreview
-from mini_gplus.resources.password_reset import ForgetPassword, ResetPassword
+from pillcity.daos.rss import get_rss_notifications_xml
+from pillcity.resources.posts import Profile, Home, Posts, Post, PostMedia
+from pillcity.resources.comments import NestedComments, Comments, NestedComment, Comment
+from pillcity.resources.media import Media, MaxMediaCount
+from pillcity.resources.reactions import Reactions, Reaction
+from pillcity.resources.circles import Circles, CircleName, CircleMember, Circle
+from pillcity.resources.followings import Following
+from pillcity.resources.notifications import Notifications, NotificationRead, NotificationsAllRead
+from pillcity.resources.invitations_codes import InvitationCode, InvitationCodes, ClearMediaUrlCache
+from pillcity.resources.link_preview import LinkPreview
+from pillcity.resources.password_reset import ForgetPassword, ResetPassword
 
 # sentry
 if os.getenv('SENTRY_DSN'):
