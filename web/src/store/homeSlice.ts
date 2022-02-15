@@ -85,10 +85,9 @@ export const pollPosts = (): ThunkAction<void, RootState, unknown, AnyAction> =>
     }
     dispatch(setPolling())
     const newPosts = await api.pollHome(homePosts[0].id)
-    if (newPosts.length === 0) {
-      return
+    if (newPosts.length !== 0) {
+      dispatch(setPosts([...newPosts, ...homePosts]))
     }
-    dispatch(setPosts([...newPosts, ...homePosts]))
     dispatch(unsetPolling())
   }
 }
