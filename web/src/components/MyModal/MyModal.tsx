@@ -1,6 +1,8 @@
 import Modal from "react-modal";
 import React from "react";
 import {useMediaQuery} from "react-responsive";
+import {XIcon} from "@heroicons/react/solid";
+import './MyModal.css'
 
 interface Props {
   children: any
@@ -9,22 +11,23 @@ interface Props {
 }
 
 export default (props: Props) => {
-  let styles: any = {
-    backgroundColor: '#ffffff',
-    borderRadius: '5px',
-    boxShadow: '2px 2px 1px 1px #e0e0e0',
-    resize: 'none'
-  }
-
-  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 750px)' })
+  const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
+  let styles = {}
   if (isTabletOrMobile) {
     styles = {
-      ...styles,
-      overflow: 'auto',
+      backgroundColor: '#ffffff',
+      borderRadius: '0',
+      resize: 'none',
+      top: '0',
+      left: '0',
+      right: '0',
     }
   } else {
     styles = {
-      ...styles,
+      backgroundColor: '#ffffff',
+      borderRadius: '5px',
+      boxShadow: '2px 2px 1px 1px #e0e0e0',
+      resize: 'none',
       top: '50%',
       left: '50%',
       right: 'auto',
@@ -45,6 +48,12 @@ export default (props: Props) => {
       shouldCloseOnOverlayClick={true}
       shouldCloseOnEsc={true}
     >
+      {isTabletOrMobile &&
+        <XIcon
+          className='my-modal-close-button'
+          onClick={props.onClose}
+        />
+      }
       {props.children}
     </Modal>
   )
