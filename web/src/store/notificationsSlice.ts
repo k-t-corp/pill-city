@@ -77,10 +77,9 @@ export const pollNotifications = (): ThunkAction<void, RootState, unknown, AnyAc
     }
     dispatch(setPolling())
     const newNotifications = await api.pollNotifications(notifications[0].id)
-    if (newNotifications.length === 0) {
-      return
+    if (newNotifications.length !== 0) {
+      dispatch(setNotifications([...newNotifications, ...notifications]))
     }
-    dispatch(setNotifications([...newNotifications, ...notifications]))
     dispatch(unsetPolling())
   }
 }
