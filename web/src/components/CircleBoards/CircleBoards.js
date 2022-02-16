@@ -1,10 +1,10 @@
 import React from 'react'
-import "./CircleBoards.css"
 import DroppableBoard from "../DroppableBoard/DroppableBoard";
 import AddNewCircleButton from "../AddNewCircleButton/AddNewCircleButton";
+import "./CircleBoards.css"
 
 export default (props) => {
-  let circles = [<AddNewCircleButton key="new-circle-button" api={props.api}/>]
+  let circles = [<AddNewCircleButton key="new-circle-button"/>]
   for (let i = 0; i < props.circleData.length; i++) {
     const circle = props.circleData[i]
     circles.push(
@@ -13,7 +13,6 @@ export default (props) => {
         circleId={circle.id}
         circleName={circle.name}
         members={circle.members}
-        api={props.api}
       />
     )
   }

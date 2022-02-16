@@ -1,9 +1,10 @@
 import React, {useState} from 'react'
-import "./DroppableBoard.css"
+import api from '../../api/Api'
 import UserProfileCard from "../UserProfileCard/UserProfileCard";
 import getAvatarUrl from "../../utils/getAvatarUrl";
 import { useMediaQuery } from 'react-responsive'
 import {useHotkeys} from "react-hotkeys-hook";
+import "./DroppableBoard.css"
 
 export default (props) => {
   const isTabletOrMobile = useMediaQuery({ query: '(max-width: 750px)' })
@@ -118,7 +119,7 @@ export default (props) => {
     const card_id = e.dataTransfer.getData("card_id")
     const avatarUrl = e.dataTransfer.getData("avatar_url")
     try {
-      await props.api.addToCircle(props.circleId, card_id)
+      await api.addToCircle(props.circleId, card_id)
       innerCircleScale(false, 0)
       circleAnimation(props.circleId, card_id, avatarUrl)
       innerCircleScale(true, 900)
@@ -189,7 +190,6 @@ export default (props) => {
           key={i}
           user={member}
           circleId={props.circleId}
-          api={props.api}
         />)
     }
     return memberModalCardElements
@@ -210,7 +210,7 @@ export default (props) => {
       updateDeleteCircleClicked(true)
     } else {
       // actually delete the circle
-      await props.api.deleteCircle(props.circleId)
+      await api.deleteCircle(props.circleId)
       window.location.reload()
     }
   }
@@ -218,7 +218,7 @@ export default (props) => {
   const renameCircle = async () => {
     updateRenamingCircle(false)
     updateRenameCircleLoading(true)
-    await props.api.renameCircle(props.circleId, circleName)
+    await api.renameCircle(props.circleId, circleName)
     updateCircleName(circleName)
     updateRenameCircleLoading(false)
   }

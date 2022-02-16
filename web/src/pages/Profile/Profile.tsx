@@ -113,7 +113,6 @@ const Profile = () => {
           >
             <PostComponent
               data={post}
-              api={api}
               me={me as User}
               updateResharePostData={updateResharePost}
               hasNewPostModal={true}
@@ -253,7 +252,6 @@ const Profile = () => {
         onClose={() => {updateNewPostOpened(false)}}
       >
         <NewPost
-          api={api}
           resharePostData={resharePost}
           updateResharePostData={updateResharePost}
           beforePosting={() => {

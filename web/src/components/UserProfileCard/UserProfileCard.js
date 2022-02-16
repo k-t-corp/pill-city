@@ -1,13 +1,14 @@
 import React, {useState} from 'react'
-import "./UserProfileCard.css"
+import api from '../../api/Api'
 import getAvatarUrl from "../../utils/getAvatarUrl";
+import "./UserProfileCard.css"
 
 export default (props) => {
   const [deleted, updateDeleted] = useState(false)
   const [loading, updateLoading] = useState(false)
   const deleteMemberFromCircleOnClick = async () => {
     updateLoading(true)
-    await props.api.removeFromCircle(props.circleId, props.user.id)
+    await api.removeFromCircle(props.circleId, props.user.id)
     updateLoading(false)
     updateDeleted(true)
   }

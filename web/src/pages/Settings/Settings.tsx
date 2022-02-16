@@ -13,10 +13,6 @@ import MyModal from "../../components/MyModal/MyModal";
 import {useToast} from "../../components/Toast/ToastProvider";
 import './Settings.css'
 
-interface Props {
-  api: any
-}
-
 type NotifyingActionToRssCode = {[action: string]: string}
 
 interface RssToken {
@@ -25,7 +21,7 @@ interface RssToken {
   notifying_action_to_rss_code: NotifyingActionToRssCode
 }
 
-const Settings = (props: Props) => {
+const Settings = () => {
   const me = useAppSelector(state => state.me.me)
   const meLoading = useAppSelector(state => state.me.loading)
 
@@ -128,7 +124,7 @@ const Settings = (props: Props) => {
       <div className="settings-row" onClick={handleSignOut}>
         <div className="settings-row-header">Sign out</div>
       </div>
-      <About api={api}/>
+      <About/>
       <MyModal
         isOpen={displayNameModalOpened}
         onClose={() => {updateDisplayNameModalOpened(false)}}
@@ -200,7 +196,6 @@ const Settings = (props: Props) => {
         onClose={() => {updateAvatarModalOpened(false)}}
       >
         <UpdateAvatar
-          api={api}
           dismiss={() => {
             updateAvatarModalOpened(false)
           }}
@@ -218,7 +213,6 @@ const Settings = (props: Props) => {
         onClose={() => {updateBannerModalOpened(false)}}
       >
         <UpdateBanner
-          api={api}
           dismiss={() => {
             updateBannerModalOpened(false)
           }}

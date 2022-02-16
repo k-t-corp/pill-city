@@ -1,12 +1,12 @@
 import React, {useState} from "react";
 import {useAppDispatch} from "../../store/hooks";
 import {loadMe} from "../../store/meSlice";
+import api from "../../api/Api";
 import './UpdateBanner.css'
 
 const profilePicOptions = ["pill1.png", "pill2.png", "pill3.png", "pill4.png", "pill5.png", "pill6.png"]
 
 interface Props {
-  api: any
   dismiss: () => void
   beforeUpdate: () => void
   afterUpdate: () => void
@@ -52,7 +52,7 @@ export default (props: Props) => {
           className="settings-controls-button settings-profile-button-confirm"
           onClick={async () => {
             props.beforeUpdate()
-            await props.api.updateProfilePic(selectedOption)
+            await api.updateProfilePic(selectedOption)
             await dispatch(loadMe())
             props.afterUpdate()
           }}>Confirm</div>

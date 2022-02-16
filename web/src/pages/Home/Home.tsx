@@ -59,7 +59,6 @@ const Home = () => {
             <Post
               data={post}
               me={me as User}
-              api={api}
               detail={false}
               hasNewPostModal={isTabletOrMobile}
               updateResharePostData={updateResharePostData}
@@ -102,7 +101,6 @@ const Home = () => {
 
   const newPostElem = (
     <NewPost
-      api={api}
       resharePostData={resharePostData}
       updateResharePostData={updateResharePostData}
       beforePosting={() => {
@@ -137,7 +135,7 @@ const Home = () => {
             {newPostElem}
           </div>
           <NotificationDropdown />
-          <About api={api}/>
+          <About/>
         </div>
       }
     </div>

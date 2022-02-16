@@ -10,7 +10,6 @@ import ClickableId from "../ClickableId/ClickableId";
 interface Props {
   resharedFrom: ResharedPost,
   showDetail: boolean,
-  api: any,
 }
 
 export default (props: Props) => {
@@ -38,7 +37,7 @@ export default (props: Props) => {
             :
             <div style={{fontStyle: 'italic'}}>This post has been deleted</div>
         }
-        <Previews post={props.resharedFrom} api={props.api}/>
+        <Previews post={props.resharedFrom}/>
       </div>
     </div>
   )

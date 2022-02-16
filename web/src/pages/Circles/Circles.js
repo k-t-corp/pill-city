@@ -28,7 +28,6 @@ const Circles = () => {
       {loadingCircleData ? <div>loading</div> :
         <CircleBoards
           circleData={circleData}
-          api={api}
         />}
     </div>
   )

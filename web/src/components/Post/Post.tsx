@@ -9,15 +9,15 @@ import ResharedPost from "./ResharedPost";
 import ClickableId from "../ClickableId/ClickableId";
 import Comment from "./Comment";
 import CommentBox from "./CommentBox";
-import "./Post.css"
 import Post, {Comment as CommentModel, ResharedPost as ResharedPostModel} from "../../models/Post";
 import User from "../../models/User";
 import Previews from "./Previews";
+import api from "../../api/Api";
+import "./Post.css"
 
 interface Props {
   data: Post
   highlightCommentId?: string
-  api: any
   me: User
   detail: boolean
   hasNewPostModal: boolean,
@@ -57,7 +57,6 @@ export default (props: Props) => {
     commentElems.push(
       <Comment
         key={comment.id}
-        api={props.api}
         me={props.me}
         comment={comment}
         post={props.data}
@@ -85,7 +84,7 @@ export default (props: Props) => {
       return
     }
     updateDeleting(true)
-    await props.api.deletePost(props.data.id)
+    await api.deletePost(props.data.id)
     updateDeleted(true)
     updateDeleting(false)
   }
@@ -98,7 +97,7 @@ export default (props: Props) => {
       return
     }
     updateMediaUrls([])
-    await props.api.deletePostMedia(props.data.id)
+    await api.deletePostMedia(props.data.id)
   }
 
   const reshareButtonOnClick = () => {
@@ -202,16 +201,14 @@ export default (props: Props) => {
         <ResharedPost
           resharedFrom={props.data.reshared_from}
           showDetail={props.detail}
-          api={props.api}
         />
         }
-        <Previews post={props.data} api={props.api}/>
+        <Previews post={props.data}/>
         {
           !deleting && !deleted &&
           <div className="post-interactions-wrapper">
             <Reactions
               reactions={props.data.reactions}
-              api={props.api}
               me={props.me}
               postId={props.data.id}
             />
@@ -244,7 +241,6 @@ export default (props: Props) => {
           </div>
         }
         {addingComment && <CommentBox
-          api={props.api}
           me={props.me}
           post={props.data}
           content={commentContent}

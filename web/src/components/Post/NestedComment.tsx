@@ -6,10 +6,10 @@ import timePosted from "../../utils/timePosted";
 import React, {useState} from "react";
 import Post, {NestedComment, Comment} from "../../models/Post";
 import User from "../../models/User";
+import api from "../../api/Api";
 import './NestedComment.css'
 
 interface Props {
-  api: any
   me: User
   nestedComment: NestedComment
   parentComment: Comment
@@ -41,7 +41,7 @@ export default (props: Props) => {
     }
     // mark as deleting
     updateDeleting(true)
-    await props.api.deleteNestedComment(post.id, parentComment.id, nestedComment.id)
+    await api.deleteNestedComment(post.id, parentComment.id, nestedComment.id)
     // mark as deleted and not deleting
     updateDeleted(true)
     updateDeleting(false)

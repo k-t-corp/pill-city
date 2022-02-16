@@ -8,12 +8,12 @@ import parseMentioned from "../../utils/parseMentioned";
 import ApiError from "../../api/ApiError";
 import Post, {Comment, NestedComment} from "../../models/Post";
 import {useToast} from "../Toast/ToastProvider";
-import './CommentBox.css'
 import summary from "../../utils/summary";
 import ContentTextarea from "../ContentTextarea/ContentTextarea";
+import api from "../../api/Api";
+import './CommentBox.css'
 
 interface Props {
-  api: any
   me: User,
   post: Post,
   content: string
@@ -79,7 +79,7 @@ export default (props: Props) => {
     if (props.replyingToComment) {
       // reply nested comment
       try {
-        const newNestedComment = await props.api.postNestedComment(
+        const newNestedComment = await api.postNestedComment(
           content,
           props.post.id,
           props.replyingToComment.id,
@@ -96,7 +96,7 @@ export default (props: Props) => {
       }
     } else {
       try {
-        const newComment = await props.api.postComment(
+        const newComment = await api.postComment(
           content,
           props.post.id,
           parseMentioned(content),
@@ -131,7 +131,6 @@ export default (props: Props) => {
           <RoundAvatar user={props.me}/>
         </div>
         <ContentTextarea
-          api={props.api}
           content={content}
           onChange={(newContent) => {
             updateContent(newContent)

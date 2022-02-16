@@ -46,7 +46,6 @@ const PostPage = () => {
         <PostComponent
           data={post}
           highlightCommentId={highlightCommentId}
-          api={api}
           me={me as User}
           detail={true}
           hasNewPostModal={true}
@@ -59,7 +58,6 @@ const PostPage = () => {
           onClose={() => {updateNewPostOpened(false)}}
         >
           <NewPost
-            api={api}
             resharePostData={resharePost}
             updateResharePostData={updateResharePostData}
             beforePosting={() => {

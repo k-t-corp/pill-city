@@ -10,7 +10,6 @@ import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
 import Circle from "../../models/Circle";
 import Post, {ResharedPost} from "../../models/Post";
-import "./NewPost.css"
 import {useToast} from "../Toast/ToastProvider";
 import ApiError from "../../api/ApiError";
 import ContentTextarea from "../ContentTextarea/ContentTextarea";
@@ -18,9 +17,10 @@ import {useAppSelector} from "../../store/hooks";
 import {PhotographIcon} from "@heroicons/react/solid";
 import MyModal from "../MyModal/MyModal";
 import NewPostMedia from "./NewPostMedia";
+import api from "../../api/Api";
+import "./NewPost.css"
 
 interface Props {
-  api: any
   beforePosting: () => void
   afterPosting: (post: Post) => void
   resharePostData: Post | ResharedPost | null
@@ -46,7 +46,7 @@ export default (props: Props) => {
 
   useEffect(() => {
     (async () => {
-      updateMyCircles(await props.api.getCircles())
+      updateMyCircles(await api.getCircles())
     })()
   }, [])
 
@@ -97,7 +97,7 @@ export default (props: Props) => {
     // send post
     let post: Post | null = null
     try {
-      post = await props.api.postPost(
+      post = await api.postPost(
         newPostContent,
         isPublic,
         actualCircleIds,
@@ -230,7 +230,6 @@ export default (props: Props) => {
           </>
         }
         <ContentTextarea
-          api={props.api}
           content={newPostContent}
           onChange={(newContent) => {
             updateNewPostContent(newContent)
