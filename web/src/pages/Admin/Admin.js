@@ -1,14 +1,13 @@
 import React, {useEffect, useState} from 'react'
-import './Admin.css'
-import withApi from "../../hoc/withApi";
 import withAuthRedirect from "../../hoc/withAuthRedirect";
 import api from "../../api/Api";
+import './Admin.css'
 
-const Admin = (props) => {
+const Admin = () => {
   const [invitationCodes, updateInvitationCodes] = useState([])
 
   useEffect(async () => {
-    const invitationCodes = await props.api.getInvitationCodes()
+    const invitationCodes = await api.getInvitationCodes()
     updateInvitationCodes(invitationCodes)
   }, [])
 
@@ -41,7 +40,7 @@ const Admin = (props) => {
       <h1>Invitation Codes</h1>
       <div className="admin-page-button" onClick={async (e) => {
         e.preventDefault()
-        const newCode = await props.api.createInvitationCode()
+        const newCode = await api.createInvitationCode()
         updateInvitationCodes([
           {code: newCode, claimed: false, isNewCode: true, clicked: false},
           ...invitationCodes.map(ic => {return {...ic, clicked: false}})
@@ -55,10 +54,10 @@ const Admin = (props) => {
       <h2>Cache</h2>
       <div className='admin-page-button' onClick={async (e) => {
         e.preventDefault()
-        await props.api.clearMediaUrlCache()
+        await api.clearMediaUrlCache()
       }}>Clear media URL cache</div>
     </div>
   )
 }
 
-export default withApi(withAuthRedirect(Admin, '/admin'), api)
+export default withAuthRedirect(Admin, '/admin')

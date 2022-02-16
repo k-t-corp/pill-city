@@ -1,11 +1,10 @@
 import React from 'react';
-import "./Notifications.css"
 import NotificationList from "../../components/NotificationDropdown/NotificationList";
-import withApi from "../../hoc/withApi";
 import withAuthRedirect from "../../hoc/withAuthRedirect";
 import api from "../../api/Api";
 import {useAppDispatch} from "../../store/hooks";
 import {markAllNotificationsAsRead} from "../../store/notificationsSlice";
+import "./Notifications.css"
 
 interface Props {}
 
@@ -29,4 +28,4 @@ const Notifications = (_: Props) => {
   )
 }
 
-export default withApi(withAuthRedirect(Notifications), api)
+export default withAuthRedirect(Notifications)

@@ -4,26 +4,21 @@ import getAvatarUrl from "../../utils/getAvatarUrl";
 import "./Users.css"
 import User from "../../models/User";
 import getNameAndSubName from "../../utils/getNameAndSubName";
-import withApi from "../../hoc/withApi";
 import withAuthRedirect from "../../hoc/withAuthRedirect";
 import api from "../../api/Api";
-
-interface Props {
-  api: any
-}
 
 type UserWithLoadingState = {
   _follow_loading: boolean,
   is_following: boolean
 } & User
 
-const Users = (props: Props) => {
+const Users = () => {
   const [users, updateUsers] = useState<UserWithLoadingState[]>([])
   const history = useHistory()
 
   useEffect(() => {
     (async () => {
-      const users = await props.api.getUsers()
+      const users = await api.getUsers()
       updateUsers(users.map((u: User) => {
         return {...u, _follow_loading: false}
       }))
@@ -72,9 +67,9 @@ const Users = (props: Props) => {
                 }
               }))
               if (user.is_following) {
-                await props.api.unfollow(user.id)
+                await api.unfollow(user.id)
               } else {
-                await props.api.follow(user.id)
+                await api.follow(user.id)
               }
               updateUsers(users.map(u => {
                 if (u.id !== user.id) {
@@ -120,4 +115,4 @@ const Users = (props: Props) => {
   )
 }
 
-export default withApi(withAuthRedirect(Users), api)
+export default withAuthRedirect(Users)

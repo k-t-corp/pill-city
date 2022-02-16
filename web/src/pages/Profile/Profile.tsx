@@ -9,7 +9,6 @@ import User from "../../models/User";
 import PostModel from "../../models/Post"
 import useInView from "react-cool-inview";
 import getNameAndSubName from "../../utils/getNameAndSubName";
-import withApi from "../../hoc/withApi";
 import withAuthRedirect from "../../hoc/withAuthRedirect";
 import api from "../../api/Api";
 import {useAppSelector} from "../../store/hooks";
@@ -19,12 +18,7 @@ import "./Profile.css"
 
 const InfiniteScrollFactor = 0.8
 
-interface Props {
-  api: any
-  userId?: string
-}
-
-const Profile = (props: Props) => {
+const Profile = () => {
   const { id: userId } = useParams<{id?: string}>()
   const me = useAppSelector(state => state.me.me)
   const meLoading = useAppSelector(state => state.me.loading)
@@ -52,16 +46,16 @@ const Profile = (props: Props) => {
       }
       if (!userId) {
         updateUser(me)
-        updatePosts(await props.api.getProfile((me as User).id))
+        updatePosts(await api.getProfile((me as User).id))
         updatePostsLoading(false)
         updateFollowLoading(false)
       } else {
         let user
         try {
-          user = await props.api.getUser(userId)
+          user = await api.getUser(userId)
           updateUser(user)
           updateIsFollowing(user.is_following)
-          updatePosts(await props.api.getProfile(userId))
+          updatePosts(await api.getProfile(userId))
           updatePostsLoading(false)
           updateFollowLoading(false)
         } catch (e) {
@@ -81,7 +75,7 @@ const Profile = (props: Props) => {
     }
     updateLoadingMorePosts(true)
     const lastPost = posts[posts.length - 1]
-    const newPosts = await props.api.getProfile(user.id, lastPost['id'])
+    const newPosts = await api.getProfile(user.id, lastPost['id'])
     if (newPosts.length !== 0) {
       updatePosts(posts.concat(newPosts))
     } else {
@@ -119,7 +113,7 @@ const Profile = (props: Props) => {
           >
             <PostComponent
               data={post}
-              api={props.api}
+              api={api}
               me={me as User}
               updateResharePostData={updateResharePost}
               hasNewPostModal={true}
@@ -164,9 +158,9 @@ const Profile = (props: Props) => {
     }
     updateFollowLoading(true)
     if (isFollowing) {
-      await props.api.unfollow(userId)
+      await api.unfollow(userId)
     } else {
-      await props.api.follow(userId)
+      await api.follow(userId)
     }
     updateIsFollowing(!isFollowing)
     updateFollowLoading(false)
@@ -206,7 +200,7 @@ const Profile = (props: Props) => {
         return
       }
       if (!userId || userId === (me as User).id) {
-        updateFollowingCounts(await props.api.getFollowingCounts())
+        updateFollowingCounts(await api.getFollowingCounts())
       }
     })()
   }, [meLoading])
@@ -259,7 +253,7 @@ const Profile = (props: Props) => {
         onClose={() => {updateNewPostOpened(false)}}
       >
         <NewPost
-          api={props.api}
+          api={api}
           resharePostData={resharePost}
           updateResharePostData={updateResharePost}
           beforePosting={() => {
@@ -276,4 +270,4 @@ const Profile = (props: Props) => {
   )
 }
 
-export default withApi(withAuthRedirect(Profile), api)
+export default withAuthRedirect(Profile)

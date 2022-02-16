@@ -1,12 +1,11 @@
 import React, {useEffect, useState} from 'react'
-import "./Circles.css"
 import DraggableUserProfileCards from "../../components/DraggableUserProfileCards/DraggableUserProfileCards";
 import CircleBoards from "../../components/CircleBoards/CircleBoards";
-import withApi from "../../hoc/withApi";
 import withAuthRedirect from "../../hoc/withAuthRedirect";
 import api from "../../api/Api";
+import "./Circles.css"
 
-const Circles = (props) => {
+const Circles = () => {
   const [userData, updateUserData] = useState([])
   const [loadingUserData, updateLoadingUserData] = useState(true)
   const [circleData, updateCircleData] = useState([])
@@ -14,12 +13,12 @@ const Circles = (props) => {
 
   useEffect(async () => {
     updateLoadingCircleData(true)
-    const latestCircleData = await props.api.getCircles()
+    const latestCircleData = await api.getCircles()
     updateCircleData(latestCircleData)
     updateLoadingCircleData(false)
   }, [])
   useEffect(async () => {
-    const latestUserData = await props.api.getUsers()
+    const latestUserData = await api.getUsers()
     updateUserData(latestUserData)
     updateLoadingUserData(false)
   }, [])
@@ -29,10 +28,10 @@ const Circles = (props) => {
       {loadingCircleData ? <div>loading</div> :
         <CircleBoards
           circleData={circleData}
-          api={props.api}
+          api={api}
         />}
     </div>
   )
 }
 
-export default withApi(withAuthRedirect(Circles), api)
+export default withAuthRedirect(Circles)
