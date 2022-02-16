@@ -5,7 +5,6 @@ import UpdateAvatar from "../../components/UpdateAvatar/UpdateAvatar";
 import User from "../../models/User";
 import withApi from "../../hoc/withApi";
 import withAuthRedirect from "../../hoc/withAuthRedirect";
-import withNavBar from "../../hoc/withNavBar/withNavBar";
 import api from "../../api/Api";
 import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import UpdateBanner from "../../components/UpdateBanner/UpdateBanner";
@@ -304,4 +303,4 @@ const Settings = (props: Props) => {
 
 }
 
-export default withApi(withAuthRedirect(withNavBar(Settings, '/settings')), api)
+export default withApi(withAuthRedirect(Settings), api)

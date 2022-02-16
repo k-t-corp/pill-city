@@ -6,7 +6,6 @@ import User from "../../models/User";
 import getNameAndSubName from "../../utils/getNameAndSubName";
 import withApi from "../../hoc/withApi";
 import withAuthRedirect from "../../hoc/withAuthRedirect";
-import withNavBar from "../../hoc/withNavBar/withNavBar";
 import api from "../../api/Api";
 
 interface Props {
@@ -121,4 +120,4 @@ const Users = (props: Props) => {
   )
 }
 
-export default withApi(withAuthRedirect(withNavBar(Users, '/users')), api)
+export default withApi(withAuthRedirect(Users), api)

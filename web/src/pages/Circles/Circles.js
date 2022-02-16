@@ -4,7 +4,6 @@ import DraggableUserProfileCards from "../../components/DraggableUserProfileCard
 import CircleBoards from "../../components/CircleBoards/CircleBoards";
 import withApi from "../../hoc/withApi";
 import withAuthRedirect from "../../hoc/withAuthRedirect";
-import withNavBar from "../../hoc/withNavBar/withNavBar";
 import api from "../../api/Api";
 
 const Circles = (props) => {
@@ -36,4 +35,4 @@ const Circles = (props) => {
   )
 }
 
-export default withApi(withAuthRedirect(withNavBar(Circles, '/circles')), api)
+export default withApi(withAuthRedirect(Circles), api)

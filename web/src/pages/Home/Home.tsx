@@ -9,7 +9,6 @@ import PostModel from "../../models/Post"
 import useInView from 'react-cool-inview'
 import withApi from "../../hoc/withApi";
 import withAuthRedirect from "../../hoc/withAuthRedirect";
-import withNavBar from "../../hoc/withNavBar/withNavBar";
 import api from "../../api/Api";
 import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import {loadMorePosts, pollPosts} from "../../store/homeSlice";
@@ -150,4 +149,4 @@ const Home = (props: Props) => {
   )
 }
 
-export default withApi(withAuthRedirect(withNavBar(Home, '/')), api)
+export default withApi(withAuthRedirect(Home), api)

@@ -11,7 +11,6 @@ import useInView from "react-cool-inview";
 import getNameAndSubName from "../../utils/getNameAndSubName";
 import withApi from "../../hoc/withApi";
 import withAuthRedirect from "../../hoc/withAuthRedirect";
-import withNavBar from "../../hoc/withNavBar/withNavBar";
 import api from "../../api/Api";
 import {useAppSelector} from "../../store/hooks";
 import {ResharedPost} from "../../models/Post";
@@ -277,4 +276,4 @@ const Profile = (props: Props) => {
   )
 }
 
-export default withApi(withAuthRedirect(withNavBar(Profile, '/profile')), api)
+export default withApi(withAuthRedirect(Profile), api)

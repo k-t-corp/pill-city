@@ -4,7 +4,6 @@ import PostComponent from "../../components/Post/Post";
 import NewPost from "../../components/NewPost/NewPost";
 import withApi from "../../hoc/withApi";
 import withAuthRedirect from "../../hoc/withAuthRedirect";
-import withNavBar from "../../hoc/withNavBar/withNavBar";
 import api from "../../api/Api";
 import {useAppSelector} from "../../store/hooks";
 import MyModal from "../../components/MyModal/MyModal";
@@ -93,4 +92,4 @@ const PostPage = (props: Props) => {
   )
 }
 
-export default withApi(withAuthRedirect(withNavBar(PostPage, '/post')), api)
+export default withApi(withAuthRedirect(PostPage), api)
