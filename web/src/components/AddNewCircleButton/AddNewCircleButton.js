@@ -1,7 +1,8 @@
 import React from 'react'
+import api from '../../api/Api'
 import "./AddNewCircleButton.css"
 
-export default (props) => {
+export default () => {
   window.onclick = function(event) {
     let modal = document.getElementById("create-new-circle-modal");
     if (event.target === modal) {
@@ -23,7 +24,7 @@ export default (props) => {
   const createCircleButtonOnClick = async () => {
     const circleId = document.getElementById("new-circle-name-input").value
     try {
-      await props.api.createCircle(circleId)
+      await api.createCircle(circleId)
       window.location.reload()
     } catch (e) {
       console.error(e)

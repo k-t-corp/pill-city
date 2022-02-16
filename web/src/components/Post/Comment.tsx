@@ -8,10 +8,10 @@ import {Comment} from "../../models/Post";
 import User from "../../models/User";
 import Post, {NestedComment as NestedCommentModel} from "../../models/Post";
 import NestedComment from "./NestedComment";
+import api from "../../api/Api";
 import "./Comment.css"
 
 interface Props {
-  api: any
   me: User
   comment: Comment
   post: Post
@@ -34,7 +34,6 @@ export default (props: Props) => {
     nestedCommentElems.push(
       <NestedComment
         key={nestedComment.id}
-        api={props.api}
         me={props.me}
         nestedComment={nestedComment}
         parentComment={comment}
@@ -61,7 +60,7 @@ export default (props: Props) => {
       return
     }
     updateDeleting(true)
-    await props.api.deleteComment(props.post.id, comment.id)
+    await api.deleteComment(props.post.id, comment.id)
     updateDeleted(true)
     updateDeleting(false)
   }

@@ -3,21 +3,15 @@ import {removeAccessToken} from "../../api/AuthStorage";
 import About from "../../components/About/About";
 import UpdateAvatar from "../../components/UpdateAvatar/UpdateAvatar";
 import User from "../../models/User";
-import withApi from "../../hoc/withApi";
 import withAuthRedirect from "../../hoc/withAuthRedirect";
-import withNavBar from "../../hoc/withNavBar/withNavBar";
 import api from "../../api/Api";
 import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import UpdateBanner from "../../components/UpdateBanner/UpdateBanner";
 import {loadMe} from "../../store/meSlice";
 import {validateEmail} from "../../utils/validators";
 import MyModal from "../../components/MyModal/MyModal";
-import './Settings.css'
 import {useToast} from "../../components/Toast/ToastProvider";
-
-interface Props {
-  api: any
-}
+import './Settings.css'
 
 type NotifyingActionToRssCode = {[action: string]: string}
 
@@ -27,7 +21,7 @@ interface RssToken {
   notifying_action_to_rss_code: NotifyingActionToRssCode
 }
 
-const Settings = (props: Props) => {
+const Settings = () => {
   const me = useAppSelector(state => state.me.me)
   const meLoading = useAppSelector(state => state.me.loading)
 
@@ -60,8 +54,8 @@ const Settings = (props: Props) => {
       const myProfile = me as User
       updateDisplayName(myProfile.display_name)
 
-      updateEmail(await props.api.getEmail())
-      const rssToken = await props.api.getRssToken() as RssToken
+      updateEmail(await api.getEmail())
+      const rssToken = await api.getRssToken() as RssToken
       updateRssToken(rssToken)
       updateRssCodesChecked(
         Object.fromEntries(
@@ -130,7 +124,7 @@ const Settings = (props: Props) => {
       <div className="settings-row" onClick={handleSignOut}>
         <div className="settings-row-header">Sign out</div>
       </div>
-      <About api={props.api}/>
+      <About/>
       <MyModal
         isOpen={displayNameModalOpened}
         onClose={() => {updateDisplayNameModalOpened(false)}}
@@ -150,7 +144,7 @@ const Settings = (props: Props) => {
             className="settings-controls-button settings-display-name-button-confirm"
             onClick={async () => {
               updateLoading(true)
-              await props.api.updateDisplayName(displayName)
+              await api.updateDisplayName(displayName)
               await dispatch(loadMe())
               updateLoading(false)
               updateDisplayNameModalOpened(false)
@@ -181,7 +175,7 @@ const Settings = (props: Props) => {
               }
               updateLoading(true)
               try {
-                await props.api.updateEmail(email)
+                await api.updateEmail(email)
               } catch (e: any) {
                 if (e.message) {
                   alert(e.message)
@@ -202,7 +196,6 @@ const Settings = (props: Props) => {
         onClose={() => {updateAvatarModalOpened(false)}}
       >
         <UpdateAvatar
-          api={props.api}
           dismiss={() => {
             updateAvatarModalOpened(false)
           }}
@@ -220,7 +213,6 @@ const Settings = (props: Props) => {
         onClose={() => {updateBannerModalOpened(false)}}
       >
         <UpdateBanner
-          api={props.api}
           dismiss={() => {
             updateBannerModalOpened(false)
           }}
@@ -280,13 +272,13 @@ const Settings = (props: Props) => {
               <p/>
               <p>You should <b>not</b> share this URL to anyone else. If you believe this URL is compromised, <a href="#" onClick={async () => {
                 if (confirm('Are you sure you want to rotate RSS token?')) {
-                  updateRssToken(await props.api.rotateRssToken())
+                  updateRssToken(await api.rotateRssToken())
                 }
               }}>click here to rotate RSS token</a></p>
               <p/>
               <a href="#" onClick={async () => {
                 if (confirm('Are you sure you want to disable RSS Notifications?')) {
-                  await props.api.deleteRssToken()
+                  await api.deleteRssToken()
                   updateRssToken(undefined)
                 }
               }}>Click here to disable</a>
@@ -294,7 +286,7 @@ const Settings = (props: Props) => {
             <div>
               <p>RSS Notifications is disabled</p>
               <a href="#" onClick={async () => {
-                updateRssToken(await props.api.rotateRssToken())
+                updateRssToken(await api.rotateRssToken())
               }}>Click here to enable</a>
             </div>
         }
@@ -304,4 +296,4 @@ const Settings = (props: Props) => {
 
 }
 
-export default withApi(withAuthRedirect(withNavBar(Settings, '/settings')), api)
+export default withAuthRedirect(Settings)

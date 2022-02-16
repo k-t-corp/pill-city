@@ -4,6 +4,7 @@ import ReactCrop, {Crop} from 'react-image-crop';
 import {useAppDispatch} from "../../store/hooks";
 import {loadMe} from "../../store/meSlice";
 import 'react-image-crop/dist/ReactCrop.css';
+import api from "../../api/Api";
 import './UpdateAvatar.css'
 
 
@@ -46,7 +47,6 @@ const getCroppedImg = async (image: HTMLImageElement, crop: Crop): Promise<Blob>
 }
 
 interface Props {
-  api: any
   dismiss: () => void
   beforeUpdate: () => void
   afterUpdate: () => void
@@ -137,7 +137,7 @@ export default (props: Props) => {
             const data = new FormData();
             data.append('file', croppedImg, 'new-avatar');
             data.append('update_post', sendPost ? '1' : '0')
-            await props.api.updateAvatar(data)
+            await api.updateAvatar(data)
             await dispatch(loadMe())
             props.afterUpdate()
           }}

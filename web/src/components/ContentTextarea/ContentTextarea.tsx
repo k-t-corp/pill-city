@@ -3,10 +3,10 @@ import ReactTextareaAutocomplete from "@webscopeio/react-textarea-autocomplete";
 import MentionAutoCompleteLoading from "./MentionAutoCompleteLoading";
 import MentionAutoCompleteUserItem from "./MentionAutoCompleteUserItem";
 import User from "../../models/User";
+import api from '../../api/Api'
 import "@webscopeio/react-textarea-autocomplete/style.css";
 
 interface Props {
-  api: any
   content: string
   onChange: (newContent: string) => void
   disabled: boolean
@@ -27,7 +27,7 @@ export default (props: Props) => {
       loadingComponent={MentionAutoCompleteLoading}
       trigger={{
         "@": {
-          dataProvider: (keyword) => props.api.searchUsers(keyword),
+          dataProvider: (keyword) => api.searchUsers(keyword),
           component: MentionAutoCompleteUserItem,
           output: (item, trigger) => trigger+item.id,
           allowWhitespace: true

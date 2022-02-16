@@ -26,6 +26,7 @@ import './App.css'
 import ForgetPassword from "./pages/ForgetPassword/ForgetPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import Modal from "react-modal";
+import NavBar from "./components/NavBar/NavBar";
 
 Modal.setAppElement('#root');
 
@@ -52,6 +53,7 @@ export default () => {
   return (
     <ToastProvider>
       <Router>
+        <NavBar />
         <Switch>
           <Route exact={true} path='/'>
             <Home />

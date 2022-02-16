@@ -1,15 +1,12 @@
 import React, {useState} from 'react';
 import Post from "../../components/Post/Post";
-import "./Home.css"
 import NewPost from "../../components/NewPost/NewPost";
 import NotificationDropdown from "../../components/NotificationDropdown/NotificationDropdown";
 import {useMediaQuery} from "react-responsive";
 import About from "../../components/About/About";
 import PostModel from "../../models/Post"
 import useInView from 'react-cool-inview'
-import withApi from "../../hoc/withApi";
 import withAuthRedirect from "../../hoc/withAuthRedirect";
-import withNavBar from "../../hoc/withNavBar/withNavBar";
 import api from "../../api/Api";
 import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import {loadMorePosts, pollPosts} from "../../store/homeSlice";
@@ -17,14 +14,11 @@ import User from "../../models/User";
 import {ResharedPost} from "../../models/Post";
 import MyModal from "../../components/MyModal/MyModal";
 import { PencilIcon } from '@heroicons/react/solid'
+import "./Home.css"
 
 const InfiniteScrollFactor = 0.8
 
-interface Props {
-  api: any
-}
-
-const Home = (props: Props) => {
+const Home = () => {
   const dispatch = useAppDispatch()
   const posts = useAppSelector(state => state.home.posts)
   const loading = useAppSelector(state => state.home.loading)
@@ -65,7 +59,6 @@ const Home = (props: Props) => {
             <Post
               data={post}
               me={me as User}
-              api={props.api}
               detail={false}
               hasNewPostModal={isTabletOrMobile}
               updateResharePostData={updateResharePostData}
@@ -108,7 +101,6 @@ const Home = (props: Props) => {
 
   const newPostElem = (
     <NewPost
-      api={props.api}
       resharePostData={resharePostData}
       updateResharePostData={updateResharePostData}
       beforePosting={() => {
@@ -143,11 +135,11 @@ const Home = (props: Props) => {
             {newPostElem}
           </div>
           <NotificationDropdown />
-          <About api={props.api}/>
+          <About/>
         </div>
       }
     </div>
   )
 }
 
-export default withApi(withAuthRedirect(withNavBar(Home, '/')), api)
+export default withAuthRedirect(Home)

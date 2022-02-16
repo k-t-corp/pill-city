@@ -21,7 +21,6 @@ const parseUrls = (content: string): URL[] => {
 
 interface Props {
   post: Previewable
-  api: any
 }
 
 export default (props: Props) => {
@@ -49,7 +48,6 @@ export default (props: Props) => {
   for (const parsedUrl of parsedUrls) {
     previewElems.push(
       <LinkPreview
-        api={props.api}
         url={parsedUrl}
       />
     )

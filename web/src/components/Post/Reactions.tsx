@@ -2,10 +2,11 @@ import React, {useEffect, useRef, useState} from "react";
 import Picker from "emoji-picker-react";
 import {Reaction} from "../../models/Post";
 import User from "../../models/User";
-import './Reactions.css'
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
 import MyModal from "../MyModal/MyModal";
+import api from "../../api/Api";
+import './Reactions.css'
 
 const groupReactions = (reactions: Reaction[]) => {
   const groupedReactions: {[emoji: string]: {key: number, author: User, reactionId: string}[]} = {}
@@ -33,7 +34,6 @@ const groupReactions = (reactions: Reaction[]) => {
 interface Props {
   reactions: Reaction[],
   me: User,
-  api: any,
   postId: string
 }
 
@@ -63,14 +63,14 @@ export default (props: Props) => {
     let reactionId = myReactionId(emoji)
     if (!reactionId) {
       // add reaction
-      const res = await props.api.addReaction(emoji, props.postId)
+      const res = await api.addReaction(emoji, props.postId)
       updateReactions([
         ...reactions,
         { id: res.id, emoji: emoji, author: props.me }
       ])
     } else {
       // delete reaction with reactionId
-      await props.api.deleteReaction(props.postId, reactionId)
+      await api.deleteReaction(props.postId, reactionId)
       updateReactions(reactions.filter(r => {
         return r.id !== reactionId
       }))
@@ -85,7 +85,7 @@ export default (props: Props) => {
     }
     updateLoading(true)
     const emoji = emojiObject.emoji
-    const res = await props.api.addReaction(emoji, props.postId)
+    const res = await api.addReaction(emoji, props.postId)
     updateReactions([
       ...reactions,
       { id: res.id, emoji: emoji, author: props.me }

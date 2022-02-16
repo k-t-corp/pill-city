@@ -5,7 +5,6 @@ import './LinkPreview.css'
 import {useState} from "react";
 
 interface Props {
-  api: any,
   url: URL,
 }
 
@@ -19,7 +18,6 @@ export default (props: Props) => {
     return (
       <FetchedPreview
         url={url.toString()}
-        api={props.api}
         onClick={() => {
           if (instantPreview) {
             updateClicked(true)

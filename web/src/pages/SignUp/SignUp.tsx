@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import HomePage from "../../components/HomePage/HomePage";
-import withApi from "../../hoc/withApi";
 import withNoAuthRedirect from "../../hoc/withNoAuthRedirect";
 import api from "../../api/Api";
-import "./SignUp.css";
 import {validateEmail, validateId, validatePassword} from "../../utils/validators";
 import {useHistory} from "react-router-dom";
+import "./SignUp.css";
 
 const SignUpForm = () => {
   const [id, updateId] = useState('')
@@ -134,4 +133,4 @@ const SignUp = () => {
   )
 }
 
-export default withApi(withNoAuthRedirect(SignUp), api)
+export default withNoAuthRedirect(SignUp)

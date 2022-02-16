@@ -3,11 +3,11 @@ import {useInterval} from "react-interval-hook";
 import LinkPreview from "../../models/LinkPreview";
 import MediaPreview from "../MediaPreview/MediaPreview";
 import {useMediaQuery} from "react-responsive";
-import './FetchedPreview.css'
 import summary from "../../utils/summary";
+import api from '../../api/Api'
+import './FetchedPreview.css'
 
 interface Props {
-  api: any,
   url: string
   onClick: () => void
 }
@@ -18,7 +18,7 @@ export default (props: Props) => {
 
   useInterval(async () => {
     if (preview === null || preview.state === 'fetching') {
-      updatePreview(await props.api.getLinkPreview(props.url))
+      updatePreview(await api.getLinkPreview(props.url))
     }
   }, 5000, { immediate: true })
 

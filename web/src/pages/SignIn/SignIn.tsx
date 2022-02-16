@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import HomePage from "../../components/HomePage/HomePage";
-import withApi from "../../hoc/withApi";
 import withNoAuthRedirect from "../../hoc/withNoAuthRedirect";
 import api from "../../api/Api";
 import {validateId, validatePassword} from "../../utils/validators";
@@ -82,4 +81,4 @@ const SignIn = () => {
   )
 }
 
-export default withApi(withNoAuthRedirect(SignIn), api)
+export default withNoAuthRedirect(SignIn)
