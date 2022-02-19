@@ -57,25 +57,6 @@
     top: 10px;
 }
 
-.post-reactions-detail-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 12px;
-}
-
-.post-reactions-detail-title {
-    font-size: 1.5em;
-}
-
-.post-reactions-detail-close-button {
-    width: 20px;
-    height: 20px;
-}
-
-.post-reactions-detail-close-button:hover {
-    cursor: pointer;
-}
-
 .post-reactions-detail-emoji {
     font-size: 1.2em;
     margin-bottom: 8px;
