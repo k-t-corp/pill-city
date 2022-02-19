@@ -7,6 +7,7 @@ import ClickableId from "../ClickableId/ClickableId";
 import MyModal from "../MyModal/MyModal";
 import api from "../../api/Api";
 import './Reactions.css'
+import {useMediaQuery} from "react-responsive";
 
 const groupReactions = (reactions: Reaction[]) => {
   const groupedReactions: {[emoji: string]: {key: number, author: User, reactionId: string}[]} = {}
@@ -43,6 +44,7 @@ export default (props: Props) => {
   const [reactions, updateReactions] = useState<Reaction[]>(props.reactions)
   const [loading, updateLoading] = useState(false)
   const emojiPickerRef = useRef(null);
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 750px)' })
 
   const myReactionId = (emoji: string): string | undefined => {
     // Returns reaction id if I reacted with emoji, undefined otherwise
@@ -158,19 +160,41 @@ export default (props: Props) => {
     )
   }
 
+  let emojiPicker = null
+  if (emojiPickerOpened) {
+    if (isTabletOrMobile) {
+      emojiPicker = (
+        <MyModal
+          isOpen={emojiPickerOpened}
+          onClose={() => {updateEmojiPickerOpened(false)}}
+        >
+          <Picker
+            pickerStyle={{
+              width: '100%',
+              height: '100vh'
+            }}
+            onEmojiClick={addEmoji} preload={true} native={true}
+          />
+        </MyModal>
+      )
+    } else {
+      emojiPicker = (
+        <div id="post-reaction-emoji-picker-wrapper" ref={emojiPickerRef}>
+          <div className="post-reaction-emoji-picker">
+            <Picker onEmojiClick={addEmoji} preload={true} native={true}/>
+          </div>
+        </div>
+      )
+    }
+  }
+
   reactionElems.push(
     <div key='add-reaction'>
       <div className={addReactionClassName} onClick={showEmojiPicker}>
         <span className="post-emoji" role="img" aria-label="Add Reaction">➕</span>
         {reactions.length === 0 ? "Add Reaction" : null}
       </div>
-      {emojiPickerOpened &&
-        <div id="post-reaction-emoji-picker-wrapper" ref={emojiPickerRef}>
-          <div className="post-reaction-emoji-picker">
-            <Picker onEmojiClick={addEmoji} preload={true} native={true}/>
-          </div>
-        </div>
-      }
+      {emojiPicker}
     </div>
   )
 

@@ -21,6 +21,7 @@ export default (props: Props) => {
       top: '0',
       left: '0',
       right: '0',
+      padding: '0'
     }
   } else {
     styles = {
@@ -49,10 +50,12 @@ export default (props: Props) => {
       shouldCloseOnEsc={true}
     >
       {isTabletOrMobile &&
-        <XIcon
-          className='my-modal-close-button'
-          onClick={props.onClose}
-        />
+        <div className='my-modal-mobile-header'>
+          <XIcon
+            className='my-modal-close-button'
+            onClick={props.onClose}
+          />
+        </div>
       }
       {props.children}
     </Modal>

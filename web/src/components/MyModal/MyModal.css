@@ -1,8 +1,11 @@
+.my-modal-mobile-header {
+    display: flex;
+    justify-content: right;
+}
+
 .my-modal-close-button {
-    position: absolute;
-    top: 15px;
-    right: 3px;
-    width: 20px;
+    width: 30px;
+    padding: 5px;
     cursor: pointer;
-    z-index: 999;
+    color: #505050;
 }

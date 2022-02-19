@@ -57,6 +57,10 @@
     top: 10px;
 }
 
+.post-reaction-emoji-picker-mobile {
+    width: 100%
+}
+
 .post-reactions-detail-emoji {
     font-size: 1.2em;
     margin-bottom: 8px;
