@@ -7,7 +7,6 @@ import About from "../../components/About/About";
 import PostModel from "../../models/Post"
 import useInView from 'react-cool-inview'
 import withAuthRedirect from "../../hoc/withAuthRedirect";
-import api from "../../api/Api";
 import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import {loadMorePosts, pollPosts} from "../../store/homeSlice";
 import User from "../../models/User";

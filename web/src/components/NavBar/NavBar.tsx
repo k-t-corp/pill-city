@@ -70,56 +70,54 @@ const MobileNavBar = (props: Props) => {
   }
 
   return (
-    <div className="mobile-nav-bar-wrapper">
-      <div className="mobile-nav-bar-container">
-        <div
-          className={`mobile-nav-bar-button-container ${handleNavItemActiveClass("/users")}`}
-          onClick={() => {history.push('/users')}}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path
-              d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/>
-          </svg>
-        </div>
-        <div
-          className={`mobile-nav-bar-button-container ${handleNavItemActiveClass("/circles")}`}
-          onClick={() => {history.push('/circles')}}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-                  clipRule="evenodd"/>
-          </svg>
-        </div>
-        <div
-          className={`mobile-nav-bar-button-container ${handleNavItemActiveClass("/")}`}
-          onClick={() => {history.push('/')}}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path
-              d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-          </svg>
-        </div>
-        <div
-          className={`mobile-nav-bar-button-container ${handleNavItemActiveClass("/notifications")}`}
-          onClick={() => {history.push('/notifications')}}
-        >
-          {hasNewNotifications && <div className='mobile-nav-bar-notification-indicator-wrapper'><div className='mobile-nav-bar-notification-indicator' /></div>}
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path
-              d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
-          </svg>
-        </div>
-        <div
-          className={`mobile-nav-bar-button-container ${handleNavItemActiveClass("/profile")}`}
-          onClick={() => {history.push('/profile')}}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
-                  clipRule="evenodd"/>
-          </svg>
-        </div>
+    <div className="mobile-nav-bar-container">
+      <div
+        className={`mobile-nav-bar-button-container ${handleNavItemActiveClass("/users")}`}
+        onClick={() => {history.push('/users')}}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/>
+        </svg>
+      </div>
+      <div
+        className={`mobile-nav-bar-button-container ${handleNavItemActiveClass("/circles")}`}
+        onClick={() => {history.push('/circles')}}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
+                clipRule="evenodd"/>
+        </svg>
+      </div>
+      <div
+        className={`mobile-nav-bar-button-container ${handleNavItemActiveClass("/")}`}
+        onClick={() => {history.push('/')}}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+        </svg>
+      </div>
+      <div
+        className={`mobile-nav-bar-button-container ${handleNavItemActiveClass("/notifications")}`}
+        onClick={() => {history.push('/notifications')}}
+      >
+        {hasNewNotifications && <div className='mobile-nav-bar-notification-indicator-wrapper'><div className='mobile-nav-bar-notification-indicator' /></div>}
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+        </svg>
+      </div>
+      <div
+        className={`mobile-nav-bar-button-container ${handleNavItemActiveClass("/profile")}`}
+        onClick={() => {history.push('/profile')}}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
+                clipRule="evenodd"/>
+        </svg>
       </div>
     </div>
   )

@@ -17,13 +17,15 @@ const Circles = () => {
     updateCircleData(latestCircleData)
     updateLoadingCircleData(false)
   }, [])
+
   useEffect(async () => {
     const latestUserData = await api.getUsers()
     updateUserData(latestUserData)
     updateLoadingUserData(false)
   }, [])
+
   return (
-    <div className="circle-wrapper">
+    <div>
       {loadingUserData ? <div>loading</div> : <DraggableUserProfileCards userProfileData={userData}/>}
       {loadingCircleData ? <div>loading</div> :
         <CircleBoards

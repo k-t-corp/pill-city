@@ -5,3 +5,16 @@
 input[type="file"] {
     display: none;
 }
+
+.app-container {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1200px;
+}
+
+@media only screen and (max-width: 750px) {
+    .app-container {
+        width: 100%;
+        padding-bottom: calc(50px + env(safe-area-inset-bottom));;
+    }
+}

@@ -54,48 +54,50 @@ export default () => {
     <ToastProvider>
       <Router>
         <NavBar />
-        <Switch>
-          <Route exact={true} path='/'>
-            <Home />
-          </Route>
-          <Route path='/post/:id'>
-            <Post />
-          </Route>
-          <Route path="/profile/:id">
-            <Profile />
-          </Route>
-          <Route path="/profile">
-            <Profile />
-          </Route>
-          <Route path="/notifications">
-            <Notifications />
-          </Route>
-          <Route path="/users">
-            <Users />
-          </Route>
-          <Route path="/signup">
-            <SignUp />
-          </Route>
-          <Route path="/signin">
-            <SignIn />
-          </Route>
-          <Route path="/circles">
-            <Circles />
-          </Route>
-          <Route path="/settings">
-            <Settings />
-          </Route>
-          <Route path="/admin">
-            <Admin />
-          </Route>
-          <Route path="/forget">
-            <ForgetPassword />
-          </Route>
-          <Route path="/reset">
-            <ResetPassword />
-          </Route>
-          <Redirect to='/'/>
-        </Switch>
+        <div className='app-container'>
+          <Switch>
+            <Route exact={true} path='/'>
+              <Home />
+            </Route>
+            <Route path='/post/:id'>
+              <Post />
+            </Route>
+            <Route path="/profile/:id">
+              <Profile />
+            </Route>
+            <Route path="/profile">
+              <Profile />
+            </Route>
+            <Route path="/notifications">
+              <Notifications />
+            </Route>
+            <Route path="/users">
+              <Users />
+            </Route>
+            <Route path="/signup">
+              <SignUp />
+            </Route>
+            <Route path="/signin">
+              <SignIn />
+            </Route>
+            <Route path="/circles">
+              <Circles />
+            </Route>
+            <Route path="/settings">
+              <Settings />
+            </Route>
+            <Route path="/admin">
+              <Admin />
+            </Route>
+            <Route path="/forget">
+              <ForgetPassword />
+            </Route>
+            <Route path="/reset">
+              <ResetPassword />
+            </Route>
+            <Redirect to='/'/>
+          </Switch>
+        </div>
       </Router>
     </ToastProvider>
   );
