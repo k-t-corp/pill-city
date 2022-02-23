@@ -83,7 +83,7 @@ class MyAvatar(Resource):
         # because it's faster to read a user's metadata, and we are fine with all avatars being public
         # BUG: the suffix was previously now_ms() // 1_000_000, meaning the timestamps where at ~1/3 hour scale
         object_name_stem = f"avatars/{user_id}-{str(now_seconds())}"
-        avatar_media = upload_to_s3(file, object_name_stem)
+        avatar_media = upload_to_s3(file, object_name_stem, user)
         if not avatar_media:
             return {'msg': f"Disallowed image type"}, 400
 

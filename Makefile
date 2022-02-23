@@ -20,4 +20,4 @@ dev-dump: dev-deps
 		./venv/bin/python ./scripts/dev_dump_mock_data.py
 
 test: dev-deps
-		nosetests
+		./venv/bin/nosetests

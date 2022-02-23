@@ -4,13 +4,13 @@ import tempfile
 import uuid
 from PIL import Image, UnidentifiedImageError
 from pillcity.daos.media import create_media
-from pillcity.models import Media
+from pillcity.models import Media, User
 from .cache import r, RMediaUrl
 
 AllowedImageTypes = ['gif', 'jpeg', 'bmp', 'png']
 
 
-def upload_to_s3(file, object_name_stem: str):
+def upload_to_s3(file, object_name_stem: str, owner: User):
     s3_client = boto3.client(
         's3',
         endpoint_url=os.environ['S3_ENDPOINT_URL'],
@@ -50,7 +50,7 @@ def upload_to_s3(file, object_name_stem: str):
     )
 
     # update user model
-    media = create_media(object_name)
+    media = create_media(object_name, owner)
     os.remove(temp_fp)
 
     return media

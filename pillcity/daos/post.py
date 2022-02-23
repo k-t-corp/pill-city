@@ -10,6 +10,7 @@ from .mention import mention
 from .pagination import get_page, poll_latest
 from .post_cache import set_in_post_cache, get_in_post_cache, exists_in_post_cache
 from .circle_cache import get_in_circle_cache
+from .media import use_media_list
 
 HomePostsPageSize = 10
 ProfilePostsPageSize = 10
@@ -36,6 +37,8 @@ def create_post(self: User, content: str, is_public: bool, circles: List[Circle]
     if not content and not media_list:
         # a post has to have either content or media
         return False
+
+    use_media_list(media_list)
 
     new_post = Post()
     new_post.eid = make_uuid()

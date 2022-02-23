@@ -8,6 +8,7 @@ class Media(Document, CreatedAtMixin):
     # todo: change to required
     # DO_NOTHING instead of NULLIFY here because of circular ref to User model
     #   We should instead manually NULLIFY.
+    #   See https://github.com/MongoEngine/mongoengine/issues/1697
     # Missing type because don't want circular ref
     owner = LazyReferenceField('User', required=False, default=None, reverse_delete_rule=DO_NOTHING)
     # todo: change to required
