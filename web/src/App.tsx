@@ -80,7 +80,6 @@ export default () => {
             <Authenticated>
               <Home />
             </Authenticated>
-            <Home />
           </Route>
           <Route path='/post/:id'>
             <Authenticated>
@@ -88,7 +87,9 @@ export default () => {
             </Authenticated>
           </Route>
           <Route path="/profile/:id">
-            <Profile />
+            <Authenticated>
+              <Profile />
+            </Authenticated>
           </Route>
           <Route path="/profile">
             <Authenticated>
@@ -105,7 +106,6 @@ export default () => {
               <Users />
             </Authenticated>
           </Route>
-
           <Route path="/circles">
             <Authenticated>
               <Circles />

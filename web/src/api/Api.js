@@ -70,7 +70,8 @@ export class Api {
     if (res.status !== 200) {
       throw new ApiError(res)
     }
-    setAccessToken(res.data['access_token'])
+    const {access_token, expires} = res.data
+    setAccessToken(access_token, expires)
     this.axiosInstance.defaults.headers = {
       ...this.axiosInstance.defaults.headers,
       ...Api.authorizedHeaders(),
