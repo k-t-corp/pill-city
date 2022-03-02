@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import DraggableUserProfileCards from "../../components/DraggableUserProfileCards/DraggableUserProfileCards";
 import CircleBoards from "../../components/CircleBoards/CircleBoards";
-import withAuthRedirect from "../../hoc/withAuthRedirect";
 import api from "../../api/Api";
 import "./Circles.css"
 
@@ -35,4 +34,4 @@ const Circles = () => {
   )
 }
 
-export default withAuthRedirect(Circles)
+export default Circles

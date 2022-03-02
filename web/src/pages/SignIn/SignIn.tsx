@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import HomePage from "../../components/HomePage/HomePage";
-import withNoAuthRedirect from "../../hoc/withNoAuthRedirect";
 import api from "../../api/Api";
 import {validateId, validatePassword} from "../../utils/validators";
 import "./SignIn.css"
@@ -81,4 +80,4 @@ const SignIn = () => {
   )
 }
 
-export default withNoAuthRedirect(SignIn)
+export default SignIn

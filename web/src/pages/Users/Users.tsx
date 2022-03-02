@@ -4,7 +4,6 @@ import getAvatarUrl from "../../utils/getAvatarUrl";
 import "./Users.css"
 import User from "../../models/User";
 import getNameAndSubName from "../../utils/getNameAndSubName";
-import withAuthRedirect from "../../hoc/withAuthRedirect";
 import api from "../../api/Api";
 
 type UserWithLoadingState = {
@@ -115,4 +114,4 @@ const Users = () => {
   )
 }
 
-export default withAuthRedirect(Users)
+export default Users

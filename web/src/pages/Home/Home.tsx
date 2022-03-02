@@ -6,7 +6,6 @@ import {useMediaQuery} from "react-responsive";
 import About from "../../components/About/About";
 import PostModel from "../../models/Post"
 import useInView from 'react-cool-inview'
-import withAuthRedirect from "../../hoc/withAuthRedirect";
 import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import {loadMorePosts, pollPosts} from "../../store/homeSlice";
 import User from "../../models/User";
@@ -141,4 +140,4 @@ const Home = () => {
   )
 }
 
-export default withAuthRedirect(Home)
+export default Home
