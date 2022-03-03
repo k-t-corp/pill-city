@@ -27,6 +27,7 @@ from pillcity.resources.notifications import Notifications, NotificationRead, No
 from pillcity.resources.invitations_codes import InvitationCode, InvitationCodes, ClearMediaUrlCache
 from pillcity.resources.link_preview import LinkPreview
 from pillcity.resources.password_reset import ForgetPassword, ResetPassword
+from pillcity.utils.now_ms import now_seconds
 
 # sentry
 if os.getenv('SENTRY_DSN'):
@@ -78,8 +79,9 @@ max_mb_per_media = 40
 app.config['MAX_CONTENT_LENGTH'] = (max_mb_per_media * 1024 * 1024) * MaxMediaCount
 
 # jwt
+access_token_expires = int(os.environ['JWT_ACCESS_TOKEN_EXPIRES'])
 app.config['JWT_SECRET_KEY'] = os.environ['JWT_SECRET_KEY']
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = access_token_expires
 JWTManager(app)
 
 app.config['BUNDLE_ERRORS'] = True
@@ -128,7 +130,10 @@ def _sign_in():
     if not user:
         return jsonify({"msg": "Invalid id or password"}), 401
     access_token = create_access_token(identity=user_id)
-    return jsonify(access_token=access_token), 200
+    return jsonify({
+        'access_token': access_token,
+        'expires': now_seconds() + access_token_expires
+    }), 200
 
 
 def check_user_id(user_id):

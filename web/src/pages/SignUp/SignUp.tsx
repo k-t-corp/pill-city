@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import HomePage from "../../components/HomePage/HomePage";
-import withNoAuthRedirect from "../../hoc/withNoAuthRedirect";
 import api from "../../api/Api";
 import {validateEmail, validateId, validatePassword} from "../../utils/validators";
 import {useHistory} from "react-router-dom";
@@ -133,4 +132,4 @@ const SignUp = () => {
   )
 }
 
-export default withNoAuthRedirect(SignUp)
+export default SignUp
