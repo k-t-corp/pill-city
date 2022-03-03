@@ -1,7 +1,5 @@
 import React from 'react';
 import NotificationList from "../../components/NotificationDropdown/NotificationList";
-import withAuthRedirect from "../../hoc/withAuthRedirect";
-import api from "../../api/Api";
 import {useAppDispatch} from "../../store/hooks";
 import {markAllNotificationsAsRead} from "../../store/notificationsSlice";
 import "./Notifications.css"
@@ -28,4 +26,4 @@ const Notifications = (_: Props) => {
   )
 }
 
-export default withAuthRedirect(Notifications)
+export default Notifications

@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react'
-import withAuthRedirect from "../../hoc/withAuthRedirect";
 import api from "../../api/Api";
 import './Admin.css'
 
@@ -60,4 +59,4 @@ const Admin = () => {
   )
 }
 
-export default withAuthRedirect(Admin, '/admin')
+export default Admin

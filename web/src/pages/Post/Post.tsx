@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react'
 import {useLocation, useParams} from "react-router-dom";
 import PostComponent from "../../components/Post/Post";
 import NewPost from "../../components/NewPost/NewPost";
-import withAuthRedirect from "../../hoc/withAuthRedirect";
 import api from "../../api/Api";
 import {useAppSelector} from "../../store/hooks";
 import MyModal from "../../components/MyModal/MyModal";
@@ -85,4 +84,4 @@ const PostPage = () => {
   )
 }
 
-export default withAuthRedirect(PostPage)
+export default PostPage

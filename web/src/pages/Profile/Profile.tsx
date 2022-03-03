@@ -9,7 +9,6 @@ import User from "../../models/User";
 import PostModel from "../../models/Post"
 import useInView from "react-cool-inview";
 import getNameAndSubName from "../../utils/getNameAndSubName";
-import withAuthRedirect from "../../hoc/withAuthRedirect";
 import api from "../../api/Api";
 import {useAppSelector} from "../../store/hooks";
 import {ResharedPost} from "../../models/Post";
@@ -268,4 +267,4 @@ const Profile = () => {
   )
 }
 
-export default withAuthRedirect(Profile)
+export default Profile
