@@ -3,7 +3,6 @@ import {removeAccessToken} from "../../api/AuthStorage";
 import About from "../../components/About/About";
 import UpdateAvatar from "../../components/UpdateAvatar/UpdateAvatar";
 import User from "../../models/User";
-import withAuthRedirect from "../../hoc/withAuthRedirect";
 import api from "../../api/Api";
 import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import UpdateBanner from "../../components/UpdateBanner/UpdateBanner";
@@ -296,4 +295,4 @@ const Settings = () => {
 
 }
 
-export default withAuthRedirect(Settings)
+export default Settings

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {ReactElement, useEffect} from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -27,8 +27,30 @@ import ForgetPassword from "./pages/ForgetPassword/ForgetPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import Modal from "react-modal";
 import NavBar from "./components/NavBar/NavBar";
+import {accessTokenExists} from "./api/AuthStorage";
 
 Modal.setAppElement('#root');
+
+const Authenticated = (props: {children: ReactElement}) => {
+  if (!accessTokenExists()) {
+    return <Redirect to='/signin'/>
+  }
+  return (
+    <>
+      <NavBar />
+      <div className="app-container">
+        {props.children}
+      </div>
+    </>
+  )
+}
+
+const NotAuthenticated = (props: {children: ReactElement}) => {
+  if (accessTokenExists()) {
+    return <Redirect to='/'/>
+  }
+  return props.children
+}
 
 export default () => {
   const dispatch = useAppDispatch()
@@ -53,51 +75,70 @@ export default () => {
   return (
     <ToastProvider>
       <Router>
-        <NavBar />
-        <div className='app-container'>
-          <Switch>
-            <Route exact={true} path='/'>
+        <Switch>
+          <Route exact={true} path='/'>
+            <Authenticated>
               <Home />
-            </Route>
-            <Route path='/post/:id'>
+            </Authenticated>
+          </Route>
+          <Route path='/post/:id'>
+            <Authenticated>
               <Post />
-            </Route>
-            <Route path="/profile/:id">
+            </Authenticated>
+          </Route>
+          <Route path="/profile/:id">
+            <Authenticated>
               <Profile />
-            </Route>
-            <Route path="/profile">
+            </Authenticated>
+          </Route>
+          <Route path="/profile">
+            <Authenticated>
               <Profile />
-            </Route>
-            <Route path="/notifications">
+            </Authenticated>
+          </Route>
+          <Route path="/notifications">
+            <Authenticated>
               <Notifications />
-            </Route>
-            <Route path="/users">
+            </Authenticated>
+          </Route>
+          <Route path="/users">
+            <Authenticated>
               <Users />
-            </Route>
-            <Route path="/signup">
-              <SignUp />
-            </Route>
-            <Route path="/signin">
-              <SignIn />
-            </Route>
-            <Route path="/circles">
+            </Authenticated>
+          </Route>
+          <Route path="/circles">
+            <Authenticated>
               <Circles />
-            </Route>
-            <Route path="/settings">
+            </Authenticated>
+          </Route>
+          <Route path="/settings">
+            <Authenticated>
               <Settings />
-            </Route>
-            <Route path="/admin">
+            </Authenticated>
+          </Route>
+          <Route path="/admin">
+            <Authenticated>
               <Admin />
-            </Route>
-            <Route path="/forget">
-              <ForgetPassword />
-            </Route>
-            <Route path="/reset">
-              <ResetPassword />
-            </Route>
-            <Redirect to='/'/>
-          </Switch>
-        </div>
+            </Authenticated>
+          </Route>
+          <Route path="/signup">
+            <NotAuthenticated>
+              <SignUp />
+            </NotAuthenticated>
+          </Route>
+          <Route path="/signin">
+            <NotAuthenticated>
+              <SignIn />
+            </NotAuthenticated>
+          </Route>
+          <Route path="/forget">
+            <ForgetPassword />
+          </Route>
+          <Route path="/reset">
+            <ResetPassword />
+          </Route>
+          <Redirect to='/'/>
+        </Switch>
       </Router>
     </ToastProvider>
   );
