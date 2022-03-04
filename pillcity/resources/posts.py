@@ -9,7 +9,6 @@ from pillcity.daos.post_cache import get_in_post_cache
 from pillcity.daos.circle_cache import get_in_circle_cache
 from pillcity.daos.exceptions import UnauthorizedAccess, BadRequest
 from .users import user_fields
-from .s3 import delete_from_s3
 from .pagination import pagination_parser
 from .mention import check_mentioned_user_ids
 from .comments import comment_fields
@@ -170,8 +169,6 @@ class Post(Resource):
         post = dangerously_get_post(post_id)
         if user != post.author:
             raise UnauthorizedAccess()
-        for m in post.media_list:
-            delete_from_s3(m)
 
         deleted_post = delete_post(user, post_id)
         return {'id': deleted_post.eid}, 201
@@ -189,8 +186,6 @@ class PostMedia(Resource):
         if not post.content:
             # keep the criteria that a post has to have either content or media
             raise BadRequest()
-        for m in post.media_list:
-            delete_from_s3(m)
 
         deleted_post = delete_post_media(user, post_id)
         return {'id': deleted_post.eid}, 201

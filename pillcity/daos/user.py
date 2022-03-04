@@ -9,7 +9,7 @@ from pillcity.models import NotifyingAction
 from .exceptions import UnauthorizedAccess
 from .user_cache import set_in_user_cache, get_users_in_user_cache, get_in_user_cache_by_user_id
 from .notification import create_notification
-from .media import use_media
+from .media import use_media, delete_media
 
 AvailableProfilePics = ["pill1.png", "pill2.png", "pill3.png", "pill4.png", "pill5.png", "pill6.png"]
 
@@ -179,6 +179,8 @@ def update_avatar(self: User, avatar_media: Media):
     :param self: The acting user
     :param avatar_media: The new avatar
     """
+    if self.avatar:
+        delete_media(self.avatar)
     use_media(avatar_media)
     self.avatar = avatar_media
     self.save()

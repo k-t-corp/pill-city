@@ -7,7 +7,6 @@ from pillcity.daos.exceptions import UnauthorizedAccess
 from .mention import check_mentioned_user_ids
 from .users import user_fields
 from .media import check_media_object_names, MediaUrls
-from .s3 import delete_from_s3
 
 MaxCommentMediaCount = 1
 
@@ -63,8 +62,6 @@ class Comment(Resource):
         comment = dangerously_get_comment(comment_id, post)
         if user != comment.author:
             raise UnauthorizedAccess()
-        for m in comment.media_list:
-            delete_from_s3(m)
 
         deleted_comment = delete_comment(user, comment_id, post)
         return {'id': deleted_comment.eid}, 201
@@ -106,8 +103,6 @@ class NestedComment(Resource):
         nested_comment = dangerously_get_comment(nested_comment_id, post)
         if user != nested_comment.author:
             raise UnauthorizedAccess()
-        for m in nested_comment.media_list:
-            delete_from_s3(m)
 
         deleted_nested_comment = delete_comment(user, nested_comment_id, post)
         return {'id': deleted_nested_comment.eid}, 201

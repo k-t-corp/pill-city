@@ -1,5 +1,6 @@
 import bleach
 from typing import List, Optional
+from pillcity.daos.media import delete_media_list
 from pillcity.models import Comment, NotifyingAction, User, Post, Media
 from pillcity.utils.make_uuid import make_uuid
 from pillcity.utils.now_ms import now_seconds
@@ -126,6 +127,7 @@ def delete_comment(self: User, comment_id: str, parent_post: Post) -> Optional[C
     comment.author = ghost_user
     comment.content = ''
     comment.deleted = True
+    delete_media_list(comment.media_list)
     comment.media_list = []
     parent_post.save()
 

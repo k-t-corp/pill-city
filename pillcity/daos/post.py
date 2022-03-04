@@ -1,6 +1,7 @@
 import bleach
 from typing import List, Optional, Union
 from pillcity.models import Post, NotifyingAction, User, Circle, Media
+from pillcity.daos.media import delete_media_list
 from pillcity.utils.profiling import timer
 from pillcity.utils.make_uuid import make_uuid
 from pillcity.daos.exceptions import UnauthorizedAccess
@@ -230,6 +231,7 @@ def delete_post(self: User, post_id: str) -> Optional[Post]:
     post.content = ''
     post.deleted = True
     post.reshareable = False
+    delete_media_list(post.media_list)
     post.media_list = []
     # TODO: remove poll both on here and on polls collection
     post.save()
@@ -253,6 +255,7 @@ def delete_post_media(self: User, post_id: str) -> Optional[Post]:
     if self != post.author:
         raise UnauthorizedAccess()
 
+    delete_media_list(post.media_list)
     post.media_list = []
     post.save()
 
