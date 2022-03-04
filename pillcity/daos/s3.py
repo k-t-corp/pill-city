@@ -2,15 +2,14 @@ import os
 import boto3
 import tempfile
 import uuid
+from typing import Optional
 from PIL import Image, UnidentifiedImageError
-from pillcity.daos.media import create_media
-from pillcity.models import Media
 from .cache import r, RMediaUrl
 
 AllowedImageTypes = ['gif', 'jpeg', 'bmp', 'png']
 
 
-def upload_to_s3(file, object_name_stem: str):
+def upload_to_s3(file, object_name_stem: str) -> Optional[str]:
     s3_client = boto3.client(
         's3',
         endpoint_url=os.environ['S3_ENDPOINT_URL'],
@@ -18,7 +17,6 @@ def upload_to_s3(file, object_name_stem: str):
         aws_access_key_id=os.environ['AWS_ACCESS_KEY'],
         aws_secret_access_key=os.environ['AWS_SECRET_KEY']
     )
-
     s3_bucket_name = os.environ['S3_BUCKET_NAME']
 
     # check file size
@@ -37,9 +35,8 @@ def upload_to_s3(file, object_name_stem: str):
     if img_type not in AllowedImageTypes:
         return None
 
-    object_name = f"{object_name_stem}.{img_type}"
-
     # upload the file
+    object_name = f"{object_name_stem}.{img_type}"
     s3_client.upload_file(
         Filename=temp_fp,
         Bucket=s3_bucket_name,
@@ -50,13 +47,12 @@ def upload_to_s3(file, object_name_stem: str):
     )
 
     # update user model
-    media = create_media(object_name)
     os.remove(temp_fp)
 
-    return media
+    return object_name
 
 
-def delete_from_s3(media: Media):
+def delete_from_s3(object_name: str):
     s3_client = boto3.client(
         's3',
         endpoint_url=os.environ['S3_ENDPOINT_URL'],
@@ -64,11 +60,7 @@ def delete_from_s3(media: Media):
         aws_access_key_id=os.environ['AWS_ACCESS_KEY'],
         aws_secret_access_key=os.environ['AWS_SECRET_KEY']
     )
-
     s3_bucket_name = os.environ['S3_BUCKET_NAME']
-
-    object_name = media.id
 
     s3_client.delete_object(Bucket=s3_bucket_name, Key=object_name)
     r.hdel(RMediaUrl, object_name)
-    media.fetch().delete()

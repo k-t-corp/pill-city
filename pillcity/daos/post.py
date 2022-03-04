@@ -1,6 +1,7 @@
 import bleach
 from typing import List, Optional, Union
 from pillcity.models import Post, NotifyingAction, User, Circle, Media
+from pillcity.daos.media import delete_media_list
 from pillcity.utils.profiling import timer
 from pillcity.utils.make_uuid import make_uuid
 from pillcity.daos.exceptions import UnauthorizedAccess
@@ -10,6 +11,7 @@ from .mention import mention
 from .pagination import get_page, poll_latest
 from .post_cache import set_in_post_cache, get_in_post_cache, exists_in_post_cache
 from .circle_cache import get_in_circle_cache
+from .media import use_media_list
 
 HomePostsPageSize = 10
 ProfilePostsPageSize = 10
@@ -36,6 +38,8 @@ def create_post(self: User, content: str, is_public: bool, circles: List[Circle]
     if not content and not media_list:
         # a post has to have either content or media
         return False
+
+    use_media_list(media_list)
 
     new_post = Post()
     new_post.eid = make_uuid()
@@ -227,6 +231,7 @@ def delete_post(self: User, post_id: str) -> Optional[Post]:
     post.content = ''
     post.deleted = True
     post.reshareable = False
+    delete_media_list(post.media_list)
     post.media_list = []
     # TODO: remove poll both on here and on polls collection
     post.save()
@@ -250,6 +255,7 @@ def delete_post_media(self: User, post_id: str) -> Optional[Post]:
     if self != post.author:
         raise UnauthorizedAccess()
 
+    delete_media_list(post.media_list)
     post.media_list = []
     post.save()
 

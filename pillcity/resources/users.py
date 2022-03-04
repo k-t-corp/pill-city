@@ -9,8 +9,8 @@ from pillcity.daos.user import find_user, update_profile_pic, update_avatar, get
 from pillcity.daos.user_cache import get_in_user_cache_by_oid, get_users_in_user_cache
 from pillcity.daos.post import create_post
 from pillcity.daos.rss import notifying_action_value_to_rss_code
+from pillcity.daos.media import create_media
 from pillcity.utils.now_ms import now_seconds
-from .s3 import upload_to_s3
 
 
 class UserId(fields.Raw):
@@ -83,7 +83,7 @@ class MyAvatar(Resource):
         # because it's faster to read a user's metadata, and we are fine with all avatars being public
         # BUG: the suffix was previously now_ms() // 1_000_000, meaning the timestamps where at ~1/3 hour scale
         object_name_stem = f"avatars/{user_id}-{str(now_seconds())}"
-        avatar_media = upload_to_s3(file, object_name_stem)
+        avatar_media = create_media(file, object_name_stem, user)
         if not avatar_media:
             return {'msg': f"Disallowed image type"}, 400
 

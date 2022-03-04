@@ -1,5 +1,6 @@
 import bleach
 from typing import List, Optional
+from pillcity.daos.media import delete_media_list
 from pillcity.models import Comment, NotifyingAction, User, Post, Media
 from pillcity.utils.make_uuid import make_uuid
 from pillcity.utils.now_ms import now_seconds
@@ -9,6 +10,7 @@ from .post_cache import set_in_post_cache, exists_in_post_cache
 from .notification import create_notification, nullify_notifications
 from .mention import mention
 from .user import find_ghost_user_or_raise
+from .media import use_media_list
 
 
 def create_comment(self: User, content: str, parent_post: Post, parent_comment: Optional[Comment],
@@ -39,6 +41,8 @@ def create_comment(self: User, content: str, parent_post: Post, parent_comment: 
     # a comment has to have either content or media
     if not content and not media_list:
         raise BadRequest()
+
+    use_media_list(media_list)
 
     new_comment = Comment()
     new_comment.eid = make_uuid()
@@ -123,6 +127,7 @@ def delete_comment(self: User, comment_id: str, parent_post: Post) -> Optional[C
     comment.author = ghost_user
     comment.content = ''
     comment.deleted = True
+    delete_media_list(comment.media_list)
     comment.media_list = []
     parent_post.save()
 

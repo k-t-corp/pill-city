@@ -1,15 +1,50 @@
-from pillcity.models import Media
+from typing import List, Optional
+from pillcity.models import Media, User
+from .s3 import upload_to_s3, delete_from_s3
 
 
-def get_media(object_name):
+def get_media(object_name: str) -> Media:
     return Media.objects.get(id=object_name)
 
 
-def create_media(object_name):
+def create_media(file, object_name_stem: str, owner: User) -> Optional[Media]:
+    object_name = upload_to_s3(file, object_name_stem)
+    if not object_name:
+        return None
+
     media = Media()
     media.id = object_name
+    media.owner = owner
+    media.refs = 0
     # have to force save for some reason...
     # https://github.com/MongoEngine/mongoengine/issues/1246
     media.save(force_insert=True)
 
     return media
+
+
+def use_media(media: Media):
+    media.refs += 1
+    media.save()
+
+
+def use_media_list(media_list: List[Media]):
+    for media in media_list:
+        use_media(media)
+
+
+def delete_media(media: Media):
+    # we can always fetch because all reference to Media is Lazy...
+    media = media.fetch()
+    media.refs -= 1
+    if media.refs <= 0:
+        object_name = media.id
+        media.delete()
+        delete_from_s3(object_name)
+    else:
+        media.save()
+
+
+def delete_media_list(media_list: List[Media]):
+    for media in media_list:
+        delete_media(media)

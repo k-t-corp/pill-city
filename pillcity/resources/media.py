@@ -5,12 +5,12 @@ import werkzeug
 import uuid
 from typing import List
 from flask_restful import reqparse, Resource, fields
-from flask_jwt_extended import jwt_required
-from pillcity.daos.media import get_media
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from pillcity.daos.media import get_media, create_media
+from pillcity.daos.user import find_user
 from pillcity.utils.now_ms import now_ms
 from pillcity.utils.profiling import timer
 from .cache import r, RMediaUrl
-from .s3 import upload_to_s3
 
 
 MaxMediaCount = 4
@@ -97,6 +97,11 @@ for i in range(MaxMediaCount):
 class Media(Resource):
     @jwt_required()
     def post(self):
+        user_id = get_jwt_identity()
+        user = find_user(user_id)
+        if not user:
+            return {'msg': f'User {user_id} is not found'}, 404
+
         args = media_parser.parse_args()
         media_files = []
         for i in range(MaxMediaCount):
@@ -106,7 +111,7 @@ class Media(Resource):
         media_object_names = []
         for media_file in media_files:
             object_name_stem = f"media/{uuid.uuid4()}"
-            media_object = upload_to_s3(media_file, object_name_stem)
+            media_object = create_media(media_file, object_name_stem, user)
             if not media_object:
                 return {'msg': f"Disallowed image type"}, 400
             media_object_names.append(media_object.id)
