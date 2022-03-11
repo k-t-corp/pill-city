@@ -1,8 +1,7 @@
-from mongoengine import Document, StringField, LazyReferenceField, IntField, DO_NOTHING
-from .created_at_mixin import CreatedAtMixin
+from mongoengine import Document, StringField, LazyReferenceField, IntField, LongField, DO_NOTHING
 
 
-class Media(Document, CreatedAtMixin):
+class Media(Document):
     # this is the object name (obviously..)
     id = StringField(primary_key=True)
     # todo: change to required
@@ -13,3 +12,7 @@ class Media(Document, CreatedAtMixin):
     owner = LazyReferenceField('User', required=False, default=None, reverse_delete_rule=DO_NOTHING)
     # todo: change to required
     refs = IntField(required=False, default=-1)
+    # todo: change to required
+    created_at = LongField(required=False, default=0)
+    # todo: change to required
+    used_at = LongField(required=False, default=0)
