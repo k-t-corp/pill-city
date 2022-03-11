@@ -1,8 +1,11 @@
 import React from "react";
+import OwnedMedia from "../OwnedMedia/OwnedMedia";
+import OwnedMediaModel from "../../models/OwnedMedia"
 import './NewPostMedia.css'
 
 interface Props {
   onChangeMedias: (arg0: FileList) => void
+  onSelectOwnedMedia: (m: OwnedMediaModel) => void
   onClose: () => void
 }
 
@@ -21,6 +24,11 @@ export default (props: Props) => {
 
   return (
     <>
+      <OwnedMedia onSelectOwnedMedia={m => {
+        props.onSelectOwnedMedia(m)
+        props.onClose()
+      }}/>
+      <div className='new-post-media-divider'>OR</div>
       <label
         htmlFor='upload'
         className='new-post-media-drop-zone'

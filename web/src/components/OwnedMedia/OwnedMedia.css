@@ -1,0 +1,28 @@
+.owned-media-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.owned-media-preview-container {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.owned-media-nav-button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #f0f0f0;
+}
+
+.owned-media-nav-button:hover {
+    cursor: pointer;
+}
+
+.owned-media-nav-icon {
+    width: 30px;
+    padding: 5px;
+    cursor: pointer;
+    color: #505050;
+}

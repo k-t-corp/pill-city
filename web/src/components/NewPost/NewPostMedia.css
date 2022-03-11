@@ -1,3 +1,11 @@
+.new-post-media-divider {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: large;
+    text-align: center;
+    color: #505050;
+}
+
 .new-post-media-drop-zone {
     display: block;
     background-color: #f0f0f0;

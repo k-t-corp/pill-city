@@ -9,6 +9,7 @@ interface Props {
   threeRowHeight: string
   forLinkPreview?: boolean
   forCommentPreview?: boolean
+  onMediaClick?: (i: number) => void
 }
 
 export default (props: Props) => {
@@ -66,7 +67,11 @@ export default (props: Props) => {
         }}
         onClick={e => {
           e.preventDefault()
-          openMedia(i)
+          if (props.onMediaClick) {
+            props.onMediaClick(i)
+          } else {
+            openMedia(i)
+          }
         }}
       >
         <img

@@ -1,7 +1,6 @@
 import os
 from pymongo.uri_parser import parse_uri
 from mongoengine import connect
-from pillcity.models import User, Post
 
 uri = os.environ['MONGODB_URI']
 connect(

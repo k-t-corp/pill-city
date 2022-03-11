@@ -153,12 +153,13 @@ export class Api {
     return res.data
   }
 
-  async postPost(content, isPublic, circleIds, reshareable, resharedFrom, mediaData, mentionedUserIds) {
+  async postPost(content, isPublic, circleIds, reshareable, resharedFrom, mediaData, mentionedUserIds, ownedMediaObjectNames) {
     Api.throwOnUnauthorized()
-    let mediaObjNames = []
+    let allMediaObjNames = []
     if (mediaData.length !== 0) {
-      mediaObjNames = await this.media(mediaData)
+      allMediaObjNames = await this.uploadMedia(mediaData)
     }
+    allMediaObjNames = allMediaObjNames.concat(ownedMediaObjectNames)
     const res = await this.axiosInstance.post(
       `/posts`,
       {
@@ -167,7 +168,7 @@ export class Api {
         circle_ids: circleIds,
         reshareable: reshareable,
         reshared_from: resharedFrom,
-        media_object_names: mediaObjNames,
+        media_object_names: allMediaObjNames,
         mentioned_user_ids: mentionedUserIds
       }
     )
@@ -177,7 +178,7 @@ export class Api {
     return res.data
   }
 
-  async media(mediaData) {
+  async uploadMedia(mediaData) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.post(
       `/media`,
@@ -191,6 +192,22 @@ export class Api {
       }
     )
     if (res.status !== 201) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
+
+  async getOwnedMedia(pageNumber) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.get(
+      `/media`,
+      {
+        params: {
+          page: pageNumber
+        }
+      }
+    )
+    if (res.status !== 200) {
       throw new ApiError(res)
     }
     return res.data
@@ -265,7 +282,7 @@ export class Api {
     Api.throwOnUnauthorized()
     let mediaObjNames = []
     if (mediaData.length !== 0) {
-      mediaObjNames = await this.media(mediaData)
+      mediaObjNames = await this.uploadMedia(mediaData)
     }
     const res = await this.axiosInstance.post(
       `/posts/${postId}/comment`,
@@ -296,7 +313,7 @@ export class Api {
     Api.throwOnUnauthorized()
     let mediaObjNames = []
     if (mediaData.length !== 0) {
-      mediaObjNames = await this.media(mediaData)
+      mediaObjNames = await this.uploadMedia(mediaData)
     }
     const res = await this.axiosInstance.post(
       `/posts/${postId}/comment/${commentId}/comment`,

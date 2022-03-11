@@ -8,6 +8,14 @@ def get_media(object_name: str) -> Media:
     return Media.objects.get(id=object_name)
 
 
+def get_media_page(owner: User, page_number: int, page_count: int) -> List[Media]:
+    """
+    Get a page of media items owned by a user, reverse chronologically ordered
+    """
+    return Media.objects(owner=owner)\
+        .order_by('-created_at', '+id').skip(page_number * page_count).limit(page_count)
+
+
 def create_media(file, object_name_stem: str, owner: User) -> Optional[Media]:
     object_name = upload_to_s3(file, object_name_stem)
     if not object_name:
