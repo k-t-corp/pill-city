@@ -19,6 +19,7 @@ import MyModal from "../MyModal/MyModal";
 import NewPostMedia from "./NewPostMedia";
 import api from "../../api/Api";
 import "./NewPost.css"
+import OwnedMedia from "../../models/OwnedMedia";
 
 interface Props {
   beforePosting: () => void
@@ -33,11 +34,12 @@ export default (props: Props) => {
   const me = useAppSelector(state => state.me.me)
   const [myCircles, updateMyCircles] = useState<Circle[]>([])
 
-  const [newPostContent, updateNewPostContent] = useState<string>("")
-  const [newPostCircleIds, updateNewPostCircleIds] = useState<CircleIdOrPublic[]>([])
-  const [newPostResharable, updateNewPostResharable] = useState(true)
-  const [newPostMedias, updateNewPostMedias] = useState<File[]>([])
-  const [newPostMediaOpened, updateNewPostMediaOpened] = useState(false)
+  const [content, updateContent] = useState<string>("")
+  const [circleIds, updateCircleIds] = useState<CircleIdOrPublic[]>([])
+  const [resharable, updateResharable] = useState(true)
+  const [medias, updateMedias] = useState<File[]>([])
+  const [ownedMedias, updateOwnedMedias] = useState<OwnedMedia[]>([])
+  const [mediaOpened, updateMediaOpened] = useState(false)
 
   const [posting, updatePosting] = useState(false)
 
@@ -52,9 +54,9 @@ export default (props: Props) => {
 
   useHotkeys('ctrl+enter', () => {
     (async () => {
-      if (newPostContent.endsWith('\n')) {
+      if (content.endsWith('\n')) {
         // if sent using ctrl+enter, there should be an extra newline at the end
-        updateNewPostContent(newPostContent.substring(0, newPostContent.length - 1))
+        updateContent(content.substring(0, content.length - 1))
       }
       if (isValid()) {
         await postButtonOnClick()
@@ -65,14 +67,15 @@ export default (props: Props) => {
   })
 
   const isValid = () => {
-    return (newPostContent.trim().length !== 0 || newPostMedias.length !== 0) && newPostCircleIds.length !== 0
+    return (content.trim().length !== 0 || medias.length !== 0 || ownedMedias.length !== 0) && circleIds.length !== 0
   }
 
   const reset = () => {
-    updateNewPostContent('')
-    updateNewPostCircleIds([])
-    updateNewPostResharable(true)
-    updateNewPostMedias([])
+    updateContent('')
+    updateCircleIds([])
+    updateResharable(true)
+    updateMedias([])
+    updateOwnedMedias([])
   }
 
   const postButtonOnClick = async () => {
@@ -82,11 +85,11 @@ export default (props: Props) => {
     updatePosting(true);
 
     // parse post parameters
-    const actualCircleIds = newPostCircleIds.filter(cn => cn !== true)
-    const isPublic = newPostCircleIds.filter(cn => cn === true).length !== 0
+    const actualCircleIds = circleIds.filter(cn => cn !== true)
+    const isPublic = circleIds.filter(cn => cn === true).length !== 0
     let mediaData = new FormData()
-    for (let i = 0; i < newPostMedias.length; i++) {
-      const blob = new Blob([newPostMedias[i]], {type: 'image/*'})
+    for (let i = 0; i < medias.length; i++) {
+      const blob = new Blob([medias[i]], {type: 'image/*'})
       mediaData.append(`media${i}`, blob)
     }
 
@@ -98,13 +101,14 @@ export default (props: Props) => {
     let post: Post | null = null
     try {
       post = await api.postPost(
-        newPostContent,
+        content,
         isPublic,
         actualCircleIds,
-        props.resharePostData === null ? newPostResharable : true,
+        props.resharePostData === null ? resharable : true,
         props.resharePostData === null ? null : props.resharePostData.id,
         props.resharePostData === null ? mediaData : [],
-        parseMentioned(newPostContent)
+        parseMentioned(content),
+        ownedMedias.map(_ => _.objectName)
       );
     } catch (e) {
       if (e instanceof ApiError) {
@@ -137,7 +141,7 @@ export default (props: Props) => {
         for (let i = 0; i < fl.length; i++) {
           selectedMedias.push(fl[i])
         }
-        updateNewPostMedias(selectedMedias)
+        updateMedias(selectedMedias)
       }
     }
   }
@@ -147,7 +151,7 @@ export default (props: Props) => {
     if (posting) {
       return
     }
-    updateNewPostCircleIds(value)
+    updateCircleIds(value)
   }
 
   const resharableOnChange = (e: any) => {
@@ -155,7 +159,7 @@ export default (props: Props) => {
     if (posting) {
       return
     }
-    updateNewPostResharable(!newPostResharable)
+    updateResharable(!resharable)
   }
 
   const submitButtonClass = () => {
@@ -199,14 +203,14 @@ export default (props: Props) => {
           </div>
         </div>
       }
-      {props.resharePostData === null ?
+      {props.resharePostData === null &&
         <MediaPreview
-          mediaUrls={newPostMedias.map(m => URL.createObjectURL(m))}
+          mediaUrls={medias.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.mediaUrl))}
           threeRowHeight={isTabletOrMobile ? "30px" : "80px"}
           twoRowHeight={isTabletOrMobile ? "50px" : "100px"}
           oneRowHeight={isTabletOrMobile ? "80px" : "140px"}
         />
-        : null}
+      }
       <div className="new-post-text-box-container">
         {props.resharePostData === null &&
           <>
@@ -214,25 +218,28 @@ export default (props: Props) => {
               className='new-post-attachment-button'
               onClick={() => {
                 if (!posting) {
-                  updateNewPostMediaOpened(true)
+                  updateMediaOpened(true)
                 }
               }}
             />
             <MyModal
-              isOpen={newPostMediaOpened}
-              onClose={() => {updateNewPostMediaOpened(false)}}
+              isOpen={mediaOpened}
+              onClose={() => {updateMediaOpened(false)}}
             >
               <NewPostMedia
                 onChangeMedias={onChangeMedias}
-                onClose={() => {updateNewPostMediaOpened(false)}}
+                onSelectOwnedMedia={m => {
+                  updateOwnedMedias([m])
+                }}
+                onClose={() => {updateMediaOpened(false)}}
               />
             </MyModal>
           </>
         }
         <ContentTextarea
-          content={newPostContent}
+          content={content}
           onChange={(newContent) => {
-            updateNewPostContent(newContent)
+            updateContent(newContent)
           }}
           disabled={posting}
           textAreaClassName='new-post-text-box'
@@ -251,7 +258,7 @@ export default (props: Props) => {
               })
             )
           }
-          value={newPostCircleIds}
+          value={circleIds}
           onChange={sharingScopeOnChange}
           disabled={posting}
           fluid multiple selection
@@ -278,7 +285,7 @@ export default (props: Props) => {
             toggle
             label="Enable Resharing"
             onChange={resharableOnChange}
-            checked={newPostResharable}
+            checked={resharable}
             disabled={posting}
           />
           <Popup
