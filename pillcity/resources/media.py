@@ -16,7 +16,7 @@ from .cache import r, RMediaUrl
 
 MaxMediaCount = 4
 PostMediaUrlExpireSeconds = 3600 * 12  # 12 hours
-GetMediaPageCount = 9
+GetMediaPageCount = 4
 
 
 # Cache structure within Redis
