@@ -6,7 +6,7 @@ import uuid
 from typing import List
 from flask_restful import reqparse, Resource, fields
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from pillcity.daos.media import get_media, create_media
+from pillcity.daos.media import get_media, create_media, get_media_page
 from pillcity.daos.user import find_user
 from pillcity.utils.now_ms import now_ms
 from pillcity.utils.profiling import timer
@@ -15,6 +15,7 @@ from .cache import r, RMediaUrl
 
 MaxMediaCount = 4
 PostMediaUrlExpireSeconds = 3600 * 12  # 12 hours
+GetMediaPageCount = 10
 
 
 # Cache structure within Redis
@@ -88,10 +89,14 @@ class MediaUrls(fields.Raw):
         return list(map(get_media_url, media_list))
 
 
-media_parser = reqparse.RequestParser()
+post_media_parser = reqparse.RequestParser()
 for i in range(MaxMediaCount):
-    media_parser.add_argument('media' + str(i), type=werkzeug.datastructures.FileStorage, location='files',
-                              required=False, default=None)
+    post_media_parser.add_argument('media' + str(i), type=werkzeug.datastructures.FileStorage, location='files',
+                                   required=False, default=None)
+
+
+get_media_parser = reqparse.RequestParser()
+get_media_parser.add_argument('from', type=int, required=False, default=1, location='args')
 
 
 class Media(Resource):
@@ -102,7 +107,7 @@ class Media(Resource):
         if not user:
             return {'msg': f'User {user_id} is not found'}, 404
 
-        args = media_parser.parse_args()
+        args = post_media_parser.parse_args()
         media_files = []
         for i in range(MaxMediaCount):
             media_file = args['media' + str(i)]
@@ -117,6 +122,17 @@ class Media(Resource):
             media_object_names.append(media_object.id)
 
         return media_object_names, 201
+
+    @jwt_required()
+    def get(self):
+        user_id = get_jwt_identity()
+        user = find_user(user_id)
+        if not user:
+            return {'msg': f'User {user_id} is not found'}, 404
+
+        args = get_media_parser.parse_args()
+        from_page = args['from']
+        return list(map(lambda m: m.id, get_media_page(user, from_page - 1, GetMediaPageCount)))
 
 
 def check_media_object_names(media_object_names: List[str], limit: int) -> List[Media]:
