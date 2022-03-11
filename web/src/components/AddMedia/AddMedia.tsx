@@ -1,7 +1,7 @@
 import React from "react";
 import OwnedMedia from "../OwnedMedia/OwnedMedia";
 import OwnedMediaModel from "../../models/OwnedMedia"
-import './NewPostMedia.css'
+import './AddMedia.css'
 
 interface Props {
   onChangeMedias: (arg0: FileList) => void

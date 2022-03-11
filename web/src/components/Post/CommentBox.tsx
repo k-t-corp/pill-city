@@ -12,6 +12,10 @@ import summary from "../../utils/summary";
 import ContentTextarea from "../ContentTextarea/ContentTextarea";
 import api from "../../api/Api";
 import './CommentBox.css'
+import {PhotographIcon} from "@heroicons/react/solid";
+import AddMedia from "../AddMedia/AddMedia";
+import MyModal from "../MyModal/MyModal";
+import OwnedMediaModel from "../../models/OwnedMedia";
 
 interface Props {
   me: User,
@@ -25,31 +29,33 @@ interface Props {
 }
 
 export default (props: Props) => {
-  const { content, updateContent } = props
-  const [ posting, updatePosting ] = useState(false)
-  const [ media, updateMedia ] = useState<any[]>([])
+  const {content, updateContent} = props
+  const [posting, updatePosting] = useState(false)
+  const [medias, updateMedias] = useState<File[]>([])
+  const [ownedMedias, updateOwnedMedias] = useState<OwnedMediaModel[]>([])
+  const [mediaOpened, updateMediaOpened] = useState(false)
 
   const { addToast } = useToast()
 
-  const onAddMedia = (e: any) => {
+  const onChangeMedias = (fl: FileList) => {
     if (posting) {
       return
     }
-    if (e.target.files && e.target.files[0]) {
-      if (e.target.files.length > 1) {
+    if (fl && fl[0]) {
+      if (fl.length> 1) {
         alert(`Only allowed to upload 1 image`);
       } else {
         let selectedMedias = []
-        for (let i = 0; i < e.target.files.length; i++) {
-          selectedMedias.push(e.target.files[i])
+        for (let i = 0; i < fl.length; i++) {
+          selectedMedias.push(fl[i])
         }
-        updateMedia(selectedMedias)
+        updateMedias(selectedMedias)
       }
     }
   }
 
   const isContentValid = () => {
-    return content.trim().length > 0 || media.length > 0
+    return content.trim().length > 0 || medias.length > 0 || ownedMedias.length > 0
   }
 
   useHotkeys('ctrl+enter', () => {
@@ -71,8 +77,8 @@ export default (props: Props) => {
 
     // upload media
     let mediaData = new FormData()
-    for (let i = 0; i < media.length; i++) {
-      const blob = new Blob([media[i]], {type: 'image/*'})
+    for (let i = 0; i < medias.length; i++) {
+      const blob = new Blob([medias[i]], {type: 'image/*'})
       mediaData.append(`media${i}`, blob)
     }
 
@@ -84,7 +90,8 @@ export default (props: Props) => {
           props.post.id,
           props.replyingToComment.id,
           parseMentioned(content),
-          mediaData
+          mediaData,
+          ownedMedias.map(_ => _.objectName)
         )
         props.addNestedComment(newNestedComment)
       } catch (e) {
@@ -100,7 +107,8 @@ export default (props: Props) => {
           content,
           props.post.id,
           parseMentioned(content),
-          mediaData
+          mediaData,
+          ownedMedias.map(_ => _.objectName)
         )
         props.addComment(newComment)
       } catch (e) {
@@ -113,7 +121,8 @@ export default (props: Props) => {
     }
     updatePosting(false)
     updateContent('')
-    updateMedia([])
+    updateMedias([])
+    updateOwnedMedias([])
     props.afterSendingComment()
   }
 
@@ -139,25 +148,31 @@ export default (props: Props) => {
           textAreaClassName='post-comment-box-input'
           placeholder={contentPlaceholder}
         />
-        <label className="post-comment-box-attachment-button">
-          <input
-            accept="image/*"
-            type="file"
-            onChange={onAddMedia}
-            multiple={false}
-            disabled={posting}
+        <PhotographIcon
+          className='post-comment-box-attachment-button'
+          onClick={() => {
+            if (!posting) {
+              updateMediaOpened(true)
+            }
+          }}
+        />
+        <MyModal
+          isOpen={mediaOpened}
+          onClose={() => {updateMediaOpened(false)}}
+        >
+          <AddMedia
+            onChangeMedias={onChangeMedias}
+            onSelectOwnedMedia={m => {
+              updateOwnedMedias([m])
+            }}
+            onClose={() => {updateMediaOpened(false)}}
           />
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd"
-                  d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                  clipRule="evenodd"/>
-          </svg>
-        </label>
+        </MyModal>
       </div>
       {
-        media.length > 0 &&
+        (medias.length + ownedMedias.length) > 0 &&
           <MediaPreview
-            mediaUrls={[URL.createObjectURL(media[0])]}
+            mediaUrls={medias.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.mediaUrl))}
             oneRowHeight='300px'
             twoRowHeight=''
             threeRowHeight=''

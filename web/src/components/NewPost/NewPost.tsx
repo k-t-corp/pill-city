@@ -16,7 +16,7 @@ import ContentTextarea from "../ContentTextarea/ContentTextarea";
 import {useAppSelector} from "../../store/hooks";
 import {PhotographIcon} from "@heroicons/react/solid";
 import MyModal from "../MyModal/MyModal";
-import NewPostMedia from "./NewPostMedia";
+import AddMedia from "../AddMedia/AddMedia";
 import api from "../../api/Api";
 import "./NewPost.css"
 import OwnedMedia from "../../models/OwnedMedia";
@@ -226,7 +226,7 @@ export default (props: Props) => {
               isOpen={mediaOpened}
               onClose={() => {updateMediaOpened(false)}}
             >
-              <NewPostMedia
+              <AddMedia
                 onChangeMedias={onChangeMedias}
                 onSelectOwnedMedia={m => {
                   updateOwnedMedias([m])
