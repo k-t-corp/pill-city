@@ -2,18 +2,18 @@ import React, {useEffect, useState} from 'react'
 import {useMediaQuery} from "react-responsive";
 import api from "../../api/Api";
 import MediaPreview from "../MediaPreview/MediaPreview";
-import OwnedMediaModel from "../../models/OwnedMedia"
+import Media from "../../models/Media"
 import {ChevronDoubleLeftIcon} from "@heroicons/react/solid";
 import {ChevronDoubleRightIcon} from "@heroicons/react/solid";
 import './OwnedMedia.css'
 
 interface Props {
-  onSelectOwnedMedia: (m: OwnedMediaModel) => void
+  onSelectOwnedMedia: (m: Media) => void
 }
 
 export default (props: Props) => {
   const [loading, updateLoading] = useState(true)
-  const [mediaList, updateMediaList] = useState<OwnedMediaModel[]>([])
+  const [mediaList, updateMediaList] = useState<Media[]>([])
   const [page, updatePage] = useState(1)
   const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
 
@@ -46,7 +46,7 @@ export default (props: Props) => {
       </div>
       <div className='owned-media-preview-container'>
         <MediaPreview
-          mediaUrls={mediaList.map(_ => _.mediaUrl)}
+          mediaUrls={mediaList.map(_ => _.media_url)}
           threeRowHeight={isTabletOrMobile ? "30px" : "80px"}
           twoRowHeight={isTabletOrMobile ? "50px" : "100px"}
           oneRowHeight={isTabletOrMobile ? "150px" : "220px"}

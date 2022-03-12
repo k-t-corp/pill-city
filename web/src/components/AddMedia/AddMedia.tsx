@@ -1,11 +1,11 @@
 import React from "react";
 import OwnedMedia from "../OwnedMedia/OwnedMedia";
-import OwnedMediaModel from "../../models/OwnedMedia"
+import Media from "../../models/Media"
 import './AddMedia.css'
 
 interface Props {
   onChangeMedias: (arg0: FileList) => void
-  onSelectOwnedMedia: (m: OwnedMediaModel) => void
+  onSelectOwnedMedia: (m: Media) => void
   onClose: () => void
 }
 

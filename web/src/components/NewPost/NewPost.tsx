@@ -19,7 +19,7 @@ import MyModal from "../MyModal/MyModal";
 import AddMedia from "../AddMedia/AddMedia";
 import api from "../../api/Api";
 import "./NewPost.css"
-import OwnedMedia from "../../models/OwnedMedia";
+import Media from "../../models/Media";
 
 interface Props {
   beforePosting: () => void
@@ -38,7 +38,7 @@ export default (props: Props) => {
   const [circleIds, updateCircleIds] = useState<CircleIdOrPublic[]>([])
   const [resharable, updateResharable] = useState(true)
   const [medias, updateMedias] = useState<File[]>([])
-  const [ownedMedias, updateOwnedMedias] = useState<OwnedMedia[]>([])
+  const [ownedMedias, updateOwnedMedias] = useState<Media[]>([])
   const [mediaOpened, updateMediaOpened] = useState(false)
 
   const [posting, updatePosting] = useState(false)
@@ -108,7 +108,7 @@ export default (props: Props) => {
         props.resharePostData === null ? null : props.resharePostData.id,
         props.resharePostData === null ? mediaData : [],
         parseMentioned(content),
-        ownedMedias.map(_ => _.objectName)
+        ownedMedias.map(_ => _.object_name)
       );
     } catch (e) {
       if (e instanceof ApiError) {
@@ -205,7 +205,7 @@ export default (props: Props) => {
       }
       {props.resharePostData === null &&
         <MediaPreview
-          mediaUrls={medias.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.mediaUrl))}
+          mediaUrls={medias.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.media_url))}
           threeRowHeight={isTabletOrMobile ? "30px" : "80px"}
           twoRowHeight={isTabletOrMobile ? "50px" : "100px"}
           oneRowHeight={isTabletOrMobile ? "80px" : "140px"}
