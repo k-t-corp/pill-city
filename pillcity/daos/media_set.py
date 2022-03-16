@@ -1,12 +1,12 @@
-from typing import List, Optional
+from typing import List
 from mongoengine import NotUniqueError
 from pillcity.models import User, Media
 from pillcity.models.media_set import MediaSet
 from pillcity.utils.make_uuid import make_uuid
-from .exceptions import UnauthorizedAccess
+from .exceptions import UnauthorizedAccess, Conflict, NotFound
 
 
-def create_media_set(self: User, name: str) -> Optional[str]:
+def create_media_set(self: User, name: str) -> str:
     new_ms = MediaSet()
     new_ms.eid = make_uuid()
     new_ms.owner = self
@@ -14,8 +14,15 @@ def create_media_set(self: User, name: str) -> Optional[str]:
     try:
         new_ms.save()
     except NotUniqueError:
-        return None
+        raise Conflict()
     return new_ms.eid
+
+
+def find_media_set(self: User, media_set_id: str) -> MediaSet:
+    ms = MediaSet.objects(owner=self, eid=media_set_id)
+    if not ms or len(ms) > 1:
+        raise NotFound()
+    return ms[0]
 
 
 def rename_media_set(self: User, media_set: MediaSet, new_name: str):
@@ -32,7 +39,7 @@ def delete_media_set(self: User, media_set: MediaSet):
 
 
 def toggle_media(self: User, media_set: MediaSet, toggled_media: Media):
-    if self != media_set.owner:
+    if self != media_set.owner or self != toggled_media.owner:
         raise UnauthorizedAccess()
     if toggled_media in media_set.media_list:
         media_set.media_list.remove(toggled_media)

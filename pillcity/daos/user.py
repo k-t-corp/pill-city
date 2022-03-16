@@ -6,7 +6,7 @@ from pillcity.models import User, Media
 from pillcity.utils.profiling import timer
 from pillcity.utils.make_uuid import make_dashless_uuid
 from pillcity.models import NotifyingAction
-from .exceptions import UnauthorizedAccess
+from .exceptions import UnauthorizedAccess, NotFound
 from .user_cache import set_in_user_cache, get_users_in_user_cache, get_in_user_cache_by_user_id
 from .notification import create_notification
 from .media import use_media, delete_media
@@ -75,6 +75,16 @@ def find_user(user_id: str) -> Union[User, bool]:
     :return: Whether the user exists
     """
     return get_in_user_cache_by_user_id(user_id)
+
+
+def find_user_or_raise(user_id: str) -> User:
+    """
+    Finds the user, or otherwise raise
+    """
+    user = find_user(user_id)
+    if not user:
+        raise NotFound()
+    return user
 
 
 def get_users(user_id):
