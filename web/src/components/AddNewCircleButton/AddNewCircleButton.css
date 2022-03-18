@@ -24,78 +24,35 @@
     animation: color-change-2x 0.5s ease-in both;
 }
 
-/* The Modal (background) */
-.modal {
-    visibility: hidden; /* Hidden by default *!*/
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-
-/* Modal Content/Box */
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
-    padding: 60px 20px 20px 20px;
-    border: 1px solid #888;
-    border-radius: 5px;
-    min-width: 300px;
-    max-width: 400px;
-    width: 50%; /* Could be more or less, depending on screen size */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
-#new-circle-name-input {
-    text-align: center;
-    font-size: x-large;
-    border: none;
-    flex: 1;
-    resize: none;
-    margin-left: 10px;
-    margin-top: 20px;
-    height: auto;
-    width: 70%;
-    border-bottom: #e0e0e0 1px solid;
-}
-
-#new-circle-name-input:focus {
-    outline: none !important;
+.add-new-circle-name-input {
+    width: 240px;
+    height: 3em;
+    padding: 1em;
+    border-width: 1px;
+    border-radius: 4px;
+    border-color: #86989B;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .modal-content-button-wrapper {
-    margin-top: 40px;
     display: flex;
+    justify-content: center;
     align-items: center;
+    margin-top: 20px;
 }
 
-/*Error Message*/
-#new-circle-error-message-box {
-    width: 70%;
-    height: 50px;
-    visibility: hidden;
-    margin-top: 10px;
-    color: cornflowerblue;
-    text-align: center;
-}
-
-/*Modal Button*/
+/* Modal Button */
 .modal-content-button {
-    padding: 8px 12px;
-    font-size: large;
+    padding: 8px 10px;
     font-weight: bold;
+    font-size: medium;
     color: white;
     border-radius: 5px;
     width: auto;
     cursor: pointer;
+    margin-right: 20px;
 }
 
 .confirm {
@@ -109,26 +66,15 @@
 
 /* Mobile */
 @media only screen and (max-width: 750px) {
-    .modal-content {
-        width: 80%;
-    }
-
-    #new-circle-name-input {
-        font-size: large;
-    }
-
     .add-new-circle-button {
         width: 150px;
         height: 150px;
         margin-bottom: 28px;
         font-size: larger;
     }
-
 }
 
-
-/*Animation*/
-
+/* Animation */
 @-webkit-keyframes color-change-2x {
     0% {
         background: #000000;
