@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import MediaSet from "../../models/MediaSet";
 import api from "../../api/Api";
+import './MyMediaSet.css'
 
 interface Props {
   onEmptyAddNewMedia: () => void
@@ -23,15 +24,15 @@ export default (props: Props) => {
 
   if (mediaSet === null) {
     return (
-      <>
-        <p>No sticker pack</p>
-        <a href="#" onClick={async () => {
+      <div
+        className='my-media-set-empty'
+        onClick={async () => {
           updateLoading(true)
           await api.createMyMediaSet()
           updateMediaSet(await api.getMyMediaSet())
           updateLoading(false)
-        }}>Create one</a>
-      </>
+        }}
+      >Create my sticker pack</div>
     )
   }
 
@@ -39,37 +40,39 @@ export default (props: Props) => {
     <div>
       {
         mediaSet.media_list.length === 0 &&
-        <>
-          <p>No media in my sticker pack</p>
-          <a href="#" onClick={props.onEmptyAddNewMedia}>Pick some from uploaded media</a>
-        </>
+          <div
+            className='my-media-set-empty'
+            onClick={props.onEmptyAddNewMedia}
+          >Add media</div>
       }
-      <p></p>
-      <p>{mediaSet.is_public ? '(Public)' : "(Private)"}</p>
-      {!mediaSet.is_public &&
-        <p>
-          <a href="#" onClick={async () => {
-            if (!confirm("Are you sure you want to make your sticker pack public? This operation cannot be reverted.")) {
+      <div className='my-media-set-controls'>
+        {!mediaSet.is_public &&
+          <div
+            className='my-media-set-button my-media-set-button-danger'
+            onClick={async () => {
+              if (!confirm("Are you sure you want to make your sticker pack public? This operation cannot be reverted.")) {
+                return
+              }
+              updateLoading(true)
+              await api.makeMyMediaSetPublic()
+              updateMediaSet(await api.getMyMediaSet())
+              updateLoading(false)
+            }}
+          >Make it public</div>
+        }
+        <div
+          className='my-media-set-button my-media-set-button-danger'
+          onClick={async () => {
+            if (!confirm("Are you sure you want to delete your sticker pack? Media contained in the pack won't be deleted.")) {
               return
             }
             updateLoading(true)
-            await api.makeMyMediaSetPublic()
+            await api.deleteMyMediaSet()
             updateMediaSet(await api.getMyMediaSet())
             updateLoading(false)
-          }}>Make my sticker pack public</a>
-        </p>
-      }
-      <p>
-        <a href="#" onClick={async () => {
-          if (!confirm("Are you sure you want to delete your sticker pack? Media contained in the pack won't be deleted.")) {
-            return
-          }
-          updateLoading(true)
-          await api.deleteMyMediaSet()
-          updateMediaSet(await api.getMyMediaSet())
-          updateLoading(false)
-        }}>Delete my sticker pack</a>
-      </p>
+          }}
+        >Delete</div>
+      </div>
     </div>
   )
 }

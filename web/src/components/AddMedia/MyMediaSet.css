@@ -1,0 +1,36 @@
+.my-media-set-empty {
+    display: block;
+    background-color: #f0f0f0;
+    width: 100%;
+    padding: 40px;
+    text-align: center;
+    color: #838383;
+    font-size: x-large;
+    border-radius: 4px;
+}
+
+.my-media-set-empty:hover {
+    cursor: pointer;
+}
+
+.my-media-set-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.my-media-set-button {
+    padding: 8px 10px;
+    font-weight: bold;
+    font-size: medium;
+    color: white;
+    border-radius: 5px;
+    width: auto;
+    cursor: pointer;
+    margin-right: 20px;
+}
+
+.my-media-set-button-danger {
+    background-color: #E05140;
+}
