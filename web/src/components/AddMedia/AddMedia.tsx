@@ -1,7 +1,8 @@
 import React, {useState} from "react";
-import OwnedMedia from "../OwnedMedia/OwnedMedia";
+import OwnedMedia from "./OwnedMedia";
 import Media from "../../models/Media"
 import './AddMedia.css'
+import UploadMedia from "./UploadMedia";
 
 interface Props {
   onChangeMedias: (arg0: FileList) => void
@@ -11,18 +12,6 @@ interface Props {
 
 export default (props: Props) => {
   const [showingTab, updateShowingTab] = useState(0)
-
-  const onDrop = (e: any) => {
-    e.preventDefault()
-    props.onChangeMedias(e.dataTransfer.files)
-    props.onClose()
-  }
-
-  const onChange = (e: any) => {
-    e.preventDefault()
-    props.onChangeMedias(e.target.files)
-    props.onClose()
-  }
 
   return (
     <>
@@ -46,25 +35,10 @@ export default (props: Props) => {
       </div>
       <div>
         {showingTab === 0 &&
-          <>
-            <label
-              htmlFor='upload'
-              className='add-media-drop-zone'
-              onDragOver={(e: any) => {e.preventDefault()}}
-              onDragEnter={(e: any) => {e.preventDefault()}}
-              onDragLeave={(e: any) => {e.preventDefault()}}
-              onDrop={onDrop}
-            >
-              Drop or click here to upload media
-            </label>
-            <input
-              id='upload'
-              accept="image/*"
-              type="file"
-              onChange={onChange}
-              multiple={true}
-            />
-          </>
+          <UploadMedia
+            onChangeMedias={props.onChangeMedias}
+            onClose={props.onClose}
+          />
         }
         {showingTab == 1 &&
           <OwnedMedia onSelectOwnedMedia={m => {

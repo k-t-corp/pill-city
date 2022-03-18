@@ -19,18 +19,3 @@
 .add-media-tab-selected {
     color: #0d71bb;
 }
-
-.add-media-drop-zone {
-    display: block;
-    background-color: #f0f0f0;
-    width: 100%;
-    padding: 40px;
-    text-align: center;
-    color: #838383;
-    font-size: x-large;
-    border-radius: 4px;
-}
-
-.add-media-drop-zone:hover {
-    cursor: pointer;
-}
