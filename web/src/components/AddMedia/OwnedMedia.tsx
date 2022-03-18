@@ -25,7 +25,7 @@ export default (props: Props) => {
   }, [])
 
   if (loading) {
-    return null
+    return <div>Loading...</div>
   }
 
   return (
