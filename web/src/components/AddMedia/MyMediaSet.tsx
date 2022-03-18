@@ -24,7 +24,7 @@ export default (props: Props) => {
   if (mediaSet === null) {
     return (
       <>
-        <p>No media set</p>
+        <p>No sticker pack</p>
         <a href="#" onClick={async () => {
           updateLoading(true)
           await api.createMyMediaSet()
@@ -40,7 +40,7 @@ export default (props: Props) => {
       {
         mediaSet.media_list.length === 0 &&
         <>
-          <p>No media in my media set</p>
+          <p>No media in my sticker pack</p>
           <a href="#" onClick={props.onEmptyAddNewMedia}>Pick some from uploaded media</a>
         </>
       }
@@ -49,26 +49,26 @@ export default (props: Props) => {
       {!mediaSet.is_public &&
         <p>
           <a href="#" onClick={async () => {
-            if (!confirm("Are you sure you want to make your media set public? This operation cannot be reverted.")) {
+            if (!confirm("Are you sure you want to make your sticker pack public? This operation cannot be reverted.")) {
               return
             }
             updateLoading(true)
             await api.makeMyMediaSetPublic()
             updateMediaSet(await api.getMyMediaSet())
             updateLoading(false)
-          }}>Make my media set public</a>
+          }}>Make my sticker pack public</a>
         </p>
       }
       <p>
         <a href="#" onClick={async () => {
-          if (!confirm("Are you sure you want to delete your media set? Media contained in the media set won't be deleted.")) {
+          if (!confirm("Are you sure you want to delete your sticker pack? Media contained in the pack won't be deleted.")) {
             return
           }
           updateLoading(true)
           await api.deleteMyMediaSet()
           updateMediaSet(await api.getMyMediaSet())
           updateLoading(false)
-        }}>Delete my media set</a>
+        }}>Delete my sticker pack</a>
       </p>
     </div>
   )

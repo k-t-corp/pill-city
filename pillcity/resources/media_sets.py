@@ -10,7 +10,8 @@ media_set_fields = {
     'id': fields.String(attribute='eid'),
     'owner': fields.Nested(user_fields),
     'name': fields.String,
-    'media_list': fields.List(fields.Nested(media_fields))
+    'media_list': fields.List(fields.Nested(media_fields)),
+    'is_public': fields.Boolean()
 }
 
 create_media_set_parser = reqparse.RequestParser()

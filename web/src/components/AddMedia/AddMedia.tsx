@@ -37,11 +37,11 @@ export default (props: Props) => {
         <div
           className={'add-media-tab' + (showingTab === 2 ? ' add-media-tab-selected' : '')}
           onClick={() => {updateShowingTab(2)}}
-        >My media set</div>
+        >My sticker pack</div>
         <div
           className={'add-media-tab' + (showingTab === 3 ? ' add-media-tab-selected' : '')}
           onClick={() => {updateShowingTab(3)}}
-        >Public media sets</div>
+        >Public sticker packs</div>
       </div>
       <div>
         {showingTab === 0 &&
