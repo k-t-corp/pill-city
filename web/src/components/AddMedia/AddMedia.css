@@ -1,22 +1,36 @@
-.new-post-media-divider {
-    margin-top: 10px;
-    margin-bottom: 10px;
-    font-size: large;
-    text-align: center;
-    color: #505050;
+.add-media-tabs {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 12px;
 }
 
-.new-post-media-drop-zone {
+.add-media-tab {
+    margin-right: 12px;
+    padding: 6px;
+    color: #838383;
+    background-color: #f0f0f0;
+    border-radius: 2px;
+}
+
+.add-media-tab:hover {
+    cursor: pointer;
+}
+
+.add-media-tab-selected {
+    color: #0d71bb;
+}
+
+.add-media-drop-zone {
     display: block;
     background-color: #f0f0f0;
     width: 100%;
     padding: 40px;
     text-align: center;
     color: #838383;
-    font-size: xx-large;
+    font-size: x-large;
     border-radius: 4px;
 }
 
-.new-post-media-drop-zone:hover {
+.add-media-drop-zone:hover {
     cursor: pointer;
 }
