@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react'
-import {useMediaQuery} from "react-responsive";
 import api from "../../api/Api";
 import MediaPane from "../MediaPane/MediaPane";
 import Media from "../../models/Media"
@@ -15,7 +14,6 @@ export default (props: Props) => {
   const [loading, updateLoading] = useState(true)
   const [mediaList, updateMediaList] = useState<Media[]>([])
   const [page, updatePage] = useState(1)
-  const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
 
   useEffect(() => {
     (async () => {
@@ -50,6 +48,7 @@ export default (props: Props) => {
           onMediaClick={i => {
             props.onSelectOwnedMedia(mediaList[i])
           }}
+          usePlaceholder={true}
         />
       </div>
       <div
