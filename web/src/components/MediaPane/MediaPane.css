@@ -16,8 +16,25 @@
 .media-pane-img {
     object-fit: cover;
     width: 100%;
-    height: 100%;
     border-radius: 4px;
+}
+
+.media-op-container {
+    display: flex;
+}
+
+.media-op {
+    flex-grow: 1;
+    flex-basis: 0;
+    padding: 2px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    font-size: small;
+    text-align: center;
+}
+
+.media-op:hover {
+    cursor: pointer;
 }
 
 .media-modal-container {

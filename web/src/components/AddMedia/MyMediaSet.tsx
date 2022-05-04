@@ -6,8 +6,13 @@ import MediaPane from "../MediaPane/MediaPane";
 import MyModal from "../MyModal/MyModal";
 import OwnedMedia from "./OwnedMedia";
 import MediaNavButtons from "../MediaNavButtons/MediaNavButtons";
+import Media from "../../models/Media";
 
-export default () => {
+interface Props {
+  onSelectMedia: (m: Media) => void
+}
+
+export default (props: Props) => {
   const [loading, updateLoading] = useState(true)
   const [mediaSet, updateMediaSet] = useState<MediaSet | null>(null)
   const [mediaSetListIndex, updateMediaSetListIndex] = useState(0)
@@ -52,13 +57,24 @@ export default () => {
     <div>
       <MediaPane
         mediaUrls={mediaSet.media_list.slice(mediaSetListIndex * 4, (mediaSetListIndex + 1) * 4).map(m => m.media_url)}
-        onMediaClick={async i => {
-          const removedMedia = mediaSet.media_list[mediaSetListIndex * 4 + i]
-          updateLoading(true)
-          await api.removeMediaFromMyMediaSet(removedMedia.object_name)
-          updateMediaSet(await api.getMyMediaSet())
-          updateLoading(false)
-        }}
+        mediaOperations={[
+          {
+            op: 'Use',
+            action: (i) => {
+              props.onSelectMedia(mediaSet.media_list[mediaSetListIndex * 4 + i])
+            }
+          },
+          {
+            op: 'Remove',
+            action: (async (i) => {
+              const removedMedia = mediaSet.media_list[mediaSetListIndex * 4 + i]
+              updateLoading(true)
+              await api.removeMediaFromMyMediaSet(removedMedia.object_name)
+              updateMediaSet(await api.getMyMediaSet())
+              updateLoading(false)
+            })
+          }
+        ]}
         usePlaceholder={true}
       />
       <MediaNavButtons
@@ -117,6 +133,7 @@ export default () => {
         }}
       >
         <OwnedMedia
+          selectMediaOp={'Add'}
           onSelectOwnedMedia={async m => {
             updateAddMediaToMediaSetOpened(false)
             updateLoading(true)

@@ -6,6 +6,7 @@ import MediaNavButtons from "../MediaNavButtons/MediaNavButtons";
 import './OwnedMedia.css'
 
 interface Props {
+  selectMediaOp: string
   onSelectOwnedMedia: (m: Media) => void
 }
 
@@ -29,9 +30,14 @@ export default (props: Props) => {
     <div>
       <MediaPane
         mediaUrls={mediaList.map(_ => _.media_url)}
-        onMediaClick={i => {
-          props.onSelectOwnedMedia(mediaList[i])
-        }}
+        mediaOperations={[
+          {
+            op: props.selectMediaOp,
+            action: i => {
+              props.onSelectOwnedMedia(mediaList[i])
+            }
+          }
+        ]}
         usePlaceholder={true}
       />
       <MediaNavButtons

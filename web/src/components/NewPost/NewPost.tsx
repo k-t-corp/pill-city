@@ -222,7 +222,7 @@ export default (props: Props) => {
               <AddMedia
                 onChangeMedias={onChangeMedias}
                 onSelectOwnedMedia={m => {
-                  updateOwnedMedias([m])
+                  updateOwnedMedias(ownedMedias.concat([m]))
                 }}
                 onClose={() => {updateMediaOpened(false)}}
               />

@@ -11,6 +11,7 @@
     justify-content: center;
     margin-left: 6px;
     margin-right: 6px;
+    border-radius: 2px;
 }
 
 .media-nav-button:hover {

@@ -4,7 +4,7 @@ import MyModal from "../MyModal/MyModal";
 
 interface Props {
   mediaUrls: string[]
-  onMediaClick?: (i: number) => void
+  mediaOperations?: {op: string, action: (index: number) => void}[]
   heightPx?: number
   usePlaceholder?: boolean
 }
@@ -33,25 +33,37 @@ export default (props: Props) => {
     mediaList.push(
       <div
         className='media-pane'
-        style={{cursor: isPlaceholder ? 'auto' : 'pointer'}}
+        style={{height, cursor: isPlaceholder ? 'auto' : 'pointer'}}
         key={i}
         onClick={e => {
           e.preventDefault()
           if (isPlaceholder) {
             return
           }
-          if (props.onMediaClick) {
-            props.onMediaClick(i)
-          } else {
-            updateModalMediaIndex(i)
-          }
+          updateModalMediaIndex(i)
         }}
       >
         <img
           className='media-pane-img'
+          style={{height: !isPlaceholder && props.mediaOperations ? '86%' : '100%'}}
           src={mediaUrl}
           alt={""}
         />
+        {props.mediaOperations && !isPlaceholder &&
+          <div className='media-op-container'>
+            {props.mediaOperations.map(mo => {
+              return (
+                <div
+                  className='media-op'
+                  key={mo.op}
+                  onClick={() => {mo.action(i)}}
+                >
+                  {mo.op}
+                </div>
+              )
+            })}
+          </div>
+        }
       </div>
     )
   }
@@ -60,10 +72,7 @@ export default (props: Props) => {
 
   return (
     <>
-      <div
-        className='media-pane-container'
-        style={{height}}
-      >
+      <div className='media-pane-container'>
         {mediaList}
       </div>
       <MyModal

@@ -43,6 +43,7 @@ export default (props: Props) => {
         }
         {showingTab === 1 &&
           <OwnedMedia
+            selectMediaOp={'Use'}
             onSelectOwnedMedia={m => {
               props.onSelectOwnedMedia(m)
               props.onClose()
@@ -50,7 +51,12 @@ export default (props: Props) => {
           />
         }
         {showingTab === 2 &&
-          <MyMediaSet />
+          <MyMediaSet
+            onSelectMedia={m => {
+              props.onSelectOwnedMedia(m)
+              props.onClose()
+            }}
+          />
         }
       </div>
     </>
