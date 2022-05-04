@@ -24,29 +24,14 @@ export default () => {
     return <div>Loading...</div>
   }
 
-  return (
-    <div>
-      <MediaPane
-        mediaUrls={mediaSet !== null ? mediaSet.media_list.slice(mediaSetListIndex * 4, (mediaSetListIndex + 1) * 4).map(m => m.media_url) : []}
-        onMediaClick={i => {
-          // props.onSelectOwnedMedia(mediaList[i])
-        }}
-        usePlaceholder={true}
-      />
-      {mediaSet !== null &&
-        <MediaNavButtons
-          hasPrevious={mediaSetListIndex !== 0}
-          onPrevious={async () => {
-            updateMediaSetListIndex(mediaSetListIndex - 1)
-          }}
-          hasNext={(mediaSetListIndex + 1) * 4 < mediaSet.media_list.length}
-          onNext={async () => {
-            updateMediaSetListIndex(mediaSetListIndex + 1)
-          }}
+  if (mediaSet === null) {
+    return (
+      <div>
+        <MediaPane
+          mediaUrls={[]}
+          usePlaceholder={true}
         />
-      }
-      <div className='my-media-set-buttons'>
-        {mediaSet === null &&
+        <div className='my-media-set-buttons'>
           <div
             className='my-media-set-button my-media-set-button-confirm'
             onClick={async e => {
@@ -56,18 +41,46 @@ export default () => {
               updateMediaSet(await api.getMyMediaSet())
               updateLoading(false)
             }}
-          >Create sticker pack</div>
-        }
-        {mediaSet !== null &&
-          <div
-            className='my-media-set-button my-media-set-button-confirm'
-            onClick={async e => {
-              e.preventDefault()
-              updateAddMediaToMediaSetOpened(true)
-            }}
-          >Add media to pack</div>
-        }
-        {mediaSet !== null && !mediaSet.is_public &&
+          >Create sticker pack
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      <MediaPane
+        mediaUrls={mediaSet.media_list.slice(mediaSetListIndex * 4, (mediaSetListIndex + 1) * 4).map(m => m.media_url)}
+        onMediaClick={async i => {
+          const removedMedia = mediaSet.media_list[mediaSetListIndex * 4 + i]
+          updateLoading(true)
+          await api.removeMediaFromMyMediaSet(removedMedia.object_name)
+          updateMediaSet(await api.getMyMediaSet())
+          updateLoading(false)
+        }}
+        usePlaceholder={true}
+      />
+      <MediaNavButtons
+        hasPrevious={mediaSetListIndex !== 0}
+        onPrevious={async () => {
+          updateMediaSetListIndex(mediaSetListIndex - 1)
+        }}
+        hasNext={(mediaSetListIndex + 1) * 4 < mediaSet.media_list.length}
+        onNext={async () => {
+          updateMediaSetListIndex(mediaSetListIndex + 1)
+        }}
+      />
+      <div className='my-media-set-buttons'>
+        <div
+          className='my-media-set-button my-media-set-button-confirm'
+          onClick={async e => {
+            e.preventDefault()
+            updateAddMediaToMediaSetOpened(true)
+          }}
+        >Add media to pack
+        </div>
+        {!mediaSet.is_public &&
           <div
             className='my-media-set-button my-media-set-button-danger'
             onClick={async e => {
@@ -82,25 +95,26 @@ export default () => {
             }}
           >Make pack public</div>
         }
-        {mediaSet !== null &&
-          <div
-            className='my-media-set-button my-media-set-button-danger'
-            onClick={async e => {
-              e.preventDefault()
-              if (!confirm("Are you sure you want to delete your sticker pack? Media contained in the pack won't be deleted.")) {
-                return
-              }
-              updateLoading(true)
-              await api.deleteMyMediaSet()
-              updateMediaSet(await api.getMyMediaSet())
-              updateLoading(false)
-            }}
-          >Delete pack</div>
-        }
+        <div
+          className='my-media-set-button my-media-set-button-danger'
+          onClick={async e => {
+            e.preventDefault()
+            if (!confirm("Are you sure you want to delete your sticker pack? Media contained in the pack won't be deleted.")) {
+              return
+            }
+            updateLoading(true)
+            await api.deleteMyMediaSet()
+            updateMediaSet(await api.getMyMediaSet())
+            updateLoading(false)
+          }}
+        >Delete pack
+        </div>
       </div>
       <MyModal
         isOpen={addMediaToMediaSetOpened}
-        onClose={() => {updateAddMediaToMediaSetOpened(false)}}
+        onClose={() => {
+          updateAddMediaToMediaSetOpened(false)
+        }}
       >
         <OwnedMedia
           onSelectOwnedMedia={async m => {

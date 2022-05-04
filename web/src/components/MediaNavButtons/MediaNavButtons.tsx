@@ -4,9 +4,9 @@ import {ChevronDoubleLeftIcon, ChevronDoubleRightIcon} from "@heroicons/react/so
 
 interface Props {
   hasPrevious: boolean
-  onPrevious: () => Promise<void>
+  onPrevious: () => void
   hasNext: boolean
-  onNext: () => Promise<void>
+  onNext: () => void
 }
 
 export default (props: Props) => {
@@ -21,9 +21,9 @@ export default (props: Props) => {
       <div
         className='media-nav-button'
         style={{visibility: !hasPrevious ? 'hidden' : 'visible'}}
-        onClick={async e => {
+        onClick={e => {
           e.preventDefault()
-          await onPrevious()
+          onPrevious()
         }}
       >
         <ChevronDoubleLeftIcon className='media-nav-button-icon'/>
@@ -31,9 +31,9 @@ export default (props: Props) => {
       <div
         className='media-nav-button'
         style={{visibility: !hasNext ? 'hidden' : 'visible'}}
-        onClick={async e => {
+        onClick={e => {
           e.preventDefault()
-          await onNext()
+          onNext()
         }}
       >
         <ChevronDoubleRightIcon className='media-nav-button-icon'/>
