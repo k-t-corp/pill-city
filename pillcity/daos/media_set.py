@@ -55,15 +55,16 @@ def make_media_set_public(self: User, media_set: MediaSet):
     media_set.save()
 
 
-def add_media_to_media_set(self: User, media_set: MediaSet, media: Media):
+def add_media_to_media_set(self: User, media_set: MediaSet, media: Media) -> bool:
     if self != media_set.owner:
         raise UnauthorizedAccess()
     if self != media.owner:
         raise UnauthorizedAccess()
     if media in media_set.media_list:
-        return
+        return False
     media_set.media_list.append(media)
     media_set.save()
+    return True
 
 
 def remove_media_from_media_set(self: User, media_set: MediaSet, media: Media):

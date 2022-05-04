@@ -761,7 +761,7 @@ export class Api {
       `/mediaSet/${defaultMediaSetId}/media`,
       { object_name: objectName }
     )
-    if (res.status !== 200) {
+    if (res.status !== 201) {
       throw new ApiError(res)
     }
     return res.data

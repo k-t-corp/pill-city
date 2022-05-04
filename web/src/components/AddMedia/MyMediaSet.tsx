@@ -137,9 +137,18 @@ export default (props: Props) => {
           onSelectOwnedMedia={async m => {
             updateAddMediaToMediaSetOpened(false)
             updateLoading(true)
-            await api.addMediaToMyMediaSet(m.object_name)
-            updateMediaSet(await api.getMyMediaSet())
-            updateLoading(false)
+            try {
+              await api.addMediaToMyMediaSet(m.object_name)
+            } catch (e: any) {
+              if (e.message) {
+                alert(e.message)
+              } else {
+                alert("Unknown error")
+              }
+            } finally {
+              updateMediaSet(await api.getMyMediaSet())
+              updateLoading(false)
+            }
           }}
         />
       </MyModal>
