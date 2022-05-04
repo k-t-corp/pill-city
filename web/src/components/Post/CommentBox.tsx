@@ -171,12 +171,7 @@ export default (props: Props) => {
       </div>
       {
         (medias.length + ownedMedias.length) > 0 &&
-          <MediaPane
-            mediaUrls={medias.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.media_url))}
-            // oneRowHeight='300px'
-            // twoRowHeight=''
-            // threeRowHeight=''
-          />
+          <MediaPane mediaUrls={medias.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.media_url))}/>
       }
       <div className="post-comment-box-buttons">
         <div

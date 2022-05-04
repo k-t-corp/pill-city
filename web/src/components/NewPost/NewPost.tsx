@@ -204,12 +204,7 @@ export default (props: Props) => {
         </div>
       }
       {props.resharePostData === null &&
-        <MediaPane
-          mediaUrls={medias.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.media_url))}
-          // threeRowHeight={isTabletOrMobile ? "30px" : "80px"}
-          // twoRowHeight={isTabletOrMobile ? "50px" : "100px"}
-          // oneRowHeight={isTabletOrMobile ? "80px" : "140px"}
-        />
+        <MediaPane mediaUrls={medias.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.media_url))}/>
       }
       <div className="new-post-text-box-container">
         {props.resharePostData === null &&

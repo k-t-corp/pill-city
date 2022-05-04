@@ -14,7 +14,7 @@ export default (props: Props) => {
     return null
   }
   const [modalMediaIndex, updateModalMediaIndex] = useState(-1)
-  const height = props.heightPx ? `${props.heightPx}px` : '300px'
+  const height = props.heightPx ? `${props.heightPx}px` : '200px'
 
   let mediaList = []
   for (let i = 0; i < mediaCount; i++) {

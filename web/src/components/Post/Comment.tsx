@@ -92,13 +92,7 @@ export default (props: Props) => {
           {
             !deleted && comment.media_urls.length > 0 &&
             <div>
-              <MediaPane
-                mediaUrls={[comment.media_urls[0]]}
-                // oneRowHeight='200px'
-                // twoRowHeight=''
-                // threeRowHeight=''
-                // forCommentPreview={true}
-              />
+              <MediaPane mediaUrls={[comment.media_urls[0]]}/>
             </div>
           }
           {

@@ -32,9 +32,7 @@ export default (props: Props) => {
   const previewElems = []
   if (mediaUrls.length > 0) {
     previewElems.push(
-      <MediaPane
-        mediaUrls={mediaUrls}
-      />
+      <MediaPane mediaUrls={mediaUrls} heightPx={300}/>
     )
   }
 

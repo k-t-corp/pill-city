@@ -47,10 +47,6 @@ export default (props: Props) => {
       <div className='owned-media-preview-container'>
         <MediaPane
           mediaUrls={mediaList.map(_ => _.media_url)}
-          // threeRowHeight={isTabletOrMobile ? "30px" : "80px"}
-          // twoRowHeight={isTabletOrMobile ? "50px" : "100px"}
-          // oneRowHeight={isTabletOrMobile ? "150px" : "220px"}
-          // forLinkPreview={false}
           onMediaClick={i => {
             props.onSelectOwnedMedia(mediaList[i])
           }}

@@ -68,13 +68,7 @@ export default (props: Props) => {
         {
           !deleted && nestedComment.media_urls.length > 0 &&
           <div>
-            <MediaPane
-              mediaUrls={[nestedComment.media_urls[0]]}
-              // oneRowHeight='200px'
-              // twoRowHeight=''
-              // threeRowHeight=''
-              // forCommentPreview={true}
-            />
+            <MediaPane mediaUrls={[nestedComment.media_urls[0]]}/>
           </div>
         }
         <span className="post-nested-comment-time">{timePosted(nestedComment.created_at_seconds)}</span>
