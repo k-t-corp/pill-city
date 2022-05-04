@@ -1,51 +1,74 @@
-import React from "react";
-import OwnedMedia from "../OwnedMedia/OwnedMedia";
-import OwnedMediaModel from "../../models/OwnedMedia"
+import React, {useState} from "react";
+import OwnedMedia from "./OwnedMedia";
+import Media from "../../models/Media"
+import UploadMedia from "./UploadMedia";
+import MyMediaSet from "./MyMediaSet";
 import './AddMedia.css'
+import PublicMediaSets from "./PublicMediaSets";
 
 interface Props {
   onChangeMedias: (arg0: FileList) => void
-  onSelectOwnedMedia: (m: OwnedMediaModel) => void
+  onSelectOwnedMedia: (m: Media) => void
   onClose: () => void
 }
 
 export default (props: Props) => {
-  const onDrop = (e: any) => {
-    e.preventDefault()
-    props.onChangeMedias(e.dataTransfer.files)
-    props.onClose()
-  }
-
-  const onChange = (e: any) => {
-    e.preventDefault()
-    props.onChangeMedias(e.target.files)
-    props.onClose()
-  }
+  const [showingTab, updateShowingTab] = useState(0)
 
   return (
     <>
-      <OwnedMedia onSelectOwnedMedia={m => {
-        props.onSelectOwnedMedia(m)
-        props.onClose()
-      }}/>
-      <div className='new-post-media-divider'>OR</div>
-      <label
-        htmlFor='upload'
-        className='new-post-media-drop-zone'
-        onDragOver={(e: any) => {e.preventDefault()}}
-        onDragEnter={(e: any) => {e.preventDefault()}}
-        onDragLeave={(e: any) => {e.preventDefault()}}
-        onDrop={onDrop}
-      >
-        Drop or click here to upload media
-      </label>
-      <input
-        id='upload'
-        accept="image/*"
-        type="file"
-        onChange={onChange}
-        multiple={true}
-      />
+      <div className='add-media-tabs'>
+        <div
+          className={'add-media-tab' + (showingTab === 0 ? ' add-media-tab-selected' : '')}
+          onClick={() => {updateShowingTab(0)}}
+        >Upload new media</div>
+        <div
+          className={'add-media-tab' + (showingTab === 1 ? ' add-media-tab-selected' : '')}
+          onClick={() => {updateShowingTab(1)}}
+        >Use uploaded media</div>
+        <div
+          className={'add-media-tab' + (showingTab === 2 ? ' add-media-tab-selected' : '')}
+          onClick={() => {updateShowingTab(2)}}
+        >My sticker pack</div>
+        <div
+          className={'add-media-tab' + (showingTab === 3 ? ' add-media-tab-selected' : '')}
+          onClick={() => {updateShowingTab(3)}}
+        >Public sticker packs</div>
+      </div>
+      <div>
+        {showingTab === 0 &&
+          <UploadMedia
+            onChangeMedias={props.onChangeMedias}
+            onClose={props.onClose}
+          />
+        }
+        {showingTab === 1 &&
+          <OwnedMedia
+            selectMediaOp={'Use'}
+            onSelectOwnedMedia={m => {
+              props.onSelectOwnedMedia(m)
+              props.onClose()
+            }}
+          />
+        }
+        {showingTab === 2 &&
+          <MyMediaSet
+            onSelectMedia={m => {
+              props.onSelectOwnedMedia(m)
+              props.onClose()
+            }}
+          />
+        }
+        {
+          showingTab === 3 &&
+            <PublicMediaSets
+              onSelectMedia={m => {
+                props.onSelectOwnedMedia(m)
+                props.onClose()
+              }}
+            />
+        }
+      </div>
     </>
   )
 }

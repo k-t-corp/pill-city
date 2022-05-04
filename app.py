@@ -27,6 +27,7 @@ from pillcity.resources.notifications import Notifications, NotificationRead, No
 from pillcity.resources.invitations_codes import InvitationCode, InvitationCodes, ClearMediaUrlCache
 from pillcity.resources.link_preview import LinkPreview
 from pillcity.resources.password_reset import ForgetPassword, ResetPassword
+from pillcity.resources.media_sets import MediaSets, MediaSetName, MediaSetPublic, MediaSetMedia, MediaSet
 from pillcity.utils.now_ms import now_seconds
 
 # sentry
@@ -211,7 +212,7 @@ def _rss_notifications(user_id: str):
 
 
 # api
-api = Api(app, errors={
+errors = {
     'UnauthorizedAccess': {
         'status': 401,
     },
@@ -220,8 +221,12 @@ api = Api(app, errors={
     },
     'NotFound': {
         'status': 404,
+    },
+    'Conflict': {
+        'status': 409
     }
-})
+}
+api = Api(app, errors=errors)
 
 api.add_resource(MyAvatar, '/api/me/avatar')
 api.add_resource(MyProfilePic, '/api/me/profilePic/<string:user_profile_pic>')
@@ -270,6 +275,12 @@ api.add_resource(ForgetPassword, '/api/forgetPassword')
 api.add_resource(ResetPassword, '/api/resetPassword')
 
 api.add_resource(MyRssToken, '/api/rssToken')
+
+api.add_resource(MediaSets, '/api/mediaSets')
+api.add_resource(MediaSetName, '/api/mediaSet/<string:media_set_id>/name')
+api.add_resource(MediaSetPublic, '/api/mediaSet/<string:media_set_id>/public')
+api.add_resource(MediaSetMedia, '/api/mediaSet/<string:media_set_id>/media')
+api.add_resource(MediaSet, '/api/mediaSet/<string:media_set_id>')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

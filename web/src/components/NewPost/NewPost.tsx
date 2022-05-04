@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react'
 import {Dropdown, Popup, Icon, Checkbox} from 'semantic-ui-react'
 import FormData from "form-data";
-import {useMediaQuery} from "react-responsive";
 import {useHotkeys} from "react-hotkeys-hook";
 import parseContent from "../../utils/parseContent";
-import MediaPreview from "../MediaPreview/MediaPreview";
+import MediaPane from "../MediaPane/MediaPane";
 import parseMentioned from "../../utils/parseMentioned";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
@@ -19,7 +18,7 @@ import MyModal from "../MyModal/MyModal";
 import AddMedia from "../AddMedia/AddMedia";
 import api from "../../api/Api";
 import "./NewPost.css"
-import OwnedMedia from "../../models/OwnedMedia";
+import Media from "../../models/Media";
 
 interface Props {
   beforePosting: () => void
@@ -38,12 +37,11 @@ export default (props: Props) => {
   const [circleIds, updateCircleIds] = useState<CircleIdOrPublic[]>([])
   const [resharable, updateResharable] = useState(true)
   const [medias, updateMedias] = useState<File[]>([])
-  const [ownedMedias, updateOwnedMedias] = useState<OwnedMedia[]>([])
+  const [ownedMedias, updateOwnedMedias] = useState<Media[]>([])
   const [mediaOpened, updateMediaOpened] = useState(false)
 
   const [posting, updatePosting] = useState(false)
 
-  const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
   const {addToast, removeToast} = useToast()
 
   useEffect(() => {
@@ -108,7 +106,7 @@ export default (props: Props) => {
         props.resharePostData === null ? null : props.resharePostData.id,
         props.resharePostData === null ? mediaData : [],
         parseMentioned(content),
-        ownedMedias.map(_ => _.objectName)
+        ownedMedias.map(_ => _.object_name)
       );
     } catch (e) {
       if (e instanceof ApiError) {
@@ -204,12 +202,7 @@ export default (props: Props) => {
         </div>
       }
       {props.resharePostData === null &&
-        <MediaPreview
-          mediaUrls={medias.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.mediaUrl))}
-          threeRowHeight={isTabletOrMobile ? "30px" : "80px"}
-          twoRowHeight={isTabletOrMobile ? "50px" : "100px"}
-          oneRowHeight={isTabletOrMobile ? "80px" : "140px"}
-        />
+        <MediaPane mediaUrls={medias.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.media_url))}/>
       }
       <div className="new-post-text-box-container">
         {props.resharePostData === null &&
@@ -229,7 +222,7 @@ export default (props: Props) => {
               <AddMedia
                 onChangeMedias={onChangeMedias}
                 onSelectOwnedMedia={m => {
-                  updateOwnedMedias([m])
+                  updateOwnedMedias(ownedMedias.concat([m]))
                 }}
                 onClose={() => {updateMediaOpened(false)}}
               />

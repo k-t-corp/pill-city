@@ -1,5 +1,5 @@
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
-import MediaPreview from "../MediaPreview/MediaPreview";
+import MediaPane from "../MediaPane/MediaPane";
 import React, {useState} from "react";
 import User from "../../models/User";
 import {useHotkeys} from "react-hotkeys-hook";
@@ -15,7 +15,7 @@ import './CommentBox.css'
 import {PhotographIcon} from "@heroicons/react/solid";
 import AddMedia from "../AddMedia/AddMedia";
 import MyModal from "../MyModal/MyModal";
-import OwnedMediaModel from "../../models/OwnedMedia";
+import Media from "../../models/Media";
 
 interface Props {
   me: User,
@@ -32,7 +32,7 @@ export default (props: Props) => {
   const {content, updateContent} = props
   const [posting, updatePosting] = useState(false)
   const [medias, updateMedias] = useState<File[]>([])
-  const [ownedMedias, updateOwnedMedias] = useState<OwnedMediaModel[]>([])
+  const [ownedMedias, updateOwnedMedias] = useState<Media[]>([])
   const [mediaOpened, updateMediaOpened] = useState(false)
 
   const { addToast } = useToast()
@@ -91,7 +91,7 @@ export default (props: Props) => {
           props.replyingToComment.id,
           parseMentioned(content),
           mediaData,
-          ownedMedias.map(_ => _.objectName)
+          ownedMedias.map(_ => _.object_name)
         )
         props.addNestedComment(newNestedComment)
       } catch (e) {
@@ -108,7 +108,7 @@ export default (props: Props) => {
           props.post.id,
           parseMentioned(content),
           mediaData,
-          ownedMedias.map(_ => _.objectName)
+          ownedMedias.map(_ => _.object_name)
         )
         props.addComment(newComment)
       } catch (e) {
@@ -171,12 +171,7 @@ export default (props: Props) => {
       </div>
       {
         (medias.length + ownedMedias.length) > 0 &&
-          <MediaPreview
-            mediaUrls={medias.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.mediaUrl))}
-            oneRowHeight='300px'
-            twoRowHeight=''
-            threeRowHeight=''
-          />
+          <MediaPane mediaUrls={medias.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.media_url))}/>
       }
       <div className="post-comment-box-buttons">
         <div

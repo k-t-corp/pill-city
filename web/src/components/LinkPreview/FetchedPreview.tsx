@@ -1,8 +1,6 @@
 import React, {useState} from 'react'
 import {useInterval} from "react-interval-hook";
 import LinkPreview from "../../models/LinkPreview";
-import MediaPreview from "../MediaPreview/MediaPreview";
-import {useMediaQuery} from "react-responsive";
 import summary from "../../utils/summary";
 import api from '../../api/Api'
 import './FetchedPreview.css'
@@ -14,7 +12,6 @@ interface Props {
 
 export default (props: Props) => {
   const [preview, updatePreview] = useState<LinkPreview | null>(null)
-  const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
 
   useInterval(async () => {
     if (preview === null || preview.state === 'fetching') {
@@ -38,28 +35,29 @@ export default (props: Props) => {
     )
   } else {
     return (
-      <>
+      <div onClick={props.onClick}>
         {
           (preview.image_urls || []).length !== 0 &&
-            <MediaPreview
-              mediaUrls={preview.image_urls}
-              threeRowHeight={isTabletOrMobile ? "30px" : "80px"}
-              twoRowHeight={isTabletOrMobile ? "50px" : "100px"}
-              oneRowHeight={isTabletOrMobile ? "150px" : "220px"}
-              forLinkPreview={true}
-            />
+            <div className='fetched-preview-image-container'>
+              <img
+                className='fetched-preview-image'
+                // TODO: we assume we only have one preview image for now
+                src={preview.image_urls[0]}
+                alt={''}
+              />
+            </div>
+
         }
         {
           (preview.title || preview.subtitle) &&
             <div
-              onClick={props.onClick}
               className={preview.image_urls.length === 0 ? "fetched-preview" : "fetched-preview fetched-preview-with-image"}
             >
               <div className='fetched-preview-title'>{summary(preview.title, 100)}</div>
               <div className='fetched-preview-subtitle'>{summary(preview.subtitle, 150)}</div>
             </div>
         }
-      </>
+      </div>
     )
   }
 }

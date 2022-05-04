@@ -12,8 +12,9 @@ def get_media_page(owner: User, page_number: int, page_count: int) -> List[Media
     """
     Get a page of media items owned by a user, reverse chronologically ordered
     """
-    return Media.objects(owner=owner)\
-        .order_by('-created_at', '+id').skip(page_number * page_count).limit(page_count)
+    return list(
+        Media.objects(owner=owner).order_by('-created_at', '+id').skip(page_number * page_count).limit(page_count)
+    )
 
 
 def create_media(file, object_name_stem: str, owner: User) -> Optional[Media]:

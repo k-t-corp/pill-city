@@ -1,0 +1,48 @@
+/* Media Pane */
+.media-pane-container {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: flex;
+}
+
+.media-pane {
+    flex-grow: 1;
+    flex-basis: 0;
+    margin: 3px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+}
+
+.media-pane-img {
+    object-fit: cover;
+    width: 100%;
+    border-radius: 4px;
+}
+
+.media-op-container {
+    display: flex;
+}
+
+.media-op {
+    flex-grow: 1;
+    flex-basis: 0;
+    padding: 2px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    font-size: small;
+    text-align: center;
+}
+
+.media-op:hover {
+    cursor: pointer;
+}
+
+.media-modal-container {
+    display: flex;
+    justify-content: center;
+}
+
+.media-modal-img {
+    height: 600px;
+    border-radius: 4px;
+}

@@ -1,22 +1,21 @@
-.new-post-media-divider {
-    margin-top: 10px;
-    margin-bottom: 10px;
-    font-size: large;
-    text-align: center;
-    color: #505050;
+.add-media-tabs {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 12px;
 }
 
-.new-post-media-drop-zone {
-    display: block;
-    background-color: #f0f0f0;
-    width: 100%;
-    padding: 40px;
-    text-align: center;
+.add-media-tab {
+    margin-right: 12px;
+    padding: 6px;
     color: #838383;
-    font-size: xx-large;
-    border-radius: 4px;
+    font-weight: bold;
 }
 
-.new-post-media-drop-zone:hover {
+.add-media-tab:hover {
     cursor: pointer;
+}
+
+.add-media-tab-selected {
+    color: #0d71bb;
+    border-bottom: 2px solid #0d71bb;
 }

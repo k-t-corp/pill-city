@@ -4,7 +4,7 @@ import json
 import werkzeug
 import uuid
 from typing import List
-from flask_restful import reqparse, Resource, fields
+from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from pillcity.models.media import Media
 from pillcity.daos.media import get_media, create_media, get_media_page
@@ -23,8 +23,7 @@ GetMediaPageCount = 4
 # "mediaUrl" -> object_name -> "media url"(space)"media url generated time in ms"
 
 @timer
-def get_media_url(media: Media):
-    object_name = media.id
+def get_media_url(object_name: str):
     # subtract expiry by 10 seconds for some network overhead
     r_media_url = r.hget(RMediaUrl, object_name)
     if r_media_url:
@@ -74,7 +73,7 @@ def get_media_url(media: Media):
     # get pre-signed url
     media_url = temp_s3_client.generate_presigned_url(
         ClientMethod='get_object',
-        Params={'Bucket': s3_bucket_name, 'Key': media.id},
+        Params={'Bucket': s3_bucket_name, 'Key': object_name},
         ExpiresIn=PostMediaUrlExpireSeconds
     )
 
@@ -82,11 +81,22 @@ def get_media_url(media: Media):
     return media_url
 
 
+class MediaUrl(fields.Raw):
+    def format(self, object_name: str):
+        return get_media_url(object_name)
+
+
 class MediaUrls(fields.Raw):
-    def format(self, media_list):
+    def format(self, media_list: List[Media]):
         if not media_list:
             return []
-        return list(map(get_media_url, media_list))
+        return list(map(lambda m: get_media_url(m.id), media_list))
+
+
+media_fields = {
+    "object_name": fields.String(attribute='id'),
+    "media_url": MediaUrl(attribute='id')
+}
 
 
 post_media_parser = reqparse.RequestParser()
@@ -124,6 +134,7 @@ class Media(Resource):
         return media_object_names, 201
 
     @jwt_required()
+    @marshal_with(media_fields)
     def get(self):
         user_id = get_jwt_identity()
         user = find_user(user_id)
@@ -135,13 +146,7 @@ class Media(Resource):
         if page_number < 1:
             return {'msg': f'Invalid page number'}, 400
 
-        def _media(media: Media):
-            return {
-                "objectName": media.id,
-                "mediaUrl": get_media_url(media)
-            }
-
-        return list(map(_media, get_media_page(user, page_number - 1, GetMediaPageCount)))
+        return get_media_page(user, page_number - 1, GetMediaPageCount), 200
 
 
 def check_media_object_names(media_object_names: List[str], limit: int) -> List[Media]:

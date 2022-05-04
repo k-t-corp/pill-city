@@ -707,6 +707,92 @@ export class Api {
     }
     return res.data
   }
+
+  async createMyMediaSet() {
+    const res = await this.axiosInstance.post(
+      `/mediaSets`,
+      {
+        name: 'default'
+      }
+    )
+    if (res.status !== 201) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
+
+  async getMyMediaSet() {
+    const res = await this.axiosInstance.get(
+      `/mediaSets?mine=1`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    if (res.data.length === 0) {
+      return null
+    }
+    return res.data[0]
+  }
+
+  async getPublicMediaSets() {
+    const res = await this.axiosInstance.get(
+      `/mediaSets?mine=0`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
+
+  async makeMyMediaSetPublic() {
+    const defaultMediaSetId = (await this.getMyMediaSet()).id
+    const res = await this.axiosInstance.patch(
+      `/mediaSet/${defaultMediaSetId}/public`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
+
+  async addMediaToMyMediaSet(objectName) {
+    const defaultMediaSetId = (await this.getMyMediaSet()).id
+    const res = await this.axiosInstance.post(
+      `/mediaSet/${defaultMediaSetId}/media`,
+      { object_name: objectName }
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
+
+  async removeMediaFromMyMediaSet(objectName) {
+    const defaultMediaSetId = (await this.getMyMediaSet()).id
+    const res = await this.axiosInstance.delete(
+      `/mediaSet/${defaultMediaSetId}/media`,
+      {
+        data: {
+          object_name: objectName
+        }
+      }
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
+
+  async deleteMyMediaSet() {
+    const defaultMediaSetId = (await this.getMyMediaSet()).id
+    const res = await this.axiosInstance.delete(
+      `/mediaSet/${defaultMediaSetId}`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
 }
 
 const api = new Api(process.env.REACT_APP_API_ENDPOINT)
