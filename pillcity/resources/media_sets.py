@@ -80,10 +80,7 @@ class MediaSetMedia(Resource):
         object_name = args['object_name']
         m = get_media(object_name)
 
-        if add_media_to_media_set(user, ms, m):
-            return {'msg': 'Added'}, 201
-        else:
-            return {'msg': 'Media already exists in sticker pack'}, 409
+        add_media_to_media_set(user, ms, m)
 
     @jwt_required()
     def delete(self, media_set_id: str):
