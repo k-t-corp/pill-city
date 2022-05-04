@@ -3,6 +3,7 @@ import React, {useState} from "react";
 import LinkPreview from "../LinkPreview/LinkPreview";
 import {Previewable} from "../../models/Post";
 import './Previews.css'
+import MyModal from "../MyModal/MyModal";
 
 // https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
 const regExForUrl = /(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*))/g
@@ -29,14 +30,10 @@ export default (props: Props) => {
   }
 
   const previewElems = []
-
   if (mediaUrls.length > 0) {
     previewElems.push(
       <MediaPane
         mediaUrls={mediaUrls}
-        // threeRowHeight="130px"
-        // twoRowHeight="150px"
-        // oneRowHeight={isTabletOrMobile ? "200px" : "280px"}
       />
     )
   }

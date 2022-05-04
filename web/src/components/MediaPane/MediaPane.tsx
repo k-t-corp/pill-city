@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
-import {useHotkeys} from "react-hotkeys-hook";
 import "./MediaPane.css"
+import MyModal from "../MyModal/MyModal";
 
 interface Props {
   mediaUrls: string[]
   onMediaClick?: (i: number) => void
+  heightPx?: number
 }
 
 export default (props: Props) => {
@@ -12,66 +13,56 @@ export default (props: Props) => {
   if (mediaCount === 0) {
     return null
   }
-
-  const [mediaOpenedIndex, updateMediaOpenedIndex] = useState(-1)
-
-  const openMedia = (index: number) => {
-    updateMediaOpenedIndex(index)
-  }
-
-  const dismissOpenedMedia = () => {
-    updateMediaOpenedIndex(-1)
-  }
-
-  useHotkeys('esc', () => {
-    dismissOpenedMedia()
-  })
-
-  let widthPerPreview = "31%"
-  if (mediaCount === 2 || mediaCount === 4) {
-    widthPerPreview = "46%"
-  } else if (mediaCount === 1) {
-    widthPerPreview = "100%"
-  }
+  const [modalMediaIndex, updateModalMediaIndex] = useState(-1)
+  const height = props.heightPx ? `${props.heightPx}px` : '300px'
 
   let mediaList = []
   for (let i = 0; i < mediaCount; i++) {
     const mediaUrl = props.mediaUrls[i]
     mediaList.push(
       <div
-        // className={!forLinkPreview ? "media-preview" : "media-preview media-preview-for-link-preview"}
+        className='media-pane'
         key={i}
-        style={{
-          width: widthPerPreview,
-          // height: heightPerPreview,
-        }}
         onClick={e => {
           e.preventDefault()
           if (props.onMediaClick) {
             props.onMediaClick(i)
           } else {
-            openMedia(i)
+            updateModalMediaIndex(i)
           }
         }}
       >
         <img
-          // className={!forLinkPreview ? "media-preview-img" : "media-preview-img media-preview-img-for-link-preview"}
-          src={mediaUrl} alt=""
+          className='media-pane-img'
+          src={mediaUrl}
+          alt={""}
         />
       </div>
     )
   }
 
   return (
-    <div
-      // className={!forLinkPreview ? "media-preview-container" : "media-preview-container media-preview-container-for-link-preview"}
-    >
-      {mediaList}
-      {
-        mediaOpenedIndex !== -1 &&
-        <div className="media-preview-full" onClick={dismissOpenedMedia}>
-          <img className="media-preview-full-img" src={props.mediaUrls[mediaOpenedIndex]} alt=""/>
+    <>
+      <div
+        className='media-pane-container'
+        style={{height}}
+      >
+        {mediaList}
+      </div>
+      <MyModal
+        isOpen={modalMediaIndex !== -1}
+        onClose={() => {
+          updateModalMediaIndex(-1)
+        }}
+      >
+        <div className='media-modal-container'>
+          <img
+            className='media-modal-img'
+            src={props.mediaUrls[modalMediaIndex]}
+            alt={""}
+          />
         </div>
-      }
-    </div>)
+      </MyModal>
+    </>
+  )
 }
