@@ -4,6 +4,7 @@ import Media from "../../models/Media"
 import UploadMedia from "./UploadMedia";
 import MyMediaSet from "./MyMediaSet";
 import './AddMedia.css'
+import PublicMediaSets from "./PublicMediaSets";
 
 interface Props {
   onChangeMedias: (arg0: FileList) => void
@@ -57,6 +58,15 @@ export default (props: Props) => {
               props.onClose()
             }}
           />
+        }
+        {
+          showingTab === 3 &&
+            <PublicMediaSets
+              onSelectMedia={m => {
+                props.onSelectOwnedMedia(m)
+                props.onClose()
+              }}
+            />
         }
       </div>
     </>

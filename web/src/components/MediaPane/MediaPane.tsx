@@ -35,19 +35,19 @@ export default (props: Props) => {
         className='media-pane'
         style={{height, cursor: isPlaceholder ? 'auto' : 'pointer'}}
         key={i}
-        onClick={e => {
-          e.preventDefault()
-          if (isPlaceholder) {
-            return
-          }
-          updateModalMediaIndex(i)
-        }}
       >
         <img
           className='media-pane-img'
           style={{height: !isPlaceholder && props.mediaOperations ? '86%' : '100%'}}
           src={mediaUrl}
           alt={""}
+          onClick={e => {
+            e.preventDefault()
+            if (isPlaceholder) {
+              return
+            }
+            updateModalMediaIndex(i)
+          }}
         />
         {props.mediaOperations && !isPlaceholder &&
           <div className='media-op-container'>
