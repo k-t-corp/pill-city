@@ -30,7 +30,7 @@ export default (props: Props) => {
   }
 
   if (mediaSets.length === 0) {
-    return <div>No public media set</div>
+    return <div>No public sticker packs</div>
   }
 
   return (
