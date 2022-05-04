@@ -2,7 +2,7 @@ import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
 import timePosted from "../../utils/timePosted";
 import parseContent from "../../utils/parseContent";
-import MediaPreview from "../MediaPreview/MediaPreview";
+import MediaPane from "../MediaPane/MediaPane";
 import React, {useState} from "react";
 import {Comment} from "../../models/Post";
 import User from "../../models/User";
@@ -92,12 +92,12 @@ export default (props: Props) => {
           {
             !deleted && comment.media_urls.length > 0 &&
             <div>
-              <MediaPreview
+              <MediaPane
                 mediaUrls={[comment.media_urls[0]]}
-                oneRowHeight='200px'
-                twoRowHeight=''
-                threeRowHeight=''
-                forCommentPreview={true}
+                // oneRowHeight='200px'
+                // twoRowHeight=''
+                // threeRowHeight=''
+                // forCommentPreview={true}
               />
             </div>
           }

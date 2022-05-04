@@ -1,5 +1,5 @@
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
-import MediaPreview from "../MediaPreview/MediaPreview";
+import MediaPane from "../MediaPane/MediaPane";
 import React, {useState} from "react";
 import User from "../../models/User";
 import {useHotkeys} from "react-hotkeys-hook";
@@ -171,11 +171,11 @@ export default (props: Props) => {
       </div>
       {
         (medias.length + ownedMedias.length) > 0 &&
-          <MediaPreview
+          <MediaPane
             mediaUrls={medias.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.media_url))}
-            oneRowHeight='300px'
-            twoRowHeight=''
-            threeRowHeight=''
+            // oneRowHeight='300px'
+            // twoRowHeight=''
+            // threeRowHeight=''
           />
       }
       <div className="post-comment-box-buttons">

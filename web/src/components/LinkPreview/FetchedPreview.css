@@ -16,6 +16,20 @@
     border-radius: 0 0 4px 4px;
 }
 
+.fetched-preview-image-container {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px 4px 0 0;
+    height: 200px;
+    cursor: pointer;
+}
+
+.fetched-preview-image {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px 4px 0 0;
+}
+
 .fetched-preview-title {
     font-size: large;
     overflow-wrap: break-word;

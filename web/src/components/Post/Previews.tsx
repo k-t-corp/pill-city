@@ -1,8 +1,7 @@
-import MediaPreview from "../MediaPreview/MediaPreview";
+import MediaPane from "../MediaPane/MediaPane";
 import React, {useState} from "react";
 import LinkPreview from "../LinkPreview/LinkPreview";
 import {Previewable} from "../../models/Post";
-import {useMediaQuery} from "react-responsive";
 import './Previews.css'
 
 // https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
@@ -29,17 +28,15 @@ export default (props: Props) => {
     return null
   }
 
-  const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
-
   const previewElems = []
 
   if (mediaUrls.length > 0) {
     previewElems.push(
-      <MediaPreview
+      <MediaPane
         mediaUrls={mediaUrls}
-        threeRowHeight="130px"
-        twoRowHeight="150px"
-        oneRowHeight={isTabletOrMobile ? "200px" : "280px"}
+        // threeRowHeight="130px"
+        // twoRowHeight="150px"
+        // oneRowHeight={isTabletOrMobile ? "200px" : "280px"}
       />
     )
   }

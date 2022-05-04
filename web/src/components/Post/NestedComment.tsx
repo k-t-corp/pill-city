@@ -1,7 +1,7 @@
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
 import parseContent from "../../utils/parseContent";
-import MediaPreview from "../MediaPreview/MediaPreview";
+import MediaPane from "../MediaPane/MediaPane";
 import timePosted from "../../utils/timePosted";
 import React, {useState} from "react";
 import Post, {NestedComment, Comment} from "../../models/Post";
@@ -68,12 +68,12 @@ export default (props: Props) => {
         {
           !deleted && nestedComment.media_urls.length > 0 &&
           <div>
-            <MediaPreview
+            <MediaPane
               mediaUrls={[nestedComment.media_urls[0]]}
-              oneRowHeight='200px'
-              twoRowHeight=''
-              threeRowHeight=''
-              forCommentPreview={true}
+              // oneRowHeight='200px'
+              // twoRowHeight=''
+              // threeRowHeight=''
+              // forCommentPreview={true}
             />
           </div>
         }

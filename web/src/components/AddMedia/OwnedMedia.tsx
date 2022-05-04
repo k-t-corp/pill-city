@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {useMediaQuery} from "react-responsive";
 import api from "../../api/Api";
-import MediaPreview from "../MediaPreview/MediaPreview";
+import MediaPane from "../MediaPane/MediaPane";
 import Media from "../../models/Media"
 import {ChevronDoubleLeftIcon} from "@heroicons/react/solid";
 import {ChevronDoubleRightIcon} from "@heroicons/react/solid";
@@ -45,12 +45,12 @@ export default (props: Props) => {
         <ChevronDoubleLeftIcon className='owned-media-nav-icon'/>
       </div>
       <div className='owned-media-preview-container'>
-        <MediaPreview
+        <MediaPane
           mediaUrls={mediaList.map(_ => _.media_url)}
-          threeRowHeight={isTabletOrMobile ? "30px" : "80px"}
-          twoRowHeight={isTabletOrMobile ? "50px" : "100px"}
-          oneRowHeight={isTabletOrMobile ? "150px" : "220px"}
-          forLinkPreview={false}
+          // threeRowHeight={isTabletOrMobile ? "30px" : "80px"}
+          // twoRowHeight={isTabletOrMobile ? "50px" : "100px"}
+          // oneRowHeight={isTabletOrMobile ? "150px" : "220px"}
+          // forLinkPreview={false}
           onMediaClick={i => {
             props.onSelectOwnedMedia(mediaList[i])
           }}

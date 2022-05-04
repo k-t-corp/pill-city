@@ -4,7 +4,7 @@ import FormData from "form-data";
 import {useMediaQuery} from "react-responsive";
 import {useHotkeys} from "react-hotkeys-hook";
 import parseContent from "../../utils/parseContent";
-import MediaPreview from "../MediaPreview/MediaPreview";
+import MediaPane from "../MediaPane/MediaPane";
 import parseMentioned from "../../utils/parseMentioned";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
@@ -204,11 +204,11 @@ export default (props: Props) => {
         </div>
       }
       {props.resharePostData === null &&
-        <MediaPreview
+        <MediaPane
           mediaUrls={medias.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.media_url))}
-          threeRowHeight={isTabletOrMobile ? "30px" : "80px"}
-          twoRowHeight={isTabletOrMobile ? "50px" : "100px"}
-          oneRowHeight={isTabletOrMobile ? "80px" : "140px"}
+          // threeRowHeight={isTabletOrMobile ? "30px" : "80px"}
+          // twoRowHeight={isTabletOrMobile ? "50px" : "100px"}
+          // oneRowHeight={isTabletOrMobile ? "80px" : "140px"}
         />
       }
       <div className="new-post-text-box-container">

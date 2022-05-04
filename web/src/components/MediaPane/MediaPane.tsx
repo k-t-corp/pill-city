@@ -1,20 +1,13 @@
 import React, {useState} from 'react';
 import {useHotkeys} from "react-hotkeys-hook";
-import "./MediaPreview.css"
+import "./MediaPane.css"
 
 interface Props {
   mediaUrls: string[]
-  oneRowHeight: string
-  twoRowHeight: string
-  threeRowHeight: string
-  forLinkPreview?: boolean
-  forCommentPreview?: boolean
   onMediaClick?: (i: number) => void
 }
 
 export default (props: Props) => {
-  // todo: pretty hack that only works for link previews with one image...
-  const forLinkPreview = props.forLinkPreview !== undefined ? props.forLinkPreview : false
   const mediaCount = props.mediaUrls.length
   if (mediaCount === 0) {
     return null
@@ -41,29 +34,16 @@ export default (props: Props) => {
     widthPerPreview = "100%"
   }
 
-  if (props.forCommentPreview) {
-    widthPerPreview = "300px"
-  }
-
-  let heightPerPreview
-  if (mediaCount <= 3) {
-    heightPerPreview = props.oneRowHeight
-  } else if (mediaCount <= 6) {
-    heightPerPreview = props.twoRowHeight
-  } else if (mediaCount <= 9) {
-    heightPerPreview = props.threeRowHeight
-  }
-
-  let mediaPreviewElems = []
+  let mediaList = []
   for (let i = 0; i < mediaCount; i++) {
     const mediaUrl = props.mediaUrls[i]
-    mediaPreviewElems.push(
+    mediaList.push(
       <div
-        className={!forLinkPreview ? "media-preview" : "media-preview media-preview-for-link-preview"}
+        // className={!forLinkPreview ? "media-preview" : "media-preview media-preview-for-link-preview"}
         key={i}
         style={{
           width: widthPerPreview,
-          height: heightPerPreview,
+          // height: heightPerPreview,
         }}
         onClick={e => {
           e.preventDefault()
@@ -75,7 +55,7 @@ export default (props: Props) => {
         }}
       >
         <img
-          className={!forLinkPreview ? "media-preview-img" : "media-preview-img media-preview-img-for-link-preview"}
+          // className={!forLinkPreview ? "media-preview-img" : "media-preview-img media-preview-img-for-link-preview"}
           src={mediaUrl} alt=""
         />
       </div>
@@ -84,9 +64,9 @@ export default (props: Props) => {
 
   return (
     <div
-      className={!forLinkPreview ? "media-preview-container" : "media-preview-container media-preview-container-for-link-preview"}
+      // className={!forLinkPreview ? "media-preview-container" : "media-preview-container media-preview-container-for-link-preview"}
     >
-      {mediaPreviewElems}
+      {mediaList}
       {
         mediaOpenedIndex !== -1 &&
         <div className="media-preview-full" onClick={dismissOpenedMedia}>
