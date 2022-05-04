@@ -1,19 +1,16 @@
-.owned-media-container {
+.owned-media-nav-buttons {
     display: flex;
-    flex-direction: row;
-    justify-content: center;
-}
-
-.owned-media-preview-container {
-    margin-left: 10px;
-    margin-right: 10px;
+    justify-content: space-evenly;
 }
 
 .owned-media-nav-button {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     background-color: #f0f0f0;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    margin-left: 6px;
+    margin-right: 6px;
 }
 
 .owned-media-nav-button:hover {
@@ -23,6 +20,5 @@
 .owned-media-nav-icon {
     width: 30px;
     padding: 5px;
-    cursor: pointer;
     color: #505050;
 }

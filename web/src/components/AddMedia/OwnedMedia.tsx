@@ -27,43 +27,47 @@ export default (props: Props) => {
   }
 
   return (
-    <div className='owned-media-container'>
-      <div
-        className='owned-media-nav-button'
-        style={{
-          visibility: page > 1 ? 'visible' : 'hidden'
+    <div>
+      <MediaPane
+        mediaUrls={mediaList.map(_ => _.media_url)}
+        onMediaClick={i => {
+          props.onSelectOwnedMedia(mediaList[i])
         }}
-        onClick={async () => {
-          updateLoading(true)
-          updateMediaList(await api.getOwnedMedia(page - 1))
-          updateLoading(false)
-          updatePage(page - 1)
-        }}
-      >
-        <ChevronDoubleLeftIcon className='owned-media-nav-icon'/>
-      </div>
-      <div className='owned-media-preview-container'>
-        <MediaPane
-          mediaUrls={mediaList.map(_ => _.media_url)}
-          onMediaClick={i => {
-            props.onSelectOwnedMedia(mediaList[i])
+        usePlaceholder={true}
+      />
+      <div className='owned-media-nav-buttons'>
+        <div
+          className='owned-media-nav-button'
+          style={{visibility: page === 1 ? 'hidden' : 'visible'}}
+          onClick={async e => {
+            e.preventDefault()
+            if (page === 1) {
+              return
+            }
+            updateLoading(true)
+            updateMediaList(await api.getOwnedMedia(page - 1))
+            updateLoading(false)
+            updatePage(page - 1)
           }}
-          usePlaceholder={true}
-        />
-      </div>
-      <div
-        className='owned-media-nav-button'
-        style={{
-          visibility: mediaList.length == 4 ? 'visible' : 'hidden'
-        }}
-        onClick={async () => {
-          updateLoading(true)
-          updateMediaList(await api.getOwnedMedia(page + 1))
-          updateLoading(false)
-          updatePage(page + 1)
-        }}
-      >
-        <ChevronDoubleRightIcon className='owned-media-nav-icon'/>
+        >
+          <ChevronDoubleLeftIcon className='owned-media-nav-icon'/>
+        </div>
+        <div
+          className='owned-media-nav-button'
+          style={{visibility: mediaList.length !== 4 ? 'hidden' : 'visible'}}
+          onClick={async e => {
+            e.preventDefault()
+            if (mediaList.length !== 4) {
+              return
+            }
+            updateLoading(true)
+            updateMediaList(await api.getOwnedMedia(page + 1))
+            updateLoading(false)
+            updatePage(page + 1)
+          }}
+        >
+          <ChevronDoubleRightIcon className='owned-media-nav-icon'/>
+        </div>
       </div>
     </div>
   )
