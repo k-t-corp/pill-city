@@ -1,8 +1,10 @@
 from flask_restful import Resource, fields, marshal_with, reqparse
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from pillcity.daos.media_set import create_media_set, get_media_sets, get_all_public_media_sets, \
-    make_media_set_public, find_media_set, rename_media_set, delete_media_set
+    make_media_set_public, find_media_set, rename_media_set, delete_media_set, add_media_to_media_set, \
+    remove_media_from_media_set
 from pillcity.daos.user import find_user_or_raise
+from pillcity.daos.media import get_media
 from .users import user_fields
 from .media import media_fields
 
@@ -63,14 +65,34 @@ class MediaSetPublic(Resource):
         make_media_set_public(user, ms)
 
 
+media_set_media_args = reqparse.RequestParser()
+media_set_media_args.add_argument('object_name', type=str, required=True)
+
+
 class MediaSetMedia(Resource):
     @jwt_required()
-    def post(self, media_set_id: str, object_name: str):
-        pass
+    def post(self, media_set_id: str):
+        user_id = get_jwt_identity()
+        user = find_user_or_raise(user_id)
+
+        ms = find_media_set(user, media_set_id)
+        args = media_set_media_args.parse_args()
+        object_name = args['object_name']
+        m = get_media(object_name)
+
+        add_media_to_media_set(user, ms, m)
 
     @jwt_required()
-    def delete(self, media_set_id: str, object_name: str):
-        pass
+    def delete(self, media_set_id: str):
+        user_id = get_jwt_identity()
+        user = find_user_or_raise(user_id)
+
+        ms = find_media_set(user, media_set_id)
+        args = media_set_media_args.parse_args()
+        object_name = args['object_name']
+        m = get_media(object_name)
+
+        remove_media_from_media_set(user, ms, m)
 
 
 class MediaSet(Resource):

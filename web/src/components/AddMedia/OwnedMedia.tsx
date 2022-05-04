@@ -2,8 +2,7 @@ import React, {useEffect, useState} from 'react'
 import api from "../../api/Api";
 import MediaPane from "../MediaPane/MediaPane";
 import Media from "../../models/Media"
-import {ChevronDoubleLeftIcon} from "@heroicons/react/solid";
-import {ChevronDoubleRightIcon} from "@heroicons/react/solid";
+import MediaNavButtons from "../MediaNavButtons/MediaNavButtons";
 import './OwnedMedia.css'
 
 interface Props {
@@ -35,40 +34,22 @@ export default (props: Props) => {
         }}
         usePlaceholder={true}
       />
-      <div className='owned-media-nav-buttons'>
-        <div
-          className='owned-media-nav-button'
-          style={{visibility: page === 1 ? 'hidden' : 'visible'}}
-          onClick={async e => {
-            e.preventDefault()
-            if (page === 1) {
-              return
-            }
-            updateLoading(true)
-            updateMediaList(await api.getOwnedMedia(page - 1))
-            updateLoading(false)
-            updatePage(page - 1)
-          }}
-        >
-          <ChevronDoubleLeftIcon className='owned-media-nav-icon'/>
-        </div>
-        <div
-          className='owned-media-nav-button'
-          style={{visibility: mediaList.length !== 4 ? 'hidden' : 'visible'}}
-          onClick={async e => {
-            e.preventDefault()
-            if (mediaList.length !== 4) {
-              return
-            }
-            updateLoading(true)
-            updateMediaList(await api.getOwnedMedia(page + 1))
-            updateLoading(false)
-            updatePage(page + 1)
-          }}
-        >
-          <ChevronDoubleRightIcon className='owned-media-nav-icon'/>
-        </div>
-      </div>
+      <MediaNavButtons
+        hasPrevious={page !== 1}
+        onPrevious={async () => {
+          updateLoading(true)
+          updateMediaList(await api.getOwnedMedia(page - 1))
+          updateLoading(false)
+          updatePage(page - 1)
+        }}
+        hasNext={mediaList.length === 4}
+        onNext={async () => {
+          updateLoading(true)
+          updateMediaList(await api.getOwnedMedia(page + 1))
+          updateLoading(false)
+          updatePage(page + 1)
+        }}
+      />
     </div>
   )
 }

@@ -5,11 +5,13 @@ import './MyMediaSet.css'
 import MediaPane from "../MediaPane/MediaPane";
 import MyModal from "../MyModal/MyModal";
 import OwnedMedia from "./OwnedMedia";
+import MediaNavButtons from "../MediaNavButtons/MediaNavButtons";
 
 export default () => {
   const [loading, updateLoading] = useState(true)
   const [mediaSet, updateMediaSet] = useState<MediaSet | null>(null)
-  const [addMediaOpened, updateAddMediaOpened] = useState(false)
+  const [mediaSetListIndex, updateMediaSetListIndex] = useState(0)
+  const [addMediaToMediaSetOpened, updateAddMediaToMediaSetOpened] = useState(false)
 
   useEffect(() => {
     (async () => {
@@ -25,12 +27,24 @@ export default () => {
   return (
     <div>
       <MediaPane
-        mediaUrls={mediaSet !== null ? mediaSet.media_list.map(m => m.media_url) : []}
+        mediaUrls={mediaSet !== null ? mediaSet.media_list.slice(mediaSetListIndex * 4, (mediaSetListIndex + 1) * 4).map(m => m.media_url) : []}
         onMediaClick={i => {
           // props.onSelectOwnedMedia(mediaList[i])
         }}
         usePlaceholder={true}
       />
+      {mediaSet !== null &&
+        <MediaNavButtons
+          hasPrevious={mediaSetListIndex !== 0}
+          onPrevious={async () => {
+            updateMediaSetListIndex(mediaSetListIndex - 1)
+          }}
+          hasNext={(mediaSetListIndex + 1) * 4 < mediaSet.media_list.length}
+          onNext={async () => {
+            updateMediaSetListIndex(mediaSetListIndex + 1)
+          }}
+        />
+      }
       <div className='my-media-set-buttons'>
         {mediaSet === null &&
           <div
@@ -49,7 +63,7 @@ export default () => {
             className='my-media-set-button my-media-set-button-confirm'
             onClick={async e => {
               e.preventDefault()
-              updateAddMediaOpened(true)
+              updateAddMediaToMediaSetOpened(true)
             }}
           >Add media to pack</div>
         }
@@ -85,12 +99,12 @@ export default () => {
         }
       </div>
       <MyModal
-        isOpen={addMediaOpened}
-        onClose={() => {updateAddMediaOpened(false)}}
+        isOpen={addMediaToMediaSetOpened}
+        onClose={() => {updateAddMediaToMediaSetOpened(false)}}
       >
         <OwnedMedia
           onSelectOwnedMedia={async m => {
-            updateAddMediaOpened(false)
+            updateAddMediaToMediaSetOpened(false)
             updateLoading(true)
             await api.addMediaToMyMediaSet(m.object_name)
             updateMediaSet(await api.getMyMediaSet())

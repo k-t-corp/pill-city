@@ -55,6 +55,28 @@ def make_media_set_public(self: User, media_set: MediaSet):
     media_set.save()
 
 
+def add_media_to_media_set(self: User, media_set: MediaSet, media: Media):
+    if self != media_set.owner:
+        raise UnauthorizedAccess()
+    if self != media.owner:
+        raise UnauthorizedAccess()
+    if media in media_set.media_list:
+        return
+    media_set.media_list.append(media)
+    media_set.save()
+
+
+def remove_media_from_media_set(self: User, media_set: MediaSet, media: Media):
+    if self != media_set.owner:
+        raise UnauthorizedAccess()
+    if self != media.owner:
+        raise UnauthorizedAccess()
+    if media not in media_set.media_list:
+        return
+    media_set.media_list.remove(media)
+    media_set.save()
+
+
 def get_media_sets(self: User) -> List[MediaSet]:
     return list(reversed(sorted(MediaSet.objects(owner=self), key=lambda ms: ms.created_at)))
 

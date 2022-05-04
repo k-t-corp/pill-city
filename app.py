@@ -27,7 +27,7 @@ from pillcity.resources.notifications import Notifications, NotificationRead, No
 from pillcity.resources.invitations_codes import InvitationCode, InvitationCodes, ClearMediaUrlCache
 from pillcity.resources.link_preview import LinkPreview
 from pillcity.resources.password_reset import ForgetPassword, ResetPassword
-from pillcity.resources.media_sets import MediaSets, MediaSetName, MediaSetPublic, MediaSet
+from pillcity.resources.media_sets import MediaSets, MediaSetName, MediaSetPublic, MediaSetMedia, MediaSet
 from pillcity.utils.now_ms import now_seconds
 
 # sentry
@@ -279,6 +279,7 @@ api.add_resource(MyRssToken, '/api/rssToken')
 api.add_resource(MediaSets, '/api/mediaSets')
 api.add_resource(MediaSetName, '/api/mediaSet/<string:media_set_id>/name')
 api.add_resource(MediaSetPublic, '/api/mediaSet/<string:media_set_id>/public')
+api.add_resource(MediaSetMedia, '/api/mediaSet/<string:media_set_id>/media')
 api.add_resource(MediaSet, '/api/mediaSet/<string:media_set_id>')
 
 if __name__ == '__main__':
