@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default (props: Props) => {
-  if (props.mediaUrls.length === 0) {
+  if (props.mediaUrls.length === 0 && !props.usePlaceholder) {
     return null
   }
 
@@ -22,12 +22,12 @@ export default (props: Props) => {
 
   let mediaList = []
   for (let i = 0; i < mediaCount; i++) {
-    let m
+    let mediaUrl
     let isPlaceholder = false
     if (i < props.mediaUrls.length) {
-      m = props.mediaUrls[i]
+      mediaUrl = props.mediaUrls[i]
     } else {
-      m = `${process.env.PUBLIC_URL}/placeholder.png`
+      mediaUrl = `${process.env.PUBLIC_URL}/placeholder.png`
       isPlaceholder = true
     }
     mediaList.push(
@@ -49,7 +49,7 @@ export default (props: Props) => {
       >
         <img
           className='media-pane-img'
-          src={m}
+          src={mediaUrl}
           alt={""}
         />
       </div>

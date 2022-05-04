@@ -1,23 +1,14 @@
 import React, {useState} from "react";
 import OwnedMedia from "./OwnedMedia";
 import Media from "../../models/Media"
-import './AddMedia.css'
 import UploadMedia from "./UploadMedia";
 import MyMediaSet from "./MyMediaSet";
+import './AddMedia.css'
 
 interface Props {
   onChangeMedias: (arg0: FileList) => void
   onSelectOwnedMedia: (m: Media) => void
   onClose: () => void
-}
-
-const myMediaSetOps = () => {
-  return (
-    <>
-      <a href="#">Make my media set public</a>
-      <a href="#">Delete my media set</a>
-    </>
-  )
 }
 
 export default (props: Props) => {
@@ -58,11 +49,8 @@ export default (props: Props) => {
             }}
           />
         }
-        {
-          showingTab === 2 &&
-          <MyMediaSet
-            onEmptyAddNewMedia={() => updateShowingTab(1)}
-          />
+        {showingTab === 2 &&
+          <MyMediaSet />
         }
       </div>
     </>

@@ -2,14 +2,14 @@ import React, {useEffect, useState} from "react";
 import MediaSet from "../../models/MediaSet";
 import api from "../../api/Api";
 import './MyMediaSet.css'
+import MediaPane from "../MediaPane/MediaPane";
+import MyModal from "../MyModal/MyModal";
+import OwnedMedia from "./OwnedMedia";
 
-interface Props {
-  onEmptyAddNewMedia: () => void
-}
-
-export default (props: Props) => {
+export default () => {
   const [loading, updateLoading] = useState(true)
   const [mediaSet, updateMediaSet] = useState<MediaSet | null>(null)
+  const [addMediaOpened, updateAddMediaOpened] = useState(false)
 
   useEffect(() => {
     (async () => {
@@ -22,34 +22,42 @@ export default (props: Props) => {
     return <div>Loading...</div>
   }
 
-  if (mediaSet === null) {
-    return (
-      <div
-        className='my-media-set-empty'
-        onClick={async () => {
-          updateLoading(true)
-          await api.createMyMediaSet()
-          updateMediaSet(await api.getMyMediaSet())
-          updateLoading(false)
-        }}
-      >Create my sticker pack</div>
-    )
-  }
-
   return (
     <div>
-      {
-        mediaSet.media_list.length === 0 &&
+      <MediaPane
+        mediaUrls={mediaSet !== null ? mediaSet.media_list.map(m => m.media_url) : []}
+        onMediaClick={i => {
+          // props.onSelectOwnedMedia(mediaList[i])
+        }}
+        usePlaceholder={true}
+      />
+      <div className='my-media-set-buttons'>
+        {mediaSet === null &&
           <div
-            className='my-media-set-empty'
-            onClick={props.onEmptyAddNewMedia}
-          >Add media</div>
-      }
-      <div className='my-media-set-controls'>
-        {!mediaSet.is_public &&
+            className='my-media-set-button my-media-set-button-confirm'
+            onClick={async e => {
+              e.preventDefault()
+              updateLoading(true)
+              await api.createMyMediaSet()
+              updateMediaSet(await api.getMyMediaSet())
+              updateLoading(false)
+            }}
+          >Create sticker pack</div>
+        }
+        {mediaSet !== null &&
+          <div
+            className='my-media-set-button my-media-set-button-confirm'
+            onClick={async e => {
+              e.preventDefault()
+              updateAddMediaOpened(true)
+            }}
+          >Add media to pack</div>
+        }
+        {mediaSet !== null && !mediaSet.is_public &&
           <div
             className='my-media-set-button my-media-set-button-danger'
-            onClick={async () => {
+            onClick={async e => {
+              e.preventDefault()
               if (!confirm("Are you sure you want to make your sticker pack public? This operation cannot be reverted.")) {
                 return
               }
@@ -58,21 +66,38 @@ export default (props: Props) => {
               updateMediaSet(await api.getMyMediaSet())
               updateLoading(false)
             }}
-          >Make it public</div>
+          >Make pack public</div>
         }
-        <div
-          className='my-media-set-button my-media-set-button-danger'
-          onClick={async () => {
-            if (!confirm("Are you sure you want to delete your sticker pack? Media contained in the pack won't be deleted.")) {
-              return
-            }
+        {mediaSet !== null &&
+          <div
+            className='my-media-set-button my-media-set-button-danger'
+            onClick={async e => {
+              e.preventDefault()
+              if (!confirm("Are you sure you want to delete your sticker pack? Media contained in the pack won't be deleted.")) {
+                return
+              }
+              updateLoading(true)
+              await api.deleteMyMediaSet()
+              updateMediaSet(await api.getMyMediaSet())
+              updateLoading(false)
+            }}
+          >Delete pack</div>
+        }
+      </div>
+      <MyModal
+        isOpen={addMediaOpened}
+        onClose={() => {updateAddMediaOpened(false)}}
+      >
+        <OwnedMedia
+          onSelectOwnedMedia={async m => {
+            updateAddMediaOpened(false)
             updateLoading(true)
-            await api.deleteMyMediaSet()
+            await api.addMediaToMyMediaSet(m.object_name)
             updateMediaSet(await api.getMyMediaSet())
             updateLoading(false)
           }}
-        >Delete</div>
-      </div>
+        />
+      </MyModal>
     </div>
   )
 }

@@ -755,6 +755,34 @@ export class Api {
     return res.data
   }
 
+  async addMediaToMyMediaSet(objectName) {
+    const defaultMediaSetId = (await this.getMyMediaSet()).id
+    const res = await this.axiosInstance.post(
+      `/mediaSet/${defaultMediaSetId}/media`,
+      { object_name: objectName }
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
+
+  async removeMediaFromMyMediaSet(objectName) {
+    const defaultMediaSetId = (await this.getMyMediaSet()).id
+    const res = await this.axiosInstance.delete(
+      `/mediaSet/${defaultMediaSetId}/media`,
+      {
+        data: {
+          object_name: objectName
+        }
+      }
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
+
   async deleteMyMediaSet() {
     const defaultMediaSetId = (await this.getMyMediaSet()).id
     const res = await this.axiosInstance.delete(
