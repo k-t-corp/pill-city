@@ -8,7 +8,7 @@ import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import UpdateBanner from "../../components/UpdateBanner/UpdateBanner";
 import {loadMe} from "../../store/meSlice";
 import {validateEmail} from "../../utils/validators";
-import MyModal from "../../components/MyModal/MyModal";
+import PillModal from "../../components/PillModal/PillModal";
 import {useToast} from "../../components/Toast/ToastProvider";
 import './Settings.css'
 
@@ -124,7 +124,7 @@ const Settings = () => {
         <div className="settings-row-header">Sign out</div>
       </div>
       <About/>
-      <MyModal
+      <PillModal
         isOpen={displayNameModalOpened}
         onClose={() => {updateDisplayNameModalOpened(false)}}
       >
@@ -150,8 +150,8 @@ const Settings = () => {
             }}
           >Confirm</div>
         </div>
-      </MyModal>
-      <MyModal
+      </PillModal>
+      <PillModal
         isOpen={emailModalOpened}
         onClose={() => {updateEmailModalOpened(false)}}
       >
@@ -189,8 +189,8 @@ const Settings = () => {
             }}
           >Confirm</div>
         </div>
-      </MyModal>
-      <MyModal
+      </PillModal>
+      <PillModal
         isOpen={avatarModalOpened}
         onClose={() => {updateAvatarModalOpened(false)}}
       >
@@ -206,8 +206,8 @@ const Settings = () => {
             updateAvatarModalOpened(false)
           }}
         />
-      </MyModal>
-      <MyModal
+      </PillModal>
+      <PillModal
         isOpen={bannerModalOpened}
         onClose={() => {updateBannerModalOpened(false)}}
       >
@@ -223,8 +223,8 @@ const Settings = () => {
             updateBannerModalOpened(false)
           }}
         />
-      </MyModal>
-      <MyModal
+      </PillModal>
+      <PillModal
         isOpen={rssTokenModalOpened}
         onClose={() => {updateRssTokenModalOpened(false)}}
       >
@@ -289,7 +289,7 @@ const Settings = () => {
               }}>Click here to enable</a>
             </div>
         }
-      </MyModal>
+      </PillModal>
     </div>
   )
 

@@ -10,7 +10,7 @@ import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import {loadMorePosts, pollPosts} from "../../store/homeSlice";
 import User from "../../models/User";
 import {ResharedPost} from "../../models/Post";
-import MyModal from "../../components/MyModal/MyModal";
+import PillModal from "../../components/PillModal/PillModal";
 import { PencilIcon } from '@heroicons/react/solid'
 import "./Home.css"
 
@@ -121,12 +121,12 @@ const Home = () => {
             className='mobile-new-post-button'
             onClick={() => updateMobileNewPostOpened(true)}
           />
-          <MyModal
+          <PillModal
             isOpen={mobileNewPostOpened}
             onClose={() => {updateMobileNewPostOpened(false)}}
           >
             {newPostElem}
-          </MyModal>
+          </PillModal>
         </> :
         <div className="home-right-column-container">
           <div className="home-right-column-new-post-wrapper">

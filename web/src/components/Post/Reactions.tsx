@@ -4,7 +4,7 @@ import {Reaction} from "../../models/Post";
 import User from "../../models/User";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
-import MyModal from "../MyModal/MyModal";
+import PillModal from "../PillModal/PillModal";
 import api from "../../api/Api";
 import './Reactions.css'
 import {useMediaQuery} from "react-responsive";
@@ -164,7 +164,7 @@ export default (props: Props) => {
   if (emojiPickerOpened) {
     if (isTabletOrMobile) {
       emojiPicker = (
-        <MyModal
+        <PillModal
           isOpen={emojiPickerOpened}
           onClose={() => {updateEmojiPickerOpened(false)}}
         >
@@ -175,7 +175,7 @@ export default (props: Props) => {
             }}
             onEmojiClick={addEmoji} preload={true} native={true}
           />
-        </MyModal>
+        </PillModal>
       )
     } else {
       emojiPicker = (
@@ -223,12 +223,12 @@ export default (props: Props) => {
   return (
     <div className="post-reactions-wrapper">
       {reactionElems}
-      <MyModal
+      <PillModal
         isOpen={detailNodalOpened}
         onClose={() => {updateDetailNodalOpened(false)}}
       >
         {detailElems}
-      </MyModal>
+      </PillModal>
     </div>
   )
 }

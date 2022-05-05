@@ -4,7 +4,7 @@ import PostComponent from "../../components/Post/Post";
 import NewPost from "../../components/NewPost/NewPost";
 import api from "../../api/Api";
 import {useAppSelector} from "../../store/hooks";
-import MyModal from "../../components/MyModal/MyModal";
+import PillModal from "../../components/PillModal/PillModal";
 import User from "../../models/User";
 import Post, {ResharedPost} from "../../models/Post";
 import './Post.css'
@@ -52,7 +52,7 @@ const PostPage = () => {
           updateResharePostData={updateResharePostData}
           disableNavigateToPostPage={true}
         />
-        <MyModal
+        <PillModal
           isOpen={newPostOpened}
           onClose={() => {updateNewPostOpened(false)}}
         >
@@ -64,7 +64,7 @@ const PostPage = () => {
             }}
             afterPosting={() => {}}
           />
-        </MyModal>
+        </PillModal>
       </>
     )
   }

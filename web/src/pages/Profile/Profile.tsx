@@ -12,7 +12,7 @@ import getNameAndSubName from "../../utils/getNameAndSubName";
 import api from "../../api/Api";
 import {useAppSelector} from "../../store/hooks";
 import {ResharedPost} from "../../models/Post";
-import MyModal from "../../components/MyModal/MyModal";
+import PillModal from "../../components/PillModal/PillModal";
 import "./Profile.css"
 
 const InfiniteScrollFactor = 0.8
@@ -246,7 +246,7 @@ const Profile = () => {
       <div className="profile-posts">
         {profilePosts()}
       </div>
-      <MyModal
+      <PillModal
         isOpen={newPostOpened}
         onClose={() => {updateNewPostOpened(false)}}
       >
@@ -262,7 +262,7 @@ const Profile = () => {
             }
           }}
         />
-      </MyModal>
+      </PillModal>
     </div>
   )
 }

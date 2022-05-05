@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import "./MediaPane.css"
-import MyModal from "../MyModal/MyModal";
+import PillModal from "../PillModal/PillModal";
 
 interface Props {
   mediaUrls: string[]
@@ -75,7 +75,7 @@ export default (props: Props) => {
       <div className='media-pane-container'>
         {mediaList}
       </div>
-      <MyModal
+      <PillModal
         isOpen={modalMediaIndex !== -1}
         onClose={() => {
           updateModalMediaIndex(-1)
@@ -88,7 +88,7 @@ export default (props: Props) => {
             alt={""}
           />
         </div>
-      </MyModal>
+      </PillModal>
     </>
   )
 }

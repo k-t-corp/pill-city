@@ -2,7 +2,7 @@ import Modal from "react-modal";
 import React from "react";
 import {useMediaQuery} from "react-responsive";
 import {XIcon} from "@heroicons/react/solid";
-import './MyModal.css'
+import './PillModal.css'
 
 interface Props {
   children: any
@@ -50,9 +50,9 @@ export default (props: Props) => {
       shouldCloseOnEsc={true}
     >
       {isTabletOrMobile &&
-        <div className='my-modal-mobile-header'>
+        <div className='pill-modal-mobile-header'>
           <XIcon
-            className='my-modal-close-button'
+            className='pill-modal-close-button'
             onClick={props.onClose}
           />
         </div>

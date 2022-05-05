@@ -3,7 +3,7 @@ import MediaSet from "../../models/MediaSet";
 import api from "../../api/Api";
 import './MyMediaSet.css'
 import MediaPane from "../MediaPane/MediaPane";
-import MyModal from "../MyModal/MyModal";
+import PillModal from "../PillModal/PillModal";
 import OwnedMedia from "./OwnedMedia";
 import MediaNavButtons from "../MediaNavButtons/MediaNavButtons";
 import Media from "../../models/Media";
@@ -126,7 +126,7 @@ export default (props: Props) => {
         >Delete pack
         </div>
       </div>
-      <MyModal
+      <PillModal
         isOpen={addMediaToMediaSetOpened}
         onClose={() => {
           updateAddMediaToMediaSetOpened(false)
@@ -151,7 +151,7 @@ export default (props: Props) => {
             }
           }}
         />
-      </MyModal>
+      </PillModal>
     </div>
   )
 }

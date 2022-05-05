@@ -14,7 +14,7 @@ import ApiError from "../../api/ApiError";
 import ContentTextarea from "../ContentTextarea/ContentTextarea";
 import {useAppSelector} from "../../store/hooks";
 import {PhotographIcon} from "@heroicons/react/solid";
-import MyModal from "../MyModal/MyModal";
+import PillModal from "../PillModal/PillModal";
 import AddMedia from "../AddMedia/AddMedia";
 import api from "../../api/Api";
 import "./NewPost.css"
@@ -215,7 +215,7 @@ export default (props: Props) => {
                 }
               }}
             />
-            <MyModal
+            <PillModal
               isOpen={mediaOpened}
               onClose={() => {updateMediaOpened(false)}}
             >
@@ -226,7 +226,7 @@ export default (props: Props) => {
                 }}
                 onClose={() => {updateMediaOpened(false)}}
               />
-            </MyModal>
+            </PillModal>
           </>
         }
         <ContentTextarea

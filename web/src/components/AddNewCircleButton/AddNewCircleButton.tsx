@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import api from '../../api/Api'
 import "./AddNewCircleButton.css"
-import MyModal from "../MyModal/MyModal";
+import PillModal from "../PillModal/PillModal";
 import {useToast} from "../Toast/ToastProvider";
 
 export default () => {
@@ -19,7 +19,7 @@ export default () => {
           Create New Circle
         </div>
       </div>
-      <MyModal
+      <PillModal
         isOpen={modalOpened}
         onClose={() => {updateModalOpened(false)}}
       >
@@ -66,7 +66,7 @@ export default () => {
             Create
           </div>
         </div>
-      </MyModal>
+      </PillModal>
     </>
   )
 }

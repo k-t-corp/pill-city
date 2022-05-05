@@ -14,7 +14,7 @@ import api from "../../api/Api";
 import './CommentBox.css'
 import {PhotographIcon} from "@heroicons/react/solid";
 import AddMedia from "../AddMedia/AddMedia";
-import MyModal from "../MyModal/MyModal";
+import PillModal from "../PillModal/PillModal";
 import Media from "../../models/Media";
 
 interface Props {
@@ -156,7 +156,7 @@ export default (props: Props) => {
             }
           }}
         />
-        <MyModal
+        <PillModal
           isOpen={mediaOpened}
           onClose={() => {updateMediaOpened(false)}}
         >
@@ -167,7 +167,7 @@ export default (props: Props) => {
             }}
             onClose={() => {updateMediaOpened(false)}}
           />
-        </MyModal>
+        </PillModal>
       </div>
       {
         (medias.length + ownedMedias.length) > 0 &&

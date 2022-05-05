@@ -1,9 +1,9 @@
-.my-modal-mobile-header {
+.pill-modal-mobile-header {
     display: flex;
     justify-content: right;
 }
 
-.my-modal-close-button {
+.pill-modal-close-button {
     width: 30px;
     padding: 5px;
     cursor: pointer;
