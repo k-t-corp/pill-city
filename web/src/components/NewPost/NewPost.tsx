@@ -95,13 +95,6 @@ export default (props: Props) => {
     const actualCircleIds = circleIds.filter(cn => cn !== true)
     const isPublic = circleIds.filter(cn => cn === true).length !== 0
 
-    const uploadedMedias = medias.filter(m => m.type === 'Uploaded')
-    let mediaData = new FormData()
-    for (let i = 0; i < uploadedMedias.length; i++) {
-      const blob = new Blob([uploadedMedias[i].media as File], {type: 'image/*'})
-      mediaData.append(`media${i}`, blob)
-    }
-
     // before sending post
     const toastId = addToast('Sending new post', false)
     props.beforePosting()
@@ -109,16 +102,14 @@ export default (props: Props) => {
     // send post
     let post: Post | null = null
     try {
-      const ownedMedia = medias.filter(m => m.type === 'Owned')
       post = await api.postPost(
         content,
         isPublic,
         actualCircleIds,
         props.resharePostData === null ? resharable : true,
         props.resharePostData === null ? null : props.resharePostData.id,
-        props.resharePostData === null ? mediaData : [],
+        props.resharePostData === null ? medias : [],
         parseMentioned(content),
-        ownedMedia.map(m => (m as NewPostMediaOwned).media.object_name)
       );
     } catch (e) {
       if (e instanceof ApiError) {

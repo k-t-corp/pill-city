@@ -153,13 +153,36 @@ export class Api {
     return res.data
   }
 
-  async postPost(content, isPublic, circleIds, reshareable, resharedFrom, mediaData, mentionedUserIds, ownedMediaObjectNames) {
+  async postPost(content, isPublic, circleIds, reshareable, resharedFrom, newPostMedias, mentionedUserIds) {
     Api.throwOnUnauthorized()
-    let allMediaObjNames = []
-    if (mediaData.length !== 0) {
-      allMediaObjNames = await this.uploadMedia(mediaData)
+
+    // gather uploaded media and their indices
+    let uploadedMediaFormData = new FormData()
+    let uploadedMediaIndex = 0
+    for (let i = 0; i < newPostMedias.length; i++) {
+      const m = newPostMedias[i]
+      if (m.type === 'Uploaded') {
+        const blob = new Blob([m.media], {type: 'image/*'})
+        uploadedMediaFormData.append(`media${uploadedMediaIndex++}`, blob)
+      }
     }
-    allMediaObjNames = allMediaObjNames.concat(ownedMediaObjectNames)
+
+    // upload media
+    let uploadedMediaObjNames = []
+    if (uploadedMediaFormData.length !== 0) {
+      uploadedMediaObjNames = await this.uploadMedia(uploadedMediaFormData)
+    }
+
+    // build media object names
+    let uploadedMediaObjNamesPtr = 0
+    const mediaObjectNames = newPostMedias.map(m => {
+      if (m.type === 'Uploaded') {
+        return uploadedMediaObjNames[uploadedMediaObjNamesPtr++]
+      } else {
+        return m.media.object_name
+      }
+    })
+
     const res = await this.axiosInstance.post(
       `/posts`,
       {
@@ -168,7 +191,7 @@ export class Api {
         circle_ids: circleIds,
         reshareable: reshareable,
         reshared_from: resharedFrom,
-        media_object_names: allMediaObjNames,
+        media_object_names: mediaObjectNames,
         mentioned_user_ids: mentionedUserIds
       }
     )
