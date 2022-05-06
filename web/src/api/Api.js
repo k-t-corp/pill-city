@@ -376,17 +376,6 @@ export class Api {
     return res.data
   }
 
-  async getCircle(circleId) {
-    Api.throwOnUnauthorized()
-    const res = await this.axiosInstance.get(
-      `/circle/${circleId}`
-    )
-    if (res.status !== 200) {
-      throw new ApiError(res)
-    }
-    return res.data
-  }
-
   async renameCircle(circleId, newName) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.patch(
