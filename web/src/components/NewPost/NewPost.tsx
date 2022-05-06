@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react'
 import {Dropdown, Popup, Icon, Checkbox} from 'semantic-ui-react'
-import FormData from "form-data";
 import {useHotkeys} from "react-hotkeys-hook";
 import parseContent from "../../utils/parseContent";
 import MediaPane from "../MediaPane/MediaPane";
