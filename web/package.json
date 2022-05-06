@@ -6,6 +6,7 @@
     "@heroicons/react": "^1.0.5",
     "@reduxjs/toolkit": "^1.6.2",
     "@webscopeio/react-textarea-autocomplete": "^4.8.1",
+    "array-move": "^4.0.0",
     "axios": "^0.21.1",
     "emoji-picker-react": "^3.4.8",
     "form-data": "^4.0.0",

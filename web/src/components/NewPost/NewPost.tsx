@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react'
 import {Dropdown, Popup, Icon, Checkbox} from 'semantic-ui-react'
-import FormData from "form-data";
 import {useHotkeys} from "react-hotkeys-hook";
 import parseContent from "../../utils/parseContent";
 import MediaPane from "../MediaPane/MediaPane";
@@ -19,6 +18,7 @@ import AddMedia from "../AddMedia/AddMedia";
 import api from "../../api/Api";
 import "./NewPost.css"
 import Media from "../../models/Media";
+import {arrayMoveImmutable} from "array-move";
 
 interface Props {
   beforePosting: () => void
@@ -29,6 +29,16 @@ interface Props {
 
 type CircleIdOrPublic = string | true
 
+interface NewPostMediaUploaded {
+  type: 'Uploaded'
+  media: File
+}
+
+interface NewPostMediaOwned {
+  type: 'Owned'
+  media: Media
+}
+
 export default (props: Props) => {
   const me = useAppSelector(state => state.me.me)
   const [myCircles, updateMyCircles] = useState<Circle[]>([])
@@ -36,8 +46,7 @@ export default (props: Props) => {
   const [content, updateContent] = useState<string>("")
   const [circleIds, updateCircleIds] = useState<CircleIdOrPublic[]>([])
   const [resharable, updateResharable] = useState(true)
-  const [medias, updateMedias] = useState<File[]>([])
-  const [ownedMedias, updateOwnedMedias] = useState<Media[]>([])
+  const [medias, updateMedias] = useState<(NewPostMediaUploaded | NewPostMediaOwned)[]>([])
   const [mediaOpened, updateMediaOpened] = useState(false)
 
   const [posting, updatePosting] = useState(false)
@@ -65,7 +74,7 @@ export default (props: Props) => {
   })
 
   const isValid = () => {
-    return (content.trim().length !== 0 || medias.length !== 0 || ownedMedias.length !== 0) && circleIds.length !== 0
+    return (content.trim().length !== 0 || medias.length !== 0) && circleIds.length !== 0
   }
 
   const reset = () => {
@@ -73,7 +82,6 @@ export default (props: Props) => {
     updateCircleIds([])
     updateResharable(true)
     updateMedias([])
-    updateOwnedMedias([])
   }
 
   const postButtonOnClick = async () => {
@@ -85,11 +93,6 @@ export default (props: Props) => {
     // parse post parameters
     const actualCircleIds = circleIds.filter(cn => cn !== true)
     const isPublic = circleIds.filter(cn => cn === true).length !== 0
-    let mediaData = new FormData()
-    for (let i = 0; i < medias.length; i++) {
-      const blob = new Blob([medias[i]], {type: 'image/*'})
-      mediaData.append(`media${i}`, blob)
-    }
 
     // before sending post
     const toastId = addToast('Sending new post', false)
@@ -104,9 +107,8 @@ export default (props: Props) => {
         actualCircleIds,
         props.resharePostData === null ? resharable : true,
         props.resharePostData === null ? null : props.resharePostData.id,
-        props.resharePostData === null ? mediaData : [],
+        props.resharePostData === null ? medias : [],
         parseMentioned(content),
-        ownedMedias.map(_ => _.object_name)
       );
     } catch (e) {
       if (e instanceof ApiError) {
@@ -139,7 +141,12 @@ export default (props: Props) => {
         for (let i = 0; i < fl.length; i++) {
           selectedMedias.push(fl[i])
         }
-        updateMedias(selectedMedias)
+        updateMedias(medias.concat(selectedMedias.map(sm => {
+          return {
+            type: 'Uploaded',
+            media: sm
+          }
+        })))
       }
     }
   }
@@ -202,7 +209,41 @@ export default (props: Props) => {
         </div>
       }
       {props.resharePostData === null &&
-        <MediaPane mediaUrls={medias.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.media_url))}/>
+        <MediaPane
+          mediaUrls={medias.map(m => {
+            if (m.type === 'Uploaded') {
+              return URL.createObjectURL(m.media)
+            } else {
+              return m.media.media_url
+            }
+          })}
+          mediaOperations={[
+            {
+              op: '<',
+              action: i => {
+                if (i === 0) {
+                  return
+                }
+                updateMedias(arrayMoveImmutable(medias, i - 1, i))
+              }
+            },
+            {
+              op: 'x',
+              action: i => {
+                updateMedias(medias.filter((_, ii) => i !== ii))
+              }
+            },
+            {
+              op: '>',
+              action: i => {
+                if (i === medias.length - 1) {
+                  return
+                }
+                updateMedias(arrayMoveImmutable(medias, i, i + 1))
+              }
+            },
+          ]}
+        />
       }
       <div className="new-post-text-box-container">
         {props.resharePostData === null &&
@@ -222,7 +263,10 @@ export default (props: Props) => {
               <AddMedia
                 onChangeMedias={onChangeMedias}
                 onSelectOwnedMedia={m => {
-                  updateOwnedMedias(ownedMedias.concat([m]))
+                  updateMedias(medias.concat([{
+                    type: 'Owned',
+                    media: m
+                  }]))
                 }}
                 onClose={() => {updateMediaOpened(false)}}
               />
