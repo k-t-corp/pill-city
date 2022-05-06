@@ -6,7 +6,7 @@ from typing import Optional
 from PIL import Image, UnidentifiedImageError
 from .cache import r, RMediaUrl
 
-AllowedImageTypes = ['gif', 'jpeg', 'bmp', 'png']
+AllowedImageTypes = ['gif', 'jpeg', 'bmp', 'png', 'webp']
 
 
 def upload_to_s3(file, object_name_stem: str) -> Optional[str]:
