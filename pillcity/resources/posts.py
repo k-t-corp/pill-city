@@ -81,6 +81,9 @@ post_parser.add_argument('reshareable', type=bool, required=True)
 post_parser.add_argument('reshared_from', type=str, required=False)
 post_parser.add_argument('media_object_names', type=str, action="append", default=[])
 post_parser.add_argument('mentioned_user_ids', type=str, action='append', default=[])
+post_parser.add_argument('poll_choices', type=str, action='append', default=[])
+post_parser.add_argument('poll_choice_media_object_names', type=str, action='append', default=[])
+post_parser.add_argument('poll_close_by', type=int, required=False)
 
 
 class Posts(Resource):
@@ -115,6 +118,15 @@ class Posts(Resource):
         if reshared_from and media_object_names:
             return {'msg': "Reshared post is not allowed to have media"}, 400
 
+        # check poll
+        poll_choices = args['poll_choices']
+        poll_choice_media_object_names = args['poll_choice_media_object_names']
+        poll_close_by = args['poll_close_by']
+        if len(poll_choices) != len(poll_choice_media_object_names):
+            return {'msg', 'Poll choices do not have the correct number of media object names'}
+        if poll_close_by and not poll_choices:
+            return {'msg': 'No poll choices given for a timed poll'}
+
         post = create_post(
             user,
             content=args['content'],
@@ -124,7 +136,10 @@ class Posts(Resource):
             reshared_from=reshared_from_post,
             media_list=check_media_object_names(media_object_names, MaxPostMediaCount),
             mentioned_users=check_mentioned_user_ids(args['mentioned_user_ids']),
-            is_update_avatar=False
+            is_update_avatar=False,
+            poll_choices=poll_choices,
+            poll_choice_media_object_names=poll_choice_media_object_names,
+            poll_close_by=poll_close_by
         )
         if not post:
             return {"msg": f"Not allowed to reshare post {reshared_from}"}, 403

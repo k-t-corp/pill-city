@@ -98,7 +98,10 @@ class MyAvatar(Resource):
                 reshared_from=None,
                 media_list=[avatar_media],
                 mentioned_users=[],
-                is_update_avatar=True
+                is_update_avatar=True,
+                poll_choices=[],
+                poll_choice_media_object_names=[],
+                poll_close_by=None
             )
 
 

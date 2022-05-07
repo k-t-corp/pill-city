@@ -94,7 +94,8 @@ class InteractionsTest(BaseTestCase):
         post = dangerously_get_post(post.eid)
         if reshare:
             new_post_id = create_post(acting_user, 'resharing', is_public=True, circles=[], reshareable=True,
-                                      reshared_from=post, media_list=[], mentioned_users=[], is_update_avatar=False).eid
+                                      reshared_from=post, media_list=[], mentioned_users=[], is_update_avatar=False,
+                                      poll_choices=[], poll_choice_media_object_names=[], poll_close_by=None).eid
             self.assertEqual(1, len(Post.objects(eid=new_post_id)))
             new_post = dangerously_get_post(new_post_id)
             self.assertEqual(post.id, new_post.reshared_from.id)
@@ -106,7 +107,8 @@ class InteractionsTest(BaseTestCase):
                                                              owner=post.author.id)))
         else:
             self.assertFalse(create_post(acting_user, 'resharing', is_public=True, circles=[], reshareable=True,
-                                         reshared_from=post, media_list=[], mentioned_users=[], is_update_avatar=False))
+                                         reshared_from=post, media_list=[], mentioned_users=[], is_update_avatar=False,
+                                         poll_choices=[], poll_choice_media_object_names=[], poll_close_by=None))
 
         post = dangerously_get_post(post.eid)
         if deletes_nested_comment:
@@ -136,7 +138,7 @@ class InteractionsTest(BaseTestCase):
         user1 = find_user('user1')
 
         # Post reshareable post1 by user1
-        create_post(user1, 'post1', True, [], True, None, [], [], False)
+        create_post(user1, 'post1', True, [], True, None, [], [], False, [], [], None)
         post1 = Post.objects(author=user1)
         self.assertTrue(1, len(post1))
         post1 = post1[0]
@@ -154,14 +156,14 @@ class InteractionsTest(BaseTestCase):
         user1 = find_user('user1')
 
         # Post reshareable post1 by user1
-        create_post(user1, 'post1', True, [], True, None, [], [], False)
+        create_post(user1, 'post1', True, [], True, None, [], [], False, [], [], None)
         post1 = Post.objects(author=user1)
         self.assertTrue(1, len(post1))
         post1 = post1[0]
 
-        post2_id = create_post(user1, 'resharing post1', True, [], True, post1, [], [], False).eid
+        post2_id = create_post(user1, 'resharing post1', True, [], True, post1, [], [], False, [], [], None).eid
         post2 = dangerously_get_post(post2_id)
-        post3_id = create_post(user1, 'resharing post2', True, [], True, post2, [], [], False).eid
+        post3_id = create_post(user1, 'resharing post2', True, [], True, post2, [], [], False, [], [], None).eid
         post3 = dangerously_get_post(post3_id)
         self.assertEqual(post1.id, post2.reshared_from.id)
         self.assertEqual(post1.id, post3.reshared_from.id)
@@ -177,11 +179,11 @@ class InteractionsTest(BaseTestCase):
         user3 = find_user('user3')
 
         # Create reshareable public post1 from user1
-        post1_id = create_post(user1, 'post1', True, [], True, None, [], [], False).eid
+        post1_id = create_post(user1, 'post1', True, [], True, None, [], [], False, [], [], None).eid
         post1 = dangerously_get_post(post1_id)
 
         # Create non-reshareable public post2 from user1
-        post2_id = create_post(user1, 'post2', True, [], False, None, [], [], False).eid
+        post2_id = create_post(user1, 'post2', True, [], False, None, [], [], False, [], [], None).eid
         post2 = dangerously_get_post(post2_id)
 
         # user2 follows user1
@@ -222,7 +224,7 @@ class InteractionsTest(BaseTestCase):
         circle1 = find_circle(user1, circle1_id)
 
         # Create post1 into circle1
-        create_post(user1, 'post1', False, [circle1], True, None, [], [], False)
+        create_post(user1, 'post1', False, [circle1], True, None, [], [], False, [], [], None)
         post1 = Post.objects(author=user1)
         self.assertTrue(1, len(post1))
         post1 = post1[0]
@@ -255,11 +257,11 @@ class InteractionsTest(BaseTestCase):
         add_following(user2, user1)
 
         # Create reshareable post1 by user1 into circle1
-        post1_id = create_post(user1, 'post1', False, [circle1], True, None, [], [], False).eid
+        post1_id = create_post(user1, 'post1', False, [circle1], True, None, [], [], False, [], [], None).eid
         post1 = dangerously_get_post(post1_id)
 
         # Create non-reshareable post2 by user1 into circle1
-        post2_id = create_post(user1, 'post2', False, [circle1], False, None, [], [], False).eid
+        post2_id = create_post(user1, 'post2', False, [circle1], False, None, [], [], False, [], [], None).eid
         post2 = dangerously_get_post(post2_id)
 
         # User2 not owns but sees, sees on profile, comments, nested-comments, reacts and reshares on post1
@@ -319,13 +321,13 @@ class InteractionsTest(BaseTestCase):
         add_following(user2, user1)
 
         # Create post1 by user1 into circle1
-        create_post(user1, 'post1', False, [circle1], False, None, [], [], False)
+        create_post(user1, 'post1', False, [circle1], False, None, [], [], False, [], [], None)
         post1 = Post.objects(author=user1)
         self.assertTrue(1, len(post1))
         post1 = post1[0]
 
         # Create public post2 by user1
-        create_post(user1, 'post2', True, [], False, None, [], [], False)
+        create_post(user1, 'post2', True, [], False, None, [], [], False, [], [], None)
         post2 = Post.objects(content='post2')
         self.assertTrue(1, len(post2))
         post2 = post2[0]

@@ -1,6 +1,7 @@
 import bleach
+import datetime
 from typing import List, Optional, Union
-from pillcity.models import Post, NotifyingAction, User, Circle, Media
+from pillcity.models import Post, NotifyingAction, User, Circle, Media, Poll, PollChoice
 from pillcity.daos.media import delete_media_list
 from pillcity.utils.profiling import timer
 from pillcity.utils.make_uuid import make_uuid
@@ -11,7 +12,7 @@ from .mention import mention
 from .pagination import get_page, poll_latest
 from .post_cache import set_in_post_cache, get_in_post_cache, exists_in_post_cache
 from .circle_cache import get_in_circle_cache
-from .media import use_media_list
+from .media import use_media_list, get_media
 
 HomePostsPageSize = 10
 ProfilePostsPageSize = 10
@@ -19,7 +20,8 @@ ProfilePostsPageSize = 10
 
 def create_post(self: User, content: str, is_public: bool, circles: List[Circle], reshareable: bool,
                 reshared_from: Optional[Post], media_list: List[Media], mentioned_users: List[User],
-                is_update_avatar: bool) \
+                is_update_avatar: bool, poll_choices: List[str], poll_choice_media_object_names: List[str],
+                poll_close_by: Optional[int]) \
         -> Union[Post, bool]:
     """
     Create a post for the user
@@ -33,6 +35,9 @@ def create_post(self: User, content: str, is_public: bool, circles: List[Circle]
     :param media_list: List of media's
     :param mentioned_users: List of mentioned users
     :param is_update_avatar: Whether the post is for updating avatar
+    :param poll_choices: Poll choices
+    :param poll_choice_media_object_names: Media's for poll choices
+    :param poll_close_by: Optional time for when the poll should be closed by
     :return ID of the new post
     """
     if not content and not media_list:
@@ -55,6 +60,7 @@ def create_post(self: User, content: str, is_public: bool, circles: List[Circle]
         # if resharing from a post, this post must also be reshareable, otherwise it's logically wrong
         return False
 
+    # check reshare
     if reshared_from:
         if media_list:
             # when resharing, only allow content (text), e.g. no media
@@ -75,6 +81,22 @@ def create_post(self: User, content: str, is_public: bool, circles: List[Circle]
         new_post.reshared_from = reshared_from
 
     new_post.reshareable = reshareable
+
+    # check poll
+    if poll_choices:
+        p = Poll()
+        for i, poll_choice in enumerate(poll_choices):
+            pc = PollChoice()
+            pc.eid = make_uuid()
+            pc.content = poll_choice
+            poll_choice_media_object_name = poll_choice_media_object_names[i]
+            if poll_choice_media_object_name != 'null':
+                pc.media = get_media(poll_choice_media_object_name)
+            p.choices.append(pc)
+        if poll_close_by:
+            p.close_by = datetime.datetime.fromtimestamp(poll_close_by)
+        new_post.poll = p
+
     new_post.save()
 
     if reshared_from:
