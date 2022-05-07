@@ -1,5 +1,4 @@
 import bleach
-import datetime
 from typing import List, Optional, Union
 from pillcity.models import Post, NotifyingAction, User, Circle, Media, Poll, PollChoice
 from pillcity.daos.media import delete_media_list
@@ -94,7 +93,7 @@ def create_post(self: User, content: str, is_public: bool, circles: List[Circle]
                 pc.media = get_media(poll_choice_media_object_name)
             p.choices.append(pc)
         if poll_close_by:
-            p.close_by = datetime.datetime.fromtimestamp(poll_close_by)
+            p.close_by = poll_close_by
         new_post.poll = p
 
     new_post.save()

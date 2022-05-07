@@ -12,7 +12,7 @@ from .users import user_fields
 from .pagination import pagination_parser
 from .mention import check_mentioned_user_ids
 from .comments import comment_fields
-from .media import check_media_object_names, MediaUrls
+from .media import check_media_object_names, MediaUrls, MediaUrl
 
 MaxPostMediaCount = 4
 
@@ -69,7 +69,16 @@ post_fields = {
     'comments': fields.List(fields.Nested(comment_fields), attribute='comments2'),
     'circles': fields.List(Circle),
     'deleted': fields.Boolean,
-    'is_update_avatar': fields.Boolean
+    'is_update_avatar': fields.Boolean,
+    'poll': fields.Nested({
+        'choices': fields.List(fields.Nested({
+            'id': fields.String(attribute='eid'),
+            'content': fields.String,
+            'media': MediaUrl,
+            'voters': fields.List(fields.Nested(user_fields))
+        })),
+        'close_by_seconds': fields.Integer(attribute='close_by')
+    })
 }
 
 

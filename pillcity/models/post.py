@@ -1,6 +1,6 @@
 from typing import List
 from mongoengine import Document, ListField, BooleanField, StringField, LazyReferenceField, EmbeddedDocumentListField, \
-    EmbeddedDocument, LongField, PULL, CASCADE, NULLIFY, DateTimeField, EmbeddedDocumentField
+    EmbeddedDocument, LongField, PULL, CASCADE, NULLIFY, IntField, EmbeddedDocumentField
 from .created_at_mixin import CreatedAtMixin
 from .user import User
 from .circle import Circle
@@ -42,7 +42,7 @@ class PollChoice(EmbeddedDocument):
 
 class Poll(EmbeddedDocument):
     choices = EmbeddedDocumentListField(PollChoice)  # type: List[PollChoice]
-    close_by = DateTimeField(required=False)
+    close_by = IntField(required=False)
 
 
 class Post(Document, CreatedAtMixin):
