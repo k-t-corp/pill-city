@@ -1,12 +1,13 @@
 import React, {useState} from 'react';
 import "./MediaPane.css"
-import PillModal from "../PillModal/PillModal";
+import Lightbox from 'react-image-lightbox';
 
 interface Props {
   mediaUrls: string[]
   mediaOperations?: {op: string, action: (index: number) => void}[]
   heightPx?: number
   usePlaceholder?: boolean
+  oneRow?: boolean
 }
 
 export default (props: Props) => {
@@ -20,7 +21,7 @@ export default (props: Props) => {
     mediaCount = 4
   }
 
-  let mediaList = []
+  let mediaElems = []
   for (let i = 0; i < mediaCount; i++) {
     let mediaUrl
     let isPlaceholder = false
@@ -30,14 +31,14 @@ export default (props: Props) => {
       mediaUrl = `${process.env.PUBLIC_URL}/placeholder.png`
       isPlaceholder = true
     }
-    mediaList.push(
+    mediaElems.push(
       <div
-        className='media-pane'
+        className='media-img-container'
         style={{height, cursor: isPlaceholder ? 'auto' : 'pointer'}}
         key={i}
       >
         <img
-          className='media-pane-img'
+          className='media-img'
           style={{height: !isPlaceholder && props.mediaOperations ? '86%' : '100%'}}
           src={mediaUrl}
           alt={""}
@@ -46,7 +47,7 @@ export default (props: Props) => {
             if (isPlaceholder) {
               return
             }
-            updateModalMediaIndex(i)
+            updateShowingMediaIndex(i)
           }}
         />
         {props.mediaOperations && !isPlaceholder &&
@@ -68,27 +69,29 @@ export default (props: Props) => {
     )
   }
 
-  const [modalMediaIndex, updateModalMediaIndex] = useState(-1)
+  const [showingMediaIndex, updateShowingMediaIndex] = useState(-1)
+  const mediaUrls = props.mediaUrls
 
   return (
     <>
-      <div className='media-pane-container'>
-        {mediaList}
+      <div className='media-pane'>
+        {mediaElems}
       </div>
-      <PillModal
-        isOpen={modalMediaIndex !== -1}
-        onClose={() => {
-          updateModalMediaIndex(-1)
-        }}
-      >
-        <div className='media-modal-container'>
-          <img
-            className='media-modal-img'
-            src={props.mediaUrls[modalMediaIndex]}
-            alt={""}
-          />
-        </div>
-      </PillModal>
+      {showingMediaIndex !== -1 &&
+        <Lightbox
+          mainSrc={mediaUrls[showingMediaIndex]}
+          prevSrc={showingMediaIndex !== 0 ? mediaUrls[showingMediaIndex - 1] : undefined}
+          onMovePrevRequest={() =>
+            updateShowingMediaIndex(showingMediaIndex - 1)
+          }
+          nextSrc={showingMediaIndex !== mediaUrls.length - 1 ? mediaUrls[showingMediaIndex + 1] : undefined}
+          onMoveNextRequest={() =>
+            updateShowingMediaIndex(showingMediaIndex + 1)
+          }
+          onCloseRequest={() => {updateShowingMediaIndex(-1)}}
+          animationDuration={0}
+        />
+      }
     </>
   )
 }

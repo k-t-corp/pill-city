@@ -1,11 +1,11 @@
 /* Media Pane */
-.media-pane-container {
+.media-pane {
     margin-top: 10px;
     margin-bottom: 10px;
     display: flex;
 }
 
-.media-pane {
+.media-img-container {
     flex-grow: 1;
     flex-basis: 0;
     margin: 3px;
@@ -13,7 +13,7 @@
     border-radius: 4px;
 }
 
-.media-pane-img {
+.media-img {
     object-fit: cover;
     width: 100%;
     border-radius: 4px;
@@ -31,18 +31,5 @@
     border-radius: 4px;
     font-size: small;
     text-align: center;
-}
-
-.media-op:hover {
     cursor: pointer;
-}
-
-.media-modal-container {
-    display: flex;
-    justify-content: center;
-}
-
-.media-modal-img {
-    height: 600px;
-    border-radius: 4px;
 }
