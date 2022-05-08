@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import "./MediaPane.css"
-import PillModal from "../PillModal/PillModal";
+import Lightbox from 'react-image-lightbox';
 
 interface Props {
   mediaUrls: string[]
@@ -46,7 +46,7 @@ export default (props: Props) => {
             if (isPlaceholder) {
               return
             }
-            updateModalMediaIndex(i)
+            updateShowingMediaIndex(i)
           }}
         />
         {props.mediaOperations && !isPlaceholder &&
@@ -68,27 +68,29 @@ export default (props: Props) => {
     )
   }
 
-  const [modalMediaIndex, updateModalMediaIndex] = useState(-1)
+  const [showingMediaIndex, updateShowingMediaIndex] = useState(-1)
+  const mediaUrls = props.mediaUrls
 
   return (
     <>
       <div className='media-pane-container'>
         {mediaList}
       </div>
-      <PillModal
-        isOpen={modalMediaIndex !== -1}
-        onClose={() => {
-          updateModalMediaIndex(-1)
-        }}
-      >
-        <div className='media-modal-container'>
-          <img
-            className='media-modal-img'
-            src={props.mediaUrls[modalMediaIndex]}
-            alt={""}
-          />
-        </div>
-      </PillModal>
+      {showingMediaIndex !== -1 &&
+        <Lightbox
+          mainSrc={mediaUrls[showingMediaIndex]}
+          prevSrc={showingMediaIndex !== 0 ? mediaUrls[showingMediaIndex - 1] : undefined}
+          onMovePrevRequest={() =>
+            updateShowingMediaIndex(showingMediaIndex - 1)
+          }
+          nextSrc={showingMediaIndex !== mediaUrls.length - 1 ? mediaUrls[showingMediaIndex + 1] : undefined}
+          onMoveNextRequest={() =>
+            updateShowingMediaIndex(showingMediaIndex + 1)
+          }
+          onCloseRequest={() => {updateShowingMediaIndex(-1)}}
+          animationDuration={0}
+        />
+      }
     </>
   )
 }
