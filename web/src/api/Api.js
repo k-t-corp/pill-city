@@ -815,6 +815,16 @@ export class Api {
     }
     return res.data
   }
+
+  async vote(postId, choiceId) {
+    const res = await this.axiosInstance.post(
+      `/post/${postId}/poll/${choiceId}`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
 }
 
 const api = new Api(process.env.REACT_APP_API_ENDPOINT)

@@ -9,7 +9,7 @@ import ResharedPost from "./ResharedPost";
 import ClickableId from "../ClickableId/ClickableId";
 import Comment from "./Comment";
 import CommentBox from "./CommentBox";
-import Post, {Comment as CommentModel, ResharedPost as ResharedPostModel} from "../../models/Post";
+import Post, {Comment as CommentModel, ResharedPost as ResharedPostModel, Poll} from "../../models/Post";
 import User from "../../models/User";
 import Previews from "./Previews";
 import api from "../../api/Api";
@@ -40,6 +40,8 @@ export default (props: Props) => {
   const [replyingToComment, updateReplyingToComment] = useState<CommentModel | null>(null)
 
   const [mediaUrls, updateMediaUrls] = useState(props.data.media_urls)
+  const [poll, updatePoll] = useState<Poll>(props.data.poll)
+  const [voting, updateVoting] = useState(false)
 
   const history = useHistory()
 
@@ -203,10 +205,47 @@ export default (props: Props) => {
         }
         <Previews post={props.data}/>
 
-        {props.data.poll.choices && props.data.poll.choices.length > 0 &&
+        {poll.choices && poll.choices.length > 0 &&
           <div className='post-poll'>
-            {props.data.poll.choices.map((c, i) => {
-              return <div key={i} className='post-poll-choice'>{c.content}</div>
+            {poll.choices.map((c, i) => {
+              // whether the user has voted on this choice
+              const voted = c.voters.map(u => u.id).indexOf(props.me.id) !== -1
+
+              return (
+                <div
+                  key={i}
+                  className='post-poll-choice'
+                  style={{
+                    cursor: voted || voting ? 'auto' : 'pointer',
+                    backgroundColor: voting ? '#ffffff' : '#f0f0f0'
+                }}
+                  onClick={async (e) => {
+                    e.preventDefault()
+                    if (voted || voting) {
+                      return
+                    }
+                    updateVoting(true)
+                    await api.vote(props.data.id, c.id)
+
+                    updatePoll({...poll, choices: poll.choices.map(cc => {
+                      if (cc.voters.map(u => u.id).filter(id => id === props.me.id).length > 0) {
+                        // if the user previously picked this choice
+                        return {
+                          ...cc, voters: cc.voters.filter(u => u.id !== props.me.id)
+                        }
+                      } else if (c.id === cc.id) {
+                        // if the user now picks this choice
+                        return {
+                          ...cc, voters: [...cc.voters, props.me]
+                        }
+                      } else {
+                        return cc
+                      }
+                    })})
+                    updateVoting(false)
+                  }}
+                >{c.content} ({c.voters.length})</div>
+              )
             })}
           </div>
         }
