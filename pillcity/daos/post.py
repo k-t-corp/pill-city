@@ -121,7 +121,7 @@ def create_post(self: User, content: str, is_public: bool, circles: List[Circle]
     return new_post
 
 
-def dangerously_get_post(post_id: str):
+def dangerously_get_post(post_id: str) -> Post:
     """
     Get a post by its ID without checking permission
     We don't need to check permission here because this method is only used internally
@@ -254,7 +254,7 @@ def delete_post(self: User, post_id: str) -> Optional[Post]:
     post.reshareable = False
     delete_media_list(post.media_list)
     post.media_list = []
-    # TODO: remove poll both on here and on polls collection
+    # Do not delete other people's poll votes lol
     post.save()
 
     if exists_in_post_cache(post.id):

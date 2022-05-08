@@ -94,7 +94,12 @@ export default (props: Props) => {
     if (posting) {
       return
     }
-    updatePosting(true);
+    updatePosting(true)
+    if (pollChoices.length > 0) {
+      if (!confirm("Are you sure to send a post with poll? Even if you delete the post, you won't be able to delete the poll or poll results.")) {
+        return
+      }
+    }
 
     // parse post parameters
     const actualCircleIds = circleIds.filter(cn => cn !== true)
