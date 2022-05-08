@@ -204,7 +204,6 @@ export default (props: Props) => {
         />
         }
         <Previews post={props.data}/>
-
         {poll.choices && poll.choices.length > 0 &&
           <div className='post-poll'>
             {poll.choices.map((c, i) => {
@@ -218,7 +217,7 @@ export default (props: Props) => {
                   style={{
                     cursor: voted || voting ? 'auto' : 'pointer',
                     backgroundColor: voting ? '#ffffff' : '#f0f0f0'
-                }}
+                  }}
                   onClick={async (e) => {
                     e.preventDefault()
                     if (voted || voting) {
