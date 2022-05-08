@@ -14,6 +14,7 @@ import User from "../../models/User";
 import Previews from "./Previews";
 import api from "../../api/Api";
 import "./Post.css"
+import {BanIcon, ChatIcon, DotsVerticalIcon, ShareIcon} from "@heroicons/react/solid";
 
 interface Props {
   data: Post
@@ -148,7 +149,12 @@ export default (props: Props) => {
               &#x25B8; {sharingScope}
             </div>
           </div>
-          <div className="post-op-info-right">
+          <div>
+            <div className="post-op-info-time" onClick={navigateToPostPage} style={{
+              cursor: disableNavigateToPostPage ? 'auto' : 'pointer'
+            }}>
+              {timePosted(props.data.created_at_seconds)}
+            </div>
             {
               props.me.id === props.data.author.id && !deleted &&
               <DropdownMenu
@@ -171,18 +177,10 @@ export default (props: Props) => {
                 }
               >
                 <div className="post-more-actions-trigger">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path
-                      d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"/>
-                  </svg>
+                  <DotsVerticalIcon />
                 </div>
               </DropdownMenu>
             }
-            <div className="post-op-info-time" onClick={navigateToPostPage} style={{
-              cursor: disableNavigateToPostPage ? 'auto' : 'pointer'
-            }}>
-              {timePosted(props.data.created_at_seconds)}
-            </div>
           </div>
         </div>
         <div className='post-content-wrapper'>
@@ -222,27 +220,15 @@ export default (props: Props) => {
             />
             <div className="post-interactions">
               <div className="post-circle-button" onClick={commentButtonOnClick}>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd"
-                        d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
-                        clipRule="evenodd"/>
-                </svg>
+                <ChatIcon />
               </div>
-
               {props.data.reshareable ?
                 <div className="post-circle-button" onClick={reshareButtonOnClick}>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path
-                      d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/>
-                  </svg>
+                  <ShareIcon />
                 </div>
                 :
                 <div className="post-circle-button">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd"
-                          d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z"
-                          clipRule="evenodd"/>
-                  </svg>
+                  <BanIcon />
                 </div>
               }
             </div>

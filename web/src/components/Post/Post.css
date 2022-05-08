@@ -25,8 +25,8 @@
 
 .post-more-actions-trigger {
     color: #bdbdbd;
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 25px;
     border-radius: 7px;
     padding: 5px;
     cursor: pointer;
@@ -39,6 +39,7 @@
 .post-op-info-time {
     color: #767676;
     cursor: pointer;
+    margin-right: 4px;
 }
 
 .post-name {
