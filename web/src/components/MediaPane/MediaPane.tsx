@@ -7,6 +7,7 @@ interface Props {
   mediaOperations?: {op: string, action: (index: number) => void}[]
   heightPx?: number
   usePlaceholder?: boolean
+  oneRow?: boolean
 }
 
 export default (props: Props) => {
@@ -20,7 +21,7 @@ export default (props: Props) => {
     mediaCount = 4
   }
 
-  let mediaList = []
+  let mediaElems = []
   for (let i = 0; i < mediaCount; i++) {
     let mediaUrl
     let isPlaceholder = false
@@ -30,14 +31,14 @@ export default (props: Props) => {
       mediaUrl = `${process.env.PUBLIC_URL}/placeholder.png`
       isPlaceholder = true
     }
-    mediaList.push(
+    mediaElems.push(
       <div
-        className='media-pane'
+        className='media-img-container'
         style={{height, cursor: isPlaceholder ? 'auto' : 'pointer'}}
         key={i}
       >
         <img
-          className='media-pane-img'
+          className='media-img'
           style={{height: !isPlaceholder && props.mediaOperations ? '86%' : '100%'}}
           src={mediaUrl}
           alt={""}
@@ -73,8 +74,8 @@ export default (props: Props) => {
 
   return (
     <>
-      <div className='media-pane-container'>
-        {mediaList}
+      <div className='media-pane'>
+        {mediaElems}
       </div>
       {showingMediaIndex !== -1 &&
         <Lightbox
