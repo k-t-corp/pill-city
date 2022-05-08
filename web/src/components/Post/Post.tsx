@@ -210,6 +210,13 @@ export default (props: Props) => {
               // whether me has voted for this choice
               const voted = c.voters.map(u => u.id).indexOf(props.me.id) !== -1
 
+              const votes = c.voters.length
+              const totalVotes = poll.choices.map(c => c.voters).reduce((prev, cur) => [...prev, ...cur]).length
+              let percent = 0
+              if (totalVotes !== 0) {
+                percent = votes / totalVotes
+              }
+
               return (
                 <div
                   key={i}
@@ -244,7 +251,7 @@ export default (props: Props) => {
                     })})
                     updateVoting(false)
                   }}
-                >{c.content} ({c.voters.length})</div>
+                >{`${c.content} (${parseFloat(percent.toFixed(2)) * 100}%, ${votes} votes)`}</div>
               )
             })}
           </div>
