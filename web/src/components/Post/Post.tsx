@@ -9,11 +9,12 @@ import ResharedPost from "./ResharedPost";
 import ClickableId from "../ClickableId/ClickableId";
 import Comment from "./Comment";
 import CommentBox from "./CommentBox";
-import Post, {Comment as CommentModel, ResharedPost as ResharedPostModel} from "../../models/Post";
+import Post, {Comment as CommentModel, ResharedPost as ResharedPostModel, Poll} from "../../models/Post";
 import User from "../../models/User";
 import Previews from "./Previews";
 import api from "../../api/Api";
 import "./Post.css"
+import {BanIcon, ChatIcon, DotsVerticalIcon, ShareIcon} from "@heroicons/react/solid";
 
 interface Props {
   data: Post
@@ -39,6 +40,8 @@ export default (props: Props) => {
   const [replyingToComment, updateReplyingToComment] = useState<CommentModel | null>(null)
 
   const [mediaUrls, updateMediaUrls] = useState(props.data.media_urls)
+  const [poll, updatePoll] = useState<Poll>(props.data.poll)
+  const [voting, updateVoting] = useState(false)
 
   const history = useHistory()
 
@@ -148,7 +151,12 @@ export default (props: Props) => {
               &#x25B8; {sharingScope}
             </div>
           </div>
-          <div className="post-op-info-right">
+          <div>
+            <div className="post-op-info-time" onClick={navigateToPostPage} style={{
+              cursor: disableNavigateToPostPage ? 'auto' : 'pointer'
+            }}>
+              {timePosted(props.data.created_at_seconds)}
+            </div>
             {
               props.me.id === props.data.author.id && !deleted &&
               <DropdownMenu
@@ -171,18 +179,10 @@ export default (props: Props) => {
                 }
               >
                 <div className="post-more-actions-trigger">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path
-                      d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"/>
-                  </svg>
+                  <DotsVerticalIcon />
                 </div>
               </DropdownMenu>
             }
-            <div className="post-op-info-time" onClick={navigateToPostPage} style={{
-              cursor: disableNavigateToPostPage ? 'auto' : 'pointer'
-            }}>
-              {timePosted(props.data.created_at_seconds)}
-            </div>
           </div>
         </div>
         <div className='post-content-wrapper'>
@@ -204,6 +204,47 @@ export default (props: Props) => {
         />
         }
         <Previews post={props.data}/>
+        {poll.choices && poll.choices.length > 0 &&
+          <div className='post-poll'>
+            {poll.choices.map((c, i) => {
+              return (
+                <div
+                  key={i}
+                  className='post-poll-choice'
+                  style={{
+                    cursor: voting ? 'auto' : 'pointer',
+                    backgroundColor: voting ? '#ffffff' : '#f0f0f0'
+                  }}
+                  onClick={async (e) => {
+                    e.preventDefault()
+                    if (voting) {
+                      return
+                    }
+                    updateVoting(true)
+                    await api.vote(props.data.id, c.id)
+
+                    updatePoll({...poll, choices: poll.choices.map(cc => {
+                      if (cc.voters.map(u => u.id).filter(id => id === props.me.id).length > 0) {
+                        // if the user previously picked this choice
+                        return {
+                          ...cc, voters: cc.voters.filter(u => u.id !== props.me.id)
+                        }
+                      } else if (c.id === cc.id) {
+                        // if the user now picks this choice
+                        return {
+                          ...cc, voters: [...cc.voters, props.me]
+                        }
+                      } else {
+                        return cc
+                      }
+                    })})
+                    updateVoting(false)
+                  }}
+                >{c.content} ({c.voters.length})</div>
+              )
+            })}
+          </div>
+        }
         {
           !deleting && !deleted &&
           <div className="post-interactions-wrapper">
@@ -214,27 +255,15 @@ export default (props: Props) => {
             />
             <div className="post-interactions">
               <div className="post-circle-button" onClick={commentButtonOnClick}>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd"
-                        d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
-                        clipRule="evenodd"/>
-                </svg>
+                <ChatIcon />
               </div>
-
               {props.data.reshareable ?
                 <div className="post-circle-button" onClick={reshareButtonOnClick}>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path
-                      d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/>
-                  </svg>
+                  <ShareIcon />
                 </div>
                 :
                 <div className="post-circle-button">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd"
-                          d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z"
-                          clipRule="evenodd"/>
-                  </svg>
+                  <BanIcon />
                 </div>
               }
             </div>

@@ -49,13 +49,22 @@
     border: 1px #b4b4b4 solid;
 }
 
-.new-post-attachment-button {
+.new-post-media-button {
     position: absolute;
     top: 15px;
     right: 5px;
     width: 20px;
     cursor: pointer;
-    z-index: 999;
+    z-index: 3;
+}
+
+.new-post-poll-button {
+    position: absolute;
+    top: 35px;
+    right: 5px;
+    width: 20px;
+    cursor: pointer;
+    z-index: 3;
 }
 
 .new-post-circles-dropdown-wrapper {

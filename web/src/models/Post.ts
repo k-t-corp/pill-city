@@ -1,5 +1,6 @@
 import User from "./User";
 import Circle from "./Circle";
+import Media from "./Media";
 
 export interface NestedComment {
   id: string
@@ -32,6 +33,18 @@ export interface ResharedPost extends Previewable {
   author: User
 }
 
+export interface PollChoice {
+  id: string,
+  content: string,
+  media: Media,
+  voters: User[]
+}
+
+export interface Poll {
+  choices: PollChoice[]
+  close_by_seconds: number
+}
+
 export default interface Post extends Previewable {
   id: string
   created_at_seconds: number
@@ -43,4 +56,5 @@ export default interface Post extends Previewable {
   comments: Comment[],
   circles: Circle[],
   is_update_avatar: boolean
+  poll: Poll
 }

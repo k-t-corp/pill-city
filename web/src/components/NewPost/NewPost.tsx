@@ -12,13 +12,14 @@ import {useToast} from "../Toast/ToastProvider";
 import ApiError from "../../api/ApiError";
 import ContentTextarea from "../ContentTextarea/ContentTextarea";
 import {useAppSelector} from "../../store/hooks";
-import {PhotographIcon} from "@heroicons/react/solid";
+import {ChartSquareBarIcon, PhotographIcon} from "@heroicons/react/solid";
 import PillModal from "../PillModal/PillModal";
 import AddMedia from "../AddMedia/AddMedia";
 import api from "../../api/Api";
 import "./NewPost.css"
 import Media from "../../models/Media";
 import {arrayMoveImmutable} from "array-move";
+import AddPoll from "../AddPoll/AddPoll";
 
 interface Props {
   beforePosting: () => void
@@ -38,6 +39,9 @@ interface NewPostMediaOwned {
   type: 'Owned'
   media: Media
 }
+export interface AddPollChoice {
+  text: string
+}
 
 export default (props: Props) => {
   const me = useAppSelector(state => state.me.me)
@@ -47,8 +51,9 @@ export default (props: Props) => {
   const [circleIds, updateCircleIds] = useState<CircleIdOrPublic[]>([])
   const [resharable, updateResharable] = useState(true)
   const [medias, updateMedias] = useState<(NewPostMediaUploaded | NewPostMediaOwned)[]>([])
-  const [mediaOpened, updateMediaOpened] = useState(false)
-
+  const [pollChoices, updatePollChoices] = useState<AddPollChoice[]>([])
+  const [addingMedia, updateAddingMedia] = useState(false)
+  const [addingPoll, updateAddingPoll] = useState(false)
   const [posting, updatePosting] = useState(false)
 
   const {addToast, removeToast} = useToast()
@@ -82,13 +87,19 @@ export default (props: Props) => {
     updateCircleIds([])
     updateResharable(true)
     updateMedias([])
+    updatePollChoices([])
   }
 
   const postButtonOnClick = async () => {
     if (posting) {
       return
     }
-    updatePosting(true);
+    updatePosting(true)
+    if (pollChoices.length > 0) {
+      if (!confirm("Are you sure to send a post with poll? Even if you delete the post, you won't be able to delete the poll results.")) {
+        return
+      }
+    }
 
     // parse post parameters
     const actualCircleIds = circleIds.filter(cn => cn !== true)
@@ -109,6 +120,7 @@ export default (props: Props) => {
         props.resharePostData === null ? null : props.resharePostData.id,
         props.resharePostData === null ? medias : [],
         parseMentioned(content),
+        pollChoices
       );
     } catch (e) {
       if (e instanceof ApiError) {
@@ -209,56 +221,68 @@ export default (props: Props) => {
         </div>
       }
       {props.resharePostData === null &&
-        <MediaPane
-          mediaUrls={medias.map(m => {
-            if (m.type === 'Uploaded') {
-              return URL.createObjectURL(m.media)
-            } else {
-              return m.media.media_url
-            }
-          })}
-          mediaOperations={[
-            {
-              op: '<',
-              action: i => {
-                if (i === 0) {
-                  return
+        <>
+          <MediaPane
+            mediaUrls={medias.map(m => {
+              if (m.type === 'Uploaded') {
+                return URL.createObjectURL(m.media)
+              } else {
+                return m.media.media_url
+              }
+            })}
+            mediaOperations={[
+              {
+                op: '<',
+                action: i => {
+                  if (i === 0) {
+                    return
+                  }
+                  updateMedias(arrayMoveImmutable(medias, i - 1, i))
                 }
-                updateMedias(arrayMoveImmutable(medias, i - 1, i))
-              }
-            },
-            {
-              op: 'x',
-              action: i => {
-                updateMedias(medias.filter((_, ii) => i !== ii))
-              }
-            },
-            {
-              op: '>',
-              action: i => {
-                if (i === medias.length - 1) {
-                  return
+              },
+              {
+                op: 'x',
+                action: i => {
+                  updateMedias(medias.filter((_, ii) => i !== ii))
                 }
-                updateMedias(arrayMoveImmutable(medias, i, i + 1))
-              }
-            },
-          ]}
-        />
+              },
+              {
+                op: '>',
+                action: i => {
+                  if (i === medias.length - 1) {
+                    return
+                  }
+                  updateMedias(arrayMoveImmutable(medias, i, i + 1))
+                }
+              },
+            ]}
+          />
+        </>
       }
       <div className="new-post-text-box-container">
         {props.resharePostData === null &&
           <>
             <PhotographIcon
-              className='new-post-attachment-button'
+              className='new-post-media-button'
+              style={{color: medias.length > 0 ? 'black' : '#b2b2b2'}}
               onClick={() => {
                 if (!posting) {
-                  updateMediaOpened(true)
+                  updateAddingMedia(true)
+                }
+              }}
+            />
+            <ChartSquareBarIcon
+              className='new-post-poll-button'
+              style={{color: pollChoices.length > 0 ? 'black' : '#b2b2b2'}}
+              onClick={() => {
+                if (!posting) {
+                  updateAddingPoll(true)
                 }
               }}
             />
             <PillModal
-              isOpen={mediaOpened}
-              onClose={() => {updateMediaOpened(false)}}
+              isOpen={addingMedia}
+              onClose={() => {updateAddingMedia(false)}}
             >
               <AddMedia
                 onChangeMedias={onChangeMedias}
@@ -268,7 +292,17 @@ export default (props: Props) => {
                     media: m
                   }]))
                 }}
-                onClose={() => {updateMediaOpened(false)}}
+                onClose={() => {updateAddingMedia(false)}}
+              />
+            </PillModal>
+            <PillModal
+              isOpen={addingPoll}
+              onClose={() => {updateAddingPoll(false)}}
+            >
+              <AddPoll
+                choices={pollChoices}
+                onChangeChoices={updatePollChoices}
+                onDone={() => {updateAddingPoll(false)}}
               />
             </PillModal>
           </>

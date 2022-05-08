@@ -25,8 +25,8 @@
 
 .post-more-actions-trigger {
     color: #bdbdbd;
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 25px;
     border-radius: 7px;
     padding: 5px;
     cursor: pointer;
@@ -39,6 +39,7 @@
 .post-op-info-time {
     color: #767676;
     cursor: pointer;
+    margin-right: 4px;
 }
 
 .post-name {
@@ -63,6 +64,19 @@
     overflow-wrap: break-word;
     white-space: pre-line;
     margin: 15px 0;
+}
+
+.post-poll {
+    margin-bottom: 15px;
+}
+
+.post-poll-choice {
+    padding-top: 0.5em;
+    padding-left: 0.5em;
+    height: 2.5em;
+    margin-bottom: 0.5em;
+    font-size: small;
+    border-radius: 5px;
 }
 
 /*Post Interactions*/

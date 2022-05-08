@@ -1,6 +1,6 @@
 from typing import List
 from mongoengine import Document, ListField, BooleanField, StringField, LazyReferenceField, EmbeddedDocumentListField, \
-    EmbeddedDocument, LongField, PULL, CASCADE, NULLIFY
+    EmbeddedDocument, LongField, PULL, CASCADE, NULLIFY, IntField, EmbeddedDocumentField
 from .created_at_mixin import CreatedAtMixin
 from .user import User
 from .circle import Circle
@@ -33,6 +33,18 @@ class Comment(EmbeddedDocument):
         return f"/post/{parent_post.eid}#comment-{self.eid}"
 
 
+class PollChoice(EmbeddedDocument):
+    eid = StringField(required=True)
+    content = StringField(required=True)
+    media = LazyReferenceField(Media)  # type: Media
+    voters = ListField(LazyReferenceField(User), default=[])  # type: List[User]
+
+
+class Poll(EmbeddedDocument):
+    choices = EmbeddedDocumentListField(PollChoice)  # type: List[PollChoice]
+    close_by = IntField(required=False)
+
+
 class Post(Document, CreatedAtMixin):
     eid = StringField(required=True)
     author = LazyReferenceField(User, required=True, reverse_delete_rule=CASCADE)  # type: User
@@ -41,6 +53,7 @@ class Post(Document, CreatedAtMixin):
 
     reactions2 = EmbeddedDocumentListField(Reaction)
     comments2 = EmbeddedDocumentListField(Comment)
+    poll = EmbeddedDocumentField(Poll)  # type: Poll
 
     circles = ListField(LazyReferenceField(Circle, reverse_delete_rule=PULL), default=[])  # type: List[Circle]
     reshareable = BooleanField(required=False, default=False)

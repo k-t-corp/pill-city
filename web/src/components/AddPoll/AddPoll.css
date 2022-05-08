@@ -1,0 +1,24 @@
+.add-poll-choices {
+    margin-bottom: 15px;
+}
+
+.add-poll-choice {
+    display: flex;
+}
+
+.add-poll-choice-text {
+    width: 240px;
+    height: 2em;
+    padding: 0.5em;
+}
+
+.add-poll-delete-choice-icon {
+    width: 15px;
+    margin-left: 5px;
+    cursor: pointer;
+    color: #727272;
+}
+
+.add-poll-new-choice {
+    margin-bottom: 15px;
+}

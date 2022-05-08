@@ -28,6 +28,7 @@ from pillcity.resources.invitations_codes import InvitationCode, InvitationCodes
 from pillcity.resources.link_preview import LinkPreview
 from pillcity.resources.password_reset import ForgetPassword, ResetPassword
 from pillcity.resources.media_sets import MediaSets, MediaSetName, MediaSetPublic, MediaSetMedia, MediaSet
+from pillcity.resources.poll import Vote
 from pillcity.utils.now_ms import now_seconds
 
 # sentry
@@ -253,6 +254,7 @@ api.add_resource(Posts, '/api/posts')
 api.add_resource(PostMedia, '/api/post/<string:post_id>/media')
 api.add_resource(Post, '/api/post/<string:post_id>')
 api.add_resource(Media, '/api/media')
+api.add_resource(Vote, '/api/post/<string:post_id>/poll/<string:choice_id>')
 
 api.add_resource(Circles, '/api/circles')
 api.add_resource(CircleName, '/api/circle/<string:circle_id>/name')
