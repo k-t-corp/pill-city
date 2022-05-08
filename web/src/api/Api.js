@@ -153,7 +153,7 @@ export class Api {
     return res.data
   }
 
-  async postPost(content, isPublic, circleIds, reshareable, resharedFrom, newPostMedias, mentionedUserIds) {
+  async postPost(content, isPublic, circleIds, reshareable, resharedFrom, newPostMedias, mentionedUserIds, newPostPollChoices) {
     Api.throwOnUnauthorized()
 
     // gather uploaded media and their indices
@@ -183,6 +183,14 @@ export class Api {
       }
     })
 
+    // build poll related parameters
+    let pollChoices = []
+    let pollChoiceMediaObjectNames = []
+    if (newPostPollChoices.length > 0) {
+      pollChoices = newPostPollChoices.map(pc => pc.text)
+      pollChoiceMediaObjectNames = newPostPollChoices.map(_ => "null")
+    }
+
     const res = await this.axiosInstance.post(
       `/posts`,
       {
@@ -192,7 +200,9 @@ export class Api {
         reshareable: reshareable,
         reshared_from: resharedFrom,
         media_object_names: mediaObjectNames,
-        mentioned_user_ids: mentionedUserIds
+        mentioned_user_ids: mentionedUserIds,
+        poll_choices: pollChoices,
+        poll_choice_media_object_names: pollChoiceMediaObjectNames
       }
     )
     if (res.status !== 201) {

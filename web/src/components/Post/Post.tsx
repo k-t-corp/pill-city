@@ -204,6 +204,14 @@ export default (props: Props) => {
         />
         }
         <Previews post={props.data}/>
+
+        {props.data.poll.choices && props.data.poll.choices.length > 0 &&
+          <div className='post-poll'>
+            {props.data.poll.choices.map((c, i) => {
+              return <div key={i} className='post-poll-choice'>{c.content}</div>
+            })}
+          </div>
+        }
         {
           !deleting && !deleted &&
           <div className="post-interactions-wrapper">

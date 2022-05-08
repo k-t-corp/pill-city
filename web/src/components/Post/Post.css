@@ -65,6 +65,21 @@
     margin: 15px 0;
 }
 
+.post-poll {
+    margin-bottom: 15px;
+}
+
+.post-poll-choice {
+    padding-top: 0.5em;
+    padding-left: 0.5em;
+    height: 2.5em;
+    margin-bottom: 0.5em;
+    background-color: #f0f0f0;
+    font-size: small;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 /*Post Interactions*/
 .post-interactions-wrapper {
     width: 100%;
