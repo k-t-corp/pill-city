@@ -19,19 +19,17 @@ def vote(self: User, parent_post: Post, choice_id: str):
     if not parent_post.poll:
         raise BadRequest()
 
-    existing_choice_id = None
     for c in parent_post.poll.choices:
-        if self in c.voters:
-            existing_choice_id = c.eid
-            break
-
-    if choice_id == existing_choice_id:
-        raise BadRequest()
-
-    for c in parent_post.poll.choices:
-        if c.eid == existing_choice_id:
-            c.voters.remove(self)
         if c.eid == choice_id:
-            c.voters.append(self)
+            # this is the choice that the user casts
+            if self not in c.voters:
+                # the user hasn't picked this choice before
+                c.voters.append(self)
+            else:
+                # the user has picked this choice before, remove instead
+                c.voters.remove(self)
+        elif self in c.voters:
+            # this is not hte choice that the use casts but it's the choice before
+            c.voters.remove(self)
 
     parent_post.save()

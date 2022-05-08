@@ -207,20 +207,17 @@ export default (props: Props) => {
         {poll.choices && poll.choices.length > 0 &&
           <div className='post-poll'>
             {poll.choices.map((c, i) => {
-              // whether the user has voted on this choice
-              const voted = c.voters.map(u => u.id).indexOf(props.me.id) !== -1
-
               return (
                 <div
                   key={i}
                   className='post-poll-choice'
                   style={{
-                    cursor: voted || voting ? 'auto' : 'pointer',
+                    cursor: voting ? 'auto' : 'pointer',
                     backgroundColor: voting ? '#ffffff' : '#f0f0f0'
                   }}
                   onClick={async (e) => {
                     e.preventDefault()
-                    if (voted || voting) {
+                    if (voting) {
                       return
                     }
                     updateVoting(true)
