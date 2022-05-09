@@ -144,15 +144,15 @@ def owns_post(self, post):
     return self.id == post.author.id
 
 
-def sees_post(self, post, context_home_or_profile):
+def sees_post(self: User, post: Post, context_home_or_profile: bool) -> bool:
     """
     Whether the user can see a post
 
-    :param (User) self: The acting user
-    :param (Post) post: the post
-    :param (bool) context_home_or_profile: whether the seeing context is home or profile
-                    True for home, and False for profile
-    :return (bool): whether the user sees the post
+    :param self: The acting user
+    :param post: the post
+    :param context_home_or_profile: whether the seeing context is home or profile
+                                    True for home, and False for profile
+    :return: whether the user sees the post
     """
     if owns_post(self, post):
         return True
@@ -168,6 +168,19 @@ def sees_post(self, post, context_home_or_profile):
     return False
 
 
+def is_post_fully_deleted(post: Post):
+    """
+    A post is considered fully deleted
+    if it is marked as deleted and nobody has ever interacted with it, e.g. reaction, comment, poll
+
+    """
+    if not post.deleted:
+        return False
+    if not post.reactions2 and not post.comments2 and not post.poll:
+        return True
+    return False
+
+
 @timer
 def retrieves_posts_on_home(self: User, from_id: Optional[str]) -> List[Post]:
     """
@@ -178,7 +191,7 @@ def retrieves_posts_on_home(self: User, from_id: Optional[str]) -> List[Post]:
     :return: All posts that are visible to the user, reverse chronologically ordered
     """
     def _filter_post(p):
-        return sees_post(self, p, context_home_or_profile=True)
+        return sees_post(self, p, context_home_or_profile=True) and not is_post_fully_deleted(p)
 
     return get_page(
         mongoengine_model=Post,
@@ -199,7 +212,7 @@ def poll_latest_posts_on_home(self: User, to_id: str) -> List[Post]:
     :return All posts that are visible to the user since the to_id Post, reverse chronologically ordered
     """
     def _filter_post(p):
-        return sees_post(self, p, context_home_or_profile=True)
+        return sees_post(self, p, context_home_or_profile=True) and not is_post_fully_deleted(p)
 
     return poll_latest(
         mongoengine_model=Post,
@@ -219,7 +232,7 @@ def retrieves_posts_on_profile(self, profile_user, from_id):
     :return (List[Post]): all posts that are visible to the user, reverse chronologically ordered
     """
     def _filter_post(p):
-        return sees_post(self, p, context_home_or_profile=False)
+        return sees_post(self, p, context_home_or_profile=False) and not is_post_fully_deleted(p)
 
     return get_page(
         mongoengine_model=Post,
