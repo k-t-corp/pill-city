@@ -1,8 +1,12 @@
-.dropdown-menu-container {
+.pill-dropdown-menu-container {
     position: relative;
 }
 
-.dropdown-menu {
+.pill-dropdown-children {
+    display: inline-block;
+}
+
+.pill-dropdown-menu {
     border-radius: 4px;
     position: absolute;
     border: 1px solid #e0e0e0;
@@ -12,19 +16,20 @@
     visibility: hidden;
 }
 
-.dropdown-menu-item {
-    color: #e58181;
+.pill-dropdown-menu-item {
     padding: 6px;
     background-color: white;
     cursor: pointer;
     font-weight: bold;
+    border-radius: 4px;
+    color: #c97070;
 }
 
-.dropdown-menu-item:hover {
-    background-color: #f0f0f0;
+.pill-dropdown-menu-item:hover {
+    background-color: #f5f4f4;
 }
 
-.dropdown-menu-active {
+.pill-dropdown-menu-active {
     opacity: 1;
     visibility: visible;
 }

@@ -1,9 +1,9 @@
 import React, {useRef, useState, useEffect} from "react";
-import './DropdownMenu.css'
+import './PillDropdownMenu.css'
 
 export interface DropdownMenuItem {
   text: string
-  callback: () => void
+  onClick: () => void
 }
 
 interface Props {
@@ -30,19 +30,25 @@ export default (props: Props) => {
   }, [isActive]);
 
   return (
-    <div className="dropdown-menu-container" ref={dropdownRef}>
-      <div style={{display: 'inline-block'}} onClick={() => updateIsActive(!isActive)}>
+    <div className="pill-dropdown-menu-container" ref={dropdownRef}>
+      <div
+        className="pill-dropdown-children"
+        onClick={() => updateIsActive(!isActive)}
+      >
         {props.children}
       </div>
       <div
-        className={`dropdown-menu${isActive ? ' dropdown-menu-active' : ''}`}
+        className={`pill-dropdown-menu${isActive ? ' pill-dropdown-menu-active' : ''}`}
       >
         {props.items.map((item, i) => {
           return (
             <div
               key={i}
-              className='dropdown-menu-item'
-              onClick={item.callback}
+              className='pill-dropdown-menu-item'
+              onClick={e => {
+                e.preventDefault()
+                item.onClick()
+              }}
             >{item.text}</div>
           )
         })}
