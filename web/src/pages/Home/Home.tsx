@@ -11,7 +11,8 @@ import {loadMorePosts, pollPosts} from "../../store/homeSlice";
 import User from "../../models/User";
 import {ResharedPost} from "../../models/Post";
 import PillModal from "../../components/PillModal/PillModal";
-import { PencilIcon } from '@heroicons/react/solid'
+import { PencilIcon } from '@heroicons/react/solid';
+import Masonry from 'react-masonry-css'
 import "./Home.css"
 
 const InfiniteScrollFactor = 0.8
@@ -109,10 +110,21 @@ const Home = () => {
     />
   )
 
+  const useMultiCol = true
+
   return (
     <div className="home-wrapper">
       <div className="home-posts-wrapper">
-        {postElements}
+        <Masonry
+          breakpointCols={useMultiCol ? {
+            default: 2,
+            950: 1,
+          } : 1}
+          className="home-posts-masonry-grid"
+          columnClassName="home-posts-masonry-grid_column"
+        >
+          {postElements}
+        </Masonry>
       </div>
       {isTabletOrMobile ?
         <>

@@ -4,11 +4,24 @@
 }
 
 .home-posts-wrapper {
-    max-width: 75%;
+    max-width: 70%;
+}
+
+.home-posts-masonry-grid {
+    display: -webkit-box; /* Not needed if autoprefixing */
+    display: -ms-flexbox; /* Not needed if autoprefixing */
+    display: flex;
+    margin-left: -10px; /* gutter size offset */
+    width: auto;
+}
+
+.home-posts-masonry-grid_column {
+    padding-left: 10px; /* gutter size */
+    background-clip: padding-box;
 }
 
 .home-right-column-container {
-    margin-left: 20px;
+    margin-left: 10px;
     position: -webkit-sticky;
     position: sticky;
     top: 5em;
@@ -25,7 +38,7 @@
     border-radius: 5px;
     box-shadow: 2px 2px 1px 1px #e0e0e0;
     resize: none;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     max-height: 70vh;
     overflow: auto;
 }
