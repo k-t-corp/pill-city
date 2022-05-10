@@ -29,6 +29,8 @@ import Modal from "react-modal";
 import NavBar from "./components/NavBar/NavBar";
 import {accessTokenExists} from "./api/AuthStorage";
 import {getUseMultiColumn} from "./utils/SettingsStorage";
+import SwaggerUI from "swagger-ui-react"
+import "swagger-ui-react/swagger-ui.css"
 
 Modal.setAppElement('#root');
 
@@ -145,6 +147,9 @@ export default () => {
           </Route>
           <Route path="/reset">
             <ResetPassword />
+          </Route>
+          <Route path='/api'>
+            <SwaggerUI url="https://raw.githubusercontent.com/pill-city/spec/master/swagger.yaml"/>
           </Route>
           <Redirect to='/'/>
         </Switch>

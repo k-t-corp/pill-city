@@ -5,6 +5,7 @@
   "dependencies": {
     "@heroicons/react": "^1.0.5",
     "@reduxjs/toolkit": "^1.6.2",
+    "@types/swagger-ui-react": "^4.1.1",
     "@webscopeio/react-textarea-autocomplete": "^4.8.1",
     "array-move": "^4.0.0",
     "axios": "^0.21.1",
@@ -30,6 +31,7 @@
     "react-youtube": "^7.13.1",
     "semantic-ui-css": "^2.3.3",
     "semantic-ui-react": "^0.82.1",
+    "swagger-ui-react": "^4.11.0",
     "typescript": "^4.4.3"
   },
   "scripts": {
