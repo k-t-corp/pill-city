@@ -10,7 +10,6 @@
     margin-top: 3px;
     border-radius: 4px;
     background-color: #f0f0f0;
-    border: #f0f0f0 1px solid;
     font-weight: bold;
     font-size: small;
     display: flex;
@@ -32,12 +31,11 @@
 }
 
 .post-reaction-active {
-    background-color: #e0f4ff;
-    border: #9dd0ff 1px solid;
+    background-color: #fa9994;
 }
 
 .post-reaction-active:hover {
-    background-color: #e0f4ff;
+    background-color: #dc8883;
 }
 
 .post-emoji {
