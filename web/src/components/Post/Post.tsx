@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react'
 import parseContent from "../../utils/parseContent";
 import timePosted from "../../utils/timePosted";
-import DropdownMenu from "../DropdownMenu/DropdownMenu"
 import {useHistory} from "react-router-dom";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import Reactions from "./Reactions";
@@ -15,6 +14,7 @@ import Previews from "./Previews";
 import api from "../../api/Api";
 import "./Post.css"
 import {BanIcon, ChatIcon, DotsVerticalIcon, ShareIcon} from "@heroicons/react/solid";
+import PillDropdownMenu from "../PillDropdownMenu/PillDropdownMenu";
 
 interface Props {
   data: Post
@@ -159,21 +159,21 @@ export default (props: Props) => {
             </div>
             {
               props.me.id === props.data.author.id && !deleted &&
-              <DropdownMenu
+              <PillDropdownMenu
                 items={
                   mediaUrls.length > 0 && props.data.content ? [
                     {
                       text: 'Delete all media',
-                      callback: deletePostMedia
+                      onClick: deletePostMedia
                     },
                     {
                       text: 'Delete post',
-                      callback: deletePost
+                      onClick: deletePost
                     }
                   ] : [
                     {
                       text: 'Delete post',
-                      callback: deletePost
+                      onClick: deletePost
                     }
                   ]
                 }
@@ -181,7 +181,7 @@ export default (props: Props) => {
                 <div className="post-more-actions-trigger">
                   <DotsVerticalIcon />
                 </div>
-              </DropdownMenu>
+              </PillDropdownMenu>
             }
           </div>
         </div>

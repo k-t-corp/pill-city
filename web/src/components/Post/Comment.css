@@ -1,7 +1,6 @@
-/* TODO: all classnames not starting with post-comment are duplicated */
 .post-comment {
     display: flex;
-    padding: 3px 0;
+    margin-top: 10px;
 }
 
 .highlight-comment {
@@ -16,33 +15,18 @@
     flex-shrink: 0;
 }
 
-.post-comments-wrapper {
-    margin-top: 10px;
-}
-
 .post-comment-main-content {
     flex: 1;
     min-width: 0;
-}
-
-.post-comment-info {
-    display: flex;
-    align-items: center;
+    margin-left: 10px;
 }
 
 .post-comment-name {
-    margin: 0 10px;
     font-weight: bold;
     font-size: medium;
 }
 
-.post-time {
-    font-size: smaller;
-    color: #767676;
-}
-
 .post-comment-content {
-    margin: 0 0 2px 10px;
     max-width: 100%;
     overflow-wrap: break-word;
     white-space: pre-line;
@@ -56,34 +40,41 @@
     overflow: hidden;
 }
 
+.post-comment-actions {
+    display: flex;
+    margin-top: 5px;
+    align-items: center;
+}
+
+.post-time {
+    font-size: smaller;
+    color: #767676;
+}
+
 .post-comment-reply-btn {
-    margin-left: 10px;
     font-size: smaller;
     background-color: #f0f0f0;
     padding: 2px 5px;
     border-radius: 2px;
     font-weight: bold;
     cursor: pointer;
+    margin-left: 5px;
 }
 
 .post-comment-reply-btn:hover {
     background-color: #e7e7e7;
 }
 
-.post-comment-delete-btn {
-    margin-left: 10px;
-    font-size: smaller;
-    background-color: pink;
-    padding: 2px 5px;
+.post-comment-more-actions-trigger {
+    color: #bdbdbd;
+    width: 25px;
+    height: 25px;
     border-radius: 2px;
-    font-weight: bold;
+    padding: 5px;
     cursor: pointer;
+    margin-left: 5px;
 }
 
-.post-comment-delete-btn:hover {
-    background-color: lightpink;
-}
-
-.post-nested-comment-wrapper {
-    margin-top: 3px;
+.post-comment-more-actions-trigger:hover {
+    background-color: #f0f0f0;
 }
