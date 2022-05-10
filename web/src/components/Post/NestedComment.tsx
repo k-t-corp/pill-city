@@ -74,13 +74,13 @@ export default (props: Props) => {
         <span className="post-nested-comment-time">{timePosted(nestedComment.created_at_seconds)}</span>
         {
           !deleting && !deleted && !parentComment.deleted &&
-          <span className="post-comment-reply-btn" onClick={onReply}>
+          <span className="post-nested-comment-reply-btn" onClick={onReply}>
             Reply
           </span>
         }
         {
           !deleting && !deleted && nestedComment.author.id === props.me.id &&
-          <span className="post-comment-delete-btn" onClick={onDelete}>
+          <span className="post-nested-comment-delete-btn" onClick={onDelete}>
             Delete
           </span>
         }
