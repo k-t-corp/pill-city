@@ -11,6 +11,7 @@ import {validateEmail} from "../../utils/validators";
 import PillModal from "../../components/PillModal/PillModal";
 import {useToast} from "../../components/Toast/ToastProvider";
 import './Settings.css'
+import {getUseMultiColumn, setUseMultiColumn} from "../../utils/SettingsStorage";
 
 type NotifyingActionToRssCode = {[action: string]: string}
 
@@ -36,6 +37,7 @@ const Settings = () => {
   const [emailValidated, updateEmailValidated] = useState(false)
   const [rssToken, updateRssToken] = useState<RssToken | undefined>()
   const [rssCodesChecked, updateRssCodesChecked] = useState<{[action: string]: boolean} | undefined>(undefined)
+  const [multipleColumns, updateMultipleColumns] = useState(getUseMultiColumn)
 
   useEffect(() => {
     if (validateEmail(email)) {
@@ -119,6 +121,13 @@ const Settings = () => {
       <div className="settings-row" onClick={() => {updateRssTokenModalOpened(true)}}>
         <div className="settings-row-header">RSS Notifications</div>
         <div className="settings-row-content">{rssToken && rssToken.rss_token ? 'Enabled' : 'Disabled'}</div>
+      </div>
+      <div className="settings-row" onClick={() => {
+        setUseMultiColumn(!multipleColumns)
+        updateMultipleColumns(!multipleColumns)
+      }}>
+        <div className="settings-row-header">Multiple columns on home</div>
+        <div className="settings-row-content">{`${multipleColumns ? "Enabled" : "Disabled"}. Click to ${multipleColumns ? 'disable' : 'enable'}.`}</div>
       </div>
       <div className="settings-row" onClick={handleSignOut}>
         <div className="settings-row-header">Sign out</div>
