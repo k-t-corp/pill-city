@@ -1,4 +1,3 @@
-import MediaPane from "../MediaPane/MediaPane";
 import React, {useState} from "react";
 import LinkPreview from "../LinkPreview/LinkPreview";
 import {Previewable} from "../../models/Post";
@@ -23,17 +22,9 @@ interface Props {
 }
 
 export default (props: Props) => {
-  const {deleted, media_urls: mediaUrls, content} = props.post
-  if (deleted) {
-    return null
-  }
+  const {content} = props.post
 
   const previewElems = []
-  if (mediaUrls.length > 0) {
-    previewElems.push(
-      <MediaPane mediaUrls={mediaUrls} heightPx={300}/>
-    )
-  }
 
   const parsedUrls = parseUrls(content)
   for (const parsedUrl of parsedUrls) {

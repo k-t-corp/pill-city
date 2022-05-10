@@ -4,8 +4,8 @@ import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import parseContent from "../../utils/parseContent";
 import {ResharedPost} from "../../models/Post";
 import './ResharedPost.css'
-import Previews from "./Previews";
 import ClickableId from "../ClickableId/ClickableId";
+import MediaPane from "../MediaPane/MediaPane";
 
 interface Props {
   resharedFrom: ResharedPost,
@@ -37,7 +37,10 @@ export default (props: Props) => {
             :
             <div style={{fontStyle: 'italic'}}>This post has been deleted</div>
         }
-        <Previews post={props.resharedFrom}/>
+        {
+          !resharedFrom.deleted &&
+          <MediaPane mediaUrls={resharedFrom.media_urls} heightPx={300}/>
+        }
       </div>
     </div>
   )

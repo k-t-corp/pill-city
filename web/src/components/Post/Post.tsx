@@ -15,6 +15,7 @@ import api from "../../api/Api";
 import "./Post.css"
 import {BanIcon, ChatIcon, DotsVerticalIcon, ShareIcon} from "@heroicons/react/solid";
 import PillDropdownMenu from "../PillDropdownMenu/PillDropdownMenu";
+import MediaPane from "../MediaPane/MediaPane";
 
 interface Props {
   data: Post
@@ -203,7 +204,12 @@ export default (props: Props) => {
           showDetail={props.detail}
         />
         }
-        <Previews post={props.data}/>
+        {!deleting && !deleted &&
+          <MediaPane mediaUrls={mediaUrls} heightPx={300}/>
+        }
+        {!deleting && !deleted &&
+          <Previews post={props.data}/>
+        }
         {poll.choices && poll.choices.length > 0 &&
           <div className='post-poll'>
             {poll.choices.map((c, i) => {
