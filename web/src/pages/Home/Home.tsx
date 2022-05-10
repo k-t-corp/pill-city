@@ -116,12 +116,11 @@ const Home = () => {
       <div className="home-posts-wrapper">
         <Masonry
           breakpointCols={getUseMultiColumn() ? {
-            default: 5,
-            2850: 5,
-            2350: 4,
-            1950: 3,
-            1550: 2,
-            1050: 1,
+            default: 4,
+            3350: 4,
+            2450: 3,
+            1650: 2,
+            950: 1,
           } : 1}
           className="home-posts-masonry-grid"
           columnClassName="home-posts-masonry-grid_column"
