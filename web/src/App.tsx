@@ -28,17 +28,26 @@ import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import Modal from "react-modal";
 import NavBar from "./components/NavBar/NavBar";
 import {accessTokenExists} from "./api/AuthStorage";
+import {getUseMultiColumn} from "./utils/SettingsStorage";
 
 Modal.setAppElement('#root');
 
-const Authenticated = (props: {children: ReactElement}) => {
+interface AuthenticatedProps {
+  children: ReactElement
+  freeWidth?: boolean
+}
+
+const Authenticated = (props: AuthenticatedProps) => {
   if (!accessTokenExists()) {
     return <Redirect to='/signin'/>
   }
   return (
     <>
       <NavBar />
-      <div className="app-container">
+      <div
+        className="app-container"
+        style={{maxWidth: getUseMultiColumn() && props.freeWidth ? undefined : '1200px'}}
+      >
         {props.children}
       </div>
     </>
@@ -77,7 +86,7 @@ export default () => {
       <Router>
         <Switch>
           <Route exact={true} path='/'>
-            <Authenticated>
+            <Authenticated freeWidth={true}>
               <Home />
             </Authenticated>
           </Route>

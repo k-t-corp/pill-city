@@ -14,6 +14,7 @@ import PillModal from "../../components/PillModal/PillModal";
 import { PencilIcon } from '@heroicons/react/solid';
 import Masonry from 'react-masonry-css'
 import "./Home.css"
+import {getUseMultiColumn} from "../../utils/SettingsStorage";
 
 const InfiniteScrollFactor = 0.8
 
@@ -110,14 +111,16 @@ const Home = () => {
     />
   )
 
-  const useMultiCol = true
-
   return (
     <div className="home-wrapper">
       <div className="home-posts-wrapper">
         <Masonry
-          breakpointCols={useMultiCol ? {
-            default: 2,
+          breakpointCols={getUseMultiColumn() ? {
+            default: 5,
+            2750: 5,
+            2250: 4,
+            1850: 3,
+            1450: 2,
             950: 1,
           } : 1}
           className="home-posts-masonry-grid"
