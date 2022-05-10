@@ -1,5 +1,5 @@
 # server
-The server and official web frontend for Pill City
+The OpenAPI spec, server and official web frontend for Pill City
 
 ## Video demo
 Here is a video demo for some of its features such as circle management, emoji reactions and post formatting
