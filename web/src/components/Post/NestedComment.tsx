@@ -8,6 +8,8 @@ import Post, {NestedComment, Comment} from "../../models/Post";
 import User from "../../models/User";
 import api from "../../api/Api";
 import './NestedComment.css'
+import {DotsVerticalIcon} from "@heroicons/react/solid";
+import PillDropdownMenu from "../PillDropdownMenu/PillDropdownMenu";
 
 interface Props {
   me: User
@@ -71,19 +73,30 @@ export default (props: Props) => {
             <MediaPane mediaUrls={[nestedComment.media_urls[0]]}/>
           </div>
         }
-        <span className="post-nested-comment-time">{timePosted(nestedComment.created_at_seconds)}</span>
-        {
-          !deleting && !deleted && !parentComment.deleted &&
-          <span className="post-nested-comment-reply-btn" onClick={onReply}>
+        <div className='post-nested-comment-actions'>
+          <span className="post-nested-comment-time">{timePosted(nestedComment.created_at_seconds)}</span>
+          {
+            !deleting && !deleted && !parentComment.deleted &&
+            <span className="post-nested-comment-reply-btn" onClick={onReply}>
             Reply
           </span>
-        }
-        {
-          !deleting && !deleted && nestedComment.author.id === props.me.id &&
-          <span className="post-nested-comment-delete-btn" onClick={onDelete}>
-            Delete
-          </span>
-        }
+          }
+          {
+            !deleting && !deleted && nestedComment.author.id === props.me.id &&
+            <PillDropdownMenu
+              items={[
+                {
+                  text: 'Delete',
+                  onClick: onDelete
+                }
+              ]}
+            >
+              <div className="post-nested-comment-more-actions-trigger">
+                <DotsVerticalIcon />
+              </div>
+            </PillDropdownMenu>
+          }
+        </div>
       </div>
     </div>
   )

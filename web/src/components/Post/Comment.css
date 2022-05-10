@@ -69,12 +69,12 @@
     color: #bdbdbd;
     width: 25px;
     height: 25px;
-    border-radius: 7px;
+    border-radius: 2px;
     padding: 5px;
     cursor: pointer;
     margin-left: 5px;
 }
 
 .post-comment-more-actions-trigger:hover {
-    background-color: #e7e7e7;
+    background-color: #f0f0f0;
 }

@@ -1,6 +1,6 @@
 .post-nested-comment {
     display: flex;
-    margin-bottom: 3px;
+    margin-top: 3px;
 }
 
 .highlight-comment {
@@ -10,36 +10,40 @@
 }
 
 .post-nested-comment-avatar {
-    height: 25px;
-    width: 25px;
+    height: 20px;
+    width: 20px;
     flex-shrink: 0;
 }
 
 .post-nested-comment-name {
     font-size: small;
     font-weight: bold;
-    margin: 3px 0 0 10px;
+    margin-left: 3px;
 }
 
 .post-nested-comment-content {
     overflow-wrap: break-word;
     flex: 1;
     min-width: 0;
-    margin-top: 3px;
+    margin-left: 3px;
     white-space: pre-line;
+}
+
+.post-nested-comment-actions {
+    display: flex;
+    align-items: center;
 }
 
 .post-nested-comment-time {
     font-size: smaller;
     color: #767676;
-    margin-left: 10px;
 }
 
 .post-nested-comment-reply-btn {
-    margin-left: 10px;
-    font-size: smaller;
+    margin-left: 5px;
+    font-size: x-small;
     background-color: #f0f0f0;
-    padding: 2px 5px;
+    padding: 1px 2px;
     border-radius: 2px;
     font-weight: bold;
     cursor: pointer;
@@ -49,16 +53,17 @@
     background-color: #e7e7e7;
 }
 
-.post-nested-comment-delete-btn {
-    margin-left: 10px;
-    font-size: smaller;
-    background-color: pink;
-    padding: 2px 5px;
+.post-nested-comment-more-actions-trigger {
+    color: #bdbdbd;
+    width: 17px;
+    height: 17px;
     border-radius: 2px;
-    font-weight: bold;
+    padding: 2px;
     cursor: pointer;
+    margin-left: 5px;
 }
 
-.post-nested-comment-delete-btn:hover {
-    background-color: lightpink;
+.post-nested-comment-more-actions-trigger:hover {
+    background-color: #f0f0f0;
 }
+
