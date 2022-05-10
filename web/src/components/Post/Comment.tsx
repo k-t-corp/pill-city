@@ -10,6 +10,8 @@ import Post, {NestedComment as NestedCommentModel} from "../../models/Post";
 import NestedComment from "./NestedComment";
 import api from "../../api/Api";
 import "./Comment.css"
+import {DotsVerticalIcon} from "@heroicons/react/solid";
+import PillDropdownMenu from "../PillDropdownMenu/PillDropdownMenu";
 
 interface Props {
   me: User
@@ -75,13 +77,8 @@ export default (props: Props) => {
         <RoundAvatar user={!deleted ? comment.author : null}/>
       </div>
       <div className="post-comment-main-content">
-        <div className="post-comment-info">
-          <div className="post-comment-name">
-            <ClickableId user={!deleted ? comment.author : null}/>
-          </div>
-          <div className="post-time">
-            {timePosted(comment.created_at_seconds)}
-          </div>
+        <div className="post-comment-name">
+          <ClickableId user={!deleted ? comment.author : null}/>
         </div>
         <div className={`post-comment-content ${props.detail ? '' : 'post-comment-content-summary'}`}>
           {
@@ -95,6 +92,11 @@ export default (props: Props) => {
               <MediaPane mediaUrls={[comment.media_urls[0]]}/>
             </div>
           }
+        </div>
+        <div className='post-comment-actions'>
+          <div className="post-time">
+            {timePosted(comment.created_at_seconds)}
+          </div>
           {
             !deleting && !deleted &&
             <span className="post-comment-reply-btn" onClick={onReply}>
@@ -103,14 +105,22 @@ export default (props: Props) => {
           }
           {
             !deleting && !deleted && comment.author.id === props.me.id &&
-            <span className="post-comment-delete-btn" onClick={onDelete}>
-              Delete
-            </span>
+            <PillDropdownMenu
+              items={[
+                {
+                  text: 'Delete',
+                  onClick: onDelete
+                }
+              ]}
+            >
+              <div className="post-comment-more-actions-trigger">
+                <DotsVerticalIcon />
+              </div>
+            </PillDropdownMenu>
+
           }
         </div>
-        <div className="post-nested-comment-wrapper">
-          {nestedCommentElems}
-        </div>
+        {nestedCommentElems}
       </div>
     </div>
   )
