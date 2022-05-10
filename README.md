@@ -1,4 +1,4 @@
-# pill-city
+# server
 The server and official web frontend for Pill City
 
 ## Video demo
