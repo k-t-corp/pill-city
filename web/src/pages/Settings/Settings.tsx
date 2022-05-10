@@ -127,7 +127,7 @@ const Settings = () => {
         updateMultipleColumns(!multipleColumns)
       }}>
         <div className="settings-row-header">Multiple columns on home</div>
-        <div className="settings-row-content">{multipleColumns ? "Enabled" : "Disabled"}</div>
+        <div className="settings-row-content">{`${multipleColumns ? "Enabled" : "Disabled"}. Click to ${multipleColumns ? 'disable' : 'enable'}.`}</div>
       </div>
       <div className="settings-row" onClick={handleSignOut}>
         <div className="settings-row-header">Sign out</div>
