@@ -20,8 +20,8 @@ nested_comment_fields = {
     'created_at_seconds': fields.Integer(attribute='created_at'),
     'author': fields.Nested(user_fields),
     'content': fields.String,
-    'deleted': fields.Boolean,
     'media_urls': MediaUrls(attribute='media_list'),
+    'deleted': fields.Boolean,
 }
 
 comment_fields = dict({

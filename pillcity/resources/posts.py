@@ -1,6 +1,6 @@
 from flask_restful import reqparse, Resource, fields, marshal_with, marshal
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from pillcity.daos.user import find_user
+from pillcity.daos.user import find_user, find_user_or_raise
 from pillcity.daos.user_cache import get_in_user_cache_by_user_id
 from pillcity.daos.circle import find_circle
 from pillcity.daos.post import dangerously_get_post, create_post, sees_post, retrieves_posts_on_home, \
@@ -163,7 +163,7 @@ class Home(Resource):
         Get posts that are visible to the current user
         """
         user_id = get_jwt_identity()
-        user = find_user(user_id)
+        user = find_user_or_raise(user_id)
 
         args = pagination_parser.parse_args()
         to_id = args.get('to_id', None)
