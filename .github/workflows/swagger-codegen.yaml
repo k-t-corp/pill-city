@@ -11,14 +11,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Create folder for typescript-fetch client SDK
-        run: mkdir -p typescript-fetch-sdk
-
       - name: Generate typescript-fetch client SDK
         uses: ducksify/swagger-codegen-action@v3.0
-        working-directory: typescript-fetch-sdk
-        run: -i ../swagger.yaml -l typescript-fetch
 
       - name: ls
-        working-directory: typescript-fetch-sdk
         run: ls
