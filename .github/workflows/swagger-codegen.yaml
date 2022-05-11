@@ -32,4 +32,4 @@ jobs:
           git config --global user.email developers@pill.city
           git add --all
           git commit -m "Update"
-          git status --staged
+          git push
