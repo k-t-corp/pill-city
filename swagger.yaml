@@ -1,0 +1,389 @@
+openapi: 3.0.0
+servers:
+  - url: https://api.pill.city/api
+    description: Production
+  - url: http://localhost:5000/api
+    description: Development
+info:
+  description: API for an one-of-a-kind social network
+  version: 0.0.1
+  title: Pill.City
+  contact:
+    email: feedback@pill.city
+paths:
+  /signIn:
+    post:
+      summary: Sign in
+      operationId: signIn
+      security: []
+      requestBody:
+        $ref: '#/components/requestBodies/SignInRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/SignInSuccessfulResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+  /home:
+    get:
+      summary: Get or poll latest home posts
+      operationId: getHome
+      parameters:
+        - in: query
+          name: to_id
+          schema:
+            type: string
+          description: To which post ID should the server poll latest posts on home. If both to_id and from_id are present, to_id will take precedence.
+        - in: query
+          name: from_id
+          schema:
+            type: string
+          description: From which post ID should the server fetch posts on home. If empty, the server will fetch the latest posts.
+      responses:
+        '200':
+          description: Successfully got or polled home posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+  /me:
+    get:
+      summary: Get the loggined in user
+      operationId: getMe
+      responses:
+        '200':
+          description: Successfully got the loggined in user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+components:
+  schemas:
+    User:
+      required:
+        - id
+        - created_at_seconds
+      properties:
+        id:
+          type: string
+          description: The permanent short ID for the user
+          example: kt
+        created_at_seconds:
+          type: number
+          description: In epoch seconds, when the user signed up
+          example: 1631528113
+        avatar_url:
+          type: string
+          description: URL to the user's avatar
+          format: url
+          example: https://pill-city.s3.us-west-2.amazonaws.com/avatars/kt-1646414449.png
+          default: null
+        profile_pic:
+          type: string
+          description: User's choice of profile banner. The choices are defined on web frontend.
+          example: pill1.png
+          default: pill1.png
+        display_name:
+          type: string
+          description: User's displayed/regular name. Can be changed.
+          example: KT 一號機
+          default: null
+      type: object
+    ResharedPost:
+      required:
+        - id
+        - created_at_seconds
+        - author
+      properties:
+        id:
+          type: string
+          description: Permanent ID for the reshared post
+          example: a3137edb-e629-49ac-b1f1-3343fd97329c
+        created_at_seconds:
+          type: number
+          description: In epoch seconds, when the reshared post was created
+        author:
+          $ref: '#/components/schemas/User'
+        content:
+          type: string
+          description: Text content for the reshared post
+          example: Hello, World!
+          default: ''
+        media_urls:
+          type: array
+          description: URLs for the reshared post's media
+          items:
+            type: string
+          example: ["https://pill-city.s3.us-west-2.amazonaws.com/avatars/kt-1646414449.png", "https://pill-city.s3.us-west-2.amazonaws.com/avatars/ika-1631578.png"]
+          default: []
+        deleted:
+          type: boolean
+          description: Whether the reshared post is deleted
+          default: false
+    NestedComment:
+      required:
+        - id
+        - created_at_seconds
+        - author
+      properties:
+        id:
+          type: string
+          description: Permanent ID for the nested comment
+          example: a3137edb-e629-49ac-b1f1-3343fd97329c
+        created_at_seconds:
+          type: number
+          description: In epoch seconds, when the nested comment was created
+        author:
+          $ref: '#/components/schemas/User'
+        content:
+          type: string
+          description: Text content for the nested comment
+          example: Hello, World!
+          default: ''
+        media_urls:
+          type: array
+          description: URLs for the nested comment's media
+          items:
+            type: string
+          example: ["https://pill-city.s3.us-west-2.amazonaws.com/avatars/kt-1646414449.png", "https://pill-city.s3.us-west-2.amazonaws.com/avatars/ika-1631578.png"]
+          default: []
+        deleted:
+          type: boolean
+          description: Whether the nested comment is deleted
+          default: false
+    Comment:
+      required:
+        - id
+        - created_at_seconds
+        - author
+      properties:
+        id:
+          type: string
+          description: Permanent ID for the comment
+          example: a3137edb-e629-49ac-b1f1-3343fd97329c
+        created_at_seconds:
+          type: number
+          description: In epoch seconds, when the comment was created
+        author:
+          $ref: '#/components/schemas/User'
+        content:
+          type: string
+          description: Text content for the comment
+          example: Hello, World!
+          default: ''
+        media_urls:
+          type: array
+          description: URLs for the comment's media
+          items:
+            type: string
+          example: ["https://pill-city.s3.us-west-2.amazonaws.com/avatars/kt-1646414449.png", "https://pill-city.s3.us-west-2.amazonaws.com/avatars/ika-1631578.png"]
+          default: []
+        deleted:
+          type: boolean
+          description: Whether the comment is deleted
+          default: false
+        comments:
+          type: array
+          description: Nested comments for the comment
+          items:
+            $ref: '#/components/schemas/NestedComment'
+    Circle:
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          description: Permanent ID for the circle
+          example: a3137edb-e629-49ac-b1f1-3343fd97329c
+        name:
+          type: string
+          description: Circle name
+          example: 圈子
+    Reaction:
+      required:
+        - id
+        - emoji
+        - author
+      properties:
+        id:
+          type: string
+          description: Permanent ID for the reaction
+          example: a3137edb-e629-49ac-b1f1-3343fd97329c
+        emoji:
+          type: string
+          description: Emoji for the reaction
+          example: 💩
+        author:
+          $ref: '#/components/schemas/User'
+    PollChoice:
+      required:
+        - id
+        - content
+        - media
+      properties:
+        id:
+          type: string
+          description: Permanent ID for the poll choice
+          example: a3137edb-e629-49ac-b1f1-3343fd97329c
+        content:
+          type: string
+          description: Text content for the poll choice
+          example: Choice 1
+        media:
+          type: string
+          format: url
+          description: URL for the poll choice's media
+          example: https://pill-city.s3.us-west-2.amazonaws.com/avatars/kt-1646414449.png
+        voters:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+          description: User who have voted for this poll choice
+    Poll:
+      properties:
+        choices:
+          type: array
+          items:
+            $ref: '#/components/schemas/PollChoice'
+          description: Choices for this poll
+        close_by_seconds:
+          type: number
+          description: In epoch seconds, by when this poll will close. Default 0 meaning the poll will never close.
+          default: 0
+    Post:
+      required:
+        - id
+        - created_at_seconds
+        - author
+        - is_public
+      properties:
+        id:
+          type: string
+          description: Permanent ID for the post
+          example: a3137edb-e629-49ac-b1f1-3343fd97329c
+        created_at_seconds:
+          type: number
+          description: In epoch seconds, when the post was created
+        author:
+          $ref: '#/components/schemas/User'
+        content:
+          type: string
+          description: Text content for the post
+          example: Hello, World!
+          default: ''
+        is_public:
+          type: boolean
+          description: Whether the post is publicly accessible on the server
+          example: true
+        reshareable:
+          type: boolean
+          description: Whether the post is publicly reshareable on the server
+          example: true
+          default: false
+        reshared_from:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/ResharedPost'
+        media_urls:
+          type: array
+          description: URLs for the post's media
+          items:
+            type: string
+          example: ["https://pill-city.s3.us-west-2.amazonaws.com/avatars/kt-1646414449.png", "https://pill-city.s3.us-west-2.amazonaws.com/avatars/ika-1631578.png"]
+          default: []
+        reactions:
+          type: array
+          description: Reactions for the post
+          items:
+            $ref: '#/components/schemas/Reaction'
+        comments:
+          type: array
+          description: Comments for the post
+          items:
+            $ref: '#/components/schemas/Comment'
+        circles:
+          type: array
+          description: Circles that the post is published in
+          items:
+            $ref: '#/components/schemas/Circle'
+        deleted:
+          type: boolean
+          description: Whether the post is deleted
+          default: false
+        is_update_avatar:
+          type: boolean
+          description: Whether the post is an update avatar post
+          default: false
+        poll:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/Poll'
+    Message:
+      required:
+        - msg
+      properties:
+        msg:
+          type: string
+          description: This is a message
+          example: Human readable message
+  requestBodies:
+    SignInRequest:
+      content:
+        application/json:
+          schema:
+            required:
+              - id
+              - password
+            properties:
+              id:
+                $ref: '#/components/schemas/User/properties/id'
+              password:
+                type: string
+                description: User's password
+                example: thisissupersecure
+  responses:
+    SignInSuccessfulResponse:
+      description: Successfully signed in
+      content:
+        application/json:
+          schema:
+            required:
+              - access_token
+              - expires
+            properties:
+              access_token:
+                type: string
+                description: User's bearer token
+                example: xyz.123
+              expires:
+                type: number
+                description: In epoch seconds, when the bearer token will expire
+                example: 1652301806
+    400BadRequest:
+      description: Bad request, invalid request body
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+    401Unauthorized:
+      description: Unauthorized, invalid access token or wrong user ID/password
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+security:
+  - bearer: []
