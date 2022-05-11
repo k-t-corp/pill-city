@@ -17,7 +17,7 @@ jobs:
       - name: Generate TypeScript client SDK
         uses: ducksify/swagger-codegen-action@v3.0
         with:
-          args: generate -i swagger.yaml -o gen-typescript-sdk -l typescript-axios --additional-properties npmName=pill-city-sdk,npmVersion=0.0.1
+          args: generate -i swagger.yaml -o gen-typescript-sdk -l typescript-axios --additional-properties npmName=pill-city/typescript-sdk,npmVersion=0.0.1
 
       - name: Checkout typescript-sdk
         uses: actions/checkout@v3
