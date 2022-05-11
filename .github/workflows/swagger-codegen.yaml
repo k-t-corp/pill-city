@@ -26,3 +26,4 @@ jobs:
           destination-repository-name: typescript-sdk
           user-email: feedback@pill.city
           target-branch: master
+          target-directory: sdk
