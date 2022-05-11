@@ -22,13 +22,13 @@ import {loadPosts, pollPosts} from "./store/homeSlice";
 import {loadMe} from "./store/meSlice";
 import {loadNotifications, pollNotifications} from "./store/notificationsSlice";
 import {Api} from "./api/Api";
-import './App.css'
 import ForgetPassword from "./pages/ForgetPassword/ForgetPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import Modal from "react-modal";
 import NavBar from "./components/NavBar/NavBar";
 import {accessTokenExists} from "./api/AuthStorage";
 import {getUseMultiColumn} from "./utils/SettingsStorage";
+import './App.css'
 
 Modal.setAppElement('#root');
 

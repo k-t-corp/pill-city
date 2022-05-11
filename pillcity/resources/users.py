@@ -5,7 +5,8 @@ from bson import ObjectId
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from pillcity.daos.user import find_user, update_profile_pic, update_avatar, get_users, update_display_name, \
-    search_users, update_email, get_email, get_rss_token, rotate_rss_token, delete_rss_token, get_rss_notifications_url
+    search_users, update_email, get_email, get_rss_token, rotate_rss_token, delete_rss_token, \
+    get_rss_notifications_url, find_user_or_raise
 from pillcity.daos.user_cache import get_in_user_cache_by_oid, get_users_in_user_cache
 from pillcity.daos.post import create_post
 from pillcity.daos.rss import notifying_action_value_to_rss_code
@@ -55,8 +56,7 @@ class Me(Resource):
     @marshal_with(user_fields)
     def get(self):
         user_id = get_jwt_identity()
-        user = find_user(user_id)
-        return user
+        return find_user_or_raise(user_id)
 
 
 my_avatar_parser = reqparse.RequestParser()
