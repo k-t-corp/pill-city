@@ -9,21 +9,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Generate TypeScript client SDK
         uses: ducksify/swagger-codegen-action@v3.0
         with:
           args: generate -i swagger.yaml -o gen-typescript-sdk -l typescript-axios --additional-properties npmName=pill-city-sdk,npmVersion=0.0.1
 
-      - name: Push to typescript-sdk
-        uses: cpina/github-action-push-to-another-repository@v1.4.2
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+      - name: Checkout typescript-sdk
+        uses: actions/checkout@v3
         with:
-          source-directory: gen-typescript-sdk
-          destination-github-username: pill-city
-          destination-repository-name: typescript-sdk
-          user-email: feedback@pill.city
-          target-branch: master
-          target-directory: sdk
+          repository: pill-city/typescript-sdk
+          path: typescript-sdk
+
+      - name: Copy all contents from gen-typescript-sdk into typescript-sdk
+        run: rsync -av ./gen-typescript-sdk/ ./typescript-sdk
+
+      - name: Git fuu
+        working-directory: typescript-sdk
+        run: git add --all && git commit -m "Update" && git status --staged
