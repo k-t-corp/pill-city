@@ -4,11 +4,12 @@ import sentry_sdk
 from os import urandom
 from pymongo import monitoring
 from pymongo.uri_parser import parse_uri
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 from flask_mongoengine import MongoEngine, MongoEngineSessionInterface
 from flask_restful import Api
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token
+from flask_swagger_ui import get_swaggerui_blueprint
 from sentry_sdk.integrations.flask import FlaskIntegration
 from pillcity.daos.user import sign_in, sign_up, check_email, get_user_by_rss_token
 from pillcity.daos.user_cache import populate_user_cache
@@ -44,6 +45,15 @@ else:
     print('Not enabling sentry')
 
 app = Flask(__name__)
+
+# OpenAPI/swagger
+@app.route('/docs/swagger.yaml')
+def _docs_swagger_yaml():
+    return send_file('swagger.yaml')
+
+
+swagger_ui_blueprint = get_swaggerui_blueprint('/docs', 'swagger.yaml')
+app.register_blueprint(swagger_ui_blueprint)
 
 app.secret_key = urandom(24)
 
