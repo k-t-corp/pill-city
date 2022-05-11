@@ -1,0 +1,24 @@
+name: Swagger codegen
+
+on:
+  push:
+    branches: ['master']
+
+jobs:
+  codegen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Create folder for typescript-fetch client SDK
+        run: mkdir -p typescript-fetch-sdk
+
+      - name: Generate typescript-fetch client SDK
+        uses: docker://swaggerapi/swagger-codegen-cli-v3
+        working-directory: typescript-fetch-sdk
+        run: generate -i ../swagger.yaml -l typescript-fetch
+
+      - name: ls
+        working-directory: typescript-fetch-sdk
+        run: ls
