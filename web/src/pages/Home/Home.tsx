@@ -138,10 +138,12 @@ const Home = () => {
       </div>
       {isTabletOrMobile ?
         <>
-          <PencilIcon
+          <div
             className='mobile-new-post-button'
             onClick={() => updateMobileNewPostOpened(true)}
-          />
+          >
+            <PencilIcon />
+          </div>
           <PillModal
             isOpen={mobileNewPostOpened}
             onClose={() => {updateMobileNewPostOpened(false)}}

@@ -5,6 +5,8 @@ import "./Users.css"
 import User from "../../models/User";
 import getNameAndSubName from "../../utils/getNameAndSubName";
 import api from "../../api/Api";
+import {UserRemoveIcon} from "@heroicons/react/solid";
+import {UserAddIcon} from "@heroicons/react/outline";
 
 type UserWithLoadingState = {
   _follow_loading: boolean,
@@ -83,23 +85,7 @@ const Users = () => {
             }}
           >
             {
-              user.is_following ?
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M11 6a3 3 0 11-6 0 3 3 0 016 0zM14 17a6 6 0 00-12 0h12zM13 8a1 1 0 100 2h4a1 1 0 100-2h-4z"/>
-                </svg> :
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
-                </svg>
+              user.is_following ? <UserRemoveIcon /> : <UserAddIcon />
             }
           </div>
         </div>

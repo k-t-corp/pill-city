@@ -3,6 +3,7 @@ import "./NotificationDropdown.css"
 import NotificationList from "./NotificationList";
 import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import {markAllNotificationsAsRead} from "../../store/notificationsSlice";
+import {CheckIcon} from "@heroicons/react/solid";
 
 interface Props {}
 
@@ -16,16 +17,12 @@ export default (_: Props) => {
         <div className="notification-header">
           <span className="notification-title">Notifications <span
             className={`notification-count ${unreadNotificationsCount === 0 ? "notification-count-grey" : "notification-count-red"}`}>{unreadNotificationsCount}</span></span>
-          <svg
-            className="notification-mark-all-button" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor"
-            onClick={async (e) => {
+            <div className='notification-mark-all-button' onClick={async (e) => {
               e.preventDefault()
               await dispatch(markAllNotificationsAsRead())
-            }}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"/>
-          </svg>
+            }}>
+              <CheckIcon />
+            </div>
         </div>
       </div>
       <NotificationList />

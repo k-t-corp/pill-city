@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import LinkPreview from "../LinkPreview/LinkPreview";
 import {Previewable} from "../../models/Post";
 import './Previews.css'
+import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/solid";
 
 // https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
 const regExForUrl = /(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*))/g
@@ -52,18 +53,14 @@ export default (props: Props) => {
           className={`previews-nav${showingIndex === 0 ? ' previews-nav-hidden' : ''}`}
           onClick={() => updateShowingIndex(showingIndex - 1)}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
+          <ChevronLeftIcon />
         </div>
         <span>{showingIndex + 1}/{previewElems.length}</span>
         <div
           className={`previews-nav${showingIndex === previewElems.length - 1 ? ' previews-nav-hidden' : ''}`}
           onClick={() => updateShowingIndex(showingIndex + 1)}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
+          <ChevronRightIcon />
         </div>
       </div>
     </div>
