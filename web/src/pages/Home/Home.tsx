@@ -41,11 +41,19 @@ const Home = () => {
   })
 
   if (loading || meLoading) {
-    return (<div className="home-status">Loading...</div>)
+    return (
+      <div className="home-wrapper">
+        <div className="home-status">Loading...</div>
+      </div>
+    )
   }
 
   if (posts.length === 0) {
-    return (<div className="home-status">No posts here</div>)
+    return (
+      <div className="home-wrapper">
+        <div className="home-status">No posts here</div>
+      </div>
+    )
   }
 
   let postElements = []
