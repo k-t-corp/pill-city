@@ -21,6 +21,7 @@ jobs:
         with:
           repository: pill-city/typescript-sdk
           path: typescript-sdk
+          token: ${{ secrets.GH_TOKEN }}
 
       - name: Copy all contents from gen-typescript-sdk into typescript-sdk
         run: rsync -av ./gen-typescript-sdk/ ./typescript-sdk
@@ -28,8 +29,8 @@ jobs:
       - name: Git fuu
         working-directory: typescript-sdk
         run: |
-          git config --global user.name developers@pill.city
-          git config --global user.email developers@pill.city
+          git config user.name github-actions
+          git config user.email github-actions@github.com
           git add --all
           git commit -m "Update"
           git push
