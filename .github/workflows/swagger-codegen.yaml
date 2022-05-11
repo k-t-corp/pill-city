@@ -16,7 +16,12 @@ jobs:
 
       - name: Generate typescript-fetch client SDK
         uses: ducksify/swagger-codegen-action@v3.0
-        run: generate -i ../swagger.yaml -l typescript-fetch
+        args:
+          - generate
+          - -i
+          - ../swagger.yaml
+          - -l
+          - typescript-fetch
         working-directory: typescript-fetch-sdk
 
       - name: ls
