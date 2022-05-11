@@ -8,7 +8,7 @@ on:
       - '.github/workflows/swagger-codegen.yaml'
 
 jobs:
-  codegen:
+  typescript-codegen:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -37,3 +37,33 @@ jobs:
           git add --all
           git commit -m "Update SDK"
           git push
+
+  swift-codegen:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Generate Swift client SDK
+      uses: ducksify/swagger-codegen-action@v3.0
+      with:
+        args: generate -i swagger.yaml -o gen-swift-sdk -l swift5 --additional-properties projectName=PillCity,podLicense=MIT,podAuthors=KTachibanaM
+
+    - name: Checkout swift-sdk
+      uses: actions/checkout@v3
+      with:
+        repository: pill-city/swift-sdk
+        path: swift-sdk
+        token: ${{ secrets.GH_TOKEN }}
+
+    - name: Copy all contents from gen-swift-sdk into swift-sdk
+      run: rsync -av ./gen-swift-sdk/ ./swift-sdk
+
+    - name: Push swift-sdk
+      working-directory: swift-sdk
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add --all
+        git commit -m "Update SDK"
+        git push
