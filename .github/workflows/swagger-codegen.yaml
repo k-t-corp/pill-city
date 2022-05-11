@@ -27,4 +27,9 @@ jobs:
 
       - name: Git fuu
         working-directory: typescript-sdk
-        run: git add --all && git commit -m "Update" && git status --staged
+        run: |
+          git config --global user.name developers@pill.city
+          git config --global user.email developers@pill.city
+          git add --all
+          git commit -m "Update"
+          git status --staged
