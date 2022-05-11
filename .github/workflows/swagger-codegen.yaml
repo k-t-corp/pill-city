@@ -3,6 +3,9 @@ name: Swagger codegen
 on:
   push:
     branches: ['master']
+    paths:
+      - 'swagger.yaml'
+      - '.github/workflows/swagger-codegen.yaml'
 
 jobs:
   codegen:
