@@ -11,10 +11,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Generate typescript-fetch client SDK
+      - name: Generate TypeScript client SDK
         uses: ducksify/swagger-codegen-action@v3.0
         with:
-          args: generate -i swagger.yaml -o sdk-typescript-fetch -l typescript-fetch
+          args: generate -i swagger.yaml -o gen-typescript-sdk -l typescript-axios
 
-      - name: ls
-        run: ls sdk-typescript-fetch
+      - name: Push to typescript-sdk
+        uses: cpina/github-action-push-to-another-repository@v1.4.2
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: gen-typescript-sdk
+          destination-github-username: pill-city
+          destination-repository-name: typescript-sdk
+          user-email: feedback@pill.city
+          target-branch: master
