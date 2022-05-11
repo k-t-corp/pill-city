@@ -15,9 +15,9 @@ jobs:
         run: mkdir -p typescript-fetch-sdk
 
       - name: Generate typescript-fetch client SDK
-        uses: docker://swaggerapi/swagger-codegen-cli-v3
+        uses: ducksify/swagger-codegen-action@v3.0
         working-directory: typescript-fetch-sdk
-        run: generate -i ../swagger.yaml -l typescript-fetch
+        run: -i ../swagger.yaml -l typescript-fetch
 
       - name: ls
         working-directory: typescript-fetch-sdk
