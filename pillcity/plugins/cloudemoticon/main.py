@@ -6,13 +6,20 @@ from pillcity.plugin_core import PillCityPlugin
 
 
 class CloudEmoticon(PillCityPlugin):
-    def init(self):
+    def _poll_emoticons(self):
         resp = requests.get("https://raw.githubusercontent.com/cloud-emoticon/store-repos/master/kt-favorites.json")
         resp = resp.json()
         self.get_context().redis_set("emoticons", json.dumps(resp))
 
+    def init(self):
+        self._poll_emoticons()
+
     def job(self):
-        pass
+        print("Polling latest emoticons")
+        self._poll_emoticons()
+
+    def job_interval_seconds(self) -> int:
+        return 60
 
     def flask_blueprint(self) -> Optional[Blueprint]:
         api = Blueprint(__name__, __name__)

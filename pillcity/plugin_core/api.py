@@ -20,5 +20,9 @@ class PillCityPlugin(ABC):
         pass
 
     @abstractmethod
+    def job_interval_seconds(self) -> int:
+        pass
+
+    @abstractmethod
     def flask_blueprint(self) -> Optional[Blueprint]:
         pass
