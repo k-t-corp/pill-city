@@ -16,6 +16,7 @@ paths:
       summary: Sign in
       operationId: signIn
       security: []
+      tags: ["core"]
       requestBody:
         $ref: '#/components/requestBodies/SignInRequest'
       responses:
@@ -25,10 +26,27 @@ paths:
           $ref: '#/components/responses/400BadRequest'
         '401':
           $ref: '#/components/responses/401Unauthorized'
+  /availablePlugins:
+    get:
+      summary: Get all available plugins
+      operationId: getAvailablePlugins
+      security: []
+      tags: [ "core" ]
+      responses:
+        '200':
+          description: Successfully got all available plugins
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example: ["cloudemoticon"]
   /home:
     get:
       summary: Get or poll latest home posts
       operationId: getHome
+      tags: [ "core" ]
       parameters:
         - in: query
           name: to_id
@@ -55,8 +73,9 @@ paths:
           $ref: '#/components/responses/401Unauthorized'
   /me:
     get:
-      summary: Get the loggined in user
+      summary: Get the logged in user
       operationId: getMe
+      tags: [ "core" ]
       responses:
         '200':
           description: Successfully got the loggined in user
@@ -68,19 +87,12 @@ paths:
           $ref: '#/components/responses/401Unauthorized'
   /plugins:
     get:
-      summary: Get list of plugins, either enabled by the user or all available
+      summary: Get plugins enabled by the user
       operationId: getPlugins
-      parameters:
-        - in: query
-          name: mine
-          schema:
-            type: string
-            enum: ["1", "0"]
-          required: true
-          description: Whether to return plugins enabled by the user, or all avaiable plugins
+      tags: [ "core" ]
       responses:
         '200':
-          description: Successfully got list of plugins
+          description: Successfully got list enabled plugins
           content:
             application/json:
               schema:
@@ -92,6 +104,21 @@ paths:
           $ref: '#/components/responses/400BadRequest'
         '401':
           $ref: '#/components/responses/401Unauthorized'
+  /plugin/cloudemoticon/emoticons:
+    get:
+      summary: Get emoticons
+      operationId: getEmoticons
+      tags: ["plugins"]
+      responses:
+        '200':
+          description: Successfully got emoticons
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example: [ "ლ(╹◡╹ლ)", "( ´∀`)σ)Д`)" ]
 components:
   schemas:
     User:

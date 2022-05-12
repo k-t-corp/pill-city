@@ -204,7 +204,7 @@ def _rss_notifications(user_id: str):
     return get_rss_notifications_xml(user, types, rss_codes), 200, {'Content-Type': 'application/atom+xml; charset=utf-8'}
 
 
-# API routes
+# Core API routes
 errors = {
     'UnauthorizedAccess': {
         'status': 401,
@@ -277,6 +277,28 @@ api.add_resource(MediaSetMedia, '/api/mediaSet/<string:media_set_id>/media')
 api.add_resource(MediaSet, '/api/mediaSet/<string:media_set_id>')
 
 api.add_resource(Plugins, '/api/plugins')
+
+# Load plugins
+from pillcity.plugins.cloudemoticon import CloudEmoticon  # nopep8
+from pillcity.plugin_core import PillCityServerPlatform  # nopep8
+
+PLUGINS = [CloudEmoticon]
+platform = PillCityServerPlatform()
+plugin_names = []
+
+for plugin_class in PLUGINS:
+    plugin = plugin_class(platform)
+    name = plugin.get_name()
+    plugin_names.append(name)
+    bp = plugin.flask_blueprint()
+    if bp:
+        app.register_blueprint(bp, url_prefix=f'/api/plugin/{name}')
+
+
+@app.route('/api/availablePlugins')
+def _available_plugins():
+    return jsonify(plugin_names)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
