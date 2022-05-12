@@ -2,9 +2,8 @@ import os
 import re
 import sentry_sdk
 from os import urandom
-from pymongo.uri_parser import parse_uri
+from mongoengine import connect
 from flask import Flask, jsonify, request, send_file
-from flask_mongoengine import MongoEngine, MongoEngineSessionInterface
 from flask_restful import Api
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token
@@ -62,14 +61,7 @@ app.register_blueprint(swagger_ui_blueprint)
 app.config['BUNDLE_ERRORS'] = True
 
 # Database & Caches
-mongodb_uri = os.environ['MONGODB_URI']
-mongodb_db = parse_uri(mongodb_uri)['database']
-app.config['MONGODB_SETTINGS'] = {
-    'host': mongodb_uri,
-    'db': mongodb_db,
-}
-db = MongoEngine(app)
-app.session_interface = MongoEngineSessionInterface(db)
+connect(host=os.environ['MONGODB_URI'])
 populate_user_cache()
 
 # JWT
@@ -128,7 +120,7 @@ def _sign_in():
 def check_user_id(user_id):
     if len(user_id) > 15:
         return False
-    if not re.match("^[A-Za-z0-9_-]+$", user_id):
+    if not re.match("^[A-Za-z\\d_-]+$", user_id):
         return False
     return True
 
