@@ -2,7 +2,6 @@ import os
 import re
 import sentry_sdk
 from os import urandom
-from pymongo import monitoring
 from pymongo.uri_parser import parse_uri
 from flask import Flask, jsonify, request, send_file
 from flask_mongoengine import MongoEngine, MongoEngineSessionInterface
@@ -30,9 +29,10 @@ from pillcity.resources.link_preview import LinkPreview
 from pillcity.resources.password_reset import ForgetPassword, ResetPassword
 from pillcity.resources.media_sets import MediaSets, MediaSetName, MediaSetPublic, MediaSetMedia, MediaSet
 from pillcity.resources.poll import Vote
+from pillcity.resources.plugins import Plugins
 from pillcity.utils.now_ms import now_seconds
 
-# sentry
+# Sentry
 if os.getenv('SENTRY_DSN'):
     print('Enabling sentry')
     sentry_sdk.init(
@@ -44,9 +44,15 @@ if os.getenv('SENTRY_DSN'):
 else:
     print('Not enabling sentry')
 
-app = Flask(__name__)
 
-# OpenAPI/swagger
+# Flask app
+app = Flask(__name__)
+app.secret_key = urandom(24)
+max_mb_per_media = 40
+app.config['MAX_CONTENT_LENGTH'] = (max_mb_per_media * 1024 * 1024) * MaxMediaCount
+
+
+# OpenAPI/Swagger
 @app.route('/docs/swagger.yaml')
 def _docs_swagger_yaml():
     return send_file('swagger.yaml')
@@ -54,30 +60,10 @@ def _docs_swagger_yaml():
 
 swagger_ui_blueprint = get_swaggerui_blueprint('/docs', 'swagger.yaml')
 app.register_blueprint(swagger_ui_blueprint)
-
-app.secret_key = urandom(24)
-
-
-# database profiling
-class CommandLogger(monitoring.CommandListener):
-    def started(self, event):
-        pass
-
-    def succeeded(self, event):
-        print(f"pymongo event {event.request_id} with command {event.command_name} "
-              f"in ns {event.reply.get('cursor', {}).get('ns', '')} replied "
-              f"in {event.duration_micros // 1000} milliseconds")
-
-    def failed(self, event):
-        pass
+app.config['BUNDLE_ERRORS'] = True
 
 
-if os.getenv('PROFILE'):
-    print("Enabling pymongo profiling")
-    monitoring.register(CommandLogger())
-
-
-# database
+# Database & Caches
 mongodb_uri = os.environ['MONGODB_URI']
 mongodb_db = parse_uri(mongodb_uri)['database']
 app.config['MONGODB_SETTINGS'] = {
@@ -86,45 +72,41 @@ app.config['MONGODB_SETTINGS'] = {
 }
 db = MongoEngine(app)
 app.session_interface = MongoEngineSessionInterface(db)
+populate_user_cache()
 
-max_mb_per_media = 40
-app.config['MAX_CONTENT_LENGTH'] = (max_mb_per_media * 1024 * 1024) * MaxMediaCount
 
-# jwt
+# JWT
 access_token_expires = int(os.environ['JWT_ACCESS_TOKEN_EXPIRES'])
 app.config['JWT_SECRET_KEY'] = os.environ['JWT_SECRET_KEY']
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = access_token_expires
 JWTManager(app)
 
-app.config['BUNDLE_ERRORS'] = True
 
-# cors
+# CORS
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 
-# open registration
+# Open Registration
 is_open_registration = os.environ.get('OPEN_REGISTRATION', 'false') == 'true'
 if is_open_registration:
     print('Open registration')
 else:
     print("Invite-only")
 
-# git commit
+# Git commit
 # TODO: this only works on heroku https://devcenter.heroku.com/articles/dyno-metadata
 git_commit = os.getenv('HEROKU_SLUG_COMMIT', None)
 if git_commit:
     git_commit = git_commit[: 7]
 print(f'Git commit {git_commit}')
 
-populate_user_cache()
 
-
+# Other routes
 @app.route('/', methods=['GET'])
 def _root():
     return 'pill.city api'
 
 
-# auth
 @app.route('/api/signIn', methods=['POST'])
 def _sign_in():
     """
@@ -202,7 +184,7 @@ def _git_commit():
     }
 
 
-# rss
+# RSS routes
 @app.route('/rss/<string:user_id>/notifications')
 def _rss_notifications(user_id: str):
     token = request.args.get('token', None)
@@ -222,7 +204,7 @@ def _rss_notifications(user_id: str):
     return get_rss_notifications_xml(user, types, rss_codes), 200, {'Content-Type': 'application/atom+xml; charset=utf-8'}
 
 
-# api
+# API routes
 errors = {
     'UnauthorizedAccess': {
         'status': 401,
@@ -293,6 +275,8 @@ api.add_resource(MediaSetName, '/api/mediaSet/<string:media_set_id>/name')
 api.add_resource(MediaSetPublic, '/api/mediaSet/<string:media_set_id>/public')
 api.add_resource(MediaSetMedia, '/api/mediaSet/<string:media_set_id>/media')
 api.add_resource(MediaSet, '/api/mediaSet/<string:media_set_id>')
+
+api.add_resource(Plugins, '/api/plugins')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
