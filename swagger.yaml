@@ -66,6 +66,32 @@ paths:
                 $ref: '#/components/schemas/User'
         '401':
           $ref: '#/components/responses/401Unauthorized'
+  /plugins:
+    get:
+      summary: Get list of plugins, either enabled by the user or all available
+      operationId: getPlugins
+      parameters:
+        - in: query
+          name: mine
+          schema:
+            type: string
+            enum: ["1", "0"]
+          required: true
+          description: Whether to return plugins enabled by the user, or all avaiable plugins
+      responses:
+        '200':
+          description: Successfully got list of plugins
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example: ["cloudemoticon"]
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
 components:
   schemas:
     User:
