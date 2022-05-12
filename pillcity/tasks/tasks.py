@@ -29,9 +29,18 @@ def _get_nitter_url(url: str) -> str:
     return parsed_url.geturl()
 
 
+# todo: pretty hacky but hey
+inited_mongo = [False]
+
+
+def init_mongo():
+    if not inited_mongo[0]:
+        connect(host=os.environ['MONGODB_URI'])
+
+
 @celery.task()
 def generate_link_preview(url: str):
-    connect(host=os.environ['MONGODB_URI'])
+    init_mongo()
     logger.info(f'Generating link preview for url {url}')
     link_preview = LinkPreview.objects.get(url=url)
     try:
