@@ -12,7 +12,6 @@ twitter_domains = [
     "mobile.twitter.com"
 ]
 
-connect(host=os.environ['MONGODB_URI'])
 celery = Celery('tasks', broker=os.environ['REDIS_URL'])
 logger = get_task_logger(__name__)
 
@@ -32,6 +31,7 @@ def _get_nitter_url(url: str) -> str:
 
 @celery.task()
 def generate_link_preview(url: str):
+    connect(host=os.environ['MONGODB_URI'])
     logger.info(f'Generating link preview for url {url}')
     link_preview = LinkPreview.objects.get(url=url)
     try:
