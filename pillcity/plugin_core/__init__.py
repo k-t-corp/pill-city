@@ -1,2 +1,2 @@
-from .api import PillCityServerPlugin
-from .platform import PillCityServerPlatform
+from .api import PillCityPlugin
+from .context import PillCityPluginContext

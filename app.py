@@ -44,7 +44,6 @@ if os.getenv('SENTRY_DSN'):
 else:
     print('Not enabling sentry')
 
-
 # Flask app
 app = Flask(__name__)
 app.secret_key = urandom(24)
@@ -62,7 +61,6 @@ swagger_ui_blueprint = get_swaggerui_blueprint('/docs', 'swagger.yaml')
 app.register_blueprint(swagger_ui_blueprint)
 app.config['BUNDLE_ERRORS'] = True
 
-
 # Database & Caches
 mongodb_uri = os.environ['MONGODB_URI']
 mongodb_db = parse_uri(mongodb_uri)['database']
@@ -74,17 +72,14 @@ db = MongoEngine(app)
 app.session_interface = MongoEngineSessionInterface(db)
 populate_user_cache()
 
-
 # JWT
 access_token_expires = int(os.environ['JWT_ACCESS_TOKEN_EXPIRES'])
 app.config['JWT_SECRET_KEY'] = os.environ['JWT_SECRET_KEY']
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = access_token_expires
 JWTManager(app)
 
-
 # CORS
 CORS(app, resources={r"/api/*": {"origins": "*"}})
-
 
 # Open Registration
 is_open_registration = os.environ.get('OPEN_REGISTRATION', 'false') == 'true'
@@ -201,7 +196,8 @@ def _rss_notifications(user_id: str):
             lambda rc: rss_code_to_notifying_action[rc],
             filter(lambda rc: rc in rss_code_to_notifying_action, rss_codes)
         ))
-    return get_rss_notifications_xml(user, types, rss_codes), 200, {'Content-Type': 'application/atom+xml; charset=utf-8'}
+    xml = get_rss_notifications_xml(user, types, rss_codes)
+    return xml, 200, {'Content-Type': 'application/atom+xml; charset=utf-8'}
 
 
 # Core API routes
@@ -280,16 +276,20 @@ api.add_resource(Plugins, '/api/plugins')
 
 # Load plugins
 from pillcity.plugins.cloudemoticon import CloudEmoticon  # nopep8
-from pillcity.plugin_core import PillCityServerPlatform  # nopep8
+from pillcity.plugin_core import PillCityPluginContext  # nopep8
+from redis import Redis  # nopep8
 
-PLUGINS = [CloudEmoticon]
-platform = PillCityServerPlatform()
-plugin_names = []
+PLUGINS = {
+    "cloudemoticon": CloudEmoticon
+}
+r = Redis.from_url(os.environ['REDIS_URL'])
 
-for plugin_class in PLUGINS:
-    plugin = plugin_class(platform)
-    name = plugin.get_name()
-    plugin_names.append(name)
+for name, clazz in PLUGINS.items():
+    context = PillCityPluginContext(name, r)
+    plugin = clazz(context)
+
+    plugin.init()
+
     bp = plugin.flask_blueprint()
     if bp:
         app.register_blueprint(bp, url_prefix=f'/api/plugin/{name}')
@@ -297,7 +297,7 @@ for plugin_class in PLUGINS:
 
 @app.route('/api/availablePlugins')
 def _available_plugins():
-    return jsonify(plugin_names)
+    return jsonify(PLUGINS.keys())
 
 
 if __name__ == '__main__':

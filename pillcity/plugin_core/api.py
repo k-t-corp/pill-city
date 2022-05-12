@@ -1,16 +1,15 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 from flask import Blueprint
-from .platform import PillCityServerPlatform
+from .context import PillCityPluginContext
 
 
-class PillCityServerPlugin(ABC):
-    def __init__(self, platform: PillCityServerPlatform):
-        self.platform = platform  # type: PillCityServerPlatform
+class PillCityPlugin(ABC):
+    def __init__(self, context: PillCityPluginContext):
+        self._context = context  # type: PillCityPluginContext
 
-    @abstractmethod
-    def get_name(self) -> str:
-        pass
+    def get_context(self) -> PillCityPluginContext:
+        return self._context
 
     @abstractmethod
     def init(self):
