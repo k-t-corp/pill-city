@@ -266,14 +266,11 @@ api.add_resource(MediaSet, '/api/mediaSet/<string:media_set_id>')
 
 api.add_resource(Plugins, '/api/plugins')
 
-# Load plugins
-from pillcity.plugins.cloudemoticon import CloudEmoticon  # nopep8
+# Plugins: init and register blueprints
+from pillcity.plugins import PLUGINS  # nopep8
 from pillcity.plugin_core import PillCityPluginContext  # nopep8
 from redis import Redis  # nopep8
 
-PLUGINS = {
-    "cloudemoticon": CloudEmoticon
-}
 r = Redis.from_url(os.environ['REDIS_URL'])
 
 for name, clazz in PLUGINS.items():
