@@ -1,7 +1,7 @@
 from typing import Optional
 from mongoengine.errors import ValidationError
 from pillcity.models import LinkPreview, LinkPreviewState
-from pillcity.tasks.tasks import generate_link_preview
+from pillcity.tasks.generate_link_preview import generate_link_preview
 
 
 def get_link_preview(url: str) -> Optional[LinkPreview]:

@@ -1,19 +1,15 @@
 import os
 import urllib.parse
 import linkpreview
-from mongoengine import connect
-from celery import Celery
-from celery.utils.log import get_task_logger
+from mongoengine import connect, disconnect
 from pillcity.models import LinkPreview, LinkPreviewState
+from .celery import celery, logger
 
 twitter_domains = [
     "twitter.com",
     "www.twitter.com",
     "mobile.twitter.com"
 ]
-
-celery = Celery('tasks', broker=os.environ['REDIS_URL'])
-logger = get_task_logger(__name__)
 
 
 def _is_twitter(url: str) -> bool:
@@ -29,18 +25,9 @@ def _get_nitter_url(url: str) -> str:
     return parsed_url.geturl()
 
 
-# todo: pretty hacky but hey
-inited_mongo = [False]
-
-
-def init_mongo():
-    if not inited_mongo[0]:
-        connect(host=os.environ['MONGODB_URI'])
-
-
 @celery.task()
 def generate_link_preview(url: str):
-    init_mongo()
+    connect(host=os.environ['MONGODB_URI'])
     logger.info(f'Generating link preview for url {url}')
     link_preview = LinkPreview.objects.get(url=url)
     try:
@@ -56,3 +43,4 @@ def generate_link_preview(url: str):
     except:
         link_preview.state = LinkPreviewState.Errored
     link_preview.save()
+    disconnect()
