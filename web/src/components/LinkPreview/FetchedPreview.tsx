@@ -19,12 +19,6 @@ export default (props: Props) => {
     }
   }, 5000, { immediate: true })
 
-  useInterval(async () => {
-    if (preview !== null && preview.state === 'errored') {
-      updatePreview(await api.getLinkPreview(props.url))
-    }
-  }, 10000)
-
   if (preview === null || preview.state === 'fetching') {
     return null
   } else if (preview.state === 'errored') {
@@ -36,8 +30,7 @@ export default (props: Props) => {
           className='fetched-preview-link'
           target="_blank"
           rel="noreferrer noopener"
-        >{props.url}</a> {' '}
-        {`(Retry in ${preview.retry_in_seconds} seconds)`}
+        >{props.url}</a>
       </div>
     )
   } else {
@@ -53,6 +46,7 @@ export default (props: Props) => {
                 alt={''}
               />
             </div>
+
         }
         {
           (preview.title || preview.subtitle) &&

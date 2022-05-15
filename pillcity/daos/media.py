@@ -1,6 +1,6 @@
 from typing import List, Optional
 from pillcity.models import Media, User
-from pillcity.utils.now import now_seconds
+from pillcity.utils.now_ms import now_seconds
 from .s3 import upload_to_s3, delete_from_s3
 
 

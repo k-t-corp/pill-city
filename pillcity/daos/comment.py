@@ -3,7 +3,7 @@ from typing import List, Optional
 from pillcity.daos.media import delete_media_list
 from pillcity.models import Comment, NotifyingAction, User, Post, Media
 from pillcity.utils.make_uuid import make_uuid
-from pillcity.utils.now import now_seconds
+from pillcity.utils.now_ms import now_seconds
 from .exceptions import UnauthorizedAccess, BadRequest
 from .post import sees_post
 from .post_cache import set_in_post_cache, exists_in_post_cache
