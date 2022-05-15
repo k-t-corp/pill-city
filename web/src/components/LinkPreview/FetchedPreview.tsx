@@ -46,7 +46,6 @@ export default (props: Props) => {
                 alt={''}
               />
             </div>
-
         }
         {
           (preview.title || preview.subtitle) &&

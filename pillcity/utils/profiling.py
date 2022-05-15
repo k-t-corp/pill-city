@@ -1,6 +1,6 @@
 import os
 import functools
-from .now_ms import now_ms
+from .now import now_ms
 
 
 def timer(func):
