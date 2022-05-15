@@ -2,7 +2,7 @@ import emoji as emoji_lib
 from typing import Optional
 from pillcity.models import Reaction, NotifyingAction, Post, User
 from pillcity.utils.make_uuid import make_uuid
-from pillcity.utils.now import now_seconds
+from pillcity.utils.now_ms import now_seconds
 from .exceptions import UnauthorizedAccess, BadRequest, NotFound
 from .post import sees_post
 from .notification import create_notification

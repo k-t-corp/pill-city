@@ -1,5 +1,5 @@
 from enum import Enum
-from mongoengine import Document, StringField, EnumField, URLField, ListField, IntField
+from mongoengine import Document, StringField, EnumField, URLField, ListField
 
 
 class LinkPreviewState(Enum):
@@ -14,4 +14,3 @@ class LinkPreview(Document):
     subtitle = StringField(required=False, default='')
     image_urls = ListField(URLField(), required=False, default=list)
     state = EnumField(LinkPreviewState, required=True)
-    last_refetched_seconds = IntField(required=False, default=0)
