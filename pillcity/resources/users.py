@@ -11,7 +11,7 @@ from pillcity.daos.user_cache import get_in_user_cache_by_oid, get_users_in_user
 from pillcity.daos.post import create_post
 from pillcity.daos.rss import notifying_action_value_to_rss_code
 from pillcity.daos.media import create_media
-from pillcity.utils.now_ms import now_seconds
+from pillcity.utils.now import now_seconds
 
 
 class UserId(fields.Raw):

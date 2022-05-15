@@ -42,7 +42,7 @@ def init_mongo():
         inited_mongo[0] = True
 
 
-@celery.task(rate_limit='8/m')
+@celery.task()
 def generate_link_preview(url: str):
     init_mongo()
     logger.info(f'Generating link preview for url {url}')
@@ -57,6 +57,7 @@ def generate_link_preview(url: str):
         if preview.absolute_image:
             link_preview.image_urls = [preview.absolute_image]
         link_preview.state = LinkPreviewState.Fetched
-    except:
+    except Exception as e:
+        logger.error(str(e))
         link_preview.state = LinkPreviewState.Errored
     link_preview.save()
