@@ -4,7 +4,7 @@ from pillcity.models import LinkPreview, LinkPreviewState
 from pillcity.tasks.tasks import generate_link_preview
 from pillcity.utils.now import now_seconds
 
-LinkPreviewRefetchIntervalSeconds = 60
+LinkPreviewRefetchIntervalSeconds = 30
 
 
 def get_link_preview(url: str) -> Optional[LinkPreview]:
@@ -22,7 +22,7 @@ def get_link_preview(url: str) -> Optional[LinkPreview]:
         now = now_seconds()
         if link_preview.state == LinkPreviewState.Errored and \
             (link_preview.last_refetched_seconds == 0 or
-             link_preview.last_refetched_seconds + LinkPreviewRefetchIntervalSeconds > now):
+             link_preview.last_refetched_seconds + LinkPreviewRefetchIntervalSeconds <= now):
             link_preview.last_refetched_seconds = now
             link_preview.save()
             generate_link_preview.delay(url)

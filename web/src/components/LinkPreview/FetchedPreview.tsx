@@ -19,6 +19,12 @@ export default (props: Props) => {
     }
   }, 5000, { immediate: true })
 
+  useInterval(async () => {
+    if (preview !== null && preview.state === 'errored') {
+      updatePreview(await api.getLinkPreview(props.url))
+    }
+  }, 10000)
+
   if (preview === null || preview.state === 'fetching') {
     return null
   } else if (preview.state === 'errored') {
