@@ -23,6 +23,7 @@ def get_link_preview(url: str) -> Optional[LinkPreview]:
         if link_preview.state == LinkPreviewState.Errored and \
             (link_preview.last_refetched_seconds == 0 or
              link_preview.last_refetched_seconds + LinkPreviewRefetchIntervalSeconds <= now):
+            link_preview.state = LinkPreviewState.Fetching
             link_preview.last_refetched_seconds = now
             link_preview.save()
             generate_link_preview.delay(url)

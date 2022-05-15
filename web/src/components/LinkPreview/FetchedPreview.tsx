@@ -36,7 +36,8 @@ export default (props: Props) => {
           className='fetched-preview-link'
           target="_blank"
           rel="noreferrer noopener"
-        >{props.url}</a>
+        >{props.url}</a> {' '}
+        {`(Retry in ${preview.retry_in_seconds} seconds)`}
       </div>
     )
   } else {

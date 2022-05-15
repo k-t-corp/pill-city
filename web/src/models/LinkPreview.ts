@@ -5,5 +5,6 @@ export default interface LinkPreview {
   title: string
   subtitle: string
   image_urls: string[]
-  state: LinkPreviewState
+  state: LinkPreviewState,
+  retry_in_seconds: number
 }
