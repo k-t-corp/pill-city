@@ -10,7 +10,7 @@ class CloudEmoticon(PillCityPlugin):
         resp = requests.get("https://raw.githubusercontent.com/cloud-emoticon/store-repos/master/kt-favorites.json")
         resp = resp.json()
         resp = json.dumps(resp)
-        print(f"Polled {resp}")
+        print(f"Polled {resp[: 25]}")
         self.get_context().redis_set("emoticons", resp)
 
     def init(self):
