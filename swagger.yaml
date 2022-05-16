@@ -115,10 +115,9 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: string
-                example: [ "ლ(╹◡╹ლ)", "( ´∀`)σ)Д`)" ]
+                $ref: '#/components/schemas/CloudEmoticonRepo'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
 components:
   schemas:
     User:
@@ -389,6 +388,49 @@ components:
           type: string
           description: This is a message
           example: Human readable message
+    CloudEmoticonEntry:
+      required:
+        - description
+        - emoticon
+      properties:
+        emoticon:
+          type: string
+          description: The emoticon
+          example: (・8・)
+        description:
+          type: string
+          description: Description for the emoticon
+          example: ことり
+    CloudEmoticonCategory:
+      required:
+        - name
+        - entries
+      properties:
+        name:
+          type: string
+          description: The category name
+          example: G+都亡了
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/CloudEmoticonEntry'
+          description: Emoticon entries for the category
+    CloudEmoticonRepo:
+      required:
+        - categories
+        - information
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/CloudEmoticonCategory'
+          description: Emoticon categories for the repo
+        information:
+          type: array
+          items:
+            type: string
+          description: Description for the repo
+          example: [ "KTachibana", "https://ktachibana.party/cloudemoticon/default.json" ]
   requestBodies:
     SignInRequest:
       content:
