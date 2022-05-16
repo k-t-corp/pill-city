@@ -257,7 +257,7 @@ export default (props: Props) => {
                     })})
                     updateVoting(false)
                   }}
-                >{`${c.content} (${parseFloat(percent.toFixed(2)) * 100}%, ${votes} votes)`}</div>
+                >{`${c.content} (${(percent * 100).toFixed()}%, ${votes} votes)`}</div>
               )
             })}
           </div>

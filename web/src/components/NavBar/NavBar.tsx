@@ -17,7 +17,10 @@ const DesktopNavBar = () => {
     <div className="nav-bar-container nav-bar-top">
       <div
         className={`nav-bar-button-container nav-bar-button-container-aligned ${handleNavItemActiveClass(path, "/")}`}
-        onClick={() => {history.push('/')}}
+        onClick={() => {
+          history.push('/')
+          window.scrollTo({ top: 0, behavior: 'smooth'})
+        }}
       >
         <HomeIcon />
         <span className='nav-bar-button-text'>Home</span>
@@ -68,7 +71,10 @@ const MobileNavBar = () => {
       </div>
       <div
         className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/")}`}
-        onClick={() => {history.push('/')}}
+        onClick={() => {
+          history.push('/')
+          window.scrollTo({ top: 0, behavior: 'smooth'})
+        }}
       >
         <HomeIcon />
       </div>
