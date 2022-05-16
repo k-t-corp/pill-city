@@ -267,16 +267,9 @@ api.add_resource(MediaSet, '/api/mediaSet/<string:media_set_id>')
 api.add_resource(Plugins, '/api/plugins')
 
 # Plugins: init and register blueprints
-from pillcity.plugins import PLUGINS  # nopep8
-from pillcity.plugin_core import PillCityPluginContext  # nopep8
-from redis import Redis  # nopep8
+from pillcity.plugins import get_plugins  # nopep8
 
-r = Redis.from_url(os.environ['REDIS_URL'])
-
-for name, clazz in PLUGINS.items():
-    context = PillCityPluginContext(name, r)
-    plugin = clazz(context)
-
+for name, plugin in get_plugins().items():
     plugin.init()
 
     bp = plugin.flask_blueprint()
@@ -286,7 +279,7 @@ for name, clazz in PLUGINS.items():
 
 @app.route('/api/availablePlugins')
 def _available_plugins():
-    return jsonify(PLUGINS.keys())
+    return jsonify(list(get_plugins().keys()))
 
 
 if __name__ == '__main__':
