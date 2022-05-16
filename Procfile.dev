@@ -1,2 +1,3 @@
 web: FLASK_ENVIRONMENT=development ./venv/bin/python app.py
-worker: ./venv/bin/celery -A pillcity.tasks.tasks worker --loglevel=INFO
+worker: ./venv/bin/celery -A pillcity.tasks worker --loglevel=INFO
+beat: ./venv/bin/celery -A pillcity.tasks beat --loglevel=DEBUG --max-interval 30

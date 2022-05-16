@@ -38,6 +38,7 @@ COPY app.py .
 COPY release.py .
 COPY entrypoint-worker.sh .
 COPY entrypoint-release.sh .
+COPY entrypoint-beat.sh .
 COPY swagger.yaml .
 
 # pre-compile bytecode and enable PYTHONFAULTHANDLER (catches error in c)

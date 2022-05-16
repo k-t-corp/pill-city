@@ -15,6 +15,6 @@ patch_redis = unittest.mock.patch.object(pillcity.daos.cache, 'r', r)
 patch_redis.start()
 
 c = None
-import pillcity.tasks.tasks
-patch_celery = unittest.mock.patch.object(pillcity.tasks.tasks, 'celery', c)
+import pillcity.tasks.celery
+patch_celery = unittest.mock.patch.object(pillcity.tasks, 'celery', c)
 patch_celery.start()

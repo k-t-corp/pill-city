@@ -1,3 +1,3 @@
 #!/bin/bash
 
-celery -A pillcity.tasks.tasks worker --loglevel=INFO
+celery -A pillcity.tasks worker --loglevel=INFO
