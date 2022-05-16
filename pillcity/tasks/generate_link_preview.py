@@ -3,7 +3,7 @@ import urllib.parse
 import linkpreview
 from mongoengine import connect, disconnect
 from pillcity.models import LinkPreview, LinkPreviewState
-from .celery import celery, logger
+from .celery import app, logger
 
 twitter_domains = [
     "twitter.com",
@@ -25,7 +25,7 @@ def _get_nitter_url(url: str) -> str:
     return parsed_url.geturl()
 
 
-@celery.task()
+@app.task()
 def generate_link_preview(url: str):
     connect(host=os.environ['MONGODB_URI'])
     logger.info(f'Generating link preview for url {url}')
