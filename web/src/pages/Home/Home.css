@@ -4,7 +4,32 @@
 }
 
 .home-posts-wrapper {
-    max-width: 70%;
+    max-width: 60%;
+}
+
+/* todo: wtf order matters??*/
+@media only screen and (max-width: 3350px) {
+    .home-posts-wrapper-multi {
+        max-width: 80%;
+    }
+}
+
+@media only screen and (max-width: 2450px) {
+    .home-posts-wrapper-multi {
+        max-width: 75%;
+    }
+}
+
+@media only screen and (max-width: 1650px) {
+    .home-posts-wrapper-multi {
+        max-width: 66%;
+    }
+}
+
+@media only screen and (max-width: 950px) {
+    .home-posts-wrapper-multi {
+        max-width: 60%;
+    }
 }
 
 .home-posts-masonry-grid {
