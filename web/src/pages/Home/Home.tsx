@@ -121,7 +121,9 @@ const Home = () => {
 
   return (
     <div className="home-wrapper">
-      <div className="home-posts-wrapper">
+      <div
+        className={getUseMultiColumn() ? 'home-posts-wrapper home-posts-wrapper-multi' : 'home-posts-wrapper'}
+      >
         <Masonry
           breakpointCols={getUseMultiColumn() ? {
             default: 4,
