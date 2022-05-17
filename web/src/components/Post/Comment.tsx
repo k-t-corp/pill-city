@@ -1,6 +1,6 @@
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
-import timePosted from "../../utils/timePosted";
+import {pastTime} from "../../utils/timeDelta";
 import parseContent from "../../utils/parseContent";
 import MediaPane from "../MediaPane/MediaPane";
 import React, {useState} from "react";
@@ -95,7 +95,7 @@ export default (props: Props) => {
         </div>
         <div className='post-comment-actions'>
           <div className="post-time">
-            {timePosted(comment.created_at_seconds)}
+            {pastTime(comment.created_at_seconds)}
           </div>
           {
             !deleting && !deleted &&

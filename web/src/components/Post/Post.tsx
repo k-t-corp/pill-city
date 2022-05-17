@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react'
 import parseContent from "../../utils/parseContent";
-import timePosted from "../../utils/timePosted";
+import {pastTime} from "../../utils/timeDelta";
 import {useHistory} from "react-router-dom";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import Reactions from "./Reactions";
@@ -156,7 +156,7 @@ export default (props: Props) => {
             <div className="post-op-info-time" onClick={navigateToPostPage} style={{
               cursor: disableNavigateToPostPage ? 'auto' : 'pointer'
             }}>
-              {timePosted(props.data.created_at_seconds)}
+              {pastTime(props.data.created_at_seconds)}
             </div>
             {
               props.me.id === props.data.author.id && !deleted &&

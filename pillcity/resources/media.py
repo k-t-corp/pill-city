@@ -9,7 +9,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from pillcity.models.media import Media
 from pillcity.daos.media import get_media, create_media, get_media_page
 from pillcity.daos.user import find_user
-from pillcity.utils.now_ms import now_ms
+from pillcity.utils.now import now_ms
 from pillcity.utils.profiling import timer
 from .cache import r, RMediaUrl
 

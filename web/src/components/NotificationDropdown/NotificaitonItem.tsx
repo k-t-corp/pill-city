@@ -1,6 +1,6 @@
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
-import timePosted from "../../utils/timePosted";
+import {pastTime} from "../../utils/timeDelta";
 import summary from "../../utils/summary";
 import React from "react";
 import Notification from "../../models/Notification";
@@ -95,7 +95,7 @@ export default (props: Props) => {
           </div>
         </div>
         <div className="notification-time">
-          {timePosted(notification.created_at_seconds)}
+          {pastTime(notification.created_at_seconds)}
         </div>
       </div>
 

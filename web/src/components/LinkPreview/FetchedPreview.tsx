@@ -4,6 +4,7 @@ import LinkPreview from "../../models/LinkPreview";
 import summary from "../../utils/summary";
 import api from '../../api/Api'
 import './FetchedPreview.css'
+import {futureTime} from "../../utils/timeDelta";
 
 interface Props {
   url: string
@@ -30,7 +31,8 @@ export default (props: Props) => {
           className='fetched-preview-link'
           target="_blank"
           rel="noreferrer noopener"
-        >{props.url}</a>
+        >{props.url}</a> {' '}
+        {`(Retrying in ${futureTime(preview.errored_next_refetch_seconds)})`}
       </div>
     )
   } else {

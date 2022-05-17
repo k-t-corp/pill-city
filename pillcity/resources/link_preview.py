@@ -17,7 +17,8 @@ link_preview_fields = {
     'title': fields.String,
     'subtitle': fields.String,
     'image_urls': fields.List(fields.String),
-    'state': LinkPreviewState
+    'state': LinkPreviewState,
+    'errored_next_refetch_seconds': fields.Integer
 }
 
 
