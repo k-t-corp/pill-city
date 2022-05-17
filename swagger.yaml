@@ -108,6 +108,7 @@ paths:
     get:
       summary: Get emoticons
       operationId: getEmoticons
+      security: [ ]
       tags: ["plugins"]
       responses:
         '200':
@@ -116,8 +117,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CloudEmoticonRepo'
-        '401':
-          $ref: '#/components/responses/401Unauthorized'
 components:
   schemas:
     User:
