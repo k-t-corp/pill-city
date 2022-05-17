@@ -34,6 +34,7 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
+          npm version patch
           git add --all
           git commit -m "Update SDK"
           git push
