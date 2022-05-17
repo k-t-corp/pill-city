@@ -31,11 +31,12 @@
 }
 
 .post-reaction-active {
-    background-color: #fa9994;
+    background-color: #e0f4ff;
+    border: #9dd0ff 1px solid;
 }
 
 .post-reaction-active:hover {
-    background-color: #dc8883;
+    background-color: #e0f4ff;
 }
 
 .post-emoji {
