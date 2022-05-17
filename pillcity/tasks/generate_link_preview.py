@@ -40,7 +40,8 @@ def generate_link_preview(url: str):
         if preview.absolute_image:
             link_preview.image_urls = [preview.absolute_image]
         link_preview.state = LinkPreviewState.Fetched
-    except:
+    except Exception as e:
+        logger.warn(str(e))
         link_preview.state = LinkPreviewState.Errored
     link_preview.save()
     disconnect()

@@ -2,7 +2,7 @@ import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
 import parseContent from "../../utils/parseContent";
 import MediaPane from "../MediaPane/MediaPane";
-import timePosted from "../../utils/timePosted";
+import {pastTime} from "../../utils/timeDelta";
 import React, {useState} from "react";
 import Post, {NestedComment, Comment} from "../../models/Post";
 import User from "../../models/User";
@@ -74,7 +74,7 @@ export default (props: Props) => {
           </div>
         }
         <div className='post-nested-comment-actions'>
-          <span className="post-nested-comment-time">{timePosted(nestedComment.created_at_seconds)}</span>
+          <span className="post-nested-comment-time">{pastTime(nestedComment.created_at_seconds)}</span>
           {
             !deleting && !deleted && !parentComment.deleted &&
             <span className="post-nested-comment-reply-btn" onClick={onReply}>

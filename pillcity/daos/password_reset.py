@@ -2,7 +2,7 @@ from typing import Optional
 from werkzeug.security import generate_password_hash
 from pillcity.models import PasswordResetClaim
 from pillcity.utils.make_uuid import make_dashless_uuid
-from pillcity.utils.now_ms import now_seconds
+from pillcity.utils.now import now_seconds
 from .user_cache import get_users_in_user_cache, set_in_user_cache
 
 

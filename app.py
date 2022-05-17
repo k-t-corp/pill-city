@@ -29,7 +29,7 @@ from pillcity.resources.password_reset import ForgetPassword, ResetPassword
 from pillcity.resources.media_sets import MediaSets, MediaSetName, MediaSetPublic, MediaSetMedia, MediaSet
 from pillcity.resources.poll import Vote
 from pillcity.resources.plugins import Plugins
-from pillcity.utils.now_ms import now_seconds
+from pillcity.utils.now import now_seconds
 
 # Sentry
 if os.getenv('SENTRY_DSN'):
