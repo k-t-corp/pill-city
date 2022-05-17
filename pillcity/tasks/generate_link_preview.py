@@ -54,7 +54,7 @@ def generate_link_preview(url: str):
 
         proxies = {}
         if link_preview.errored_retries > 0:
-            proxies = _random_proxy()
+            proxies = {"http": _random_proxy(), "https": _random_proxy()}
         preview = linkpreview.link_preview(processed_url, proxies=proxies)
 
         link_preview.title = preview.title
