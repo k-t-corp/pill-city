@@ -23,6 +23,9 @@ RUN pip install -r requirements.prod.txt
 
 # runner intakes the builder's virtualenv, does various things and define an entrypoint
 FROM python:3.9-slim-buster AS runner
+ARG GIT_COMMIT
+RUN test -n "$GIT_COMMIT"
+ENV GIT_COMMIT=$GIT_COMMIT
 
 # use regular user
 RUN useradd --create-home app

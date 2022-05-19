@@ -81,8 +81,7 @@ else:
     print("Invite-only")
 
 # Git commit
-# TODO: this only works on heroku https://devcenter.heroku.com/articles/dyno-metadata
-git_commit = os.getenv('HEROKU_SLUG_COMMIT', None)
+git_commit = os.getenv('GIT_COMMIT', None)
 if git_commit:
     git_commit = git_commit[: 7]
 print(f'Git commit {git_commit}')
