@@ -39,4 +39,4 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: GIT_COMMIT="$GITHUB_SHA"
+          build-args: GIT_COMMIT=${{ env.GITHUB_COMMIT }}
