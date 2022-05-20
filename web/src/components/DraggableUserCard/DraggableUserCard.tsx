@@ -3,12 +3,15 @@ import getAvatarUrl from "../../utils/getAvatarUrl";
 import getNameAndSubName from "../../utils/getNameAndSubName";
 import User from "../../models/User";
 import "./DraggableUserCard.css"
+import {useHistory} from "react-router-dom";
 
 interface Props {
   user: User
 }
 
 export default (props: Props) => {
+  const history = useHistory()
+
   const onDragStart = (e: any) => {
     e.dataTransfer.setData("user", JSON.stringify(props.user))
   }
@@ -26,6 +29,10 @@ export default (props: Props) => {
       onDragStart={onDragStart}
       onDragOver={onDragOver}
       draggable={true}
+      onClick={e => {
+        e.preventDefault()
+        history.push(`/profile/${props.user.id}`)
+      }}
     >
       {/*prevent users from dragging the single avatar image*/}
       <div className="draggable-card-avatar" draggable={false}>
