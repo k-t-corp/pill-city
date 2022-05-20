@@ -1,5 +1,5 @@
 import React from 'react'
-import "./DraggableCard.css"
+import "./DraggableUserCard.css"
 import getAvatarUrl from "../../utils/getAvatarUrl";
 import getNameAndSubName from "../../utils/getNameAndSubName";
 
