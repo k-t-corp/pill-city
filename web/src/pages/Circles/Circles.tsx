@@ -23,7 +23,9 @@ const Circles = () => {
 
   if (loading) {
     return (
-      <div className='circles-status'>Loading...</div>
+      <div className='circles-wrapper'>
+        <div className='circles-status'>Loading...</div>
+      </div>
     )
   }
 
@@ -37,7 +39,7 @@ const Circles = () => {
   }
 
   return (
-    <>
+    <div className='circles-wrapper'>
       <div className='circles-user-cards-container'>
         {users.map((u, i) => {
           return (
@@ -50,7 +52,7 @@ const Circles = () => {
           {circleElements}
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

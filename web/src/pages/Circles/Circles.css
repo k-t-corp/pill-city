@@ -1,3 +1,8 @@
+.circles-wrapper {
+    display: flex;
+    padding: 5em 2em 0 2em;
+}
+
 .circles-status {
     padding: 13px;
     background-color: #ffffff;
