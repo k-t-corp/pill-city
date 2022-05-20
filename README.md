@@ -48,7 +48,7 @@ make dev-web
 3. Temporarily update `.example.env`
    1. Replace `localhost` in `CDN_URL` with your LAN IP
 4. Temporarily update `web/.example.env`
-   1. Replace `lcoalhost` in `REACT_APP_API_ENDPOINT` with your LAN IP
+   1. Replace `localhost` in `REACT_APP_API_ENDPOINT` with your LAN IP
 5. Run `make dev-api` and `make dev-web` as usual
 6. Do not forget to revert `.example.env` and `web/.example.env` when done
 
