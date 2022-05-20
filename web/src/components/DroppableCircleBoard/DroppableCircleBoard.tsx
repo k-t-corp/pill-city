@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import api from '../../api/Api'
 import UserProfileCard from "../UserProfileCard/UserProfileCard";
 import getAvatarUrl from "../../utils/getAvatarUrl";
-import { useMediaQuery } from 'react-responsive'
+import {useMediaQuery} from 'react-responsive'
 import {useHotkeys} from "react-hotkeys-hook";
 import {PencilAltIcon} from "@heroicons/react/solid";
 import Circle from "../../models/Circle";
@@ -10,6 +10,7 @@ import User from "../../models/User";
 import ApiError from "../../api/ApiError";
 import {useToast} from "../Toast/ToastProvider";
 import "./DroppableCircleBoard.css"
+import PillModal from "../PillModal/PillModal";
 
 interface Props {
   circle: Circle
@@ -18,7 +19,7 @@ interface Props {
 export default (props: Props) => {
   const {circle} = props
 
-  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 750px)' })
+  const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
   const circleMargin = 2 // Margin between the edge of the card circle and inner/outer circles
   const outerDiameter = isTabletOrMobile ? 150 : 250; // Need to be equal to width and height in .droppable-board-wrapper
   const innerCirclePercentage = 0.7; // Update all numbers in Animation section
@@ -261,39 +262,39 @@ export default (props: Props) => {
 
   return (
     <div className="droppable-board-wrapper">
-      {modalOpened ?
-        <div id="droppable-board-modal-wrapper" className="droppable-board-modal-wrapper">
-          <div className="droppable-board-modal-content">
-            {
-              !renamingCircle ?
-                <div className="droppable-board-modal-circle" onClick={onCircleRenameClick}>
-                  <div className="droppable-board-modal-circle-name">{circleName}</div>
-                  <div className="droppable-board-modal-circle-rename-icon">
-                    <PencilAltIcon />
-                  </div>
-                </div>
-                :
-                <input
-                  className="droppable-board-modal-circle-name droppable-board-modal-circle-rename"
-                  type="text"
-                  value={circleName}
-                  onChange={e => updateCircleName(e.target.value)}
-                />
-            }
-
-            <div className="droppable-board-modal-circle-members">
-              {memberModalCards()}
+      <PillModal
+        isOpen={modalOpened}
+        onClose={() => {updateModalOpened(false)}}
+      >
+        <div className="droppable-board-modal-content">
+          {!renamingCircle ?
+            <div className="droppable-board-modal-circle" onClick={onCircleRenameClick}>
+              <div className="droppable-board-modal-circle-name">{circleName}</div>
+              <div className="droppable-board-modal-circle-rename-icon">
+                <PencilAltIcon/>
+              </div>
             </div>
-            <div className="droppable-board-modal-buttons">
-              <div className="droppable-board-modal-button-delete" onClick={deleteCircleButtonOnClick}>
-                {deleteCircleClicked ? "Confirm Delete Circle" : "Delete Circle"}
-              </div>
-              <div className="droppable-board-modal-button-done" onClick={onCircleEditingDone}>
-                Done
-              </div>
+            :
+            <input
+              className="droppable-board-modal-circle-name droppable-board-modal-circle-rename"
+              type="text"
+              value={circleName}
+              onChange={e => updateCircleName(e.target.value)}
+            />
+          }
+          <div className="droppable-board-modal-circle-members">
+            {memberModalCards()}
+          </div>
+          <div className="droppable-board-modal-buttons">
+            <div className="droppable-board-modal-button-delete" onClick={deleteCircleButtonOnClick}>
+              {deleteCircleClicked ? "Confirm Delete Circle" : "Delete Circle"}
+            </div>
+            <div className="droppable-board-modal-button-done" onClick={onCircleEditingDone}>
+              Done
             </div>
           </div>
-        </div> : null}
+        </div>
+      </PillModal>
       <div
         className="droppable-board"
         id={circle.id}
