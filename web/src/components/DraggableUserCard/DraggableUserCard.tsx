@@ -1,16 +1,22 @@
 import React from 'react'
-import "./DraggableCard.css"
 import getAvatarUrl from "../../utils/getAvatarUrl";
 import getNameAndSubName from "../../utils/getNameAndSubName";
+import User from "../../models/User";
+import "./DraggableUserCard.css"
+import {useHistory} from "react-router-dom";
 
-export default (props) => {
-  const onDragStart = e => {
-    const target = e.target
-    e.dataTransfer.setData("card_id", target.id)
-    e.dataTransfer.setData("avatar_url", getAvatarUrl(props.user))
+interface Props {
+  user: User
+}
+
+export default (props: Props) => {
+  const history = useHistory()
+
+  const onDragStart = (e: any) => {
+    e.dataTransfer.setData("user", JSON.stringify(props.user))
   }
 
-  const onDragOver = e => {
+  const onDragOver = (e: any) => {
     e.preventDefault()
   }
 
@@ -19,10 +25,14 @@ export default (props) => {
   return (
     <div
       className="draggable-card-wrapper"
-      id={props.id}
+      id={props.user.id}
       onDragStart={onDragStart}
       onDragOver={onDragOver}
       draggable={true}
+      onClick={e => {
+        e.preventDefault()
+        history.push(`/profile/${props.user.id}`)
+      }}
     >
       {/*prevent users from dragging the single avatar image*/}
       <div className="draggable-card-avatar" draggable={false}>

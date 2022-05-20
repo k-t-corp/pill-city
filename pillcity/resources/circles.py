@@ -103,7 +103,7 @@ class CircleMember(Resource):
             return {'msg': f'Circle {circle_id} is not found'}, 404
         member_user = find_user(member_user_id)
         if member_user in circle.members:
-            return {'msg': f'User {member_user_id} is already in circle {circle_id}'}, 409
+            return {'msg': f'User {member_user_id} is already in circle {circle.name}'}, 409
         toggle_member(user, circle, member_user)
 
     @jwt_required()
@@ -118,5 +118,5 @@ class CircleMember(Resource):
             return {'msg': f'Circle {circle_id} is not found'}, 404
         member_user = find_user(member_user_id)
         if member_user not in circle.members:
-            return {'msg': f'User {member_user_id} is already not in circle {circle_id}'}, 409
+            return {'msg': f'User {member_user_id} is already not in circle {circle.name}'}, 409
         toggle_member(user, circle, member_user)

@@ -41,7 +41,7 @@
 
 .droppable-board-inner-circle-name {
     font-weight: bold;
-    font-size: x-large;
+    font-size: large;
     color: #ffffff;
     margin-top: 30px;
     padding: 0 10px;
@@ -58,29 +58,7 @@
     margin-top: 20px;
 }
 
-/*Modal*/
-
-.droppable-board-modal-wrapper {
-    position: fixed; /* Stay in place */
-    z-index: 2; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0, 0, 0); /* Fallback color */
-    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
-}
-
 .droppable-board-modal-content {
-    background-color: #fefefe;
-    margin: 10% auto; /* 15% from the top and centered */
-    padding: 60px 30px 30px 30px;
-    border: 1px solid #888;
-    border-radius: 5px;
-    min-width: 400px;
-    max-width: 1200px;
-    width: 80%; /* Could be more or less, depending on screen size */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -181,11 +159,6 @@
 
 /* Mobile Modal */
 @media only screen and (max-width: 750px) {
-    .droppable-board-modal-content {
-        min-width: 0;
-        padding: 20px;
-    }
-
     .droppable-board-modal-buttons {
         justify-content: space-between;
     }
@@ -198,10 +171,6 @@
     .droppable-board-modal-circle-name {
         font-size: large;
         margin-bottom: 20px;
-    }
-
-    .droppable-board-modal-content {
-        max-height: calc(100vh - 100px);
     }
 
     .droppable-board-modal-circle-members {

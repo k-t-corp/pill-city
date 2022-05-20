@@ -1,0 +1,70 @@
+.circles-wrapper {
+    display: flex;
+    padding: 5em 2em 0 2em;
+}
+
+.circles-status {
+    padding: 13px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 2px 2px 1px 1px #e0e0e0;
+    margin-bottom: 20px;
+    color: gray;
+    width: 100%;
+    max-width: 100%;
+}
+
+.circles-user-cards-container {
+    padding: 0 50px;
+    height: 550px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    display: grid;
+    position: absolute;
+    top: 5em;
+    width: 100%;
+    left: 0;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-column-gap: 30px;
+    grid-row-gap: 30px;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.circles-user-cards-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.circles-user-cards-container {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Mobile */
+@media only screen and (max-width: 750px) {
+    .circles-user-cards-container {
+        height: calc(100% - 220px);
+        padding: 5px;
+        top: 0;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        grid-column-gap: 5px;
+        grid-row-gap: 5px;
+    }
+}
+
+
+.circles-boards-wrapper {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    direction:ltr;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+.circles-boards {
+    height: 100%;
+    display: flex;
+}
+
