@@ -1,3 +1,25 @@
+.users-wrapper {
+    display: flex;
+    padding: 5em 2em 0 2em;
+}
+
+@media only screen and (max-width: 750px) {
+    .users-wrapper {
+        padding: 0;
+    }
+}
+
+.users-status {
+    padding: 13px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 2px 2px 1px 1px #e0e0e0;
+    margin-bottom: 20px;
+    color: gray;
+    width: 100%;
+    max-width: 100%;
+}
+
 .users-grid-container {
     display: grid;
     width: 100%;

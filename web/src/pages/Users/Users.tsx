@@ -14,6 +14,7 @@ type UserWithLoadingState = {
 } & User
 
 const Users = () => {
+  const [loading, updateLoading] = useState(true)
   const [users, updateUsers] = useState<UserWithLoadingState[]>([])
   const history = useHistory()
 
@@ -23,6 +24,7 @@ const Users = () => {
       updateUsers(users.map((u: User) => {
         return {...u, _follow_loading: false}
       }))
+      updateLoading(false)
     })()
   }, [])
 
@@ -89,6 +91,14 @@ const Users = () => {
             }
           </div>
         </div>
+      </div>
+    )
+  }
+
+  if (loading) {
+    return (
+      <div className='users-wrapper'>
+        <div className='users-status'>Loading...</div>
       </div>
     )
   }
