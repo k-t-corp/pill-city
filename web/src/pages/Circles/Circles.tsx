@@ -5,7 +5,7 @@ import Circle from "../../models/Circle";
 import "./Circles.css"
 import DraggableUserCard from "../../components/DraggableUserCard/DraggableUserCard";
 import AddNewCircleButton from "../../components/AddNewCircleButton/AddNewCircleButton";
-import DroppableBoard from "../../components/DroppableBoard/DroppableBoard";
+import DroppableCircleBoard from "../../components/DroppableCircleBoard/DroppableCircleBoard";
 
 const Circles = () => {
   const [loading, updateLoading] = useState(true)
@@ -32,12 +32,7 @@ const Circles = () => {
   ]
   for (let c of circles) {
     circleElements.push(
-      <DroppableBoard
-        key={c.id}
-        circleId={c.id}
-        circleName={c.name}
-        members={c.members}
-      />
+      <DroppableCircleBoard key={c.id} circle={c}/>
     )
   }
 
@@ -46,7 +41,7 @@ const Circles = () => {
       <div className='circles-user-cards-container'>
         {users.map((u, i) => {
           return (
-            <DraggableUserCard key={i} id={u.id} user={u}/>
+            <DraggableUserCard key={i} user={u}/>
           )
         })}
       </div>
