@@ -52,7 +52,6 @@ const MobileNavBar = () => {
     <div className="nav-bar-container nav-bar-bottom">
       <div
         className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/users")}`}
-        style={{width: '50%'}}
         onClick={() => {history.push('/users')}}
       >
         <UserGroupIcon />
