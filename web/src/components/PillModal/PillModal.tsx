@@ -11,9 +11,9 @@ interface Props {
 }
 
 export default (props: Props) => {
-  const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
+  const isMobile = useMediaQuery({query: '(max-width: 750px)'})
   let styles = {}
-  if (isTabletOrMobile) {
+  if (isMobile) {
     styles = {
       backgroundColor: '#ffffff',
       borderRadius: '0',
@@ -49,7 +49,7 @@ export default (props: Props) => {
       shouldCloseOnOverlayClick={true}
       shouldCloseOnEsc={true}
     >
-      {isTabletOrMobile &&
+      {isMobile &&
         <div className='pill-modal-mobile-header'>
           <XIcon
             className='pill-modal-close-button'

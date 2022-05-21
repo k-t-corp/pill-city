@@ -3,7 +3,7 @@ import {useMediaQuery} from "react-responsive";
 import {useAppSelector} from "../../store/hooks";
 import {useHistory, useLocation} from "react-router-dom";
 import "./NavBar.css"
-import {BellIcon, HomeIcon, PlusCircleIcon, UserCircleIcon, UserGroupIcon} from "@heroicons/react/solid";
+import {BellIcon, HomeIcon, UserCircleIcon, UserGroupIcon} from "@heroicons/react/solid";
 
 const handleNavItemActiveClass = (currentPath: string, expectedPath: string) => {
   return currentPath === expectedPath ? "nav-bar-button-active" : ''
@@ -24,13 +24,6 @@ const DesktopNavBar = () => {
       >
         <HomeIcon />
         <span className='nav-bar-button-text'>Home</span>
-      </div>
-      <div
-        className={`nav-bar-button-container nav-bar-button-container-aligned ${handleNavItemActiveClass(path, "/circles")}`}
-        onClick={() => {history.push('/circles')}}
-      >
-        <PlusCircleIcon />
-        <span className='nav-bar-button-text'>Circles</span>
       </div>
       <div
         className={`nav-bar-button-container nav-bar-button-container-aligned ${handleNavItemActiveClass(path, "/users")}`}
@@ -64,12 +57,6 @@ const MobileNavBar = () => {
         <UserGroupIcon />
       </div>
       <div
-        className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/circles")}`}
-        onClick={() => {history.push('/circles')}}
-      >
-        <PlusCircleIcon />
-      </div>
-      <div
         className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/")}`}
         onClick={() => {
           history.push('/')
@@ -96,9 +83,9 @@ const MobileNavBar = () => {
 }
 
 export default () => {
-  const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
+  const isMobile = useMediaQuery({query: '(max-width: 750px)'})
 
   return (
-    isTabletOrMobile ? <MobileNavBar /> : <DesktopNavBar />
+    isMobile ? <MobileNavBar /> : <DesktopNavBar />
   )
 }

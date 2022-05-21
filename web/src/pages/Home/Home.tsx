@@ -30,7 +30,7 @@ const Home = () => {
   const [resharePostData, updateResharePostData] = useState<PostModel | ResharedPost | null>(null)
   const [mobileNewPostOpened, updateMobileNewPostOpened] = useState(false)
 
-  const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
+  const isMobile = useMediaQuery({query: '(max-width: 750px)'})
   const { observe } = useInView({
     rootMargin: "50px 0px",
     onEnter: async ({ unobserve, observe }) => {
@@ -70,7 +70,7 @@ const Home = () => {
           data={post}
           me={me as User}
           detail={false}
-          hasNewPostModal={isTabletOrMobile}
+          hasNewPostModal={isMobile}
           updateResharePostData={updateResharePostData}
           updateNewPostOpened={updateMobileNewPostOpened}
         />
@@ -138,7 +138,7 @@ const Home = () => {
           {postElements}
         </Masonry>
       </div>
-      {isTabletOrMobile ?
+      {isMobile ?
         <>
           <div
             className='mobile-new-post-button'

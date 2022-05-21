@@ -8,7 +8,6 @@ import {
 import SignIn from './pages/SignIn/SignIn'
 import SignUp from './pages/SignUp/SignUp'
 import Home from './pages/Home/Home'
-import Circles from './pages/Circles/Circles'
 import Users from './pages/Users/Users'
 import Profile from './pages/Profile/Profile'
 import Settings from './pages/Settings/Settings'
@@ -113,11 +112,6 @@ export default () => {
           <Route path="/users">
             <Authenticated>
               <Users />
-            </Authenticated>
-          </Route>
-          <Route path="/circles">
-            <Authenticated>
-              <Circles />
             </Authenticated>
           </Route>
           <Route path="/settings">

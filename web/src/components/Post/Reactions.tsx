@@ -44,7 +44,7 @@ export default (props: Props) => {
   const [reactions, updateReactions] = useState<Reaction[]>(props.reactions)
   const [loading, updateLoading] = useState(false)
   const emojiPickerRef = useRef(null);
-  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 750px)' })
+  const isMobile = useMediaQuery({ query: '(max-width: 750px)' })
 
   const myReactionId = (emoji: string): string | undefined => {
     // Returns reaction id if I reacted with emoji, undefined otherwise
@@ -162,7 +162,7 @@ export default (props: Props) => {
 
   let emojiPicker = null
   if (emojiPickerOpened) {
-    if (isTabletOrMobile) {
+    if (isMobile) {
       emojiPicker = (
         <PillModal
           isOpen={emojiPickerOpened}

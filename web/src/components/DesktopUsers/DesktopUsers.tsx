@@ -2,12 +2,12 @@ import React, {useEffect, useState} from 'react'
 import api from "../../api/Api";
 import User from "../../models/User";
 import Circle from "../../models/Circle";
-import "./Circles.css"
-import DraggableUserCard from "../../components/DraggableUserCard/DraggableUserCard";
-import AddNewCircleButton from "../../components/AddNewCircleButton/AddNewCircleButton";
-import DroppableCircleBoard from "../../components/DroppableCircleBoard/DroppableCircleBoard";
+import DraggableUserCard from "./DraggableUserCard";
+import AddNewCircleButton from "./AddNewCircleButton";
+import DroppableCircleBoard from "./DroppableCircleBoard";
+import "./DesktopUsers.css"
 
-const Circles = () => {
+const DesktopUsers = () => {
   const [loading, updateLoading] = useState(true)
   const [users, updateUsers] = useState<User[]>([])
   const [circles, updateCircles] = useState<Circle[]>([])
@@ -23,8 +23,8 @@ const Circles = () => {
 
   if (loading) {
     return (
-      <div className='circles-wrapper'>
-        <div className='circles-status'>Loading...</div>
+      <div className='desktop-users-wrapper'>
+        <div className='desktop-users-status'>Loading...</div>
       </div>
     )
   }
@@ -32,6 +32,7 @@ const Circles = () => {
   const circleElements = [
     <AddNewCircleButton key={-1}/>
   ]
+
   for (let c of circles) {
     circleElements.push(
       <DroppableCircleBoard key={c.id} circle={c}/>
@@ -39,16 +40,16 @@ const Circles = () => {
   }
 
   return (
-    <div className='circles-wrapper'>
-      <div className='circles-user-cards-container'>
+    <div className='desktop-users-wrapper'>
+      <div className='desktop-users-user-cards-container'>
         {users.map((u, i) => {
           return (
             <DraggableUserCard key={i} user={u}/>
           )
         })}
       </div>
-      <div className="circles-boards-wrapper">
-        <div className="circles-boards">
+      <div className="desktop-users-boards-wrapper">
+        <div className="desktop-users-boards">
           {circleElements}
         </div>
       </div>
@@ -56,4 +57,4 @@ const Circles = () => {
   )
 }
 
-export default Circles
+export default DesktopUsers
