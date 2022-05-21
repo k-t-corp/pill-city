@@ -17,8 +17,7 @@ interface UserCardProps {
 
 const UserCard = (props: UserCardProps) => {
   const { user, isFollowing, updateFollowing } = props
-  const { name, subName } = getNameAndSubName(user)
-  const createdAtDate = new Date(user['created_at_seconds'] * 1000)
+  const { name } = getNameAndSubName(user)
 
   const [loading, updateLoading] = useState(false)
   const history = useHistory()
@@ -33,10 +32,6 @@ const UserCard = (props: UserCardProps) => {
       <div className='mobile-users-user-card-right'>
         <div>
           <div className="mobile-users-user-card-name">{name}</div>
-          {subName && <div className="mobile-users-user-card-join-time">{`@${subName}`}</div>}
-          <div className="mobile-users-user-card-join-time">
-            Joined on {createdAtDate.toLocaleDateString(undefined, {year: '2-digit', month: 'short', day: 'numeric'})}
-          </div>
         </div>
         <div
           className={
