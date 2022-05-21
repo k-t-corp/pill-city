@@ -2,8 +2,8 @@ import React from 'react'
 import getAvatarUrl from "../../utils/getAvatarUrl";
 import getNameAndSubName from "../../utils/getNameAndSubName";
 import User from "../../models/User";
-import "./DraggableUserCard.css"
 import {useHistory} from "react-router-dom";
+import "./DraggableUserCard.css"
 
 interface Props {
   user: User
@@ -24,7 +24,7 @@ export default (props: Props) => {
 
   return (
     <div
-      className="draggable-card-wrapper"
+      className="draggable-user-card-wrapper"
       id={props.user.id}
       onDragStart={onDragStart}
       onDragOver={onDragOver}
@@ -35,10 +35,10 @@ export default (props: Props) => {
       }}
     >
       {/*prevent users from dragging the single avatar image*/}
-      <div className="draggable-card-avatar" draggable={false}>
-        <img className="draggable-card-avatar-img" draggable={false} src={getAvatarUrl(props.user)} alt=""/>
+      <div className="draggable-user-card-avatar" draggable={false}>
+        <img className="draggable-user-card-avatar-img" draggable={false} src={getAvatarUrl(props.user)} alt=""/>
       </div>
-      <div className="draggable-card-name">{name}</div>
+      <div className="draggable-user-card-name">{name}</div>
     </div>
   )
 }

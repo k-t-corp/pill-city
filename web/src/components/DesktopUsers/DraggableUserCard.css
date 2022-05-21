@@ -1,4 +1,4 @@
-.draggable-card-wrapper {
+.draggable-user-card-wrapper {
     background-color: #ffffff;
     width: 100%;
     height: 100px;
@@ -9,18 +9,18 @@
     cursor: pointer;
 }
 
-.draggable-card-avatar {
+.draggable-user-card-avatar {
     height: 100px;
     width: 100px;
     flex-shrink: 0;
 }
 
-.draggable-card-avatar-img {
+.draggable-user-card-avatar-img {
     width: 100%;
     height: 100%;
 }
 
-.draggable-card-name {
+.draggable-user-card-name {
     font-weight: bold;
     font-size: large;
     margin-left: 20px;
@@ -31,11 +31,11 @@
 
 /* Mobile */
 @media only screen and (max-width: 750px) {
-    .draggable-card-wrapper {
+    .draggable-user-card-wrapper {
         height: 50px;
     }
 
-    .draggable-card-avatar {
+    .draggable-user-card-avatar {
         height: 50px;
         width: 50px;
     }
