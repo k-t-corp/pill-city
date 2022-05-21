@@ -73,12 +73,10 @@ export default (props: UsersProps) => {
 
 
   let userCardElements = []
-  for (let i = 0; i < users.length; i++) {
-    const user = users[i]
-
+  for (let user of users) {
     userCardElements.push(
       <UserCard
-        key={i}
+        key={user.id}
         user={user}
         isFollowing={followings.map(_ => _.id).indexOf(user.id) !== -1}
         updateFollowing={f => {
