@@ -3,12 +3,6 @@
     padding: 5em 2em 0 2em;
 }
 
-@media only screen and (max-width: 750px) {
-    .desktop-users-wrapper {
-        padding: 0
-    }
-}
-
 .desktop-users-status {
     padding: 13px;
     background-color: #ffffff;
@@ -44,18 +38,6 @@
 .desktop-users-user-cards-container {
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
-}
-
-/* Mobile */
-@media only screen and (max-width: 750px) {
-    .desktop-users-user-cards-container {
-        height: calc(100% - 220px);
-        padding: 5px;
-        top: 0;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        grid-column-gap: 5px;
-        grid-row-gap: 5px;
-    }
 }
 
 .desktop-users-boards-wrapper {

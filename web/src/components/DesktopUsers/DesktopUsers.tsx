@@ -2,8 +2,8 @@ import React from 'react'
 import DraggableUserCard from "./DraggableUserCard";
 import AddNewCircleButton from "./AddNewCircleButton";
 import DroppableCircleBoard from "./DroppableCircleBoard";
-import "./DesktopUsers.css"
 import {UsersProps} from "../../pages/Users/common";
+import "./DesktopUsers.css"
 
 const DesktopUsers = (props: UsersProps) => {
   const {loading, users, circles} = props
