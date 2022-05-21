@@ -1,25 +1,12 @@
-import React, {useEffect, useState} from 'react'
-import api from "../../api/Api";
-import User from "../../models/User";
-import Circle from "../../models/Circle";
+import React from 'react'
 import DraggableUserCard from "./DraggableUserCard";
 import AddNewCircleButton from "./AddNewCircleButton";
 import DroppableCircleBoard from "./DroppableCircleBoard";
 import "./DesktopUsers.css"
+import {UsersProps} from "../../pages/Users/common";
 
-const DesktopUsers = () => {
-  const [loading, updateLoading] = useState(true)
-  const [users, updateUsers] = useState<User[]>([])
-  const [circles, updateCircles] = useState<Circle[]>([])
-
-  useEffect(() => {
-    (async () => {
-      updateLoading(true)
-      updateCircles(await api.getCircles())
-      updateUsers(await api.getUsers())
-      updateLoading(false)
-    })()
-  }, [])
+const DesktopUsers = (props: UsersProps) => {
+  const {loading, users, circles} = props
 
   if (loading) {
     return (
