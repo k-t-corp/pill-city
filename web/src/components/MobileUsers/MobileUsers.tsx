@@ -4,10 +4,11 @@ import getAvatarUrl from "../../utils/getAvatarUrl";
 import User from "../../models/User";
 import getNameAndSubName from "../../utils/getNameAndSubName";
 import api from "../../api/Api";
-import {UserRemoveIcon} from "@heroicons/react/solid";
+import {PlusCircleIcon, UserRemoveIcon} from "@heroicons/react/solid";
 import {UserAddIcon} from "@heroicons/react/outline";
 import {UsersProps} from "../../pages/Users/common";
 import "./MobileUsers.css"
+import CirclesIcon from "../PillIcons/CirclesIcon";
 
 interface UserCardProps {
   user: User
@@ -33,30 +34,35 @@ const UserCard = (props: UserCardProps) => {
         <div>
           <div className="mobile-users-user-card-name">{name}</div>
         </div>
-        <div
-          className={
-            !loading ?
-              "mobile-users-user-card-follow-button" :
-              "mobile-users-user-card-follow-button mobile-users-user-card-follow-button-disabled"
-          }
-          onClick={async (e) => {
-            e.stopPropagation()
-            if (loading) {
-              return
+        <div className='mobile-users-user-card-buttons'>
+          <div className='mobile-users-user-card-button'>
+            <CirclesIcon />
+          </div>
+          <div
+            className={
+              !loading ?
+                "mobile-users-user-card-button" :
+                "mobile-users-user-card-button mobile-users-user-card-button-disabled"
             }
-            updateLoading(true)
-            if (isFollowing) {
-              await api.unfollow(user.id)
-            } else {
-              await api.follow(user.id)
+            onClick={async (e) => {
+              e.stopPropagation()
+              if (loading) {
+                return
+              }
+              updateLoading(true)
+              if (isFollowing) {
+                await api.unfollow(user.id)
+              } else {
+                await api.follow(user.id)
+              }
+              updateFollowing(!isFollowing)
+              updateLoading(false)
+            }}
+          >
+            {
+              isFollowing ? <UserRemoveIcon /> : <UserAddIcon />
             }
-            updateFollowing(!isFollowing)
-            updateLoading(false)
-          }}
-        >
-          {
-            isFollowing ? <UserRemoveIcon /> : <UserAddIcon />
-          }
+          </div>
         </div>
       </div>
     </div>
