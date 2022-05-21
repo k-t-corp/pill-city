@@ -254,6 +254,15 @@ class MyFollowingCounts(Resource):
         return user
 
 
+class MyFollowings(Resource):
+    @jwt_required()
+    @marshal_with(user_fields)
+    def get(self):
+        user_id = get_jwt_identity()
+        user = find_user(user_id)
+        return user.followings
+
+
 class MyRssToken(Resource):
     @jwt_required()
     def get(self):
