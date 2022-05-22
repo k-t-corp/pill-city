@@ -32,7 +32,7 @@ const UserCard = (props: UserCardProps) => {
     <div className="mobile-users-user-card-wrapper" onClick={e => {
       e.stopPropagation()
       history.push(`/profile/${user.id}`)
-    }} >
+    }}>
       <div className="mobile-users-user-card-avatar">
         <img className="mobile-users-user-card-avatar-img" src={getAvatarUrl(user)} alt=""/>
       </div>
