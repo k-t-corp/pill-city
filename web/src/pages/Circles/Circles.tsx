@@ -7,7 +7,6 @@ import PillModal from "../../components/PillModal/PillModal";
 import CreateNewCircle from "../../components/CreateNewCircle/CreateNewCircle";
 import {
   PlusIcon,
-  TrashIcon,
   UserGroupIcon as UserGroupIconSolid,
 } from "@heroicons/react/solid";
 import {UserGroupIcon as UserGroupIconOutline} from "@heroicons/react/outline";
@@ -15,46 +14,33 @@ import EditCircle from "../../components/EditCircle/EditCircle";
 
 interface CircleCardProps {
   circle: Circle,
-  onDelete: () => void
 }
 
 const CircleCard = (props: CircleCardProps) => {
-  const {circle, onDelete} = props
+  const {circle} = props
   const [showingEditCircle, updateShowingEditCircle] = useState(false)
 
-  const deleteCircle = async () => {
-    if (!confirm(`Are you sure you want to delete circle "${circle.name}"`)) {
-      return
-    }
-    onDelete()
-    await api.deleteCircle(circle.id)
-  }
-
   return (
-    <div className="circles-circle-card-wrapper" onClick={e => {
-      e.stopPropagation()
-      updateShowingEditCircle(true)
-    }}>
-      <div className="circles-circle-card-name">
-        {circle.name}
-      </div>
-      <div className='circles-circle-card-right'>
-        {circle.members.length !== 0 ?
-          <div className='circles-circle-card-count-icon'>
-            <UserGroupIconSolid />
-          </div> :
-          <div className='circles-circle-card-count-icon'>
-            <UserGroupIconOutline />
-          </div>
-        }
-        <div className='circles-circle-card-count'>
-          {circle.members.length}
+    <>
+      <div className="circles-circle-card-wrapper" onClick={e => {
+        e.stopPropagation()
+        updateShowingEditCircle(true)
+      }}>
+        <div className="circles-circle-card-name">
+          {circle.name}
         </div>
-        <div className='circles-circle-card-button' onClick={async (e) => {
-          e.preventDefault()
-          await deleteCircle()
-        }}>
-          <TrashIcon />
+        <div className='circles-circle-card-right'>
+          {circle.members.length !== 0 ?
+            <div className='circles-circle-card-count-icon'>
+              <UserGroupIconSolid />
+            </div> :
+            <div className='circles-circle-card-count-icon'>
+              <UserGroupIconOutline />
+            </div>
+          }
+          <div className='circles-circle-card-count'>
+            {circle.members.length}
+          </div>
         </div>
       </div>
       <PillModal
@@ -64,7 +50,7 @@ const CircleCard = (props: CircleCardProps) => {
       >
         <EditCircle circle={circle}/>
       </PillModal>
-    </div>
+    </>
   )
 }
 
@@ -135,9 +121,6 @@ export default () => {
           <CircleCard
             key={c.id}
             circle={c}
-            onDelete={() => {
-              updateCircles(circles.filter(_ => _.id !== c.id))
-            }}
           />
         )
       })}
