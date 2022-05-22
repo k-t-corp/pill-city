@@ -77,7 +77,11 @@ const Settings = () => {
   }
 
   if (meLoading || loading) {
-    return <div className="settings-wrapper">Loading...</div>
+    return (
+      <div className="settings-wrapper">
+        <div className="settings-status">Loading...</div>
+      </div>
+    )
   }
 
   const dispatch = useAppDispatch()
