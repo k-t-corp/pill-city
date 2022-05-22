@@ -1,5 +1,5 @@
 import Modal from "react-modal";
-import React from "react";
+import React, {CSSProperties} from "react";
 import {useMediaQuery} from "react-responsive";
 import {XIcon} from "@heroicons/react/solid";
 import './PillModal.css'
@@ -12,7 +12,7 @@ interface Props {
 
 export default (props: Props) => {
   const isMobile = useMediaQuery({query: '(max-width: 750px)'})
-  let styles = {}
+  let styles: CSSProperties
   if (isMobile) {
     styles = {
       backgroundColor: '#ffffff',
