@@ -1,16 +1,14 @@
 import React, {useState} from 'react'
 import api from '../../api/Api'
-import UserProfileCard from "../UserProfileCard/UserProfileCard";
 import getAvatarUrl from "../../utils/getAvatarUrl";
 import {useMediaQuery} from 'react-responsive'
-import {useHotkeys} from "react-hotkeys-hook";
-import {PencilAltIcon} from "@heroicons/react/solid";
 import Circle from "../../models/Circle";
 import User from "../../models/User";
 import ApiError from "../../api/ApiError";
 import {useToast} from "../Toast/ToastProvider";
 import "./DroppableCircleBoard.css"
 import PillModal from "../PillModal/PillModal";
+import EditCircle from "../EditCircle/EditCircle";
 
 interface Props {
   circle: Circle
@@ -30,12 +28,8 @@ export default (props: Props) => {
   const cardNumber = Math.floor(360 / anglePerCardAsDegree);
   const finalAnglePerCardAsDegree = 360 / cardNumber
 
-  const [circleName, updateCircleName] = useState(circle.name)
-  const [renamingCircle, updateRenamingCircle] = useState(false)
-  const [renameCircleLoading, updateRenameCircleLoading] = useState(false)
   const [members, updateMembers] = useState<User[]>(circle.members)
   const [modalOpened, updateModalOpened] = useState(false)
-  const [deleteCircleClicked, updateDeleteCircleClicked] = useState(false)
 
   const {addToast} = useToast()
 
@@ -194,71 +188,6 @@ export default (props: Props) => {
     }
     return memberCardElements
   }
-  const memberModalCards = () => {
-    let memberModalCardElements = []
-    for (let i = 0; i < members.length; i++) {
-      const member = members[i]
-      memberModalCardElements.push(
-        <UserProfileCard
-          key={i}
-          user={member}
-          circleId={circle.id}
-        />)
-    }
-    return memberModalCardElements
-  }
-
-  // Close the modal when user clicks outside it
-  window.onclick = function (event) {
-    let modal = document.getElementById("droppable-circle-board-modal-wrapper");
-    if (event.target === modal) {
-      // reload the page in case user removed people from their circle
-      window.location.reload()
-    }
-  }
-
-  const deleteCircleButtonOnClick = async () => {
-    if (!deleteCircleClicked) {
-      // ask user to confirm
-      updateDeleteCircleClicked(true)
-    } else {
-      // actually delete the circle
-      await api.deleteCircle(circle.id)
-      window.location.reload()
-    }
-  }
-
-  const renameCircle = async () => {
-    updateRenamingCircle(false)
-    updateRenameCircleLoading(true)
-    await api.renameCircle(circle.id, circleName)
-    updateCircleName(circleName)
-    updateRenameCircleLoading(false)
-  }
-
-  useHotkeys('enter', () => {
-    (async () => {
-      if (renamingCircle) {
-        await renameCircle()
-      }
-    })()
-  }, {
-    enableOnTags: ['INPUT']
-  })
-
-  const onCircleEditingDone = async () => {
-    if (renamingCircle) {
-      await renameCircle()
-    }
-    window.location.reload()
-  }
-
-  const onCircleRenameClick = () => {
-    if (renameCircleLoading) {
-      return
-    }
-    updateRenamingCircle(true)
-  }
 
   return (
     <div className="droppable-circle-board-wrapper">
@@ -267,34 +196,7 @@ export default (props: Props) => {
         onClose={() => {updateModalOpened(false)}}
         title={`Update circle "${circle.name}"`}
       >
-        <div className="droppable-circle-board-modal-content">
-          {!renamingCircle ?
-            <div className="droppable-circle-board-modal-circle" onClick={onCircleRenameClick}>
-              <div className="droppable-circle-board-modal-circle-name">{circleName}</div>
-              <div className="droppable-circle-board-modal-circle-rename-icon">
-                <PencilAltIcon/>
-              </div>
-            </div>
-            :
-            <input
-              className="droppable-circle-board-modal-circle-name droppable-circle-board-modal-circle-rename"
-              type="text"
-              value={circleName}
-              onChange={e => updateCircleName(e.target.value)}
-            />
-          }
-          <div className="droppable-circle-board-modal-circle-members">
-            {memberModalCards()}
-          </div>
-          <div className="droppable-circle-board-modal-buttons">
-            <div className="droppable-circle-board-modal-button-delete" onClick={deleteCircleButtonOnClick}>
-              {deleteCircleClicked ? "Confirm Delete Circle" : "Delete Circle"}
-            </div>
-            <div className="droppable-circle-board-modal-button-done" onClick={onCircleEditingDone}>
-              Done
-            </div>
-          </div>
-        </div>
+        <EditCircle circle={circle}/>
       </PillModal>
       <div
         className="droppable-circle-board"
@@ -314,7 +216,7 @@ export default (props: Props) => {
              id={`${circle.id}-inner-circle`}
              style={{backgroundColor: circleColor(circle.id)}}>
           <div className="droppable-circle-board-inner-circle-name">
-            {circleName}
+            {circle.name}
           </div>
           <div className="droppable-circle-board-inner-circle-follow-number">
             {members.length}

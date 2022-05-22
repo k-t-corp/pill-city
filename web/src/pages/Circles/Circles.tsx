@@ -11,6 +11,7 @@ import {
   UserGroupIcon as UserGroupIconSolid,
 } from "@heroicons/react/solid";
 import {UserGroupIcon as UserGroupIconOutline} from "@heroicons/react/outline";
+import EditCircle from "../../components/EditCircle/EditCircle";
 
 interface CircleCardProps {
   circle: Circle,
@@ -19,6 +20,7 @@ interface CircleCardProps {
 
 const CircleCard = (props: CircleCardProps) => {
   const {circle, onDelete} = props
+  const [showingEditCircle, updateShowingEditCircle] = useState(false)
 
   const deleteCircle = async () => {
     if (!confirm(`Are you sure you want to delete circle "${circle.name}"`)) {
@@ -31,7 +33,7 @@ const CircleCard = (props: CircleCardProps) => {
   return (
     <div className="circles-circle-card-wrapper" onClick={e => {
       e.stopPropagation()
-      // history.push(`/profile/${user.id}`)
+      updateShowingEditCircle(true)
     }}>
       <div className="circles-circle-card-name">
         {circle.name}
@@ -55,7 +57,14 @@ const CircleCard = (props: CircleCardProps) => {
           <TrashIcon />
         </div>
       </div>
-      </div>
+      <PillModal
+        isOpen={showingEditCircle}
+        onClose={() => {updateShowingEditCircle(false)}}
+        title={`Edit circle "${circle.name}'`}
+      >
+        <EditCircle circle={circle}/>
+      </PillModal>
+    </div>
   )
 }
 
@@ -76,7 +85,6 @@ const renderCreateCircleComponents = (isOpen: boolean, onClose: () => void, onOp
         <PlusIcon />
       </div>
     </>
-
   )
 }
 
