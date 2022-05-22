@@ -28,6 +28,7 @@ import NavBar from "./components/NavBar/NavBar";
 import {accessTokenExists} from "./api/AuthStorage";
 import {getUseMultiColumn} from "./utils/SettingsStorage";
 import './App.css'
+import Circles from "./pages/Circles/Circles";
 
 Modal.setAppElement('#root');
 
@@ -112,6 +113,11 @@ export default () => {
           <Route path="/users">
             <Authenticated>
               <Users />
+            </Authenticated>
+          </Route>
+          <Route path="/circles">
+            <Authenticated>
+              <Circles />
             </Authenticated>
           </Route>
           <Route path="/settings">

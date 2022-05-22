@@ -6,26 +6,26 @@ import getNameAndSubName from "../../utils/getNameAndSubName";
 import api from "../../api/Api";
 import {UserRemoveIcon} from "@heroicons/react/solid";
 import {UserAddIcon} from "@heroicons/react/outline";
-import {UsersProps} from "../../pages/Users/common";
-import CirclesIcon from "../PillIcons/CirclesIcon";
-import PillModal from "../PillModal/PillModal";
 import "./MobileUsers.css"
-import UpdateUserCircles from "../UpdateUserCircles/UpdateUserCircles";
-import Circle from "../../models/Circle";
+
+interface Props {
+  loading: boolean
+  users: User[],
+  followings: User[]
+  updateFollowings: (v: User[]) => void
+}
 
 interface UserCardProps {
   user: User
   isFollowing: boolean
   updateFollowing: (f: boolean) => void
-  circles: Circle[]
 }
 
 const UserCard = (props: UserCardProps) => {
-  const { user, isFollowing, updateFollowing, circles } = props
+  const { user, isFollowing, updateFollowing } = props
   const { name } = getNameAndSubName(user)
 
   const [loading, updateLoading] = useState(false)
-  const [showingCirclesModal, updateShowingCirclesModal] = useState(false)
   const history = useHistory()
 
   return (
@@ -41,15 +41,6 @@ const UserCard = (props: UserCardProps) => {
           {name}
         </div>
         <div className='mobile-users-user-card-buttons'>
-          <div
-            className='mobile-users-user-card-button'
-            onClick={e => {
-              e.stopPropagation()
-              updateShowingCirclesModal(true)
-            }}
-          >
-            <CirclesIcon />
-          </div>
           <div
             className={
               !loading ?
@@ -77,21 +68,12 @@ const UserCard = (props: UserCardProps) => {
           </div>
         </div>
       </div>
-      <PillModal
-        isOpen={showingCirclesModal}
-        onClose={() => {updateShowingCirclesModal(false)}}
-      >
-        <UpdateUserCircles
-          user={user}
-          circles={circles}
-        />
-      </PillModal>
     </div>
   )
 }
 
-export default (props: UsersProps) => {
-  const {loading, users, followings, updateFollowings, circles} = props
+export default (props: Props) => {
+  const {loading, users, followings, updateFollowings} = props
 
   let userCardElements = []
   for (let user of users) {
@@ -107,7 +89,6 @@ export default (props: UsersProps) => {
             updateFollowings(followings.filter(_ => _.id !== user.id))
           }
         }}
-        circles={circles}
       />
     )
   }

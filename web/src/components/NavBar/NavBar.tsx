@@ -4,6 +4,7 @@ import {useAppSelector} from "../../store/hooks";
 import {useHistory, useLocation} from "react-router-dom";
 import "./NavBar.css"
 import {BellIcon, HomeIcon, UserCircleIcon, UserGroupIcon} from "@heroicons/react/solid";
+import CirclesIcon from "../PillIcons/CirclesIcon";
 
 const handleNavItemActiveClass = (currentPath: string, expectedPath: string) => {
   return currentPath === expectedPath ? "nav-bar-button-active" : ''
@@ -55,6 +56,12 @@ const MobileNavBar = () => {
         onClick={() => {history.push('/users')}}
       >
         <UserGroupIcon />
+      </div>
+      <div
+        className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/circles")}`}
+        onClick={() => {history.push('/circles')}}
+      >
+        <CirclesIcon />
       </div>
       <div
         className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/")}`}

@@ -30,7 +30,6 @@ const Users = () => {
       <MobileUsers
         loading={loading}
         users={users}
-        circles={circles}
         followings={followings}
         updateFollowings={updateFollowings}
       />

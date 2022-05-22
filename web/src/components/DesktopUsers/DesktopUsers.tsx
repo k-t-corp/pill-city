@@ -2,10 +2,19 @@ import React from 'react'
 import DraggableUserCard from "./DraggableUserCard";
 import AddNewCircleButton from "./AddNewCircleButton";
 import DroppableCircleBoard from "./DroppableCircleBoard";
-import {UsersProps} from "../../pages/Users/common";
 import "./DesktopUsers.css"
+import User from "../../models/User";
+import Circle from "../../models/Circle";
 
-const DesktopUsers = (props: UsersProps) => {
+interface Props {
+  loading: boolean
+  users: User[],
+  followings: User[]
+  updateFollowings: (v: User[]) => void
+  circles: Circle[]
+}
+
+const DesktopUsers = (props: Props) => {
   const {loading, users, circles} = props
 
   if (loading) {
