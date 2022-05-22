@@ -3,7 +3,7 @@ import {useMediaQuery} from "react-responsive";
 import {useAppSelector} from "../../store/hooks";
 import {useHistory, useLocation} from "react-router-dom";
 import "./NavBar.css"
-import {BellIcon, HomeIcon, UserCircleIcon, UserGroupIcon} from "@heroicons/react/solid";
+import {BellIcon, HomeIcon, UserAddIcon, UserCircleIcon, UserGroupIcon} from "@heroicons/react/solid";
 import CirclesIcon from "../PillIcons/CirclesIcon";
 
 const handleNavItemActiveClass = (currentPath: string, expectedPath: string) => {
@@ -61,7 +61,7 @@ const MobileNavBar = () => {
         className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/users")}`}
         onClick={() => {history.push('/users')}}
       >
-        <UserGroupIcon />
+        <UserAddIcon />
       </div>
       <div
         className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/")}`}
