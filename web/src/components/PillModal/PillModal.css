@@ -1,11 +1,28 @@
-.pill-modal-mobile-header {
+.pill-modal-header {
     display: flex;
-    justify-content: right;
+    align-items: center;
+    justify-content: space-between;
+    height: 50px;
+    color: #727272;
+}
+
+.pill-modal-dummy {
+    width: 25px;
+    height: 25px;
+}
+
+.pill-modal-title {
+    font-weight: bolder;
+    font-size: large;
 }
 
 .pill-modal-close-button {
-    width: 30px;
-    padding: 5px;
+    width: 25px;
+    height: 25px;
+    margin-right: 10px;
     cursor: pointer;
-    color: #505050;
+}
+
+.pill-modal-content-wrapper {
+    padding: 10px;
 }

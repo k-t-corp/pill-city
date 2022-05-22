@@ -149,6 +149,7 @@ const Home = () => {
           <PillModal
             isOpen={mobileNewPostOpened}
             onClose={() => {updateMobileNewPostOpened(false)}}
+            title="New post"
           >
             {newPostElem}
           </PillModal>

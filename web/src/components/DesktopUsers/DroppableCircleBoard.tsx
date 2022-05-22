@@ -265,6 +265,7 @@ export default (props: Props) => {
       <PillModal
         isOpen={modalOpened}
         onClose={() => {updateModalOpened(false)}}
+        title={`Update circle "${circle.name}"`}
       >
         <div className="droppable-circle-board-modal-content">
           {!renamingCircle ?

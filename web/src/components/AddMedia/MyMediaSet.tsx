@@ -131,6 +131,7 @@ export default (props: Props) => {
         onClose={() => {
           updateAddMediaToMediaSetOpened(false)
         }}
+        title="Add media to media set"
       >
         <OwnedMedia
           selectMediaOp={'Add'}

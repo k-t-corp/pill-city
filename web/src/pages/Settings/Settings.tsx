@@ -136,6 +136,7 @@ const Settings = () => {
       <PillModal
         isOpen={displayNameModalOpened}
         onClose={() => {updateDisplayNameModalOpened(false)}}
+        title="Update display name"
       >
         <input
           className="settings-display-name"
@@ -163,6 +164,7 @@ const Settings = () => {
       <PillModal
         isOpen={emailModalOpened}
         onClose={() => {updateEmailModalOpened(false)}}
+        title="Update email"
       >
         <input
           className="settings-email"
@@ -202,6 +204,7 @@ const Settings = () => {
       <PillModal
         isOpen={avatarModalOpened}
         onClose={() => {updateAvatarModalOpened(false)}}
+        title="Update avatar"
       >
         <UpdateAvatar
           dismiss={() => {
@@ -219,6 +222,7 @@ const Settings = () => {
       <PillModal
         isOpen={bannerModalOpened}
         onClose={() => {updateBannerModalOpened(false)}}
+        title="Update banner"
       >
         <UpdateBanner
           dismiss={() => {
@@ -236,6 +240,7 @@ const Settings = () => {
       <PillModal
         isOpen={rssTokenModalOpened}
         onClose={() => {updateRssTokenModalOpened(false)}}
+        title="RSS notification"
       >
         {
           rssToken && rssToken.rss_token ?

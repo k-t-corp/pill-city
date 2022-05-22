@@ -159,6 +159,7 @@ export default (props: Props) => {
         <PillModal
           isOpen={mediaOpened}
           onClose={() => {updateMediaOpened(false)}}
+          title="Add media"
         >
           <AddMedia
             onChangeMedias={onChangeMedias}

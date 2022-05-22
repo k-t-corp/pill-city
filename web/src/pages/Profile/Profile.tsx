@@ -176,7 +176,7 @@ const Profile = () => {
             history.push(`/settings`)
           }}
         >
-          Edit profile & settings
+          Update profile & settings
         </div>
       )
     } else {
@@ -249,6 +249,7 @@ const Profile = () => {
       <PillModal
         isOpen={newPostOpened}
         onClose={() => {updateNewPostOpened(false)}}
+        title="New post"
       >
         <NewPost
           resharePostData={resharePost}

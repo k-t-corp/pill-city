@@ -167,6 +167,7 @@ export default (props: Props) => {
         <PillModal
           isOpen={emojiPickerOpened}
           onClose={() => {updateEmojiPickerOpened(false)}}
+          title="Add an reaction"
         >
           <Picker
             pickerStyle={{
@@ -226,6 +227,7 @@ export default (props: Props) => {
       <PillModal
         isOpen={detailNodalOpened}
         onClose={() => {updateDetailNodalOpened(false)}}
+        title="Reactions"
       >
         {detailElems}
       </PillModal>

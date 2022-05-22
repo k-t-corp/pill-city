@@ -52,16 +52,16 @@ const MobileNavBar = () => {
   return (
     <div className="nav-bar-container nav-bar-bottom">
       <div
-        className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/users")}`}
-        onClick={() => {history.push('/users')}}
-      >
-        <UserGroupIcon />
-      </div>
-      <div
         className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/circles")}`}
         onClick={() => {history.push('/circles')}}
       >
         <CirclesIcon />
+      </div>
+      <div
+        className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/users")}`}
+        onClick={() => {history.push('/users')}}
+      >
+        <UserGroupIcon />
       </div>
       <div
         className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/")}`}

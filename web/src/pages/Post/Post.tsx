@@ -55,6 +55,7 @@ const PostPage = () => {
         <PillModal
           isOpen={newPostOpened}
           onClose={() => {updateNewPostOpened(false)}}
+          title="New post"
         >
           <NewPost
             resharePostData={resharePost}

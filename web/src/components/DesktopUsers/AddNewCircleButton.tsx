@@ -16,12 +16,13 @@ export default () => {
           className="add-new-circle-button"
           onClick={() => {updateModalOpened(true)}}
         >
-          Create New Circle
+          Create new circle
         </div>
       </div>
       <PillModal
         isOpen={modalOpened}
         onClose={() => {updateModalOpened(false)}}
+        title="Create new circle"
       >
         <input
           className='add-new-circle-name-input'
