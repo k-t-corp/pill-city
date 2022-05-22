@@ -4,14 +4,11 @@ import './PillButton.css'
 export enum PillButtonVariant {
   Neutral = 0,
   Positive,
-  Negative
 }
 
 const variantToBackgroundColor = (variant: PillButtonVariant) => {
   if (variant === PillButtonVariant.Positive) {
     return '#E05140'
-  } else if (variant === PillButtonVariant.Negative) {
-    return '#0d71bb'
   } else {
     return '#727272'
   }

@@ -1,8 +1,55 @@
 import React, {useState} from "react";
-import {PencilAltIcon} from "@heroicons/react/solid";
 import Circle from "../../models/Circle";
-import UserProfileCard from "../UserProfileCard/UserProfileCard";
 import api from "../../api/Api";
+import './EditCircle.css'
+import PillButtons from "../PillButtons/PillButtons";
+import PillButton, {PillButtonVariant} from "../PillButtons/PillButton";
+import {TrashIcon} from "@heroicons/react/solid";
+import getAvatarUrl from "../../utils/getAvatarUrl";
+import User from "../../models/User";
+
+interface MemberCardProps {
+  circle: Circle
+  user: User
+}
+
+const MemberCard = (props: MemberCardProps) => {
+  const {circle, user} = props
+
+  const [deleted, updateDeleted] = useState(false)
+  const [loading, updateLoading] = useState(false)
+  const deleteMemberFromCircleOnClick = async () => {
+    updateLoading(true)
+    await api.removeFromCircle(circle.id, user.id)
+    updateLoading(false)
+    updateDeleted(true)
+  }
+
+  const deleteButton = () => {
+    if (deleted) {
+      return null
+    } else if (loading) {
+      return <div className="lds-dual-ring"/>
+    } else {
+      return (
+        <div className="edit-circle-member-card-delete-button" onClick={deleteMemberFromCircleOnClick}>
+          <TrashIcon />
+        </div>)
+    }
+  }
+
+  return (
+    <div className="edit-circle-member-card-wrapper">
+      <div className="edit-circle-member-card-avatar">
+        <img className="edit-circle-member-card-avatar-img" src={getAvatarUrl(props.user)} alt=""/>
+      </div>
+      <div className="edit-circle-member-card-name" style={{textDecoration: deleted ? "line-through" : ""}}>
+        {props.user.id}
+      </div>
+      {deleteButton()}
+    </div>
+  )
+}
 
 interface Props {
   circle: Circle
@@ -12,86 +59,50 @@ export default (props: Props) => {
   const {circle} = props
   const members = circle.members
 
-  const [renamingCircle, updateRenamingCircle] = useState(false)
-  const [renameCircleLoading, updateRenameCircleLoading] = useState(false)
-  const [circleName, updateCircleName] = useState(circle.name)
-  const [deleteCircleClicked, updateDeleteCircleClicked] = useState(false)
-
-  const onCircleRenameClick = () => {
-    if (renameCircleLoading) {
-      return
-    }
-    updateRenamingCircle(true)
-  }
-
   const memberModalCards = () => {
+    if (members.length === 0) {
+      return <div>No member in circle</div>
+    }
+
     let memberModalCardElements = []
-    for (let i = 0; i < members.length; i++) {
-      const member = members[i]
+    for (let member of members) {
       memberModalCardElements.push(
-        <UserProfileCard
-          key={i}
+        <MemberCard
+          key={member.id}
+          circle={circle}
           user={member}
-          circleId={circle.id}
-        />)
+        />
+      )
     }
     return memberModalCardElements
   }
 
-  const deleteCircleButtonOnClick = async () => {
-    if (!deleteCircleClicked) {
-      // ask user to confirm
-      updateDeleteCircleClicked(true)
-    } else {
-      // actually delete the circle
-      await api.deleteCircle(circle.id)
-      window.location.reload()
-    }
-  }
-
   const onCircleEditingDone = async () => {
-    if (renamingCircle) {
-      await renameCircle()
-    }
     window.location.reload()
   }
 
-  const renameCircle = async () => {
-    updateRenamingCircle(false)
-    updateRenameCircleLoading(true)
-    await api.renameCircle(circle.id, circleName)
-    updateCircleName(circleName)
-    updateRenameCircleLoading(false)
-  }
-
   return (
-    <div className="droppable-circle-board-modal-content">
-      {!renamingCircle ?
-        <div className="droppable-circle-board-modal-circle" onClick={onCircleRenameClick}>
-          <div className="droppable-circle-board-modal-circle-name">{circleName}</div>
-          <div className="droppable-circle-board-modal-circle-rename-icon">
-            <PencilAltIcon/>
-          </div>
-        </div>
-        :
-        <input
-          className="droppable-circle-board-modal-circle-name droppable-circle-board-modal-circle-rename"
-          type="text"
-          value={circleName}
-          onChange={e => updateCircleName(e.target.value)}
-        />
-      }
-      <div className="droppable-circle-board-modal-circle-members">
+    <div className="edit-circle-content">
+      <div className="edit-circle-members">
         {memberModalCards()}
       </div>
-      <div className="droppable-circle-board-modal-buttons">
-        <div className="droppable-circle-board-modal-button-delete" onClick={deleteCircleButtonOnClick}>
-          {deleteCircleClicked ? "Confirm Delete Circle" : "Delete Circle"}
-        </div>
-        <div className="droppable-circle-board-modal-button-done" onClick={onCircleEditingDone}>
-          Done
-        </div>
-      </div>
+      <PillButtons>
+        <PillButton
+          text='Delete'
+          variant={PillButtonVariant.Neutral}
+          onClick={onCircleEditingDone}
+        />
+        <PillButton
+          text='Rename'
+          variant={PillButtonVariant.Neutral}
+          onClick={() => {}}
+        />
+        <PillButton
+          text='Done'
+          variant={PillButtonVariant.Positive}
+          onClick={onCircleEditingDone}
+        />
+      </PillButtons>
     </div>
   )
 }
