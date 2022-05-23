@@ -22,7 +22,10 @@ export default (props: Props) => {
       top: '0',
       left: '0',
       right: '0',
-      padding: '0'
+      paddingLeft: '0',
+      paddingRight: '0',
+      paddingTop: '0',
+      paddingBottom: '15px'
     }
   } else {
     styles = {
