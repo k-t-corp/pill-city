@@ -215,7 +215,7 @@ def main():
     kyo = signup_user('kyo', 'kyo.png', '許工')
     duff = signup_user('duff', 'duff.jpg', '豆腐老師')
     kele = signup_user('kele', 'kele.jpg', '可樂')
-    ahuhu = signup_user('ahuhu', 'ahuhu.png', '啊呼呼')
+    ahuhu = signup_user('ahuhu', 'ahuhu.png', '啊呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼')
     luxiyuan = signup_user('luxiyuan', 'luxiyuan.jpeg', '陸西圓')
     roddyzhang = signup_user('roddyzhang', 'roddyzhang.png', 'Roddy Zhang')
     mawei = signup_user('mawei', 'mawei.jpg', '馬尾')
