@@ -3,7 +3,11 @@ import "./AddNewCircleButton.css"
 import PillModal from "../PillModal/PillModal";
 import CreateNewCircle from "../CreateNewCircle/CreateNewCircle";
 
-export default () => {
+interface Props {
+  onCreate: (name: string) => void
+}
+
+export default (props: Props) => {
   const [modalOpened, updateModalOpened] = useState(false)
 
   return (
@@ -22,6 +26,10 @@ export default () => {
         title="Create new circle"
       >
         <CreateNewCircle
+          onCreate={name => {
+            updateModalOpened(false)
+            props.onCreate(name)
+          }}
           onCancel={() => {updateModalOpened(false)}}
         />
       </PillModal>

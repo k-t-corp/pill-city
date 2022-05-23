@@ -11,6 +11,8 @@ import {
 } from "@heroicons/react/solid";
 import {UserGroupIcon as UserGroupIconOutline} from "@heroicons/react/outline";
 import EditCircle from "../../components/EditCircle/EditCircle";
+import ApiError from "../../api/ApiError";
+import {useToast} from "../../components/Toast/ToastProvider";
 
 interface CircleCardProps {
   circle: Circle,
@@ -67,7 +69,7 @@ const CircleCard = (props: CircleCardProps) => {
   )
 }
 
-const renderCreateCircleComponents = (isOpen: boolean, onClose: () => void, onOpen: () => void) => {
+const renderCreateCircleComponents = (isOpen: boolean, onCreate: (name: string) => void, onClose: () => void, onOpen: () => void) => {
   return (
     <>
       <PillModal
@@ -75,7 +77,13 @@ const renderCreateCircleComponents = (isOpen: boolean, onClose: () => void, onOp
         onClose={onClose}
         title='Create new circle'
       >
-        <CreateNewCircle onCancel={onClose}/>
+        <CreateNewCircle
+          onCreate={(name) => {
+            onClose()
+            onCreate(name)
+          }}
+          onCancel={onClose}
+        />
       </PillModal>
       <div
         className='circles-create-circle-button'
@@ -92,6 +100,8 @@ export default () => {
   const [users, updateUsers] = useState<User[]>([])
   const [circles, updateCircles] = useState<Circle[]>([])
   const [showingCreateCircleModal, updateShowingCreateCircleModal] = useState(false)
+
+  const {addToast} = useToast()
 
   useEffect(() => {
     (async () => {
@@ -110,6 +120,21 @@ export default () => {
     )
   }
 
+  const createCircle = async (name: string) => {
+    try {
+      const data = await api.createCircle(name)
+      updateCircles([
+        ...circles,
+        { id: data.id, name, members: []}
+      ])
+    } catch (e) {
+      if (e instanceof ApiError) {
+        addToast(e.message)
+      } else {
+        addToast("Unknown error")
+      }
+    }
+  }
   const closeCreateCircleModal = () => {updateShowingCreateCircleModal(false)}
   const openCreateCircleModal = () => {updateShowingCreateCircleModal(true)}
 
@@ -122,7 +147,7 @@ export default () => {
             updateShowingCreateCircleModal(true)
           }}>Create one</a></p>
         </div>
-        {renderCreateCircleComponents(showingCreateCircleModal, closeCreateCircleModal, openCreateCircleModal)}
+        {renderCreateCircleComponents(showingCreateCircleModal, createCircle, closeCreateCircleModal, openCreateCircleModal)}
       </div>
     )
   }
@@ -150,7 +175,7 @@ export default () => {
           />
         )
       })}
-      {renderCreateCircleComponents(showingCreateCircleModal, closeCreateCircleModal, openCreateCircleModal)}
+      {renderCreateCircleComponents(showingCreateCircleModal, createCircle, closeCreateCircleModal, openCreateCircleModal)}
     </div>
   )
 }

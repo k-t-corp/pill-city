@@ -6,12 +6,16 @@ import MobileUsers from "../../components/MobileUsers/MobileUsers";
 import User from "../../models/User";
 import Circle from "../../models/Circle";
 import api from "../../api/Api";
+import ApiError from "../../api/ApiError";
+import {useToast} from "../../components/Toast/ToastProvider";
 
 const Users = () => {
   const [loading, updateLoading] = useState(true)
   const [users, updateUsers] = useState<User[]>([])
   const [circles, updateCircles] = useState<Circle[]>([])
   const [followings, updateFollowings] = useState<User[]>([])
+
+  const {addToast} = useToast()
 
   useEffect(() => {
     (async () => {
@@ -40,6 +44,21 @@ const Users = () => {
         loading={loading}
         users={users}
         circles={circles}
+        createCircle={async (name: string) => {
+          try {
+            const data = await api.createCircle(name)
+            updateCircles([
+              { id: data.id, name, members: []},
+              ...circles,
+            ])
+          } catch (e) {
+            if (e instanceof ApiError) {
+              addToast(e.message)
+            } else {
+              addToast("Unknown error")
+            }
+          }
+        }}
         updateCircle={circle => {
           updateCircles(circles.map(c => {
             if (c.id !== circle.id) {

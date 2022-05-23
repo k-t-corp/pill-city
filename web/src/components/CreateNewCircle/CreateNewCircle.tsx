@@ -1,58 +1,39 @@
 import React, {useState} from "react"
-import api from "../../api/Api";
-import {useToast} from "../Toast/ToastProvider";
-import ApiError from "../../api/ApiError";
 import './CreateNewCircle.css'
+import PillForm from "../PillForm/PillForm";
+import PillInput from "../PillInput/PillInput";
+import PillButtons from "../PillButtons/PillButtons";
+import PillButton, {PillButtonVariant} from "../PillButtons/PillButton";
 
 interface Props {
+  onCreate: (name: string) => void
   onCancel: () => void
 }
 
 export default (props: Props) => {
   const [name, updateName] = useState('')
-  const {addToast} = useToast()
 
   return (
-    <>
-      <input
-        className='add-new-circle-name-input'
-        type="text"
-        placeholder="New Circle Name"
+    <PillForm>
+      <PillInput
+        placeholder="Circle name"
         value={name}
-        onChange={e=> {
-          e.preventDefault()
-          updateName(e.target.value)
-        }}
+        onChange={updateName}
       />
-      <div className="modal-content-button-wrapper">
-        <div
-          className="modal-content-button cancel"
+      <PillButtons>
+        <PillButton
+          text="Cancel"
+          variant={PillButtonVariant.Neutral}
+          onClick={props.onCancel}
+        />
+        <PillButton
+          text="Create"
+          variant={PillButtonVariant.Positive}
           onClick={() => {
-            props.onCancel()
+            props.onCreate(name)
           }}
-        >
-          Cancel
-        </div>
-        <div
-          className="modal-content-button confirm"
-          onClick={async () => {
-            if (!name) {
-              return
-            }
-            try {
-              await api.createCircle(name)
-              window.location.reload()
-            } catch (e: any) {
-              if (e instanceof ApiError) {
-                addToast(e.message)
-              } else {
-                addToast('Unknown error')}
-            }
-          }}
-        >
-          Create
-        </div>
-      </div>
-    </>
+        />
+      </PillButtons>
+    </PillForm>
   )
 }

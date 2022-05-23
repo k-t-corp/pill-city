@@ -411,7 +411,7 @@ export class Api {
     if (res.status !== 201) {
       throw new ApiError(res)
     }
-    return null
+    return res.data
   }
 
   async deleteCircle(circleId) {

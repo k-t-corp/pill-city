@@ -12,6 +12,7 @@ interface Props {
   followings: User[]
   updateFollowings: (v: User[]) => void
   circles: Circle[]
+  createCircle: (name: string) => void
   updateCircle: (circle: Circle) => void
   deleteCircle: (circle: Circle) => void
 }
@@ -28,7 +29,10 @@ export default (props: Props) => {
   }
 
   const circleElements = [
-    <AddNewCircleButton key={-1}/>
+    <AddNewCircleButton
+      key={-1}
+      onCreate={props.createCircle}
+    />
   ]
 
   for (let c of circles) {
