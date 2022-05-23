@@ -124,8 +124,8 @@ export default () => {
     try {
       const data = await api.createCircle(name)
       updateCircles([
+        { id: data.id, name, members: []},
         ...circles,
-        { id: data.id, name, members: []}
       ])
     } catch (e) {
       if (e instanceof ApiError) {
