@@ -14,10 +14,12 @@ import EditCircle from "../../components/EditCircle/EditCircle";
 
 interface CircleCardProps {
   circle: Circle,
+  users: User[]
+  updateCircle: (circle: Circle) => void
 }
 
 const CircleCard = (props: CircleCardProps) => {
-  const {circle} = props
+  const {circle, updateCircle, users} = props
   const [showingEditCircle, updateShowingEditCircle] = useState(false)
 
   return (
@@ -48,7 +50,12 @@ const CircleCard = (props: CircleCardProps) => {
         onClose={() => {updateShowingEditCircle(false)}}
         title={`Edit circle "${circle.name}"`}
       >
-        <EditCircle circle={circle}/>
+        <EditCircle
+          circle={circle}
+          updateCircle={updateCircle}
+          users={users}
+          onClose={() => {updateShowingEditCircle(false)}}
+        />
       </PillModal>
     </>
   )
@@ -121,6 +128,15 @@ export default () => {
           <CircleCard
             key={c.id}
             circle={c}
+            updateCircle={circle => {
+              updateCircles(circles.map(c => {
+                if (c.id !== circle.id) {
+                  return c
+                }
+                return circle
+              }))
+            }}
+            users={users}
           />
         )
       })}

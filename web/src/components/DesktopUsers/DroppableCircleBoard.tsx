@@ -12,10 +12,12 @@ import EditCircle from "../EditCircle/EditCircle";
 
 interface Props {
   circle: Circle
+  updateCircle: (circle: Circle) => void
+  users: User[]
 }
 
 export default (props: Props) => {
-  const {circle} = props
+  const {circle, updateCircle, users} = props
 
   const isMobile = useMediaQuery({query: '(max-width: 750px)'})
   const circleMargin = 2 // Margin between the edge of the card circle and inner/outer circles
@@ -196,7 +198,12 @@ export default (props: Props) => {
         onClose={() => {updateModalOpened(false)}}
         title={`Update circle "${circle.name}"`}
       >
-        <EditCircle circle={circle}/>
+        <EditCircle
+          circle={circle}
+          updateCircle={updateCircle}
+          users={users}
+          onClose={() => {updateModalOpened(false)}}
+        />
       </PillModal>
       <div
         className="droppable-circle-board"

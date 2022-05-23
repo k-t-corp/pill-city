@@ -7,6 +7,11 @@ import PillButton, {PillButtonVariant} from "../PillButtons/PillButton";
 import {TrashIcon} from "@heroicons/react/solid";
 import getAvatarUrl from "../../utils/getAvatarUrl";
 import User from "../../models/User";
+import PillModal from "../PillModal/PillModal";
+import AddUserToCircle from "../AddUserToCircle/AddUserToCircle";
+import ApiError from "../../api/ApiError";
+import {useToast} from "../Toast/ToastProvider";
+import getNameAndSubName from "../../utils/getNameAndSubName";
 
 interface MemberCardProps {
   circle: Circle
@@ -15,6 +20,7 @@ interface MemberCardProps {
 
 const MemberCard = (props: MemberCardProps) => {
   const {circle, user} = props
+  const {name} = getNameAndSubName(user)
 
   const [deleted, updateDeleted] = useState(false)
   const [loading, updateLoading] = useState(false)
@@ -44,7 +50,7 @@ const MemberCard = (props: MemberCardProps) => {
         <img className="edit-circle-member-card-avatar-img" src={getAvatarUrl(props.user)} alt=""/>
       </div>
       <div className="edit-circle-member-card-name" style={{textDecoration: deleted ? "line-through" : ""}}>
-        {props.user.id}
+        {name}
       </div>
       {deleteButton()}
     </div>
@@ -53,11 +59,17 @@ const MemberCard = (props: MemberCardProps) => {
 
 interface Props {
   circle: Circle
+  updateCircle: (circle: Circle) => void
+  users: User[]
+  onClose: () => void
 }
 
 export default (props: Props) => {
-  const {circle} = props
+  const {circle, updateCircle, users, onClose} = props
   const members = circle.members
+  const [showingAddUserModal, updateShowingAddUserModal] = useState(false)
+
+  const {addToast} = useToast()
 
   const memberModalCards = () => {
     if (members.length === 0) {
@@ -100,14 +112,39 @@ export default (props: Props) => {
         <PillButton
           text='Add user'
           variant={PillButtonVariant.Neutral}
-          onClick={() => {}}
+          onClick={() => {updateShowingAddUserModal(true)}}
         />
         <PillButton
           text='Done'
           variant={PillButtonVariant.Positive}
-          onClick={() => {}}
+          onClick={onClose}
         />
       </PillButtons>
+      <PillModal
+        isOpen={showingAddUserModal}
+        onClose={() => {updateShowingAddUserModal(false)}}
+        title={`Add user to circle "${circle.name}"`}
+      >
+        <AddUserToCircle
+          users={users.filter(u => circle.members.map(m => m.id).indexOf(u.id) === -1)}
+          onAddUser={async (user) => {
+            try {
+              updateShowingAddUserModal(false)
+              await api.addToCircle(circle.id, user.id)
+              updateCircle({
+                ...circle,
+                members: [...members, user]
+              })
+            } catch (e) {
+              if (e instanceof ApiError) {
+                addToast(e.message)
+              } else {
+                addToast("Unknown error")
+              }
+            }
+          }}
+        />
+      </PillModal>
     </div>
   )
 }

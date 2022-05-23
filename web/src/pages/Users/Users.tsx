@@ -40,6 +40,14 @@ const Users = () => {
         loading={loading}
         users={users}
         circles={circles}
+        updateCircle={circle => {
+          updateCircles(circles.map(c => {
+            if (c.id !== circle.id) {
+              return c
+            }
+            return circle
+          }))
+        }}
         followings={followings}
         updateFollowings={updateFollowings}
       />

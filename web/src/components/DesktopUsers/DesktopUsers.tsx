@@ -12,10 +12,11 @@ interface Props {
   followings: User[]
   updateFollowings: (v: User[]) => void
   circles: Circle[]
+  updateCircle: (circle: Circle) => void
 }
 
-const DesktopUsers = (props: Props) => {
-  const {loading, users, circles} = props
+export default (props: Props) => {
+  const {loading, users, circles, updateCircle} = props
 
   if (loading) {
     return (
@@ -31,7 +32,12 @@ const DesktopUsers = (props: Props) => {
 
   for (let c of circles) {
     circleElements.push(
-      <DroppableCircleBoard key={c.id} circle={c}/>
+      <DroppableCircleBoard
+        key={c.id}
+        circle={c}
+        updateCircle={updateCircle}
+        users={users}
+      />
     )
   }
 
@@ -52,5 +58,3 @@ const DesktopUsers = (props: Props) => {
     </div>
   )
 }
-
-export default DesktopUsers
