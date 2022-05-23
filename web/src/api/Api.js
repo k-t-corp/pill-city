@@ -411,7 +411,7 @@ export class Api {
     if (res.status !== 201) {
       throw new ApiError(res)
     }
-    return null
+    return res.data
   }
 
   async deleteCircle(circleId) {
@@ -563,6 +563,17 @@ export class Api {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
       `/me/followingCounts`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
+
+  async getFollowings() {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.get(
+      `/me/followings`
     )
     if (res.status !== 200) {
       throw new ApiError(res)

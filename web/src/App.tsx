@@ -8,7 +8,6 @@ import {
 import SignIn from './pages/SignIn/SignIn'
 import SignUp from './pages/SignUp/SignUp'
 import Home from './pages/Home/Home'
-import Circles from './pages/Circles/Circles'
 import Users from './pages/Users/Users'
 import Profile from './pages/Profile/Profile'
 import Settings from './pages/Settings/Settings'
@@ -29,6 +28,7 @@ import NavBar from "./components/NavBar/NavBar";
 import {accessTokenExists} from "./api/AuthStorage";
 import {getUseMultiColumn} from "./utils/SettingsStorage";
 import './App.css'
+import Circles from "./pages/Circles/Circles";
 
 Modal.setAppElement('#root');
 

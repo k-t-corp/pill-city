@@ -1,0 +1,43 @@
+.add-new-circle-button-wrapper {
+    flex-shrink: 0;
+    margin: 20px 20px;
+}
+
+.add-new-circle-button {
+    box-shadow: 2px 2px 1px 1px #e0e0e0;
+    color: white;
+    background-color: #000000;
+    border-radius: 50%;
+    width: 250px;
+    height: 250px;
+    font-size: large;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-new-circle-button:hover {
+    background-color: #e0e0e0;
+    -webkit-animation: color-change-2x 0.5s ease-in  both;
+    animation: color-change-2x 0.5s ease-in both;
+}
+
+/* Animation */
+@-webkit-keyframes color-change-2x {
+    0% {
+        background: #000000;
+    }
+    100% {
+        background: #E05140;
+    }
+}
+@keyframes color-change-2x {
+    0% {
+        background: #000000;
+    }
+    100% {
+        background: #E05140;
+    }
+}

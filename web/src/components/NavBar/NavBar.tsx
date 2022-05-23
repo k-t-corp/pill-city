@@ -3,7 +3,8 @@ import {useMediaQuery} from "react-responsive";
 import {useAppSelector} from "../../store/hooks";
 import {useHistory, useLocation} from "react-router-dom";
 import "./NavBar.css"
-import {BellIcon, HomeIcon, PlusCircleIcon, UserCircleIcon, UserGroupIcon} from "@heroicons/react/solid";
+import {BellIcon, HomeIcon, UserAddIcon, UserCircleIcon, UserGroupIcon} from "@heroicons/react/solid";
+import CirclesIcon from "../PillIcons/CirclesIcon";
 
 const handleNavItemActiveClass = (currentPath: string, expectedPath: string) => {
   return currentPath === expectedPath ? "nav-bar-button-active" : ''
@@ -24,13 +25,6 @@ const DesktopNavBar = () => {
       >
         <HomeIcon />
         <span className='nav-bar-button-text'>Home</span>
-      </div>
-      <div
-        className={`nav-bar-button-container nav-bar-button-container-aligned ${handleNavItemActiveClass(path, "/circles")}`}
-        onClick={() => {history.push('/circles')}}
-      >
-        <PlusCircleIcon />
-        <span className='nav-bar-button-text'>Circles</span>
       </div>
       <div
         className={`nav-bar-button-container nav-bar-button-container-aligned ${handleNavItemActiveClass(path, "/users")}`}
@@ -58,16 +52,16 @@ const MobileNavBar = () => {
   return (
     <div className="nav-bar-container nav-bar-bottom">
       <div
-        className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/users")}`}
-        onClick={() => {history.push('/users')}}
-      >
-        <UserGroupIcon />
-      </div>
-      <div
         className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/circles")}`}
         onClick={() => {history.push('/circles')}}
       >
-        <PlusCircleIcon />
+        <CirclesIcon />
+      </div>
+      <div
+        className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/users")}`}
+        onClick={() => {history.push('/users')}}
+      >
+        <UserAddIcon />
       </div>
       <div
         className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/")}`}
@@ -96,9 +90,9 @@ const MobileNavBar = () => {
 }
 
 export default () => {
-  const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
+  const isMobile = useMediaQuery({query: '(max-width: 750px)'})
 
   return (
-    isTabletOrMobile ? <MobileNavBar /> : <DesktopNavBar />
+    isMobile ? <MobileNavBar /> : <DesktopNavBar />
   )
 }

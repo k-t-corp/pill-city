@@ -1,5 +1,5 @@
 import Modal from "react-modal";
-import React from "react";
+import React, {CSSProperties} from "react";
 import {useMediaQuery} from "react-responsive";
 import {XIcon} from "@heroicons/react/solid";
 import './PillModal.css'
@@ -8,12 +8,13 @@ interface Props {
   children: any
   isOpen: boolean
   onClose: () => void
+  title: string
 }
 
 export default (props: Props) => {
-  const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
-  let styles = {}
-  if (isTabletOrMobile) {
+  const isMobile = useMediaQuery({query: '(max-width: 750px)'})
+  let styles: CSSProperties
+  if (isMobile) {
     styles = {
       backgroundColor: '#ffffff',
       borderRadius: '0',
@@ -21,7 +22,7 @@ export default (props: Props) => {
       top: '0',
       left: '0',
       right: '0',
-      padding: '0 10px 0'
+      padding: '0'
     }
   } else {
     styles = {
@@ -35,7 +36,8 @@ export default (props: Props) => {
       bottom: 'auto',
       marginRight: '-50%',
       transform: 'translate(-50%, -50%)',
-      width: '800px'
+      width: '800px',
+      padding: '0'
     }
   }
 
@@ -49,15 +51,16 @@ export default (props: Props) => {
       shouldCloseOnOverlayClick={true}
       shouldCloseOnEsc={true}
     >
-      {isTabletOrMobile &&
-        <div className='pill-modal-mobile-header'>
-          <XIcon
-            className='pill-modal-close-button'
-            onClick={props.onClose}
-          />
+      <div className='pill-modal-header'>
+        <div className='pill-modal-dummy'></div>
+        <div className='pill-modal-title'>{props.title}</div>
+        <div className='pill-modal-close-button' onClick={props.onClose}>
+          <XIcon />
         </div>
-      }
-      {props.children}
+      </div>
+      <div className='pill-modal-content-wrapper'>
+        {props.children}
+      </div>
     </Modal>
   )
 }

@@ -283,6 +283,7 @@ export default (props: Props) => {
             <PillModal
               isOpen={addingMedia}
               onClose={() => {updateAddingMedia(false)}}
+              title="Add media"
             >
               <AddMedia
                 onChangeMedias={onChangeMedias}
@@ -298,6 +299,7 @@ export default (props: Props) => {
             <PillModal
               isOpen={addingPoll}
               onClose={() => {updateAddingPoll(false)}}
+              title="Add poll"
             >
               <AddPoll
                 choices={pollChoices}

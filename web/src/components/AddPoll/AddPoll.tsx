@@ -5,6 +5,7 @@ import PillInput from "../PillInput/PillInput";
 import {XCircleIcon} from "@heroicons/react/solid";
 import './AddPoll.css'
 import {AddPollChoice} from "../NewPost/NewPost";
+import PillForm from "../PillForm/PillForm";
 
 
 interface Props {
@@ -18,8 +19,8 @@ export default (props: Props) => {
   const [newChoiceText, updateNewChoiceText] = useState('')
 
   return (
-    <>
-      {choices.length > 0 &&
+    <PillForm>
+      {choices.length > 0 ?
         <div className='add-poll-choices'>
           {choices.map((c, i) => {
             return (
@@ -32,7 +33,7 @@ export default (props: Props) => {
               </div>
             )
           })}
-        </div>
+        </div> : <></>
       }
       <div className='add-poll-new-choice'>
         <PillInput
@@ -44,7 +45,7 @@ export default (props: Props) => {
       <PillButtons>
         <PillButton
           text="Add a choice"
-          variant={PillButtonVariant.Positive}
+          variant={PillButtonVariant.Neutral}
           disabled={newChoiceText === ''}
           onClick={() => {
             onChangeChoices([...choices, {
@@ -55,10 +56,10 @@ export default (props: Props) => {
         />
         <PillButton
           text="Done"
-          variant={PillButtonVariant.Neutral}
+          variant={PillButtonVariant.Positive}
           onClick={props.onDone}
         />
       </PillButtons>
-    </>
+    </PillForm>
   )
 }

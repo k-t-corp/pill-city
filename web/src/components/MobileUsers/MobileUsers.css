@@ -1,9 +1,9 @@
-.circles-wrapper {
+.mobile-users-wrapper {
     display: flex;
     padding: 0;
 }
 
-.circles-status {
+.mobile-users-status {
     padding: 13px;
     background-color: #ffffff;
     border-radius: 5px;
@@ -14,7 +14,7 @@
     max-width: 100%;
 }
 
-.circles-grid-container {
+.mobile-users-grid-container {
     display: grid;
     width: 100%;
     padding: 15px;
@@ -24,7 +24,7 @@
     grid-row-gap: 5px;
 }
 
-.circles-circle-card-wrapper {
+.mobile-users-user-card-wrapper {
     background-color: #ffffff;
     width: 100%;
     border-radius: 5px;
@@ -33,10 +33,28 @@
     align-items: center;
     cursor: pointer;
     height: 60px;
+}
+
+.mobile-users-user-card-right {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    cursor: pointer;
     justify-content: space-between;
 }
 
-.circles-circle-card-name {
+.mobile-users-user-card-avatar {
+    flex-shrink: 0;
+    height: 60px;
+    width: 60px;
+}
+
+.mobile-users-user-card-avatar-img {
+    width: 100%;
+    height: 100%;
+}
+
+.mobile-users-user-card-name {
     font-weight: bold;
     font-size: large;
     margin-left: 20px;
@@ -45,43 +63,18 @@
     text-overflow: ellipsis;
 }
 
-.circles-circle-card-right {
+.mobile-users-user-card-buttons {
     display: flex;
     flex-direction: row;
-    align-items: center;
 }
 
-.circles-circle-card-count-icon {
-    width: 15px;
-    height: 15px;
-    margin-right: 5px;
-    color: #727272;
-}
-
-.circles-circle-card-count {
-    margin-right: 15px;
-    color: #727272;
-}
-
-.circles-circle-card-button {
+.mobile-users-user-card-button {
     width: 25px;
     height: 25px;
     margin-right: 15px;
-    color: #565656;
 }
 
-.circles-create-circle-button {
-    position: fixed;
-    bottom: calc(60px + env(safe-area-inset-bottom));
-    right: 10px;
-    width: 60px;
-    height: 60px;
-    background-color: #E05140;
-    border-radius: 50%;
-    padding: 15px;
-    color: white;
-}
-
-.circles-create-circle-button:hover {
-    cursor: pointer;
+.mobile-users-user-card-button-disabled {
+    color: lightgray;
+    cursor: not-allowed;
 }

@@ -1,27 +1,30 @@
 import React, {useState} from 'react'
 import api from '../../api/Api'
-import UserProfileCard from "../UserProfileCard/UserProfileCard";
 import getAvatarUrl from "../../utils/getAvatarUrl";
 import {useMediaQuery} from 'react-responsive'
-import {useHotkeys} from "react-hotkeys-hook";
-import {PencilAltIcon} from "@heroicons/react/solid";
 import Circle from "../../models/Circle";
 import User from "../../models/User";
 import ApiError from "../../api/ApiError";
 import {useToast} from "../Toast/ToastProvider";
 import "./DroppableCircleBoard.css"
 import PillModal from "../PillModal/PillModal";
+import EditCircle from "../EditCircle/EditCircle";
 
 interface Props {
   circle: Circle
+  updateCircle: (circle: Circle) => void
+  deleteCircle: () => void
+  users: User[]
 }
 
 export default (props: Props) => {
-  const {circle} = props
+  const {circle, updateCircle, deleteCircle, users} = props
+  const members = circle.members
+  const [modalOpened, updateModalOpened] = useState(false)
 
-  const isTabletOrMobile = useMediaQuery({query: '(max-width: 750px)'})
+  const isMobile = useMediaQuery({query: '(max-width: 750px)'})
   const circleMargin = 2 // Margin between the edge of the card circle and inner/outer circles
-  const outerDiameter = isTabletOrMobile ? 150 : 250; // Need to be equal to width and height in .droppable-board-wrapper
+  const outerDiameter = isMobile ? 150 : 250; // Need to be equal to width and height in .droppable-circle-board-wrapper
   const innerCirclePercentage = 0.7; // Update all numbers in Animation section
   const outerRadius = outerDiameter / 2;
   const innerRadius = outerDiameter * innerCirclePercentage / 2;
@@ -30,19 +33,12 @@ export default (props: Props) => {
   const cardNumber = Math.floor(360 / anglePerCardAsDegree);
   const finalAnglePerCardAsDegree = 360 / cardNumber
 
-  const [circleName, updateCircleName] = useState(circle.name)
-  const [renamingCircle, updateRenamingCircle] = useState(false)
-  const [renameCircleLoading, updateRenameCircleLoading] = useState(false)
-  const [members, updateMembers] = useState<User[]>(circle.members)
-  const [modalOpened, updateModalOpened] = useState(false)
-  const [deleteCircleClicked, updateDeleteCircleClicked] = useState(false)
-
   const {addToast} = useToast()
 
   let animationIntervalId: any = null;
   const circleAnimation = (circleId: string, user: User) => {
     const avatar: any = document.getElementById(`${circleId}-temp-card-avatar`)
-    avatar.src = user.avatar_url
+    avatar.src = getAvatarUrl(user)
 
     let elem: any = document.getElementById(`${circleId}-temp-card`);
     let degree = 1;
@@ -54,7 +50,13 @@ export default (props: Props) => {
     function frame() {
       if (degree >= finalDegree || members.length >= cardNumber) {
         elem.style.visibility = "hidden"
-        updateMembers([...members, user])
+        updateCircle({
+          ...circle,
+          members: [
+            ...circle.members,
+            user
+          ]
+        })
         clearInterval(animationIntervalId);
       } else {
         elem.style.visibility = "visible"
@@ -101,7 +103,7 @@ export default (props: Props) => {
       <div
         key="temp-card"
         id={`${circleId}-temp-card`}
-        className="droppable-board-member-card-wrapper temp-card"
+        className="droppable-circle-board-member-card-wrapper temp-card"
         style={{
           top: `${top + circleMargin}px`,
           left: `${left + circleMargin}px`,
@@ -111,7 +113,7 @@ export default (props: Props) => {
         }}>
         <img
           id={`${circleId}-temp-card-avatar`}
-          className="droppable-board-member-card-avatar-img"
+          className="droppable-circle-board-member-card-avatar-img"
           alt=""
         />
       </div>
@@ -131,6 +133,10 @@ export default (props: Props) => {
   const onDrop = async (e: any) => {
     e.preventDefault();
     const user = JSON.parse(e.dataTransfer.getData("user")) as User
+    if (circle.members.map(_ => _.id).indexOf(user.id) !== -1) {
+      addToast(`User ${user.id} is already in circle "${circle.name}"`)
+      return
+    }
     try {
       await api.addToCircle(circle.id, user.id)
       innerCircleScale(false, 0)
@@ -178,7 +184,7 @@ export default (props: Props) => {
       memberCardElements.push(
         <div
           key={i}
-          className="droppable-board-member-card-wrapper"
+          className="droppable-circle-board-member-card-wrapper"
           style={{
             top: `${top + circleMargin}px`,
             left: `${left + circleMargin}px`,
@@ -186,7 +192,7 @@ export default (props: Props) => {
             height: `${cardRadius * 2 - circleMargin * 2}px`,
           }}>
           <img
-            className="droppable-board-member-card-avatar-img"
+            className="droppable-circle-board-member-card-avatar-img"
             src={getAvatarUrl(member)}
             alt=""
           />
@@ -194,109 +200,25 @@ export default (props: Props) => {
     }
     return memberCardElements
   }
-  const memberModalCards = () => {
-    let memberModalCardElements = []
-    for (let i = 0; i < members.length; i++) {
-      const member = members[i]
-      memberModalCardElements.push(
-        <UserProfileCard
-          key={i}
-          user={member}
-          circleId={circle.id}
-        />)
-    }
-    return memberModalCardElements
-  }
-
-  // Close the modal when user clicks outside it
-  window.onclick = function (event) {
-    let modal = document.getElementById("droppable-board-modal-wrapper");
-    if (event.target === modal) {
-      // reload the page in case user removed people from their circle
-      window.location.reload()
-    }
-  }
-
-  const deleteCircleButtonOnClick = async () => {
-    if (!deleteCircleClicked) {
-      // ask user to confirm
-      updateDeleteCircleClicked(true)
-    } else {
-      // actually delete the circle
-      await api.deleteCircle(circle.id)
-      window.location.reload()
-    }
-  }
-
-  const renameCircle = async () => {
-    updateRenamingCircle(false)
-    updateRenameCircleLoading(true)
-    await api.renameCircle(circle.id, circleName)
-    updateCircleName(circleName)
-    updateRenameCircleLoading(false)
-  }
-
-  useHotkeys('enter', () => {
-    (async () => {
-      if (renamingCircle) {
-        await renameCircle()
-      }
-    })()
-  }, {
-    enableOnTags: ['INPUT']
-  })
-
-  const onCircleEditingDone = async () => {
-    if (renamingCircle) {
-      await renameCircle()
-    }
-    window.location.reload()
-  }
-
-  const onCircleRenameClick = () => {
-    if (renameCircleLoading) {
-      return
-    }
-    updateRenamingCircle(true)
-  }
 
   return (
-    <div className="droppable-board-wrapper">
+    <div className="droppable-circle-board-wrapper">
       <PillModal
         isOpen={modalOpened}
         onClose={() => {updateModalOpened(false)}}
+        title={`Update circle "${circle.name}"`}
       >
-        <div className="droppable-board-modal-content">
-          {!renamingCircle ?
-            <div className="droppable-board-modal-circle" onClick={onCircleRenameClick}>
-              <div className="droppable-board-modal-circle-name">{circleName}</div>
-              <div className="droppable-board-modal-circle-rename-icon">
-                <PencilAltIcon/>
-              </div>
-            </div>
-            :
-            <input
-              className="droppable-board-modal-circle-name droppable-board-modal-circle-rename"
-              type="text"
-              value={circleName}
-              onChange={e => updateCircleName(e.target.value)}
-            />
-          }
-          <div className="droppable-board-modal-circle-members">
-            {memberModalCards()}
-          </div>
-          <div className="droppable-board-modal-buttons">
-            <div className="droppable-board-modal-button-delete" onClick={deleteCircleButtonOnClick}>
-              {deleteCircleClicked ? "Confirm Delete Circle" : "Delete Circle"}
-            </div>
-            <div className="droppable-board-modal-button-done" onClick={onCircleEditingDone}>
-              Done
-            </div>
-          </div>
-        </div>
+        <EditCircle
+          circle={circle}
+          updateCircle={updateCircle}
+          deleteCircle={deleteCircle}
+          users={users}
+          onClose={() => {updateModalOpened(false)}}
+          showAddUser={false}
+        />
       </PillModal>
       <div
-        className="droppable-board"
+        className="droppable-circle-board"
         id={circle.id}
         onDrop={onDrop}
         onDragOver={onDragOver}
@@ -305,17 +227,17 @@ export default (props: Props) => {
         onMouseLeave={onMouseLeave}
         onClick={onClick}
       >
-        <div className="droppable-board-member-cards-wrapper">
+        <div className="droppable-circle-board-member-cards-wrapper">
           {tempCard(circle.id)}
           {memberCards()}
         </div>
-        <div className="droppable-board-inner-circle"
+        <div className="droppable-circle-board-inner-circle"
              id={`${circle.id}-inner-circle`}
              style={{backgroundColor: circleColor(circle.id)}}>
-          <div className="droppable-board-inner-circle-name">
-            {circleName}
+          <div className="droppable-circle-board-inner-circle-name">
+            {circle.name}
           </div>
-          <div className="droppable-board-inner-circle-follow-number">
+          <div className="droppable-circle-board-inner-circle-follow-number">
             {members.length}
           </div>
         </div>
