@@ -14,45 +14,28 @@ import {useToast} from "../Toast/ToastProvider";
 import getNameAndSubName from "../../utils/getNameAndSubName";
 
 interface MemberCardProps {
-  circle: Circle
   user: User
+  onDelete: (user: User) => void
 }
 
 const MemberCard = (props: MemberCardProps) => {
-  const {circle, user} = props
+  const {user, onDelete} = props
   const {name} = getNameAndSubName(user)
-
-  const [deleted, updateDeleted] = useState(false)
-  const [loading, updateLoading] = useState(false)
-  const deleteMemberFromCircleOnClick = async () => {
-    updateLoading(true)
-    await api.removeFromCircle(circle.id, user.id)
-    updateLoading(false)
-    updateDeleted(true)
-  }
-
-  const deleteButton = () => {
-    if (deleted) {
-      return null
-    } else if (loading) {
-      return <div className="lds-dual-ring"/>
-    } else {
-      return (
-        <div className="edit-circle-member-card-delete-button" onClick={deleteMemberFromCircleOnClick}>
-          <TrashIcon />
-        </div>)
-    }
-  }
 
   return (
     <div className="edit-circle-member-card-wrapper">
       <div className="edit-circle-member-card-avatar">
         <img className="edit-circle-member-card-avatar-img" src={getAvatarUrl(props.user)} alt=""/>
       </div>
-      <div className="edit-circle-member-card-name" style={{textDecoration: deleted ? "line-through" : ""}}>
+      <div className="edit-circle-member-card-name">
         {name}
       </div>
-      {deleteButton()}
+      <div className="edit-circle-member-card-delete-button" onClick={e => {
+        e.preventDefault()
+        onDelete(user)
+      }}>
+        <TrashIcon />
+      </div>
     </div>
   )
 }
@@ -85,7 +68,13 @@ export default (props: Props) => {
       memberModalCardElements.push(
         <MemberCard
           key={member.id}
-          circle={circle}
+          onDelete={async () => {
+            updateCircle({
+              ...circle,
+              members: members.filter(m => m.id !== member.id)
+            })
+            await api.removeFromCircle(circle.id, member.id)
+          }}
           user={member}
         />
       )
