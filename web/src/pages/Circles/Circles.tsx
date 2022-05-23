@@ -46,7 +46,7 @@ const CircleCard = (props: CircleCardProps) => {
       <PillModal
         isOpen={showingEditCircle}
         onClose={() => {updateShowingEditCircle(false)}}
-        title={`Edit circle "${circle.name}'`}
+        title={`Edit circle "${circle.name}"`}
       >
         <EditCircle circle={circle}/>
       </PillModal>

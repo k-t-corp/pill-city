@@ -61,7 +61,11 @@ export default (props: Props) => {
 
   const memberModalCards = () => {
     if (members.length === 0) {
-      return <div>No member in circle</div>
+      return (
+        <div className='edit-circle-no-member'>
+          No member in circle
+        </div>
+      )
     }
 
     let memberModalCardElements = []
@@ -77,10 +81,6 @@ export default (props: Props) => {
     return memberModalCardElements
   }
 
-  const onCircleEditingDone = async () => {
-    window.location.reload()
-  }
-
   return (
     <div className="edit-circle-content">
       <div className="edit-circle-members">
@@ -90,7 +90,7 @@ export default (props: Props) => {
         <PillButton
           text='Delete'
           variant={PillButtonVariant.Neutral}
-          onClick={onCircleEditingDone}
+          onClick={() => {}}
         />
         <PillButton
           text='Rename'
@@ -98,9 +98,14 @@ export default (props: Props) => {
           onClick={() => {}}
         />
         <PillButton
+          text='Add user'
+          variant={PillButtonVariant.Neutral}
+          onClick={() => {}}
+        />
+        <PillButton
           text='Done'
           variant={PillButtonVariant.Positive}
-          onClick={onCircleEditingDone}
+          onClick={() => {}}
         />
       </PillButtons>
     </div>

@@ -16,16 +16,7 @@
     margin-bottom: 20px;
 }
 
-.edit-circle-rename-icon {
-    width: 20px;
-    height: 20px;
-    margin-left: 10px;
-}
-
-.edit-circle-rename {
-    border-color: black;
-    border-width: 0 0 2px;
-    margin-bottom: 40px;
+.edit-circle-no-member {
     text-align: center;
 }
 
