@@ -3,7 +3,7 @@ import {useMediaQuery} from "react-responsive";
 import {useAppSelector} from "../../store/hooks";
 import {useHistory, useLocation} from "react-router-dom";
 import "./NavBar.css"
-import {BellIcon, HomeIcon, UserAddIcon, UserCircleIcon, UserGroupIcon} from "@heroicons/react/solid";
+import {BellIcon, CogIcon, HomeIcon, UserAddIcon, UserCircleIcon, UserGroupIcon} from "@heroicons/react/solid";
 import CirclesIcon from "../PillIcons/CirclesIcon";
 
 const handleNavItemActiveClass = (currentPath: string, expectedPath: string) => {
@@ -39,6 +39,13 @@ const DesktopNavBar = () => {
       >
         <UserCircleIcon />
         <span className='nav-bar-button-text'>Profile</span>
+      </div>
+      <div
+        className={`nav-bar-button-container nav-bar-button-container-aligned ${handleNavItemActiveClass(path, "/profile")}`}
+        onClick={() => {history.push('/settings')}}
+      >
+        <CogIcon />
+        <span className='nav-bar-button-text'>Settings</span>
       </div>
     </div>
   )
