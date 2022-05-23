@@ -12,6 +12,7 @@ import AddUserToCircle from "./AddUserToCircle";
 import ApiError from "../../api/ApiError";
 import {useToast} from "../Toast/ToastProvider";
 import getNameAndSubName from "../../utils/getNameAndSubName";
+import RenameCircle from "./RenameCircle";
 
 interface MemberCardProps {
   user: User
@@ -52,6 +53,7 @@ export default (props: Props) => {
   const {circle, updateCircle, users, onClose, showAddUser} = props
   const members = circle.members
   const [showingAddUserModal, updateShowingAddUserModal] = useState(false)
+  const [showingRenameModal, updateShowingRenameModal] = useState(false)
 
   const {addToast} = useToast()
 
@@ -97,7 +99,7 @@ export default (props: Props) => {
         <PillButton
           text='Rename'
           variant={PillButtonVariant.Neutral}
-          onClick={() => {}}
+          onClick={() => {updateShowingRenameModal(true)}}
         />
         {showAddUser && <PillButton
           text='Add user'
@@ -133,6 +135,24 @@ export default (props: Props) => {
               }
             }
           }}
+        />
+      </PillModal>
+      <PillModal
+        isOpen={showingRenameModal}
+        onClose={() => {updateShowingRenameModal(false)}}
+        title={`Rename circle "${circle.name}"`}
+      >
+        <RenameCircle
+          circle={circle}
+          onUpdate={async (name) => {
+            updateCircle({
+              ...circle,
+              name
+            })
+            await api.renameCircle(circle.id, name)
+            updateShowingRenameModal(false)
+          }}
+          onClose={() => {updateShowingRenameModal(false)}}
         />
       </PillModal>
     </div>
