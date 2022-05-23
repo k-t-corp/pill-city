@@ -1,6 +1,6 @@
 .post-reshared-wrapper {
     border: #e0e0e0 solid 1px;
-    margin: -10px 0 10px 10px;
+    margin: 0 0 10px 10px;
     padding: 10px;
     border-radius: 4px;
     cursor: pointer;
@@ -13,12 +13,13 @@
 }
 
 .post-reshared-avatar {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
 }
 
 .post-reshared-author {
-    margin-left: 10px;
+    margin-left: 5px;
     font-weight: bold;
     font-size: larger;
 }

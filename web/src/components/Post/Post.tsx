@@ -15,7 +15,7 @@ import api from "../../api/Api";
 import "./Post.css"
 import {BanIcon, ChatIcon, DotsVerticalIcon, ShareIcon} from "@heroicons/react/solid";
 import PillDropdownMenu from "../PillDropdownMenu/PillDropdownMenu";
-import MediaPane from "../MediaPane/MediaPane";
+import MediaCollage from "../MediaCollage/MediaCollage";
 
 interface Props {
   data: Post
@@ -205,7 +205,7 @@ export default (props: Props) => {
         />
         }
         {!deleting && !deleted &&
-          <MediaPane mediaUrls={mediaUrls} heightPx={300}/>
+          <MediaCollage mediaUrls={mediaUrls} />
         }
         {!deleting && !deleted &&
           <Previews post={props.data}/>
