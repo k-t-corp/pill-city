@@ -19,6 +19,8 @@ interface Props {
 
 export default (props: Props) => {
   const {circle, updateCircle, deleteCircle, users} = props
+  const members = circle.members
+  const [modalOpened, updateModalOpened] = useState(false)
 
   const isMobile = useMediaQuery({query: '(max-width: 750px)'})
   const circleMargin = 2 // Margin between the edge of the card circle and inner/outer circles
@@ -31,15 +33,12 @@ export default (props: Props) => {
   const cardNumber = Math.floor(360 / anglePerCardAsDegree);
   const finalAnglePerCardAsDegree = 360 / cardNumber
 
-  const [members, updateMembers] = useState<User[]>(circle.members)
-  const [modalOpened, updateModalOpened] = useState(false)
-
   const {addToast} = useToast()
 
   let animationIntervalId: any = null;
   const circleAnimation = (circleId: string, user: User) => {
     const avatar: any = document.getElementById(`${circleId}-temp-card-avatar`)
-    avatar.src = user.avatar_url
+    avatar.src = getAvatarUrl(user)
 
     let elem: any = document.getElementById(`${circleId}-temp-card`);
     let degree = 1;
@@ -51,7 +50,13 @@ export default (props: Props) => {
     function frame() {
       if (degree >= finalDegree || members.length >= cardNumber) {
         elem.style.visibility = "hidden"
-        updateMembers([...members, user])
+        updateCircle({
+          ...circle,
+          members: [
+            ...circle.members,
+            user
+          ]
+        })
         clearInterval(animationIntervalId);
       } else {
         elem.style.visibility = "visible"
@@ -128,6 +133,10 @@ export default (props: Props) => {
   const onDrop = async (e: any) => {
     e.preventDefault();
     const user = JSON.parse(e.dataTransfer.getData("user")) as User
+    if (circle.members.map(_ => _.id).indexOf(user.id) !== -1) {
+      addToast(`User ${user.id} is already in circle "${circle.name}"`)
+      return
+    }
     try {
       await api.addToCircle(circle.id, user.id)
       innerCircleScale(false, 0)
