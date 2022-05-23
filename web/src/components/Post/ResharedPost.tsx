@@ -5,7 +5,7 @@ import parseContent from "../../utils/parseContent";
 import {ResharedPost} from "../../models/Post";
 import './ResharedPost.css'
 import ClickableId from "../ClickableId/ClickableId";
-import MediaPane from "../MediaPane/MediaPane";
+import MediaCollage from "../MediaCollage/MediaCollage";
 
 interface Props {
   resharedFrom: ResharedPost,
@@ -23,7 +23,7 @@ export default (props: Props) => {
       history.push(`/post/${resharedFrom.id}`)
     }}>
       <div className="post-reshared-info">
-        <div className="post-avatar post-reshared-avatar">
+        <div className="post-reshared-avatar">
           <RoundAvatar user={resharedFrom.author}/>
         </div>
         <div className="post-reshared-author">
@@ -39,7 +39,7 @@ export default (props: Props) => {
         }
         {
           !resharedFrom.deleted &&
-          <MediaPane mediaUrls={resharedFrom.media_urls} heightPx={300}/>
+          <MediaCollage mediaUrls={resharedFrom.media_urls} />
         }
       </div>
     </div>
