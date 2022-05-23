@@ -37,7 +37,7 @@ const Settings = () => {
 
   const [loading, updateLoading] = useState(true)
   const [displayName, updateDisplayName] = useState<string>('')
-  const [email, updateEmail] = useState<string | undefined>()
+  const [email, updateEmail] = useState<string>('')
   const [emailValidated, updateEmailValidated] = useState(false)
   const [rssToken, updateRssToken] = useState<RssToken | undefined>()
   const [rssCodesChecked, updateRssCodesChecked] = useState<{[action: string]: boolean} | undefined>(undefined)
@@ -167,7 +167,8 @@ const Settings = () => {
                 await dispatch(loadMe())
                 updateLoading(false)
                 updateDisplayNameModalOpened(false)
-              }}            />
+              }}
+            />
           </PillButtons>
         </PillForm>
       </PillModal>
@@ -176,40 +177,44 @@ const Settings = () => {
         onClose={() => {updateEmailModalOpened(false)}}
         title="Update email"
       >
-        <input
-          className="settings-email"
-          type="email"
-          value={email}
-          onChange={e => updateEmail(e.target.value)}
-        />
-        <div className="settings-controls">
-          <div
-            className="settings-controls-button settings-email-button-cancel"
-            onClick={() => {updateEmailModalOpened(false)}}
-          >Cancel</div>
-          <div
-            className={`settings-controls-button ${emailValidated ? 'settings-email-button-confirm' : 'settings-email-button-confirm-disabled'}`}
-            onClick={async () => {
-              if (!validateEmail(email)) {
-                return
-              }
-              updateLoading(true)
-              try {
-                await api.updateEmail(email)
-              } catch (e: any) {
-                if (e.message) {
-                  alert(e.message)
-                } else {
-                  console.error(e)
+        <PillForm>
+          <PillInput
+            placeholder='Email'
+            value={email}
+            onChange={updateEmail}
+          />
+          <PillButtons>
+            <PillButton
+              text='Cancel'
+              variant={PillButtonVariant.Neutral}
+              onClick={() => {updateEmailModalOpened(false)}}
+            />
+            <PillButton
+              text='Confirm'
+              variant={PillButtonVariant.Positive}
+              onClick={async () => {
+                if (!validateEmail(email)) {
+                  return
                 }
-              } finally {
-                await dispatch(loadMe())
-                updateLoading(false)
-                updateEmailModalOpened(false)
-              }
-            }}
-          >Confirm</div>
-        </div>
+                updateLoading(true)
+                try {
+                  await api.updateEmail(email)
+                } catch (e: any) {
+                  if (e.message) {
+                    alert(e.message)
+                  } else {
+                    console.error(e)
+                  }
+                } finally {
+                  await dispatch(loadMe())
+                  updateLoading(false)
+                  updateEmailModalOpened(false)
+                }
+              }}
+              disabled={!emailValidated}
+            />
+          </PillButtons>
+        </PillForm>
       </PillModal>
       <PillModal
         isOpen={avatarModalOpened}
