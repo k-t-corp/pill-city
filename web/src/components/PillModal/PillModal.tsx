@@ -25,7 +25,7 @@ export default (props: Props) => {
       paddingLeft: '0',
       paddingRight: '0',
       paddingTop: '0',
-      paddingBottom: '15px'
+      paddingBottom: '25px'
     }
   } else {
     styles = {
