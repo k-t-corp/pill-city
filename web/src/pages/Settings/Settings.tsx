@@ -12,6 +12,10 @@ import PillModal from "../../components/PillModal/PillModal";
 import {useToast} from "../../components/Toast/ToastProvider";
 import './Settings.css'
 import {getUseMultiColumn, setUseMultiColumn} from "../../utils/SettingsStorage";
+import PillForm from "../../components/PillForm/PillForm";
+import PillInput from "../../components/PillInput/PillInput";
+import PillButtons from "../../components/PillButtons/PillButtons";
+import PillButton, {PillButtonVariant} from "../../components/PillButtons/PillButton";
 
 type NotifyingActionToRssCode = {[action: string]: string}
 
@@ -32,7 +36,7 @@ const Settings = () => {
   const [rssTokenModalOpened, updateRssTokenModalOpened] = useState(false)
 
   const [loading, updateLoading] = useState(true)
-  const [displayName, updateDisplayName] = useState<string | undefined>()
+  const [displayName, updateDisplayName] = useState<string>('')
   const [email, updateEmail] = useState<string | undefined>()
   const [emailValidated, updateEmailValidated] = useState(false)
   const [rssToken, updateRssToken] = useState<RssToken | undefined>()
@@ -53,7 +57,7 @@ const Settings = () => {
         return
       }
       const myProfile = me as User
-      updateDisplayName(myProfile.display_name)
+      updateDisplayName(myProfile.display_name || '')
 
       updateEmail(await api.getEmail())
       const rssToken = await api.getRssToken() as RssToken
@@ -142,28 +146,30 @@ const Settings = () => {
         onClose={() => {updateDisplayNameModalOpened(false)}}
         title="Update display name"
       >
-        <input
-          className="settings-display-name"
-          type="text"
-          value={displayName}
-          onChange={e => updateDisplayName(e.target.value)}
-        />
-        <div className="settings-controls">
-          <div
-            className="settings-controls-button settings-display-name-button-cancel"
-            onClick={() => {updateDisplayNameModalOpened(false)}}
-          >Cancel</div>
-          <div
-            className="settings-controls-button settings-display-name-button-confirm"
-            onClick={async () => {
-              updateLoading(true)
-              await api.updateDisplayName(displayName)
-              await dispatch(loadMe())
-              updateLoading(false)
-              updateDisplayNameModalOpened(false)
-            }}
-          >Confirm</div>
-        </div>
+        <PillForm>
+          <PillInput
+            placeholder='Display name'
+            value={displayName}
+            onChange={updateDisplayName}
+          />
+          <PillButtons>
+            <PillButton
+              text='Cancel'
+              variant={PillButtonVariant.Neutral}
+              onClick={() => {updateDisplayNameModalOpened(false)}}
+            />
+            <PillButton
+              text='Confirm'
+              variant={PillButtonVariant.Positive}
+              onClick={async () => {
+                updateLoading(true)
+                await api.updateDisplayName(displayName)
+                await dispatch(loadMe())
+                updateLoading(false)
+                updateDisplayNameModalOpened(false)
+              }}            />
+          </PillButtons>
+        </PillForm>
       </PillModal>
       <PillModal
         isOpen={emailModalOpened}
