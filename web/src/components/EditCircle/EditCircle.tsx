@@ -74,6 +74,9 @@ export default (props: Props) => {
         <MemberCard
           key={member.id}
           onDelete={async () => {
+            if (!confirm(`Are you sure you want to remove user @${member.id} from circle "${circle.name}"`)) {
+              return
+            }
             updateCircle({
               ...circle,
               members: members.filter(m => m.id !== member.id)
