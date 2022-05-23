@@ -26,7 +26,17 @@
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     grid-column-gap: 5px;
     grid-row-gap: 5px;
-    margin-bottom: 15px;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.edit-circle-members::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.edit-circle-members {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 }
 
 .edit-circle-buttons {
@@ -54,17 +64,6 @@
 
 .edit-circle-button-done {
     background-color: #E05140;
-}
-
-/* Hide scrollbar for Chrome, Safari and Opera */
-.edit-circle-members::-webkit-scrollbar {
-    display: none;
-}
-
-/* Hide scrollbar for IE, Edge and Firefox */
-.edit-circle-members {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
 }
 
 .edit-circle-member-card-wrapper {

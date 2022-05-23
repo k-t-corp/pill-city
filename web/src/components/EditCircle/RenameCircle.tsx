@@ -4,6 +4,7 @@ import PillInput from "../PillInput/PillInput";
 import PillButtons from "../PillButtons/PillButtons";
 import PillButton, {PillButtonVariant} from "../PillButtons/PillButton";
 import Circle from "../../models/Circle";
+import PillForm from "../PillForm/PillForm";
 
 interface Props {
   circle: Circle
@@ -16,7 +17,7 @@ export default (props: Props) => {
   const [name, updateName] = useState(circle.name)
 
   return (
-    <>
+    <PillForm>
       <PillInput
         placeholder="Circle name"
         value={name}
@@ -35,6 +36,6 @@ export default (props: Props) => {
           disabled={!name}
         />
       </PillButtons>
-    </>
+    </PillForm>
   )
 }

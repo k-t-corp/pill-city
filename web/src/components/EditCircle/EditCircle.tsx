@@ -13,6 +13,7 @@ import ApiError from "../../api/ApiError";
 import {useToast} from "../Toast/ToastProvider";
 import getNameAndSubName from "../../utils/getNameAndSubName";
 import RenameCircle from "./RenameCircle";
+import PillForm from "../PillForm/PillForm";
 
 interface MemberCardProps {
   user: User
@@ -86,32 +87,34 @@ export default (props: Props) => {
   }
 
   return (
-    <div className="edit-circle-content">
-      <div className="edit-circle-members">
-        {memberModalCards()}
-      </div>
-      <PillButtons>
-        <PillButton
-          text='Delete'
-          variant={PillButtonVariant.Neutral}
-          onClick={() => {}}
-        />
-        <PillButton
-          text='Rename'
-          variant={PillButtonVariant.Neutral}
-          onClick={() => {updateShowingRenameModal(true)}}
-        />
-        {showAddUser && <PillButton
-          text='Add user'
-          variant={PillButtonVariant.Neutral}
-          onClick={() => {updateShowingAddUserModal(true)}}
-        />}
-        <PillButton
-          text='Done'
-          variant={PillButtonVariant.Positive}
-          onClick={onClose}
-        />
-      </PillButtons>
+    <>
+      <PillForm>
+        <div className="edit-circle-members">
+          {memberModalCards()}
+        </div>
+        <PillButtons>
+          <PillButton
+            text='Delete'
+            variant={PillButtonVariant.Neutral}
+            onClick={() => {}}
+          />
+          <PillButton
+            text='Rename'
+            variant={PillButtonVariant.Neutral}
+            onClick={() => {updateShowingRenameModal(true)}}
+          />
+          {showAddUser && <PillButton
+            text='Add user'
+            variant={PillButtonVariant.Neutral}
+            onClick={() => {updateShowingAddUserModal(true)}}
+          />}
+          <PillButton
+            text='Done'
+            variant={PillButtonVariant.Positive}
+            onClick={onClose}
+          />
+        </PillButtons>
+      </PillForm>
       <PillModal
         isOpen={showingAddUserModal}
         onClose={() => {updateShowingAddUserModal(false)}}
@@ -155,6 +158,6 @@ export default (props: Props) => {
           onClose={() => {updateShowingRenameModal(false)}}
         />
       </PillModal>
-    </div>
+    </>
   )
 }
