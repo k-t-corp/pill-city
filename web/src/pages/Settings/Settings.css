@@ -1,9 +1,8 @@
 .settings-wrapper {
-    margin-top: 4em;
     display: flex;
+    padding: 5em 2em 0 2em;
     flex-direction: column;
     align-items: center;
-    height: 100vh;
 }
 
 .settings-status {
@@ -127,8 +126,7 @@
 /* Mobile */
 @media only screen and (max-width: 750px) {
     .settings-wrapper {
-        height: 100vh;
-        margin-top: 0;
+        padding: 0;
     }
 
     .settings-row {
