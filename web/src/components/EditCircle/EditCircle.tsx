@@ -8,7 +8,7 @@ import {TrashIcon} from "@heroicons/react/solid";
 import getAvatarUrl from "../../utils/getAvatarUrl";
 import User from "../../models/User";
 import PillModal from "../PillModal/PillModal";
-import AddUserToCircle from "../AddUserToCircle/AddUserToCircle";
+import AddUserToCircle from "./AddUserToCircle";
 import ApiError from "../../api/ApiError";
 import {useToast} from "../Toast/ToastProvider";
 import getNameAndSubName from "../../utils/getNameAndSubName";
@@ -45,10 +45,11 @@ interface Props {
   updateCircle: (circle: Circle) => void
   users: User[]
   onClose: () => void
+  showAddUser: boolean
 }
 
 export default (props: Props) => {
-  const {circle, updateCircle, users, onClose} = props
+  const {circle, updateCircle, users, onClose, showAddUser} = props
   const members = circle.members
   const [showingAddUserModal, updateShowingAddUserModal] = useState(false)
 
@@ -98,11 +99,11 @@ export default (props: Props) => {
           variant={PillButtonVariant.Neutral}
           onClick={() => {}}
         />
-        <PillButton
+        {showAddUser && <PillButton
           text='Add user'
           variant={PillButtonVariant.Neutral}
           onClick={() => {updateShowingAddUserModal(true)}}
-        />
+        />}
         <PillButton
           text='Done'
           variant={PillButtonVariant.Positive}

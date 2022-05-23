@@ -203,6 +203,7 @@ export default (props: Props) => {
           updateCircle={updateCircle}
           users={users}
           onClose={() => {updateModalOpened(false)}}
+          showAddUser={false}
         />
       </PillModal>
       <div

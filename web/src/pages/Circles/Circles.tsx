@@ -55,6 +55,7 @@ const CircleCard = (props: CircleCardProps) => {
           updateCircle={updateCircle}
           users={users}
           onClose={() => {updateShowingEditCircle(false)}}
+          showAddUser={true}
         />
       </PillModal>
     </>
