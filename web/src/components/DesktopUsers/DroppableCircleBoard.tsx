@@ -13,11 +13,12 @@ import EditCircle from "../EditCircle/EditCircle";
 interface Props {
   circle: Circle
   updateCircle: (circle: Circle) => void
+  deleteCircle: () => void
   users: User[]
 }
 
 export default (props: Props) => {
-  const {circle, updateCircle, users} = props
+  const {circle, updateCircle, deleteCircle, users} = props
 
   const isMobile = useMediaQuery({query: '(max-width: 750px)'})
   const circleMargin = 2 // Margin between the edge of the card circle and inner/outer circles
@@ -201,6 +202,7 @@ export default (props: Props) => {
         <EditCircle
           circle={circle}
           updateCircle={updateCircle}
+          deleteCircle={deleteCircle}
           users={users}
           onClose={() => {updateModalOpened(false)}}
           showAddUser={false}

@@ -45,13 +45,14 @@ const MemberCard = (props: MemberCardProps) => {
 interface Props {
   circle: Circle
   updateCircle: (circle: Circle) => void
+  deleteCircle: () => void
   users: User[]
   onClose: () => void
   showAddUser: boolean
 }
 
 export default (props: Props) => {
-  const {circle, updateCircle, users, onClose, showAddUser} = props
+  const {circle, updateCircle, deleteCircle, users, onClose, showAddUser} = props
   const members = circle.members
   const [showingAddUserModal, updateShowingAddUserModal] = useState(false)
   const [showingRenameModal, updateShowingRenameModal] = useState(false)
@@ -96,7 +97,12 @@ export default (props: Props) => {
           <PillButton
             text='Delete'
             variant={PillButtonVariant.Neutral}
-            onClick={() => {}}
+            onClick={() => {
+              if (!confirm(`Are you sure you want to delete circle "${circle.name}"?`)) {
+                return
+              }
+              deleteCircle()
+            }}
           />
           <PillButton
             text='Rename'

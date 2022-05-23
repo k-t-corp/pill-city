@@ -48,6 +48,10 @@ const Users = () => {
             return circle
           }))
         }}
+        deleteCircle={async c => {
+          updateCircles(circles.filter(cc => cc.id !== c.id))
+          await api.deleteCircle(c.id)
+        }}
         followings={followings}
         updateFollowings={updateFollowings}
       />

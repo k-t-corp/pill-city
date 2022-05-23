@@ -13,10 +13,11 @@ interface Props {
   updateFollowings: (v: User[]) => void
   circles: Circle[]
   updateCircle: (circle: Circle) => void
+  deleteCircle: (circle: Circle) => void
 }
 
 export default (props: Props) => {
-  const {loading, users, circles, updateCircle} = props
+  const {loading, users, circles, updateCircle, deleteCircle} = props
 
   if (loading) {
     return (
@@ -36,6 +37,9 @@ export default (props: Props) => {
         key={c.id}
         circle={c}
         updateCircle={updateCircle}
+        deleteCircle={() => {
+          deleteCircle(c)
+        }}
         users={users}
       />
     )

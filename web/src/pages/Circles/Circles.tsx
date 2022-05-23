@@ -16,10 +16,11 @@ interface CircleCardProps {
   circle: Circle,
   users: User[]
   updateCircle: (circle: Circle) => void
+  deleteCircle: () => void
 }
 
 const CircleCard = (props: CircleCardProps) => {
-  const {circle, updateCircle, users} = props
+  const {circle, updateCircle, deleteCircle, users} = props
   const [showingEditCircle, updateShowingEditCircle] = useState(false)
 
   return (
@@ -53,6 +54,10 @@ const CircleCard = (props: CircleCardProps) => {
         <EditCircle
           circle={circle}
           updateCircle={updateCircle}
+          deleteCircle={() => {
+            updateShowingEditCircle(false)
+            deleteCircle()
+          }}
           users={users}
           onClose={() => {updateShowingEditCircle(false)}}
           showAddUser={true}
@@ -136,6 +141,10 @@ export default () => {
                 }
                 return circle
               }))
+            }}
+            deleteCircle={async () => {
+              updateCircles(circles.filter(cc => cc.id !== c.id))
+              await api.deleteCircle(c.id)
             }}
             users={users}
           />
