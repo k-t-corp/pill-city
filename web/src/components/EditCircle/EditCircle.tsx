@@ -125,11 +125,11 @@ export default (props: Props) => {
           onAddUser={async (user) => {
             try {
               updateShowingAddUserModal(false)
-              await api.addToCircle(circle.id, user.id)
               updateCircle({
                 ...circle,
                 members: [...members, user]
               })
+              await api.addToCircle(circle.id, user.id)
             } catch (e) {
               if (e instanceof ApiError) {
                 addToast(e.message)
@@ -152,8 +152,8 @@ export default (props: Props) => {
               ...circle,
               name
             })
-            await api.renameCircle(circle.id, name)
             updateShowingRenameModal(false)
+            await api.renameCircle(circle.id, name)
           }}
           onClose={() => {updateShowingRenameModal(false)}}
         />
