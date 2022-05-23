@@ -41,7 +41,7 @@ const DesktopNavBar = () => {
         <span className='nav-bar-button-text'>Profile</span>
       </div>
       <div
-        className={`nav-bar-button-container nav-bar-button-container-aligned ${handleNavItemActiveClass(path, "/profile")}`}
+        className={`nav-bar-button-container nav-bar-button-container-aligned ${handleNavItemActiveClass(path, "/settings")}`}
         onClick={() => {history.push('/settings')}}
       >
         <CogIcon />
