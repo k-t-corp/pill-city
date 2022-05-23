@@ -18,7 +18,7 @@ interface Props {
 }
 
 export default (props: Props) => {
-  const {loading, users, circles, updateCircle, deleteCircle} = props
+  const {loading, users, followings, updateFollowings, circles, updateCircle, deleteCircle} = props
 
   if (loading) {
     return (
@@ -52,9 +52,20 @@ export default (props: Props) => {
   return (
     <div className='desktop-users-wrapper'>
       <div className='desktop-users-user-cards-container'>
-        {users.map((u, i) => {
+        {users.map((user, i) => {
           return (
-            <DraggableUserCard key={i} user={u}/>
+            <DraggableUserCard
+              key={i}
+              user={user}
+              isFollowing={followings.map(_ => _.id).indexOf(user.id) !== -1}
+              updateFollowing={f => {
+                if (f) {
+                  updateFollowings([...followings, user])
+                } else {
+                  updateFollowings(followings.filter(_ => _.id !== user.id))
+                }
+              }}
+            />
           )
         })}
       </div>
