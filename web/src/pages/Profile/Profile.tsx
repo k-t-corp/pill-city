@@ -15,7 +15,7 @@ import {ResharedPost} from "../../models/Post";
 import PillModal from "../../components/PillModal/PillModal";
 import "./Profile.css"
 
-const InfiniteScrollFactor = 0.8
+const InfiniteScrollBefore = 5
 
 const Profile = () => {
   const { id: userId } = useParams<{id?: string}>()
@@ -103,12 +103,16 @@ const Profile = () => {
       let postElements = []
       for (let i = 0; i < posts.length; i++) {
         const post = posts[i]
+        let isInfiniteScrollTrigger = false
+        if (posts.length > InfiniteScrollBefore) {
+          isInfiniteScrollTrigger = i === posts.length - InfiniteScrollBefore
+        }
         postElements.push(
           <div
             // need to use post ID instead of index as key
             // otherwise comments and reactions will be shifted after a new post is prepended
             key={post.id}
-            ref={i === Math.floor(posts.length * InfiniteScrollFactor) - 1 ? observe : null}
+            ref={isInfiniteScrollTrigger ? observe : null}
           >
             <PostComponent
               data={post}
