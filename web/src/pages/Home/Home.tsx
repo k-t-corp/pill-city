@@ -62,6 +62,8 @@ const Home = () => {
     let isInfiniteScrollTrigger = false
     if (posts.length > InfiniteScrollBefore) {
       isInfiniteScrollTrigger = i === posts.length - InfiniteScrollBefore
+    } else {
+      isInfiniteScrollTrigger = i === posts.length - 1
     }
     postElements.push(
       <div
