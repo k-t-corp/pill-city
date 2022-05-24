@@ -122,7 +122,10 @@ const Home = () => {
   return (
     <div className="home-wrapper">
       <div
-        className={getUseMultiColumn() ? 'home-posts-wrapper home-posts-wrapper-multi' : 'home-posts-wrapper'}
+        className={getUseMultiColumn() ?
+          'home-posts-wrapper home-posts-wrapper-multi' :
+          'home-posts-wrapper'
+        }
       >
         <Masonry
           breakpointCols={getUseMultiColumn() ? {
@@ -154,7 +157,10 @@ const Home = () => {
             {newPostElem}
           </PillModal>
         </> :
-        <div className="home-right-column-container">
+        <div className={getUseMultiColumn() ?
+          'home-right-column-container home-right-column-container-multi' :
+          'home-right-column-container'
+        }>
           <div className="home-right-column-new-post-wrapper">
             {newPostElem}
           </div>
