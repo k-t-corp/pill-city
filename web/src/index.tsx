@@ -4,7 +4,7 @@ import {Provider as ReduxProvider} from 'react-redux'
 import 'semantic-ui-css/semantic.min.css';
 import 'react-image-lightbox/style.css';
 import App from './App';
-import {unregister} from './registerServiceWorker';
+import register from './registerServiceWorker';
 import store from "./store/store";
 
 ReactDOM.render(
@@ -13,4 +13,4 @@ ReactDOM.render(
   </ReduxProvider>,
   document.getElementById('root')
 );
-unregister();
+register();
