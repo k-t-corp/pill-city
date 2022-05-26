@@ -171,10 +171,12 @@ const App = () => {
 
 export default () => {
   return (
-    <ErrorBoundary
-      FallbackComponent={ErrorFallback}
-    >
-      <App />
-    </ErrorBoundary>
+    <React.StrictMode>
+      <ErrorBoundary
+        FallbackComponent={ErrorFallback}
+      >
+        <App />
+      </ErrorBoundary>
+    </React.StrictMode>
   )
 }

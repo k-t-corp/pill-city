@@ -209,7 +209,7 @@ export default (props: Props) => {
     )
     for (const r of reactionsWithEmoji) {
       detailElems.push(
-        <div className="post-reactions-detail-author-wrapper">
+        <div className="post-reactions-detail-author-wrapper" key={r.reactionId}>
           <div className="post-avatar post-reactions-detail-author-avatar">
             <RoundAvatar user={r.author}/>
           </div>
