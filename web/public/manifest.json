@@ -9,18 +9,45 @@
     "description": "An one-of-a-kind social network",
     "icons": [
         {
-            "src": "/icon-192x192.png",
+            "src": "/maskable_icon_x48.png",
+            "sizes": "48x48",
+            "purpose": "maskable",
+            "type": "image/png"
+        },
+        {
+            "src": "/maskable_icon_x72.png",
+            "sizes": "72x72",
+            "purpose": "maskable",
+            "type": "image/png"
+        },
+        {
+            "src": "/maskable_icon_x96.png",
+            "sizes": "96x96",
+            "purpose": "maskable",
+            "type": "image/png"
+        },
+        {
+            "src": "/maskable_icon_x128.png",
+            "sizes": "128x128",
+            "purpose": "maskable",
+            "type": "image/png"
+        },
+        {
+            "src": "/maskable_icon_x192.png",
             "sizes": "192x192",
+            "purpose": "maskable",
             "type": "image/png"
         },
         {
-            "src": "/icon-256x256.png",
-            "sizes": "256x256",
-            "type": "image/png"
-        },
-        {
-            "src": "/icon-384x384.png",
+            "src": "/maskable_icon_x384.png",
             "sizes": "384x384",
+            "purpose": "maskable",
+            "type": "image/png"
+        },
+        {
+            "src": "/maskable_icon_x512.png",
+            "sizes": "512x512",
+            "purpose": "maskable",
             "type": "image/png"
         },
         {
