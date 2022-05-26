@@ -43,7 +43,7 @@ const Home = () => {
   if (loading || meLoading) {
     return (
       <div className="home-wrapper">
-        <div className="home-status">Loading...</div>
+        <div className="home-status">Loading..</div>
       </div>
     )
   }
