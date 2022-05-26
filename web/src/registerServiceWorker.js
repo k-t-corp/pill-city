@@ -69,7 +69,7 @@ export default function register() {
         // Add some additional logging to localhost, pointing developers to the
         // service worker/PWA documentation.
         navigator.serviceWorker.ready.then(() => {
-          toast(
+          console.log(
             'This web app is being served cache-first by a service worker https://goo.gl/SC7cgQ'
           );
         });
@@ -79,7 +79,7 @@ export default function register() {
       }
     });
   } else if ('serviceWorker' in navigator) {
-    toast('Service worker is not available for development build')
+    console.log('Service worker is not available for development build')
   } else {
     console.log("Service worker is not available")
   }
@@ -98,9 +98,7 @@ function registerValidSW(swUrl) {
               // the fresh content will have been added to the cache.
               // It's the perfect time to display a "New content is
               // available; please refresh." message in your web app.
-              toast('New app version is available, click to update', () => {
-                window.location.refresh()
-              });
+              toast('New app version is available, close to update');
             } else {
               // At this point, everything has been precached.
               // It's the perfect time to display a
