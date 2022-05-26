@@ -8,6 +8,35 @@
 // To learn more about the benefits of this model, read https://goo.gl/KwvDNy.
 // This link also includes instructions on opting out of this behavior.
 
+const toast = (message, onClick) => {
+  console.log(message)
+  const el = document.createElement('div')
+  el.style['backgroundColor'] = '#E05140'
+  el.style['color'] = 'white'
+  el.style['padding'] = '16px'
+  el.style['border-radius'] = '5px'
+  el.style['position'] = 'fixed'
+  el.style["bottom"] = '20px'
+  el.style['left'] = '16px'
+  el.style['zIndex'] = '999'
+  el.textContent = message
+  if (onClick) {
+    el.style['cursor'] = 'pointer'
+    el.addEventListener('onclick', e => {
+      e.preventDefault()
+      el.remove()
+      onClick()
+    })
+  }
+  document.body.appendChild(el)
+
+  if (!onClick) {
+    setTimeout(() => {
+      el.remove()
+    }, 3000)
+  }
+}
+
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||
     // [::1] is the IPv6 localhost address.
@@ -26,6 +55,7 @@ export default function register() {
       // Our service worker won't work if PUBLIC_URL is on a different origin
       // from what our page is served on. This might happen if a CDN is used to
       // serve assets; see https://github.com/facebookincubator/create-react-app/issues/2374
+      console.warn("https://github.com/facebook/create-react-app/issues/2374")
       return;
     }
 
@@ -33,22 +63,25 @@ export default function register() {
       const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
 
       if (isLocalhost) {
-        // This is running on localhost. Lets check if a service worker still exists or not.
+        // This is running on localhost. Let's check if a service worker still exists or not.
         checkValidServiceWorker(swUrl);
 
         // Add some additional logging to localhost, pointing developers to the
         // service worker/PWA documentation.
         navigator.serviceWorker.ready.then(() => {
           console.log(
-            'This web app is being served cache-first by a service ' +
-              'worker. To learn more, visit https://goo.gl/SC7cgQ'
+            'This web app is being served cache-first by a service worker https://goo.gl/SC7cgQ'
           );
         });
       } else {
-        // Is not local host. Just register service worker
+        // Is not localhost. Just register service worker
         registerValidSW(swUrl);
       }
     });
+  } else if ('serviceWorker' in navigator) {
+    console.log('Service worker is not available for development build')
+  } else {
+    console.log("Service worker is not available")
   }
 }
 
@@ -65,12 +98,12 @@ function registerValidSW(swUrl) {
               // the fresh content will have been added to the cache.
               // It's the perfect time to display a "New content is
               // available; please refresh." message in your web app.
-              console.log('New content is available; please refresh.');
+              toast('New app version is available, close to update');
             } else {
               // At this point, everything has been precached.
               // It's the perfect time to display a
               // "Content is cached for offline use." message.
-              console.log('Content is cached for offline use.');
+              toast('App is installed');
             }
           }
         };

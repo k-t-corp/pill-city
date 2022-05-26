@@ -29,6 +29,7 @@ import {accessTokenExists} from "./api/AuthStorage";
 import {getUseMultiColumn} from "./utils/SettingsStorage";
 import './App.css'
 import Circles from "./pages/Circles/Circles";
+import {ErrorBoundary} from "react-error-boundary";
 
 Modal.setAppElement('#root');
 
@@ -61,7 +62,22 @@ const NotAuthenticated = (props: {children: ReactElement}) => {
   return props.children
 }
 
-export default () => {
+interface ErrorFallbackProps {
+  error: Error
+  resetErrorBoundary: any
+}
+
+const ErrorFallback = (props: ErrorFallbackProps) => {
+  return (
+    <div>
+      <p>Opps something went wrong</p>
+      <p>Message: {props.error.message}</p>
+      <p><a href="#" onClick={props.resetErrorBoundary}>Try again</a></p>
+    </div>
+  )
+}
+
+const App = () => {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
@@ -151,4 +167,16 @@ export default () => {
       </Router>
     </ToastProvider>
   );
+}
+
+export default () => {
+  return (
+    <React.StrictMode>
+      <ErrorBoundary
+        FallbackComponent={ErrorFallback}
+      >
+        <App />
+      </ErrorBoundary>
+    </React.StrictMode>
+  )
 }
