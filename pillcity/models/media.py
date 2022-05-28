@@ -1,4 +1,4 @@
-from mongoengine import Document, StringField, LazyReferenceField, IntField, LongField, DO_NOTHING
+from mongoengine import Document, StringField, LazyReferenceField, IntField, LongField, DO_NOTHING, BooleanField
 
 
 class Media(Document):
@@ -16,3 +16,7 @@ class Media(Document):
     created_at = LongField(required=False, default=0)
     # todo: change to required
     used_at = LongField(required=False, default=0)
+    processed = BooleanField(required=False, default=False)
+    width = IntField(required=False, default=None)
+    height = IntField(required=False, default=None)
+    dominant_color = IntField(required=False, default=None)
