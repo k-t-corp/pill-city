@@ -15,12 +15,11 @@ const DesktopNavBar = () => {
   const path = useLocation().pathname
 
   return (
-    <div className="nav-bar-container nav-bar-top">
+    <div className="nav-bar-container nav-bar-top" onClick={() => {window.scrollTo({ top: 0, behavior: 'smooth'})}}>
       <div
         className={`nav-bar-button-container nav-bar-button-container-aligned ${handleNavItemActiveClass(path, "/")}`}
         onClick={() => {
           history.push('/')
-          window.scrollTo({ top: 0, behavior: 'smooth'})
         }}
       >
         <HomeIcon />
@@ -60,13 +59,19 @@ const MobileNavBar = () => {
     <div className="nav-bar-container nav-bar-bottom">
       <div
         className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/circles")}`}
-        onClick={() => {history.push('/circles')}}
+        onClick={() => {
+          history.push('/circles')
+          window.scrollTo({ top: 0, behavior: 'smooth'})
+        }}
       >
         <CirclesIcon />
       </div>
       <div
         className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/users")}`}
-        onClick={() => {history.push('/users')}}
+        onClick={() => {
+          history.push('/users')
+          window.scrollTo({ top: 0, behavior: 'smooth'})
+        }}
       >
         <UserAddIcon />
       </div>
@@ -81,14 +86,20 @@ const MobileNavBar = () => {
       </div>
       <div
         className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/notifications")}`}
-        onClick={() => {history.push('/notifications')}}
+        onClick={() => {
+          history.push('/notifications')
+          window.scrollTo({ top: 0, behavior: 'smooth'})
+        }}
       >
         {hasNewNotifications && <div className='nav-bar-notification-indicator-wrapper'><div className='nav-bar-notification-indicator' /></div>}
         <BellIcon />
       </div>
       <div
         className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/profile")}`}
-        onClick={() => {history.push('/profile')}}
+        onClick={() => {
+          history.push('/profile')
+          window.scrollTo({ top: 0, behavior: 'smooth'})
+        }}
       >
         <UserCircleIcon />
       </div>
