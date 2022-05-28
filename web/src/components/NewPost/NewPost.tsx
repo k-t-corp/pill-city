@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {Dropdown, Checkbox} from 'semantic-ui-react'
+import {Dropdown} from 'semantic-ui-react'
 import {useHotkeys} from "react-hotkeys-hook";
 import parseContent from "../../utils/parseContent";
 import MediaPane from "../MediaPane/MediaPane";
@@ -21,6 +21,7 @@ import Media from "../../models/Media";
 import {arrayMoveImmutable} from "array-move";
 import AddPoll from "../AddPoll/AddPoll";
 import {QuestionMarkCircleIcon} from "@heroicons/react/outline";
+import PillCheckbox from "../PillCheckbox/PillCheckbox";
 
 interface Props {
   beforePosting: () => void
@@ -176,12 +177,11 @@ export default (props: Props) => {
     updateCircleIds(value)
   }
 
-  const resharableOnChange = (e: any) => {
-    e.preventDefault();
+  const resharableOnChange = (checked: boolean) => {
     if (posting) {
       return
     }
-    updateResharable(!resharable)
+    updateResharable(checked)
   }
 
   const submitButtonClass = () => {
@@ -360,14 +360,12 @@ export default (props: Props) => {
       </div>
       {props.resharePostData === null &&
         <div className="new-post-resharable">
-          <Checkbox
-            toggle
-            label="Enable Resharing"
-            onChange={resharableOnChange}
+          <PillCheckbox
             checked={resharable}
+            onChange={resharableOnChange}
+            label='Enable Resharing'
             disabled={posting}
           />
-
           <div className='new-post-enable-resharing-question' onClick={e => {
             e.preventDefault()
             updateEnableResharingExplanationOpened(true)

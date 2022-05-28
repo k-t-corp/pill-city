@@ -77,7 +77,7 @@
     height: 20px;
     margin-left: 5px;
     cursor: pointer;
-    color: #505050;
+    color: #555555;
 }
 
 .new-post-enable-resharing-question {
@@ -85,7 +85,7 @@
     height: 20px;
     margin-left: 5px;
     cursor: pointer;
-    color: #505050;
+    color: #555555;
 }
 
 .new-post-reshare-question {
@@ -93,7 +93,7 @@
     height: 20px;
     margin-right: 5px;
     cursor: pointer;
-    color: #505050;
+    color: #555555;
 }
 
 .new-post-btns {
