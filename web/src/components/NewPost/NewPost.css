@@ -72,9 +72,28 @@
     align-items: center;
 }
 
-.new-post-circles-dropdown-question {
-    padding-left: 5px;
-    padding-top: -5px;
+.new-post-sharing-scope-question {
+    width: 20px;
+    height: 20px;
+    margin-left: 5px;
+    cursor: pointer;
+    color: #505050;
+}
+
+.new-post-enable-resharing-question {
+    width: 20px;
+    height: 20px;
+    margin-left: 5px;
+    cursor: pointer;
+    color: #505050;
+}
+
+.new-post-reshare-question {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    cursor: pointer;
+    color: #505050;
 }
 
 .new-post-btns {
@@ -134,6 +153,8 @@
 
 .new-post-resharable {
     margin-top: 10px;
+    display: flex;
+    align-items: center;
 }
 
 .new-post-reshare-content-summary {
@@ -144,36 +165,10 @@
     overflow: hidden;
 }
 
-/* Post Loading Modal */
-/* The Modal (background) */
-.new-post-posting-modal {
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+.new-post-reshare-controls {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0 20px;
-}
-
-.new-post-posting-modal-content{
-    width: 100%;
-    height: 50vh;
-    display: flex;
-    flex-direction: column;
-    justify-items: center;
-    align-content: center;
-    justify-content: center;
     align-items: center;
 }
-
-
 
 @media only screen and (max-width: 750px) {
     .new-post-avatar {
@@ -190,41 +185,3 @@
         font-size: small;
     }
 }
-
-
-/* Loader */
-
-.lds-circle {
-    display: inline-block;
-    transform: translateZ(1px);
-}
-.lds-circle > div {
-    display: inline-block;
-    width: 64px;
-    height: 64px;
-    margin: 8px;
-    border-radius: 50%;
-    background: #c25a5a;
-    animation: lds-circle 2.4s cubic-bezier(0, 0.2, 0.8, 1) infinite;
-}
-@keyframes lds-circle {
-    0%, 100% {
-        animation-timing-function: cubic-bezier(0.5, 0, 1, 0.5);
-    }
-    0% {
-        transform: rotateY(0deg);
-    }
-    50% {
-        transform: rotateY(1800deg);
-        animation-timing-function: cubic-bezier(0, 0.5, 0.5, 1);
-    }
-    100% {
-        transform: rotateY(3600deg);
-    }
-}
-
-
-
-
-
-

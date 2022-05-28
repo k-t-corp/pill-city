@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {Dropdown, Popup, Icon, Checkbox} from 'semantic-ui-react'
+import {Dropdown, Checkbox} from 'semantic-ui-react'
 import {useHotkeys} from "react-hotkeys-hook";
 import parseContent from "../../utils/parseContent";
 import MediaPane from "../MediaPane/MediaPane";
@@ -20,6 +20,7 @@ import "./NewPost.css"
 import Media from "../../models/Media";
 import {arrayMoveImmutable} from "array-move";
 import AddPoll from "../AddPoll/AddPoll";
+import {QuestionMarkCircleIcon} from "@heroicons/react/outline";
 
 interface Props {
   beforePosting: () => void
@@ -55,6 +56,10 @@ export default (props: Props) => {
   const [addingMedia, updateAddingMedia] = useState(false)
   const [addingPoll, updateAddingPoll] = useState(false)
   const [posting, updatePosting] = useState(false)
+
+  const [sharingScopeExplanationOpened, updateSharingScopeExplanationOpened] = useState(false)
+  const [enableResharingExplanationOpened, updateEnableResharingExplanationOpened] = useState(false)
+  const [reshareExplanationOpened, updateReshareExplanationOpened] = useState(false)
 
   const {addToast, removeToast} = useToast()
 
@@ -200,7 +205,7 @@ export default (props: Props) => {
           <ClickableId user={me}/>
         </div>
       </div>
-      {props.resharePostData === null ? null :
+      {props.resharePostData !== null &&
         <div className="new-post-reshare-preview">
           <div className="new-post-reshared-info-wrapper">
             <div className="new-post-reshared-info">
@@ -336,23 +341,24 @@ export default (props: Props) => {
           disabled={posting}
           fluid multiple selection
         />
-        <Popup
-          trigger={
-            <Icon
-              className='new-post-circles-dropdown-question'
-              name='question circle outline'
-            />
-          }
-          position='top right'
-          basic
+        <div className='new-post-sharing-scope-question' onClick={e => {
+          e.preventDefault()
+          updateSharingScopeExplanationOpened(true)
+        }}>
+          <QuestionMarkCircleIcon />
+        </div>
+        <PillModal
+          isOpen={sharingScopeExplanationOpened}
+          onClose={() => {updateSharingScopeExplanationOpened(false)}}
+          title='Who can see it'
         >
           <p>"Public" means anyone on this site who follows you can see this post</p>
           <p>If you only pick circles, only people in these circles who follow you can see this post</p>
           <p>You can pick both "Public" and circles but that still means anyone on this site can see this post. Circle
-            selections in this case are just for your own record</p>
-        </Popup>
+            selections in this case are just for your own record.</p>
+        </PillModal>
       </div>
-      {props.resharePostData === null ?
+      {props.resharePostData === null &&
         <div className="new-post-resharable">
           <Checkbox
             toggle
@@ -361,41 +367,50 @@ export default (props: Props) => {
             checked={resharable}
             disabled={posting}
           />
-          <Popup
-            trigger={
-              <Icon
-                className='new-post-circles-dropdown-question'
-                name='question circle outline'
-              />
-            }
-            position='top right'
-            basic
+
+          <div className='new-post-enable-resharing-question' onClick={e => {
+            e.preventDefault()
+            updateEnableResharingExplanationOpened(true)
+          }}>
+            <QuestionMarkCircleIcon />
+          </div>
+          <PillModal
+            isOpen={enableResharingExplanationOpened}
+            onClose={() => {updateEnableResharingExplanationOpened(false)}}
+            title='Enable Resharing'
           >
             <p>If you enable resharing, other users can potentially reshare the post to "public" (anyone on this
               site)</p>
             <p>All interactions such as comments and reactions belong to the resharing post unless users explicitly
               click into your original post and interact with it</p>
-          </Popup>
-        </div> : null
+          </PillModal>
+        </div>
       }
       <div className='new-post-btns'>
         {props.resharePostData === null ?
           <div className={submitButtonClass()} onClick={postButtonOnClick}>
             Post
           </div> :
-          <Popup
-            trigger={
-              <div className={submitButtonClass()} onClick={postButtonOnClick}>
-                Reshare
-              </div>
-            }
-            position='top right'
-            basic
-          >
-            <p>If you reshare a resharing post, you will be resharing the original post instead of the resharing
-              post</p>
-            <p>You post is reshareable by default</p>
-          </Popup>
+          <div className='new-post-reshare-controls'>
+            <div className='new-post-reshare-question' onClick={e => {
+              e.preventDefault()
+              updateReshareExplanationOpened(true)
+            }}>
+              <QuestionMarkCircleIcon />
+            </div>
+            <div className={submitButtonClass()} onClick={postButtonOnClick}>
+              Reshare
+            </div>
+            <PillModal
+              isOpen={reshareExplanationOpened}
+              onClose={() => {updateReshareExplanationOpened(false)}}
+              title='Reshare'
+            >
+              <p>If you reshare a resharing post, you will be resharing the original post instead of the resharing
+                post</p>
+              <p>You post is reshareable by default</p>
+            </PillModal>
+          </div>
         }
       </div>
     </div>
