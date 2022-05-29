@@ -3,6 +3,9 @@ import {useAppDispatch} from "../../store/hooks";
 import {loadMe} from "../../store/meSlice";
 import api from "../../api/Api";
 import './UpdateBanner.css'
+import PillForm from "../PillForm/PillForm";
+import PillButtons from "../PillButtons/PillButtons";
+import PillButton, {PillButtonVariant} from "../PillButtons/PillButton";
 
 const profilePicOptions = ["pill1.png", "pill2.png", "pill3.png", "pill4.png", "pill5.png", "pill6.png"]
 
@@ -35,28 +38,31 @@ export default (props: Props) => {
   const dispatch = useAppDispatch()
 
   return (
-    <div className="settings-profile-pic-content">
-      <div id="settings-profile-pic-preview" style={{
+    <PillForm>
+      <div className="settings-profile-pic-preview" style={{
         backgroundColor: "#9dd0ff",
         backgroundImage: `url(${process.env.PUBLIC_URL}/${selectedOption})`,
       }}/>
       <div className="settings-profile-pic-selections">
         {optionElems}
       </div>
-      <div className="settings-controls">
-        <div
-          className="settings-controls-button settings-profile-button-cancel"
+      <PillButtons>
+        <PillButton
+          text='Cancel'
+          variant={PillButtonVariant.Neutral}
           onClick={props.dismiss}
-        >Cancel</div>
-        <div
-          className="settings-controls-button settings-profile-button-confirm"
+        />
+        <PillButton
+          text='Confirm'
+          variant={PillButtonVariant.Positive}
           onClick={async () => {
             props.beforeUpdate()
             await api.updateProfilePic(selectedOption)
             await dispatch(loadMe())
             props.afterUpdate()
-          }}>Confirm</div>
-      </div>
-    </div>
+          }}
+        />
+      </PillButtons>
+    </PillForm>
   )
 }

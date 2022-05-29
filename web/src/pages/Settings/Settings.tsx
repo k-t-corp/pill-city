@@ -16,6 +16,7 @@ import PillForm from "../../components/PillForm/PillForm";
 import PillInput from "../../components/PillInput/PillInput";
 import PillButtons from "../../components/PillButtons/PillButtons";
 import PillButton, {PillButtonVariant} from "../../components/PillButtons/PillButton";
+import PillCheckbox from "../../components/PillCheckbox/PillCheckbox";
 
 type NotifyingActionToRssCode = {[action: string]: string}
 
@@ -269,24 +270,20 @@ const Settings = () => {
                   {
                     Object.entries(rssCodesChecked).map(([a, checked]) => {
                       return (
-                        <>
-                          <input
-                            className="settings-rss-code-checkbox"
-                            type="checkbox"
-                            checked={checked}
-                            onChange={() => {
-                              if (Object.entries(rssCodesChecked).filter(([_, checked]) => checked).length === 1 && (Object.entries(rssCodesChecked).filter(([_, checked]) => checked)[0][0] === a)) {
-                                alert('You have to choose at least one type of notifications')
-                              } else {
-                                updateRssCodesChecked({
-                                  ...rssCodesChecked,
-                                  [a]: !checked
-                                })
-                              }
-                            }}
-                          />
-                          <span className="settings-rss-code-checkbox-label">{a}</span>
-                        </>
+                        <PillCheckbox
+                          label={a}
+                          checked={checked}
+                          onChange={(c) => {
+                            if (Object.entries(rssCodesChecked).filter(([_, checked]) => checked).length === 1 && (Object.entries(rssCodesChecked).filter(([_, checked]) => checked)[0][0] === a)) {
+                              alert('You have to choose at least one type of notifications')
+                            } else {
+                              updateRssCodesChecked({
+                                ...rssCodesChecked,
+                                [a]: c
+                              })
+                            }
+                          }}
+                        />
                       )
                     })
                   }

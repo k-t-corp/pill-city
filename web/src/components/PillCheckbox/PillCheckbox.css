@@ -1,0 +1,10 @@
+.pill-checkbox {
+    display: flex;
+    align-items: center;
+}
+
+.pill-checkbox-icon {
+    width: 25px;
+    height: 25px;
+    margin-right: 5px;
+}

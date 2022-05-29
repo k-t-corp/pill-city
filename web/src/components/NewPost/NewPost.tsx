@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react'
-import {Dropdown, Popup, Icon, Checkbox} from 'semantic-ui-react'
 import {useHotkeys} from "react-hotkeys-hook";
 import parseContent from "../../utils/parseContent";
 import MediaPane from "../MediaPane/MediaPane";
@@ -20,6 +19,9 @@ import "./NewPost.css"
 import Media from "../../models/Media";
 import {arrayMoveImmutable} from "array-move";
 import AddPoll from "../AddPoll/AddPoll";
+import {QuestionMarkCircleIcon} from "@heroicons/react/outline";
+import PillCheckbox from "../PillCheckbox/PillCheckbox";
+import Select, {OnChangeValue} from "react-select";
 
 interface Props {
   beforePosting: () => void
@@ -28,7 +30,12 @@ interface Props {
   updateResharePostData: (post: Post | null) => void
 }
 
-type CircleIdOrPublic = string | true
+type CircleIdOrPublic = string | boolean
+interface SharingScopeOption {
+  value: CircleIdOrPublic
+  label: string
+}
+const SharingScopePublicOption = {label: '🌏 Public', value: true}
 
 interface NewPostMediaUploaded {
   type: 'Uploaded'
@@ -48,13 +55,17 @@ export default (props: Props) => {
   const [myCircles, updateMyCircles] = useState<Circle[]>([])
 
   const [content, updateContent] = useState<string>("")
-  const [circleIds, updateCircleIds] = useState<CircleIdOrPublic[]>([])
+  const [sharingScope, updateSharingScope] = useState<SharingScopeOption[]>([SharingScopePublicOption])
   const [resharable, updateResharable] = useState(true)
   const [medias, updateMedias] = useState<(NewPostMediaUploaded | NewPostMediaOwned)[]>([])
   const [pollChoices, updatePollChoices] = useState<AddPollChoice[]>([])
   const [addingMedia, updateAddingMedia] = useState(false)
   const [addingPoll, updateAddingPoll] = useState(false)
   const [posting, updatePosting] = useState(false)
+
+  const [sharingScopeExplanationOpened, updateSharingScopeExplanationOpened] = useState(false)
+  const [enableResharingExplanationOpened, updateEnableResharingExplanationOpened] = useState(false)
+  const [reshareExplanationOpened, updateReshareExplanationOpened] = useState(false)
 
   const {addToast, removeToast} = useToast()
 
@@ -79,12 +90,12 @@ export default (props: Props) => {
   })
 
   const isValid = () => {
-    return (content.trim().length !== 0 || medias.length !== 0) && circleIds.length !== 0
+    return (content.trim().length !== 0 || medias.length !== 0) && sharingScope.length !== 0
   }
 
   const reset = () => {
     updateContent('')
-    updateCircleIds([])
+    updateSharingScope([SharingScopePublicOption])
     updateResharable(true)
     updateMedias([])
     updatePollChoices([])
@@ -102,8 +113,9 @@ export default (props: Props) => {
     }
 
     // parse post parameters
-    const actualCircleIds = circleIds.filter(cn => cn !== true)
-    const isPublic = circleIds.filter(cn => cn === true).length !== 0
+    const actualCircleIds = sharingScope.filter(cn => cn.value !== true).map(_ => _.value)
+    const isPublic = sharingScope.filter(cn => cn.value === true).length !== 0
+    console.log(actualCircleIds, isPublic)
 
     // before sending post
     const toastId = addToast('Sending new post', false)
@@ -163,20 +175,19 @@ export default (props: Props) => {
     }
   }
 
-  const sharingScopeOnChange = (e: any, {value}: any) => {
-    e.preventDefault();
+  const sharingScopeOnChange = (options: OnChangeValue<SharingScopeOption, true>) => {
     if (posting) {
       return
     }
-    updateCircleIds(value)
+    // todo: why as?
+    updateSharingScope(options as SharingScopeOption[])
   }
 
-  const resharableOnChange = (e: any) => {
-    e.preventDefault();
+  const resharableOnChange = (checked: boolean) => {
     if (posting) {
       return
     }
-    updateResharable(!resharable)
+    updateResharable(checked)
   }
 
   const submitButtonClass = () => {
@@ -190,6 +201,11 @@ export default (props: Props) => {
     return className.join(" ")
   }
 
+  const sharingScopeSelections: {label: string, value: CircleIdOrPublic}[] = [SharingScopePublicOption, ...myCircles.map(circle => {
+    const {name, id} = circle
+    return {label: `⭕ ${name}`, value: id}
+  })]
+
   return (
     <div className="new-post">
       <div className="new-post-user-info">
@@ -200,7 +216,7 @@ export default (props: Props) => {
           <ClickableId user={me}/>
         </div>
       </div>
-      {props.resharePostData === null ? null :
+      {props.resharePostData !== null &&
         <div className="new-post-reshare-preview">
           <div className="new-post-reshared-info-wrapper">
             <div className="new-post-reshared-info">
@@ -319,83 +335,85 @@ export default (props: Props) => {
         />
       </div>
 
-      <div className='new-post-circles-dropdown-wrapper'>
-        <Dropdown
+      <div className='new-post-sharing-scope'>
+        <Select
           placeholder='Who can see it'
-          options={
-            [{key: 'public', text: '🌏 Public', value: true}].concat(
-              // @ts-ignore
-              myCircles.map(circle => {
-                const {name, id} = circle
-                return {key: name, text: `⭕ ${name}`, value: id}
-              })
-            )
-          }
-          value={circleIds}
+          isMulti={true}
+          isClearable={false}
+          options={sharingScopeSelections}
+          value={sharingScope}
           onChange={sharingScopeOnChange}
-          disabled={posting}
-          fluid multiple selection
+          isDisabled={posting}
+          className='new-post-sharing-scope-dropdown'
         />
-        <Popup
-          trigger={
-            <Icon
-              className='new-post-circles-dropdown-question'
-              name='question circle outline'
-            />
-          }
-          position='top right'
-          basic
+        <div className='new-post-sharing-scope-question' onClick={e => {
+          e.preventDefault()
+          updateSharingScopeExplanationOpened(true)
+        }}>
+          <QuestionMarkCircleIcon />
+        </div>
+        <PillModal
+          isOpen={sharingScopeExplanationOpened}
+          onClose={() => {updateSharingScopeExplanationOpened(false)}}
+          title='Who can see it'
         >
           <p>"Public" means anyone on this site who follows you can see this post</p>
           <p>If you only pick circles, only people in these circles who follow you can see this post</p>
           <p>You can pick both "Public" and circles but that still means anyone on this site can see this post. Circle
-            selections in this case are just for your own record</p>
-        </Popup>
+            selections in this case are just for your own record.</p>
+        </PillModal>
       </div>
-      {props.resharePostData === null ?
+      {props.resharePostData === null &&
         <div className="new-post-resharable">
-          <Checkbox
-            toggle
-            label="Enable Resharing"
-            onChange={resharableOnChange}
+          <PillCheckbox
             checked={resharable}
+            onChange={resharableOnChange}
+            label='Enable Resharing'
             disabled={posting}
           />
-          <Popup
-            trigger={
-              <Icon
-                className='new-post-circles-dropdown-question'
-                name='question circle outline'
-              />
-            }
-            position='top right'
-            basic
+          <div className='new-post-enable-resharing-question' onClick={e => {
+            e.preventDefault()
+            updateEnableResharingExplanationOpened(true)
+          }}>
+            <QuestionMarkCircleIcon />
+          </div>
+          <PillModal
+            isOpen={enableResharingExplanationOpened}
+            onClose={() => {updateEnableResharingExplanationOpened(false)}}
+            title='Enable Resharing'
           >
             <p>If you enable resharing, other users can potentially reshare the post to "public" (anyone on this
               site)</p>
             <p>All interactions such as comments and reactions belong to the resharing post unless users explicitly
               click into your original post and interact with it</p>
-          </Popup>
-        </div> : null
+          </PillModal>
+        </div>
       }
       <div className='new-post-btns'>
         {props.resharePostData === null ?
           <div className={submitButtonClass()} onClick={postButtonOnClick}>
             Post
           </div> :
-          <Popup
-            trigger={
-              <div className={submitButtonClass()} onClick={postButtonOnClick}>
-                Reshare
-              </div>
-            }
-            position='top right'
-            basic
-          >
-            <p>If you reshare a resharing post, you will be resharing the original post instead of the resharing
-              post</p>
-            <p>You post is reshareable by default</p>
-          </Popup>
+          <div className='new-post-reshare-controls'>
+            <div className='new-post-reshare-question' onClick={e => {
+              e.preventDefault()
+              updateReshareExplanationOpened(true)
+            }}>
+              <QuestionMarkCircleIcon />
+            </div>
+            <div className={submitButtonClass()} onClick={postButtonOnClick}>
+              Reshare
+            </div>
+            <PillModal
+              isOpen={reshareExplanationOpened}
+              onClose={() => {updateReshareExplanationOpened(false)}}
+              title='Reshare'
+            >
+              <p>If you reshare a resharing post, you will be resharing the original post instead of the resharing
+                post</p>
+              <p>You post is reshareable by default</p>
+            </PillModal>
+          </div>
         }
       </div>
     </div>

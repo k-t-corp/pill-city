@@ -6,6 +6,10 @@ import {loadMe} from "../../store/meSlice";
 import 'react-image-crop/dist/ReactCrop.css';
 import api from "../../api/Api";
 import './UpdateAvatar.css'
+import PillCheckbox from "../PillCheckbox/PillCheckbox";
+import PillButtons from "../PillButtons/PillButtons";
+import PillButton, {PillButtonVariant} from "../PillButtons/PillButton";
+import PillForm from "../PillForm/PillForm";
 
 
 const getCroppedImg = async (image: HTMLImageElement, crop: Crop): Promise<Blob> => {
@@ -89,7 +93,7 @@ export default (props: Props) => {
   const dispatch = useAppDispatch()
 
   return (
-    <div className="settings-avatar-content">
+    <PillForm>
       {objectUrl === "" ?
         <>
           <label
@@ -119,14 +123,15 @@ export default (props: Props) => {
           }}
         />
       }
-      <div className="settings-controls">
-        <div
-          className="settings-controls-button settings-avatar-button-cancel"
+      <PillButtons>
+        <PillButton
+          text='Cancel'
+          variant={PillButtonVariant.Neutral}
           onClick={props.dismiss}
-        >Cancel</div>
-
-        <div
-          className="settings-controls-button settings-avatar-button-confirm"
+        />
+        <PillButton
+          text='Confirm'
+          variant={PillButtonVariant.Positive}
           onClick={async () => {
             if (!avatarImageRef.current) {
               return
@@ -141,18 +146,13 @@ export default (props: Props) => {
             await dispatch(loadMe())
             props.afterUpdate()
           }}
-        >Confirm</div>
-        <input
-          className="settings-avatar-send-post-checkbox"
-          type="checkbox"
-          checked={sendPost}
-          onChange={() => {updateSendPost(!sendPost)}}
         />
-        <span
-          className="settings-avatar-send-post-checkbox-label"
-          onClick={() => {updateSendPost(!sendPost)}}
-        >Send a post for this avatar change</span>
-      </div>
-    </div>
+        <PillCheckbox
+          checked={sendPost}
+          onChange={updateSendPost}
+          label='Send a post for this avatar change'
+        />
+      </PillButtons>
+    </PillForm>
   )
 }
