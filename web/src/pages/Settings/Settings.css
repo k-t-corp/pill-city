@@ -94,14 +94,9 @@
     align-items: baseline;
 }
 
-.settings-rss-code-checkbox {
+.settings-rss-code-checkboxes > * {
+    margin-right: 10px;
 }
-
-.settings-rss-code-checkbox-label {
-    padding-left: 4px;
-    padding-right: 4px;
-}
-
 
 /* Mobile */
 @media only screen and (max-width: 750px) {
