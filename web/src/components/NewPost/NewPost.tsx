@@ -102,7 +102,7 @@ export default (props: Props) => {
   }
 
   const postButtonOnClick = async () => {
-    if (posting) {
+    if (!isValid() || posting) {
       return
     }
     updatePosting(true)
@@ -188,17 +188,6 @@ export default (props: Props) => {
       return
     }
     updateResharable(checked)
-  }
-
-  const submitButtonClass = () => {
-    let className = ["new-post-post-btn"]
-    if (!isValid()) {
-      className.push("new-post-post-btn-invalid")
-    }
-    if (posting) {
-      className.push("new-post-post-btn-loading")
-    }
-    return className.join(" ")
   }
 
   const sharingScopeSelections: {label: string, value: CircleIdOrPublic}[] = [SharingScopePublicOption, ...myCircles.map(circle => {
@@ -391,7 +380,10 @@ export default (props: Props) => {
       }
       <div className='new-post-btns'>
         {props.resharePostData === null ?
-          <div className={submitButtonClass()} onClick={postButtonOnClick}>
+          <div
+            className={!isValid() || posting ? 'new-post-post-btn new-post-post-btn-disabled' : 'new-post-post-btn'}
+            onClick={postButtonOnClick}
+          >
             Post
           </div> :
           <div className='new-post-reshare-controls'>
@@ -401,7 +393,10 @@ export default (props: Props) => {
             }}>
               <QuestionMarkCircleIcon />
             </div>
-            <div className={submitButtonClass()} onClick={postButtonOnClick}>
+            <div
+              className={!isValid() || posting ? 'new-post-post-btn new-post-post-btn-disabled' : 'new-post-post-btn'}
+              onClick={postButtonOnClick}
+            >
               Reshare
             </div>
             <PillModal

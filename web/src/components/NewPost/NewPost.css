@@ -16,7 +16,6 @@
 }
 
 /* Text Area */
-
 .new-post-text-box-container {
     position: relative;
 }
@@ -103,11 +102,11 @@
 .new-post-btns {
     display: flex;
     justify-content: flex-end;
+    margin-top: 10px;
 }
 
 .new-post-post-btn {
-    margin-top: 10px;
-    padding: 10px 12px;
+    padding: 12px 25px;
     font-weight: bold;
     font-size: medium;
     background-color: #E05140;
@@ -117,20 +116,12 @@
     cursor: pointer;
 }
 
-.new-post-post-btn-invalid {
+.new-post-post-btn-disabled {
     background-color: #767676;
-    cursor: none;
-    pointer-events: none;
-    user-select: none;
-}
-
-.new-post-post-btn-loading {
-    background-color: #767676;
-    cursor: none;
+    cursor: not-allowed;
 }
 
 /* Reshare Preview */
-
 .new-post-reshared-info-wrapper {
     display: flex;
 }
@@ -182,10 +173,5 @@
 
     .new-post-text-box {
         resize: none;
-    }
-
-    .new-post-post-btn {
-        padding: 5px 6px;
-        font-size: small;
     }
 }
