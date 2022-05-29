@@ -37,26 +37,6 @@
     color: #555555;
 }
 
-/* TODO: this is shared among all the settings modals*/
-.settings-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-}
-
-/* TODO: this is shared among all the settings modals*/
-.settings-controls-button {
-    padding: 8px 10px;
-    font-weight: bold;
-    font-size: medium;
-    color: white;
-    border-radius: 5px;
-    width: auto;
-    cursor: pointer;
-    margin-right: 20px;
-}
-
 .settings-display-name {
     width: 240px;
     height: 3em;
