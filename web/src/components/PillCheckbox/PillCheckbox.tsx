@@ -1,7 +1,7 @@
 import React from "react";
 import './PillCheckbox.css'
-import {CheckCircleIcon} from "@heroicons/react/solid";
-import {XCircleIcon} from "@heroicons/react/outline";
+import {CheckCircleIcon as CheckCircleIconSolid} from "@heroicons/react/solid";
+import {CheckCircleIcon as CheckCircleIconOutline} from "@heroicons/react/outline";
 
 interface Props {
   checked: boolean
@@ -23,13 +23,13 @@ export default (props: Props) => {
       }}
       style={{
         cursor: props.disabled ? 'not-allowed' : 'pointer',
-        color: props.checked ? '#555555' : '#b7b7b7'
+        color: props.checked ? '#555555' : '#d0d0d0'
       }}
     >
       <div className='pill-checkbox-icon'>
         {props.checked ?
-          <CheckCircleIcon /> :
-          <XCircleIcon />
+          <CheckCircleIconSolid /> :
+          <CheckCircleIconOutline />
         }
       </div>
       <div>{props.label}</div>
