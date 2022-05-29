@@ -67,9 +67,13 @@
     z-index: 3;
 }
 
-.new-post-circles-dropdown-wrapper {
+.new-post-sharing-scope {
     display: flex;
     align-items: center;
+}
+
+.new-post-sharing-scope-dropdown {
+    width: 80%;
 }
 
 .new-post-sharing-scope-question {
