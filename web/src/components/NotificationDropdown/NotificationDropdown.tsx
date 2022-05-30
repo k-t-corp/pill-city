@@ -17,12 +17,14 @@ export default (_: Props) => {
         <div className="notification-header">
           <span className="notification-title">Notifications <span
             className={`notification-count ${unreadNotificationsCount === 0 ? "notification-count-grey" : "notification-count-red"}`}>{unreadNotificationsCount}</span></span>
-            <div className='notification-mark-all-button' onClick={async (e) => {
+          {
+            unreadNotificationsCount !== 0 && <div className='notification-mark-all-button' onClick={async (e) => {
               e.preventDefault()
               await dispatch(markAllNotificationsAsRead())
             }}>
-              <CheckIcon />
+              <CheckIcon/>
             </div>
+          }
         </div>
       </div>
       <NotificationList />
