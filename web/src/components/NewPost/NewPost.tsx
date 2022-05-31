@@ -55,7 +55,7 @@ export default (props: Props) => {
   const [myCircles, updateMyCircles] = useState<Circle[]>([])
 
   const [content, updateContent] = useState<string>("")
-  const [sharingScope, updateSharingScope] = useState<SharingScopeOption[]>([SharingScopePublicOption])
+  const [sharingScope, updateSharingScope] = useState<SharingScopeOption[]>([])
   const [resharable, updateResharable] = useState(true)
   const [medias, updateMedias] = useState<(NewPostMediaUploaded | NewPostMediaOwned)[]>([])
   const [pollChoices, updatePollChoices] = useState<AddPollChoice[]>([])
@@ -95,7 +95,7 @@ export default (props: Props) => {
 
   const reset = () => {
     updateContent('')
-    updateSharingScope([SharingScopePublicOption])
+    updateSharingScope([])
     updateResharable(true)
     updateMedias([])
     updatePollChoices([])
