@@ -1,10 +1,3 @@
-.settings-avatar-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
 .settings-avatar-drop-zone {
     display: block;
     background-color: #f0f0f0;
@@ -14,29 +7,4 @@
     color: #838383;
     font-size: xx-large;
     border-radius: 4px;
-}
-
-.settings-avatar-drop-zone:hover {
-    cursor: pointer;
-}
-
-.settings-avatar-button-cancel {
-    background-color: #727272;
-}
-
-.settings-avatar-button-upload {
-    background-color: #0d71bb;
-}
-
-.settings-avatar-button-confirm {
-    background-color: #E05140;
-}
-
-.settings-avatar-send-post-checkbox {
-    margin-left: 10px;
-}
-
-.settings-avatar-send-post-checkbox-label {
-    margin-left: 5px;
-    cursor: pointer;
 }

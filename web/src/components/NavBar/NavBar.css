@@ -4,6 +4,7 @@
     width: 100%;
     display: flex;
     z-index: 3;
+    cursor: pointer;
 }
 
 .nav-bar-top {
@@ -30,10 +31,6 @@
 .nav-bar-button-container-aligned {
     padding-left: 20px;
     padding-right: 20px;
-}
-
-.nav-bar-button-container:hover {
-    cursor: pointer;
 }
 
 .nav-bar-button-active {
