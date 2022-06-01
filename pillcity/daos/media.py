@@ -1,6 +1,7 @@
 from typing import List, Optional
 from pillcity.models import Media, User
 from pillcity.utils.now import now_seconds
+from pillcity.tasks.process_image import process_image
 from .s3 import upload_to_s3, delete_from_s3
 
 
@@ -34,6 +35,9 @@ def create_media(file, object_name_stem: str, owner: User) -> Optional[Media]:
     # have to force save for some reason...
     # https://github.com/MongoEngine/mongoengine/issues/1246
     media.save(force_insert=True)
+
+    # trigger async job to process the image
+    process_image.delay(object_name)
 
     return media
 

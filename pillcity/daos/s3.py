@@ -1,23 +1,16 @@
 import os
-import boto3
 import tempfile
 import uuid
 from typing import Optional
 from PIL import Image, UnidentifiedImageError
+from pillcity.utils.s3 import get_s3_client
 from .cache import r, RMediaUrl
 
 AllowedImageTypes = ['gif', 'jpeg', 'bmp', 'png', 'webp']
 
 
 def upload_to_s3(file, object_name_stem: str) -> Optional[str]:
-    s3_client = boto3.client(
-        's3',
-        endpoint_url=os.environ['S3_ENDPOINT_URL'],
-        region_name=os.environ.get('AWS_REGION', ''),
-        aws_access_key_id=os.environ['AWS_ACCESS_KEY'],
-        aws_secret_access_key=os.environ['AWS_SECRET_KEY']
-    )
-    s3_bucket_name = os.environ['S3_BUCKET_NAME']
+    s3_client, s3_bucket_name = get_s3_client()
 
     # check file size
     # flask will limit upload size for us :)
@@ -53,14 +46,7 @@ def upload_to_s3(file, object_name_stem: str) -> Optional[str]:
 
 
 def delete_from_s3(object_name: str):
-    s3_client = boto3.client(
-        's3',
-        endpoint_url=os.environ['S3_ENDPOINT_URL'],
-        region_name=os.environ.get('AWS_REGION', ''),
-        aws_access_key_id=os.environ['AWS_ACCESS_KEY'],
-        aws_secret_access_key=os.environ['AWS_SECRET_KEY']
-    )
-    s3_bucket_name = os.environ['S3_BUCKET_NAME']
+    s3_client, s3_bucket_name = get_s3_client()
 
     s3_client.delete_object(Bucket=s3_bucket_name, Key=object_name)
     r.hdel(RMediaUrl, object_name)
