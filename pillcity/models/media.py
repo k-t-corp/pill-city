@@ -19,4 +19,4 @@ class Media(Document):
     processed = BooleanField(required=False, default=False)
     width = IntField(required=False, default=None)
     height = IntField(required=False, default=None)
-    dominant_color = IntField(required=False, default=None)
+    dominant_color_hex = StringField(required=False, default=None)
