@@ -110,13 +110,6 @@ class MediaUrl(fields.Raw):
         return get_media_url(object_name)
 
 
-class MediaUrls(fields.Raw):
-    def format(self, media_list: List[Media]):
-        if not media_list:
-            return []
-        return list(map(lambda m: get_media_url(m.id), media_list))
-
-
 class MediaUrlsV2(fields.Raw):
     def format(self, media_list: List[Media]):
         if not media_list:
