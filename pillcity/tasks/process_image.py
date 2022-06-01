@@ -44,11 +44,10 @@ def process_image(_id: str):
         im.save(resized_fp, 'webp')
 
         logger.info(f"Uploading resized webp for media {media.id}")
-        resized_object_name = media.id.rsplit('.', 1)[0] + '.processed.webp'
         s3_client.upload_file(
             Filename=resized_fp,
             Bucket=s3_bucket_name,
-            Key=resized_object_name,
+            Key=media.get_processed_object_name(),
             ExtraArgs={
                 'ContentType': "image/webp}",
             }

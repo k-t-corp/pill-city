@@ -6,7 +6,7 @@ from pillcity.daos.comment import create_comment, dangerously_get_comment, delet
 from pillcity.daos.exceptions import UnauthorizedAccess
 from .mention import check_mentioned_user_ids
 from .users import user_fields
-from .media import check_media_object_names, MediaUrls
+from .media import check_media_object_names, MediaUrls, MediaUrlsV2
 
 MaxCommentMediaCount = 1
 
@@ -21,6 +21,7 @@ nested_comment_fields = {
     'author': fields.Nested(user_fields),
     'content': fields.String,
     'media_urls': MediaUrls(attribute='media_list'),
+    'media_urls_v2': MediaUrlsV2(attribute='media_list'),
     'deleted': fields.Boolean,
 }
 
