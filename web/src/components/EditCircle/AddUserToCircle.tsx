@@ -1,8 +1,8 @@
 import React from "react";
 import './AddUserToCircle.css'
 import User from "../../models/User";
-import getAvatarUrl from "../../utils/getAvatarUrl";
 import getNameAndSubName from "../../utils/getNameAndSubName";
+import AvatarV2 from "../MediaV2/AvatarV2";
 
 interface Props {
   users: User[]
@@ -24,7 +24,7 @@ const UserCard = (props: UserCardProps) => {
       onAddUser(user)
     }}>
       <div className="add-user-to-circle-user-card-avatar">
-        <img className="add-user-to-circle-user-card-avatar-img" src={getAvatarUrl(user)} alt=""/>
+        <AvatarV2 className="add-user-to-circle-user-card-avatar-img" user={user} />
       </div>
       <div className='add-user-to-circle-user-card-right'>
         <div className="add-user-to-circle-user-card-name">

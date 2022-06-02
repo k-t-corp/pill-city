@@ -3,7 +3,6 @@ import {useHistory, useParams} from "react-router-dom";
 import PostComponent from "../../components/Post/Post";
 import NewPost from "../../components/NewPost/NewPost";
 import getProfilePicUrl from "../../utils/getProfilePicUrl";
-import getAvatarUrl from "../../utils/getAvatarUrl";
 import ApiError from "../../api/ApiError";
 import User from "../../models/User";
 import PostModel from "../../models/Post"
@@ -14,6 +13,7 @@ import {useAppSelector} from "../../store/hooks";
 import {ResharedPost} from "../../models/Post";
 import PillModal from "../../components/PillModal/PillModal";
 import "./Profile.css"
+import AvatarV2 from "../../components/MediaV2/AvatarV2";
 
 const InfiniteScrollBefore = 5
 
@@ -237,10 +237,9 @@ const Profile = () => {
         }}/>
         <div className="profile-avatar-wrapper">
           {/* Not using RoundAvatar here because it doesn't need to be clicked + it has extra styles*/}
-          <img
+          <AvatarV2
             className="profile-avatar-img"
-            src={getAvatarUrl(user)}
-            alt=""
+            user={user}
           />
         </div>
         <span className="profile-user-name">{name}</span>

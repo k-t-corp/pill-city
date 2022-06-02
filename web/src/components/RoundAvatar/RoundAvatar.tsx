@@ -1,8 +1,8 @@
 import * as React from "react";
 import {useHistory} from "react-router-dom";
 import User from '../../models/User'
-import getAvatarUrl from '../../utils/getAvatarUrl'
 import './RoundAvatar.css'
+import AvatarV2 from "../MediaV2/AvatarV2";
 
 interface Props {
   user: User | null
@@ -12,10 +12,9 @@ export default (props: Props) => {
   const history = useHistory()
 
   return (
-    <img
+    <AvatarV2
       className="round-avatar-img"
-      src={getAvatarUrl(props.user)}
-      alt=""
+      user={props.user}
       style={{
         cursor: props.user !== null ? 'pointer' : 'default'
       }}

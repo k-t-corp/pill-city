@@ -1,6 +1,5 @@
 import React, {useState} from 'react'
 import api from '../../api/Api'
-import getAvatarUrl from "../../utils/getAvatarUrl";
 import {useMediaQuery} from 'react-responsive'
 import Circle from "../../models/Circle";
 import User from "../../models/User";
@@ -9,6 +8,8 @@ import {useToast} from "../Toast/ToastProvider";
 import "./DroppableCircleBoard.css"
 import PillModal from "../PillModal/PillModal";
 import EditCircle from "../EditCircle/EditCircle";
+import AvatarV2 from "../MediaV2/AvatarV2";
+import getMediaV2Url from "../../utils/getMediaV2Url";
 
 interface Props {
   circle: Circle
@@ -38,7 +39,7 @@ export default (props: Props) => {
   let animationIntervalId: any = null;
   const circleAnimation = (circleId: string, user: User) => {
     const avatar: any = document.getElementById(`${circleId}-temp-card-avatar`)
-    avatar.src = getAvatarUrl(user)
+    avatar.src = !user.avatar_url_v2 ? `${process.env.PUBLIC_URL}/avatar.webp` : getMediaV2Url(user.avatar_url_v2)
 
     let elem: any = document.getElementById(`${circleId}-temp-card`);
     let degree = 1;
@@ -191,10 +192,9 @@ export default (props: Props) => {
             width: `${cardRadius * 2 - circleMargin * 2}px`,
             height: `${cardRadius * 2 - circleMargin * 2}px`,
           }}>
-          <img
+          <AvatarV2
             className="droppable-circle-board-member-card-avatar-img"
-            src={getAvatarUrl(member)}
-            alt=""
+            user={member}
           />
         </div>)
     }
