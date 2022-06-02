@@ -45,7 +45,7 @@ def process_image(_id: str):
             Bucket=s3_bucket_name,
             Key=media.get_processed_object_name(),
             ExtraArgs={
-                'ContentType': "image/webp}",
+                'ContentType': "image/webp",
             }
         )
 
