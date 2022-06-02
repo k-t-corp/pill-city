@@ -23,6 +23,8 @@ def process_image(_id: str):
     connect(host=os.environ['MONGODB_URI'])
     logger.info(f"Processing image {_id}")
     media = Media.objects.get(id=_id)  # type: Media
+    if media.processed:
+        return
     try:
         logger.info(f"Processing media {media.id}")
         s3_client, s3_bucket_name = get_s3_client()
