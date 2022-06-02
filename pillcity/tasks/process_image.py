@@ -32,13 +32,9 @@ def process_image(_id: str):
         with open(original_fp, 'wb') as f:
             s3_client.download_fileobj(s3_bucket_name, media.id, f)
 
-        logger.info(f"Extracting metadata from media {media.id}")
-        im = Image.open(original_fp)
-        width, height = im.size
-        dominant_color_hex = rgb_tuple_to_hex_str(ColorThief(original_fp).get_color(quality=1))
-
         logger.info(f"Converting media {media.id} to resized webp")
         resized_fp = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
+        im = Image.open(original_fp)
         im.thumbnail(IMAGE_RESIZE_SIZE)
         im = im.convert('RGB')
         im.save(resized_fp, 'webp')
@@ -52,6 +48,11 @@ def process_image(_id: str):
                 'ContentType': "image/webp}",
             }
         )
+
+        logger.info(f"Extracting metadata from processed media {media.id}")
+        resized_im = Image.open(resized_fp)
+        width, height = resized_im.size
+        dominant_color_hex = rgb_tuple_to_hex_str(ColorThief(resized_fp).get_color(quality=1))
 
         logger.info(f"Saving processed metadata for media {media.id}")
         media.processed = True
