@@ -9,6 +9,7 @@ import {useToast} from "../Toast/ToastProvider";
 import "./DroppableCircleBoard.css"
 import PillModal from "../PillModal/PillModal";
 import EditCircle from "../EditCircle/EditCircle";
+import AvatarV2 from "../MediaV2/AvatarV2";
 
 interface Props {
   circle: Circle
@@ -38,7 +39,8 @@ export default (props: Props) => {
   let animationIntervalId: any = null;
   const circleAnimation = (circleId: string, user: User) => {
     const avatar: any = document.getElementById(`${circleId}-temp-card-avatar`)
-    avatar.src = getAvatarUrl(user)
+    // todo: this is dup with logic in AvatarV2
+    avatar.src = !user.avatar_url_v2 ? `${process.env.PUBLIC_URL}/avatar.webp` : user.avatar_url_v2.processed ? user.avatar_url_v2.processed_url : user.avatar_url_v2.original_url
 
     let elem: any = document.getElementById(`${circleId}-temp-card`);
     let degree = 1;
@@ -191,10 +193,9 @@ export default (props: Props) => {
             width: `${cardRadius * 2 - circleMargin * 2}px`,
             height: `${cardRadius * 2 - circleMargin * 2}px`,
           }}>
-          <img
+          <AvatarV2
             className="droppable-circle-board-member-card-avatar-img"
-            src={getAvatarUrl(member)}
-            alt=""
+            user={member}
           />
         </div>)
     }

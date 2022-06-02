@@ -7,6 +7,7 @@ import api from "../../api/Api";
 import {UserRemoveIcon} from "@heroicons/react/solid";
 import {UserAddIcon} from "@heroicons/react/outline";
 import "./MobileUsers.css"
+import AvatarV2 from "../MediaV2/AvatarV2";
 
 interface Props {
   loading: boolean
@@ -34,7 +35,7 @@ const UserCard = (props: UserCardProps) => {
       history.push(`/profile/${user.id}`)
     }}>
       <div className="mobile-users-user-card-avatar">
-        <img className="mobile-users-user-card-avatar-img" src={getAvatarUrl(user)} alt=""/>
+        <AvatarV2 className="mobile-users-user-card-avatar-img" user={user}/>
       </div>
       <div className='mobile-users-user-card-right'>
         <div className="mobile-users-user-card-name">

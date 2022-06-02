@@ -14,6 +14,7 @@ import {useToast} from "../Toast/ToastProvider";
 import getNameAndSubName from "../../utils/getNameAndSubName";
 import RenameCircle from "./RenameCircle";
 import PillForm from "../PillForm/PillForm";
+import AvatarV2 from "../MediaV2/AvatarV2";
 
 interface MemberCardProps {
   user: User
@@ -27,7 +28,7 @@ const MemberCard = (props: MemberCardProps) => {
   return (
     <div className="edit-circle-member-card-wrapper">
       <div className="edit-circle-member-card-avatar">
-        <img className="edit-circle-member-card-avatar-img" src={getAvatarUrl(props.user)} alt=""/>
+        <AvatarV2 className="edit-circle-member-card-avatar-img" user={props.user} />
       </div>
       <div className="edit-circle-member-card-name">
         {name}
