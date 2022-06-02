@@ -36,11 +36,11 @@ def process_image(_id: str):
 
         logger.info(f"Converting media {media.id} to resized webp")
         resized_fp = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
-        original_im = Image.open(original_fp)
+        original_im = Image.open(original_fp).convert("RGBA")
         im = Image.new("RGBA", original_im.size, "WHITE")
         im.paste(original_im, mask=original_im)
         im.thumbnail(IMAGE_RESIZE_SIZE)
-        im = im.convert('RGB')
+        im = im.convert('RGBA')
         im.save(resized_fp, 'webp')
 
         logger.info(f"Uploading resized webp for media {media.id}")
