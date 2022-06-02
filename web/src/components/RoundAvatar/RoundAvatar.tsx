@@ -1,7 +1,6 @@
 import * as React from "react";
 import {useHistory} from "react-router-dom";
 import User from '../../models/User'
-import getAvatarUrl from '../../utils/getAvatarUrl'
 import './RoundAvatar.css'
 import AvatarV2 from "../MediaV2/AvatarV2";
 

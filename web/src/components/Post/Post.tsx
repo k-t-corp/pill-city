@@ -40,7 +40,7 @@ export default (props: Props) => {
   // currently replying to comment
   const [replyingToComment, updateReplyingToComment] = useState<CommentModel | null>(null)
 
-  const [mediaUrls, updateMediaUrls] = useState(props.data.media_urls)
+  const [mediaUrls, updateMediaUrls] = useState(props.data.media_urls_v2)
   const [poll, updatePoll] = useState<Poll>(props.data.poll)
   const [voting, updateVoting] = useState(false)
 

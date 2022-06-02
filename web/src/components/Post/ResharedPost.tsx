@@ -39,7 +39,7 @@ export default (props: Props) => {
         }
         {
           !resharedFrom.deleted &&
-          <MediaCollage mediaUrls={resharedFrom.media_urls} />
+          <MediaCollage mediaUrls={resharedFrom.media_urls_v2} />
         }
       </div>
     </div>

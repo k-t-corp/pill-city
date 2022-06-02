@@ -1,9 +1,12 @@
 import React, {useState} from "react";
 import './MediaCollage.css'
 import Lightbox from "react-image-lightbox";
+import MediaUrlV2 from "../../models/MediaUrlV2";
+import MediaV2 from "../MediaV2/MediaV2";
+import getMediaV2Url from "../../utils/getMediaV2Url";
 
 interface Props {
-  mediaUrls: string[]
+  mediaUrls: MediaUrlV2[]
 }
 
 export default (props: Props) => {
@@ -23,7 +26,7 @@ export default (props: Props) => {
   if (mediaUrls.length === 1) {
     elements = [
       <div className='media-collage-img-container' key={0}>
-        <img className='media-collage-img' src={mediaUrls[0]} alt="" onClick={e => {
+        <MediaV2 className='media-collage-img' mediaUrlV2={mediaUrls[0]} onClick={e => {
           e.preventDefault()
           onClick(0)
         }}/>
@@ -34,13 +37,13 @@ export default (props: Props) => {
   if (mediaUrls.length === 2) {
     elements = [
       <div className='media-collage-img-container' key={0}>
-        <img className='media-collage-img' src={mediaUrls[0]} alt="" onClick={e => {
+        <MediaV2 className='media-collage-img' mediaUrlV2={mediaUrls[0]} onClick={e => {
           e.preventDefault()
           onClick(0)
         }}/>
       </div>,
       <div className='media-collage-img-container' key={1}>
-        <img className='media-collage-img' src={mediaUrls[1]} alt="" onClick={e => {
+        <MediaV2 className='media-collage-img' mediaUrlV2={mediaUrls[1]} onClick={e => {
           e.preventDefault()
           onClick(1)
         }}/>
@@ -51,20 +54,20 @@ export default (props: Props) => {
   if (mediaUrls.length === 3) {
     elements = [
       <div className='media-collage-img-container' key={0}>
-        <img className='media-collage-img' src={mediaUrls[0]} alt="" onClick={e => {
+        <MediaV2 className='media-collage-img' mediaUrlV2={mediaUrls[0]} onClick={e => {
           e.preventDefault()
           onClick(0)
         }}/>
       </div>,
       <div className='media-collage-img-col-container' key={1}>
         <div className='media-collage-img-container media-collage-img-container-half'>
-          <img className='media-collage-img media-collage-img-half' src={mediaUrls[1]} alt="" onClick={e => {
+          <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[1]} onClick={e => {
             e.preventDefault()
             onClick(1)
           }}/>
         </div>
         <div className='media-collage-img-container media-collage-img-container-half'>
-          <img className='media-collage-img media-collage-img-half' src={mediaUrls[2]} alt="" onClick={e => {
+          <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[2]} onClick={e => {
             e.preventDefault()
             onClick(2)
           }}/>
@@ -77,13 +80,13 @@ export default (props: Props) => {
     elements = [
       <div className='media-collage-img-col-container' key={0}>
         <div className='media-collage-img-container media-collage-img-container-half'>
-          <img className='media-collage-img media-collage-img-half' src={mediaUrls[0]} alt="" onClick={e => {
+          <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[0]} onClick={e => {
             e.preventDefault()
             onClick(0)
           }}/>
         </div>
         <div className='media-collage-img-container media-collage-img-container-half'>
-          <img className='media-collage-img media-collage-img-half' src={mediaUrls[1]} alt="" onClick={e => {
+          <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[1]} onClick={e => {
             e.preventDefault()
             onClick(1)
           }}/>
@@ -91,13 +94,13 @@ export default (props: Props) => {
       </div>,
       <div className='media-collage-img-col-container' key={1}>
         <div className='media-collage-img-container media-collage-img-container-half'>
-          <img className='media-collage-img media-collage-img-half' src={mediaUrls[2]} alt="" onClick={e => {
+          <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[2]} onClick={e => {
             e.preventDefault()
             onClick(2)
           }}/>
         </div>
         <div className='media-collage-img-container media-collage-img-container-half'>
-          <img className='media-collage-img media-collage-img-half' src={mediaUrls[3]} alt="" onClick={e => {
+          <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[3]} onClick={e => {
             e.preventDefault()
             onClick(3)
           }}/>
@@ -111,12 +114,12 @@ export default (props: Props) => {
       {elements}
       {showingMediaIndex !== -1 &&
         <Lightbox
-          mainSrc={mediaUrls[showingMediaIndex]}
-          prevSrc={showingMediaIndex !== 0 ? mediaUrls[showingMediaIndex - 1] : undefined}
+          mainSrc={getMediaV2Url(mediaUrls[showingMediaIndex])}
+          prevSrc={showingMediaIndex !== 0 ? getMediaV2Url(mediaUrls[showingMediaIndex - 1]) : undefined}
           onMovePrevRequest={() =>
             updateShowingMediaIndex(showingMediaIndex - 1)
           }
-          nextSrc={showingMediaIndex !== mediaUrls.length - 1 ? mediaUrls[showingMediaIndex + 1] : undefined}
+          nextSrc={showingMediaIndex !== mediaUrls.length - 1 ? getMediaV2Url(mediaUrls[showingMediaIndex + 1]) : undefined}
           onMoveNextRequest={() =>
             updateShowingMediaIndex(showingMediaIndex + 1)
           }

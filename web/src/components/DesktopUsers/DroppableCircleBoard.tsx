@@ -1,6 +1,5 @@
 import React, {useState} from 'react'
 import api from '../../api/Api'
-import getAvatarUrl from "../../utils/getAvatarUrl";
 import {useMediaQuery} from 'react-responsive'
 import Circle from "../../models/Circle";
 import User from "../../models/User";
@@ -10,6 +9,7 @@ import "./DroppableCircleBoard.css"
 import PillModal from "../PillModal/PillModal";
 import EditCircle from "../EditCircle/EditCircle";
 import AvatarV2 from "../MediaV2/AvatarV2";
+import getMediaV2Url from "../../utils/getMediaV2Url";
 
 interface Props {
   circle: Circle
@@ -39,8 +39,7 @@ export default (props: Props) => {
   let animationIntervalId: any = null;
   const circleAnimation = (circleId: string, user: User) => {
     const avatar: any = document.getElementById(`${circleId}-temp-card-avatar`)
-    // todo: this is dup with logic in AvatarV2
-    avatar.src = !user.avatar_url_v2 ? `${process.env.PUBLIC_URL}/avatar.webp` : user.avatar_url_v2.processed ? user.avatar_url_v2.processed_url : user.avatar_url_v2.original_url
+    avatar.src = !user.avatar_url_v2 ? `${process.env.PUBLIC_URL}/avatar.webp` : getMediaV2Url(user.avatar_url_v2)
 
     let elem: any = document.getElementById(`${circleId}-temp-card`);
     let degree = 1;

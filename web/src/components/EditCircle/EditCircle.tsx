@@ -5,7 +5,6 @@ import './EditCircle.css'
 import PillButtons from "../PillButtons/PillButtons";
 import PillButton, {PillButtonVariant} from "../PillButtons/PillButton";
 import {TrashIcon} from "@heroicons/react/solid";
-import getAvatarUrl from "../../utils/getAvatarUrl";
 import User from "../../models/User";
 import PillModal from "../PillModal/PillModal";
 import AddUserToCircle from "./AddUserToCircle";

@@ -1,7 +1,6 @@
 import React from "react";
 import './AddUserToCircle.css'
 import User from "../../models/User";
-import getAvatarUrl from "../../utils/getAvatarUrl";
 import getNameAndSubName from "../../utils/getNameAndSubName";
 import AvatarV2 from "../MediaV2/AvatarV2";
 

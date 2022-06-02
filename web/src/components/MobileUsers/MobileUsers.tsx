@@ -1,6 +1,5 @@
 import React, {useState} from 'react'
 import {useHistory} from "react-router-dom";
-import getAvatarUrl from "../../utils/getAvatarUrl";
 import User from "../../models/User";
 import getNameAndSubName from "../../utils/getNameAndSubName";
 import api from "../../api/Api";

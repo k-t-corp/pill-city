@@ -3,7 +3,6 @@ import {useHistory, useParams} from "react-router-dom";
 import PostComponent from "../../components/Post/Post";
 import NewPost from "../../components/NewPost/NewPost";
 import getProfilePicUrl from "../../utils/getProfilePicUrl";
-import getAvatarUrl from "../../utils/getAvatarUrl";
 import ApiError from "../../api/ApiError";
 import User from "../../models/User";
 import PostModel from "../../models/Post"
