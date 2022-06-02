@@ -1,7 +1,6 @@
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
 import parseContent from "../../utils/parseContent";
-import MediaPane from "../MediaPane/MediaPane";
 import {pastTime} from "../../utils/timeDelta";
 import React, {useState} from "react";
 import Post, {NestedComment, Comment} from "../../models/Post";
@@ -10,6 +9,7 @@ import api from "../../api/Api";
 import './NestedComment.css'
 import {DotsVerticalIcon} from "@heroicons/react/solid";
 import PillDropdownMenu from "../PillDropdownMenu/PillDropdownMenu";
+import MediaCollage from "../MediaCollage/MediaCollage";
 
 interface Props {
   me: User
@@ -70,7 +70,7 @@ export default (props: Props) => {
         {
           !deleted && nestedComment.media_urls.length > 0 &&
           <div>
-            <MediaPane mediaUrls={[nestedComment.media_urls[0]]}/>
+            <MediaCollage mediaUrls={[nestedComment.media_urls_v2[0]]}/>
           </div>
         }
         <div className='post-nested-comment-actions'>

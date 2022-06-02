@@ -2,7 +2,6 @@ import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
 import {pastTime} from "../../utils/timeDelta";
 import parseContent from "../../utils/parseContent";
-import MediaPane from "../MediaPane/MediaPane";
 import React, {useState} from "react";
 import {Comment} from "../../models/Post";
 import User from "../../models/User";
@@ -12,6 +11,7 @@ import api from "../../api/Api";
 import "./Comment.css"
 import {DotsVerticalIcon} from "@heroicons/react/solid";
 import PillDropdownMenu from "../PillDropdownMenu/PillDropdownMenu";
+import MediaCollage from "../MediaCollage/MediaCollage";
 
 interface Props {
   me: User
@@ -89,7 +89,7 @@ export default (props: Props) => {
           {
             !deleted && comment.media_urls.length > 0 &&
             <div>
-              <MediaPane mediaUrls={[comment.media_urls[0]]}/>
+              <MediaCollage mediaUrls={[comment.media_urls_v2[0]]}/>
             </div>
           }
         </div>
