@@ -1,5 +1,4 @@
 import React, {useState} from 'react'
-import getAvatarUrl from "../../utils/getAvatarUrl";
 import getNameAndSubName from "../../utils/getNameAndSubName";
 import User from "../../models/User";
 import {useHistory} from "react-router-dom";
@@ -7,6 +6,7 @@ import "./DraggableUserCard.css"
 import api from "../../api/Api";
 import {UserRemoveIcon} from "@heroicons/react/solid";
 import {UserAddIcon} from "@heroicons/react/outline";
+import AvatarV2 from "../MediaV2/AvatarV2";
 
 interface Props {
   user: User
@@ -44,7 +44,7 @@ export default (props: Props) => {
       {/*prevent users from dragging the single avatar image*/}
       <div className="draggable-user-card-left" draggable={false}>
         <div className="draggable-user-card-avatar" draggable={false}>
-          <img className="draggable-user-card-avatar-img" draggable={false} src={getAvatarUrl(props.user)} alt=""/>
+          <AvatarV2 className="draggable-user-card-avatar-img" draggable={false} user={props.user}/>
         </div>
         <div className="draggable-user-card-name">{name}</div>
       </div>
