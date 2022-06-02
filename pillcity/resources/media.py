@@ -18,6 +18,8 @@ MaxMediaCount = 4
 PostMediaUrlExpireSeconds = 3600 * 12  # 12 hours
 GetMediaPageCount = 4
 
+S3_AVATARS_PREFIX = "avatars/"
+
 
 # Cache structure within Redis
 # "mediaUrl" -> object_name -> "media url"(space)"media url generated time in ms"
@@ -27,6 +29,8 @@ def get_media_url(object_name: str) -> str:
     """
     Get the publicly accessible URL to a media
     """
+    if object_name.startswith(S3_AVATARS_PREFIX):
+        return f"{os.environ['CDN_URL']}/{object_name}"
 
     # subtract expiry by 10 seconds for some network overhead
     r_media_url = r.hget(RMediaUrl, object_name)
