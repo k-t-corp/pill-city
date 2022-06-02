@@ -12,6 +12,7 @@ from pillcity.daos.post import create_post
 from pillcity.daos.rss import notifying_action_value_to_rss_code
 from pillcity.daos.media import create_media
 from pillcity.utils.now import now_seconds
+from .media import get_media_url_v2
 
 
 class UserId(fields.Raw):
@@ -32,6 +33,14 @@ class UserAvatar(fields.Raw):
         return f"{os.environ['CDN_URL']}/{avatar_media.id}"
 
 
+class UserAvatarV2(fields.Raw):
+    def format(self, value):
+        avatar_media = get_in_user_cache_by_oid(value).avatar
+        if not avatar_media:
+            return None
+        return get_media_url_v2(avatar_media.id)
+
+
 class UserProfilePic(fields.Raw):
     def format(self, value):
         return get_in_user_cache_by_oid(value).profile_pic
@@ -46,6 +55,7 @@ user_fields = {
     'id': UserId(attribute='id'),
     'created_at_seconds': UserCreatedAtSeconds(attribute='id'),
     'avatar_url': UserAvatar(attribute='id'),
+    'avatar_url_v2': UserAvatarV2(attribute='id'),
     'profile_pic': UserProfilePic(attribute='id'),
     'display_name': UserDisplayName(attribute='id')
 }

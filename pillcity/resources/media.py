@@ -23,7 +23,11 @@ GetMediaPageCount = 4
 # "mediaUrl" -> object_name -> "media url"(space)"media url generated time in ms"
 
 @timer
-def get_media_url(object_name: str):
+def get_media_url(object_name: str) -> str:
+    """
+    Get the publicly accessible URL to a media
+    """
+
     # subtract expiry by 10 seconds for some network overhead
     r_media_url = r.hget(RMediaUrl, object_name)
     if r_media_url:
@@ -81,9 +85,34 @@ def get_media_url(object_name: str):
     return media_url
 
 
+def get_media_url_v2(object_name: str) -> dict:
+    """
+    Get a dict representing a media that could have been processed (or not)
+    """
+    media = get_media(object_name)
+    if not media.processed:
+        return {
+            "original_url": get_media_url(media.id),
+            "processed": False
+        }
+    return {
+        "original_url": get_media_url(media.id),
+        "processed": True,
+        "processed_url": get_media_url(media.get_processed_object_name()),
+        "width": media.width,
+        "height": media.height,
+        "dominant_color_hex": media.dominant_color_hex
+    }
+
+
 class MediaUrl(fields.Raw):
     def format(self, object_name: str):
         return get_media_url(object_name)
+
+
+class MediaUrlV2(fields.Raw):
+    def format(self, object_name: str):
+        return get_media_url_v2(object_name)
 
 
 class MediaUrls(fields.Raw):
@@ -93,9 +122,17 @@ class MediaUrls(fields.Raw):
         return list(map(lambda m: get_media_url(m.id), media_list))
 
 
+class MediaUrlsV2(fields.Raw):
+    def format(self, media_list: List[Media]):
+        if not media_list:
+            return []
+        return list(map(lambda m: get_media_url_v2(m.id), media_list))
+
+
 media_fields = {
     "object_name": fields.String(attribute='id'),
-    "media_url": MediaUrl(attribute='id')
+    "media_url": MediaUrl(attribute='id'),
+    "media_url_v2": MediaUrlV2(attribute='id')
 }
 
 

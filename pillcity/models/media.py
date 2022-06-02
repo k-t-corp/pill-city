@@ -20,3 +20,6 @@ class Media(Document):
     width = IntField(required=False, default=None)
     height = IntField(required=False, default=None)
     dominant_color_hex = StringField(required=False, default=None)
+
+    def get_processed_object_name(self):
+        return self.id.rsplit('.', 1)[0] + '.processed.webp'

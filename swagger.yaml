@@ -138,6 +138,8 @@ components:
           format: url
           example: https://pill-city.s3.us-west-2.amazonaws.com/avatars/kt-1646414449.png
           default: null
+        avatar_url_v2:
+          $ref: '#/components/schemas/MediaUrlV2'
         profile_pic:
           type: string
           description: User's choice of profile banner. The choices are defined on web frontend.
@@ -176,6 +178,12 @@ components:
             type: string
           example: ["https://pill-city.s3.us-west-2.amazonaws.com/avatars/kt-1646414449.png", "https://pill-city.s3.us-west-2.amazonaws.com/avatars/ika-1631578.png"]
           default: []
+        media_urls_v2:
+          type: array
+          description: v2 media URLs for the comment's media
+          items:
+            $ref: '#/components/schemas/MediaUrlV2'
+          default: []
         deleted:
           type: boolean
           description: Whether the reshared post is deleted
@@ -207,6 +215,12 @@ components:
             type: string
           example: ["https://pill-city.s3.us-west-2.amazonaws.com/avatars/kt-1646414449.png", "https://pill-city.s3.us-west-2.amazonaws.com/avatars/ika-1631578.png"]
           default: []
+        media_urls_v2:
+          type: array
+          description: v2 media URLs for the comment's media
+          items:
+            $ref: '#/components/schemas/MediaUrlV2'
+          default: []
         deleted:
           type: boolean
           description: Whether the nested comment is deleted
@@ -237,6 +251,12 @@ components:
           items:
             type: string
           example: ["https://pill-city.s3.us-west-2.amazonaws.com/avatars/kt-1646414449.png", "https://pill-city.s3.us-west-2.amazonaws.com/avatars/ika-1631578.png"]
+          default: []
+        media_urls_v2:
+          type: array
+          description: v2 media URLs for the comment's media
+          items:
+            $ref: '#/components/schemas/MediaUrlV2'
           default: []
         deleted:
           type: boolean
@@ -295,6 +315,8 @@ components:
           format: url
           description: URL for the poll choice's media
           example: https://pill-city.s3.us-west-2.amazonaws.com/avatars/kt-1646414449.png
+        media_url_v2:
+          $ref: '#/components/schemas/MediaUrlV2'
         voters:
           type: array
           items:
@@ -352,6 +374,12 @@ components:
             type: string
           example: ["https://pill-city.s3.us-west-2.amazonaws.com/avatars/kt-1646414449.png", "https://pill-city.s3.us-west-2.amazonaws.com/avatars/ika-1631578.png"]
           default: []
+        media_urls_v2:
+          type: array
+          description: v2 media URLs for the comment's media
+          items:
+            $ref: '#/components/schemas/MediaUrlV2'
+          default: []
         reactions:
           type: array
           description: Reactions for the post
@@ -387,6 +415,29 @@ components:
           type: string
           description: This is a message
           example: Human readable message
+    MediaUrlV2:
+      required:
+        - original_url
+        - processed
+      properties:
+        original_url:
+          type: string
+          description: Original URL to the media
+        processed:
+          type: boolean
+          description: Whether the media has been processed/optimized
+        width:
+          type: number
+          description: Processed media width
+          example: 1920
+        height:
+          type: number
+          description: Processed media height
+          example: 1080
+        dominant_color_hex:
+          type: string
+          description: Processed media dominant color in hex
+          example: 8F4092
     CloudEmoticonEntry:
       required:
         - description
