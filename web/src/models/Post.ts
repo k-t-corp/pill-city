@@ -1,6 +1,7 @@
 import User from "./User";
 import Circle from "./Circle";
 import Media from "./Media";
+import MediaUrlV2 from "./MediaUrlV2";
 
 export interface NestedComment {
   id: string
@@ -9,6 +10,7 @@ export interface NestedComment {
   content: string
   deleted: boolean
   media_urls: string[],
+  media_urls_v2: MediaUrlV2[]
 }
 
 export interface Comment extends NestedComment {
@@ -23,6 +25,7 @@ export interface Reaction {
 
 export interface Previewable {
   media_urls: string[]
+  media_urls_v2: MediaUrlV2[]
   content: string,
   deleted: boolean
 }
@@ -36,7 +39,8 @@ export interface ResharedPost extends Previewable {
 export interface PollChoice {
   id: string,
   content: string,
-  media: Media,
+  media?: Media,
+  media_url_v2?: MediaUrlV2
   voters: User[]
 }
 
