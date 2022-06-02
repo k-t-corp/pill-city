@@ -6,7 +6,12 @@ from .s3 import upload_to_s3, delete_from_s3
 
 
 def get_media(object_name: str) -> Media:
-    return Media.objects.get(id=object_name)
+    media = Media.objects.get(id=object_name)  # type: Media
+
+    if not media.processed:
+        process_image.delay(object_name)
+
+    return media
 
 
 def get_media_page(owner: User, page_number: int, page_count: int) -> List[Media]:
