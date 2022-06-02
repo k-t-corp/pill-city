@@ -12,7 +12,7 @@ from .users import user_fields
 from .pagination import pagination_parser
 from .mention import check_mentioned_user_ids
 from .comments import comment_fields
-from .media import check_media_object_names, MediaUrls, MediaUrl, MediaUrlsV2
+from .media import check_media_object_names, MediaUrls, MediaUrl, MediaUrlsV2, MediaUrlV2
 
 MaxPostMediaCount = 4
 
@@ -76,7 +76,8 @@ post_fields = {
         'choices': fields.List(fields.Nested({
             'id': fields.String(attribute='eid'),
             'content': fields.String,
-            'media': MediaUrl,
+            'media': MediaUrl(attribute='media'),
+            "media_url_v2": MediaUrlV2(attribute='media'),
             'voters': fields.List(fields.Nested(user_fields))
         })),
         'close_by_seconds': fields.Integer(attribute='close_by')

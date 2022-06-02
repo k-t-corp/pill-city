@@ -85,11 +85,11 @@ def get_media_url(object_name: str) -> str:
     return media_url
 
 
-def get_media_url_v2(media: Media) -> dict:
+def get_media_url_v2(object_name: str) -> dict:
     """
     Get a dict representing a media that could have been processed (or not)
     """
-    media = media.fetch()
+    media = get_media(object_name)
     if not media.processed:
         return {
             "original_url": get_media_url(media.id),
@@ -110,6 +110,11 @@ class MediaUrl(fields.Raw):
         return get_media_url(object_name)
 
 
+class MediaUrlV2(fields.Raw):
+    def format(self, object_name: str):
+        return get_media_url_v2(object_name)
+
+
 class MediaUrls(fields.Raw):
     def format(self, media_list: List[Media]):
         if not media_list:
@@ -121,12 +126,13 @@ class MediaUrlsV2(fields.Raw):
     def format(self, media_list: List[Media]):
         if not media_list:
             return []
-        return list(map(lambda m: get_media_url_v2(m), media_list))
+        return list(map(lambda m: get_media_url_v2(m.id), media_list))
 
 
 media_fields = {
     "object_name": fields.String(attribute='id'),
-    "media_url": MediaUrl(attribute='id')
+    "media_url": MediaUrl(attribute='id'),
+    "media_url_v2": MediaUrlV2(attribute='id')
 }
 
 
