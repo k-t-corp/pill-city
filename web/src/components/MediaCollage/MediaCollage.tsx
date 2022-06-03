@@ -125,6 +125,9 @@ export default (props: Props) => {
           }
           onCloseRequest={() => {updateShowingMediaIndex(-1)}}
           animationDuration={0}
+          toolbarButtons={[
+            <a href={mediaUrls[showingMediaIndex].original_url}>Original</a>
+          ]}
         />
       }
     </div>
