@@ -8,7 +8,7 @@ from .s3 import upload_to_s3, delete_from_s3
 def get_media(object_name: str) -> Media:
     media = Media.objects.get(id=object_name)  # type: Media
 
-    if not media.processed:
+    if media.should_process():
         process_image.delay(object_name)
 
     return media
