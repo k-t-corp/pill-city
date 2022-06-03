@@ -6,17 +6,19 @@ import './UpdateBanner.css'
 import PillForm from "../PillForm/PillForm";
 import PillButtons from "../PillButtons/PillButtons";
 import PillButton, {PillButtonVariant} from "../PillButtons/PillButton";
+import User from "../../models/User";
 
 const profilePicOptions = ["pill1.png", "pill2.png", "pill3.png", "pill4.png", "pill5.png", "pill6.png"]
 
 interface Props {
+  user: User | null
   dismiss: () => void
   beforeUpdate: () => void
   afterUpdate: () => void
 }
 
 export default (props: Props) => {
-  const [selectedOption, updateSelectedOption] = useState<string | null>(null)
+  const [selectedOption, updateSelectedOption] = useState<string>(props.user ? props.user.profile_pic : 'pill1.png')
 
   let optionElems = []
   for (let i = 0; i < profilePicOptions.length; i++) {
@@ -29,8 +31,11 @@ export default (props: Props) => {
           updateSelectedOption(profilePicOptions[i])
         }}
       >
-        <img className="settings-profile-selection-option-img"
-             src={`${process.env.PUBLIC_URL}/${profilePicOptions[i]}`} alt=""/>
+        <img
+          className="settings-profile-selection-option-img"
+          src={`${process.env.PUBLIC_URL}/banner/${profilePicOptions[i].replace('.png', '.webp')}`}
+          alt=""
+        />
       </div>
     )
   }
@@ -41,7 +46,7 @@ export default (props: Props) => {
     <PillForm>
       <div className="settings-profile-pic-preview" style={{
         backgroundColor: "#9dd0ff",
-        backgroundImage: `url(${process.env.PUBLIC_URL}/${selectedOption})`,
+        backgroundImage: `url(${process.env.PUBLIC_URL}/banner/${selectedOption.replace('.png', '.webp')})`,
       }}/>
       <div className="settings-profile-pic-selections">
         {optionElems}
