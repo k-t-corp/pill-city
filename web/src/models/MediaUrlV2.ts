@@ -5,7 +5,7 @@ interface UnprocessedMedia {
   processed: false
 }
 
-interface ProcessedMedia {
+export interface ProcessedMedia {
   original_url: string
   processed: true
   processed_url: string

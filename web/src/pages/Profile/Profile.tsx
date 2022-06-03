@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {useHistory, useParams} from "react-router-dom";
 import PostComponent from "../../components/Post/Post";
 import NewPost from "../../components/NewPost/NewPost";
-import getProfilePicUrl from "../../utils/getProfilePicUrl";
+import getProfilePicUrl from "../../utils/getUserBannerUrl";
 import ApiError from "../../api/ApiError";
 import User from "../../models/User";
 import PostModel from "../../models/Post"

@@ -16,6 +16,7 @@ class Media(Document):
     created_at = LongField(required=False, default=0)
     # todo: change to required
     used_at = LongField(required=False, default=0)
+    processing = BooleanField(required=False, default=False)
     processed = BooleanField(required=False, default=False)
     width = IntField(required=False, default=None)
     height = IntField(required=False, default=None)
@@ -23,3 +24,6 @@ class Media(Document):
 
     def get_processed_object_name(self):
         return self.id.rsplit('.', 1)[0] + '.processed.webp'
+
+    def should_process(self):
+        return not self.processed and not self.processing

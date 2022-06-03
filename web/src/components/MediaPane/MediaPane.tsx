@@ -28,7 +28,7 @@ export default (props: Props) => {
     if (i < props.mediaUrls.length) {
       mediaUrl = props.mediaUrls[i]
     } else {
-      mediaUrl = `${process.env.PUBLIC_URL}/placeholder.png`
+      mediaUrl = `${process.env.PUBLIC_URL}/image.webp`
       isPlaceholder = true
     }
     mediaElems.push(

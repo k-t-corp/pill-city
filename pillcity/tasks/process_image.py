@@ -21,12 +21,14 @@ def rgb_tuple_to_hex_str(rgb_tuple: Tuple[int, int, int]) -> str:
 @app.task()
 def process_image(_id: str):
     connect(host=os.environ['MONGODB_URI'])
-    logger.info(f"Processing image {_id}")
     media = Media.objects.get(id=_id)  # type: Media
-    if media.processed:
+    if not media.should_process():
+        logger.info(f"Media {_id} is already processed or being processed")
         return
     try:
         logger.info(f"Processing media {media.id}")
+        media.processing = True
+        media.save()
         s3_client, s3_bucket_name = get_s3_client()
 
         logger.info(f"Downloading media {media.id} from s3")
@@ -60,6 +62,7 @@ def process_image(_id: str):
 
         logger.info(f"Saving processed metadata for media {media.id}")
         media.processed = True
+        media.processing = False
         media.width = width
         media.height = height
         media.dominant_color_hex = dominant_color_hex
@@ -68,5 +71,7 @@ def process_image(_id: str):
         os.remove(original_fp)
         os.remove(resized_fp)
     except Exception as e:
+        media.processing = False
+        media.save()
         logger.warn(str(e))
     disconnect()

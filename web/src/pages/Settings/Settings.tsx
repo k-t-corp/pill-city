@@ -42,7 +42,7 @@ const Settings = () => {
   const [emailValidated, updateEmailValidated] = useState(false)
   const [rssToken, updateRssToken] = useState<RssToken | undefined>()
   const [rssCodesChecked, updateRssCodesChecked] = useState<{[action: string]: boolean} | undefined>(undefined)
-  const [multipleColumns, updateMultipleColumns] = useState(getUseMultiColumn)
+  const [multipleColumns, updateMultipleColumns] = useState(getUseMultiColumn())
 
   useEffect(() => {
     if (validateEmail(email)) {
@@ -241,6 +241,7 @@ const Settings = () => {
         title="Update banner"
       >
         <UpdateBanner
+          user={me}
           dismiss={() => {
             updateBannerModalOpened(false)
           }}
