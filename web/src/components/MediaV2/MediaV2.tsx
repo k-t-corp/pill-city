@@ -1,6 +1,6 @@
 import React from "react";
-import MediaUrlV2 from "../../models/MediaUrlV2";
-import { LazyLoadImage } from 'react-lazy-load-image-component';
+import MediaUrlV2, {ProcessedMedia} from "../../models/MediaUrlV2";
+import { LazyImage } from 'react-lazy-images';
 
 interface Props extends React.ImgHTMLAttributes<HTMLImageElement> {
   mediaUrlV2: MediaUrlV2,
@@ -9,26 +9,49 @@ interface Props extends React.ImgHTMLAttributes<HTMLImageElement> {
 export default (props: Props) => {
   if (!props.mediaUrlV2.processed) {
     return (
-      <img
-        /*todo: remove mediaUrlV2*/
-        {...props}
+      <LazyImage
         src={props.mediaUrlV2.original_url}
-        alt=""
+        placeholder={({ imageProps, ref}) => (
+          <img
+            {...props}
+            {...imageProps}
+            ref={ref}
+            alt=""
+            style={{
+              backgroundColor: `#f0f0f0`
+            }}
+          />
+        )}
+        actual={({ imageProps }) => (
+          <img
+            {...props}
+            {...imageProps}
+            alt=""
+          />
+        )}
       />
     )
   }
+  const processed = props.mediaUrlV2 as ProcessedMedia
   return (
-    // @ts-ignore
-    <LazyLoadImage
-      {...props}
-      src={props.mediaUrlV2.processed_url}
-      width={props.mediaUrlV2.width}
-      height={props.mediaUrlV2.height}
-      placeholder={(
-        <span
+    <LazyImage
+      src={processed.processed_url}
+      placeholder={({ imageProps, ref}) => (
+        <img
+          {...props}
+          {...imageProps}
+          ref={ref}
+          alt=""
           style={{
-            backgroundColor: `#${props.mediaUrlV2.dominant_color_hex}`
+            backgroundColor: `#${processed.dominant_color_hex}`
           }}
+        />
+      )}
+      actual={({ imageProps }) => (
+        <img
+          {...props}
+          {...imageProps}
+          alt=""
         />
       )}
     />
