@@ -26,7 +26,12 @@ export default (props: Props) => {
         color: props.checked ? '#555555' : '#d0d0d0'
       }}
     >
-      <div className='pill-checkbox-icon'>
+      <div
+        className='pill-checkbox-icon'
+        style={{
+          color: props.checked ? '#E05140' : '#d0d0d0'
+        }}
+      >
         {props.checked ?
           <CheckCircleIconSolid /> :
           <CheckCircleIconOutline />
