@@ -1,23 +1,18 @@
 dev-deps:
 		python3 -m venv venv
 		./venv/bin/pip install -r requirements.txt
-		cp .example.env .env
-		cp web/.example.env web/.env
 
-dev-api: dev-deps
+dev-api:
 		docker-compose down
 		docker-compose up -d
 		set -o allexport; source .env; FLASK_ENVIRONMENT=development heroku local -f Procfile.dev
 		docker-compose down
 
-dev-release: dev-deps
+dev-release:
 		set -o allexport; source .env; ./venv/bin/python release.py
 
-dev-web:
-		cd web; yarn install; yarn start
-
-dev-dump: dev-deps
+dev-dump:
 		./venv/bin/python ./scripts/dev_dump_mock_data.py
 
-test: dev-deps
+test:
 		./venv/bin/nosetests
