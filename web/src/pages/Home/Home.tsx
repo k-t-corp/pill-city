@@ -25,7 +25,6 @@ const Home = () => {
   const loadingMore = useAppSelector(state => state.home.loadingMore)
   const noMore = useAppSelector(state => state.home.noMore)
   const me = useAppSelector(state => state.me.me)
-  const meLoading = useAppSelector(state => state.me.loading)
 
   const [resharePostData, updateResharePostData] = useState<PostModel | ResharedPost | null>(null)
   const [mobileNewPostOpened, updateMobileNewPostOpened] = useState(false)
@@ -40,77 +39,91 @@ const Home = () => {
     }
   })
 
-  if (loading || meLoading) {
-    return (
-      <div className="home-wrapper">
-        <div className="home-status">Loading..</div>
-      </div>
-    )
-  }
-
-  if (posts.length === 0) {
-    return (
-      <div className="home-wrapper">
-        <div className="home-status">No posts here</div>
-      </div>
-    )
-  }
-
-  let postElements = []
-  for (let i = 0; i < posts.length; i++) {
-    const post = posts[i]
-    let isInfiniteScrollTrigger = false
-    if (posts.length > InfiniteScrollBefore) {
-      isInfiniteScrollTrigger = i === posts.length - InfiniteScrollBefore
-    } else {
-      isInfiniteScrollTrigger = i === posts.length - 1
+  const leftColumnsContent = () => {
+    if (loading) {
+      return (
+        <div className="home-status">Loading...</div>
+      )
     }
-    postElements.push(
-      <div
-        // need to use post ID instead of index as key
-        // otherwise comments and reactions will be shifted after a new post is prepended
-        key={post.id}
-        ref={isInfiniteScrollTrigger ? observe : null}
+
+    if (posts.length === 0) {
+      return (
+        <div className="home-status">No posts here</div>
+      )
+    }
+
+    let postElements = []
+    for (let i = 0; i < posts.length; i++) {
+      const post = posts[i]
+      let isInfiniteScrollTrigger = false
+      if (posts.length > InfiniteScrollBefore) {
+        isInfiniteScrollTrigger = i === posts.length - InfiniteScrollBefore
+      } else {
+        isInfiniteScrollTrigger = i === posts.length - 1
+      }
+      postElements.push(
+        <div
+          // need to use post ID instead of index as key
+          // otherwise comments and reactions will be shifted after a new post is prepended
+          key={post.id}
+          ref={isInfiniteScrollTrigger ? observe : null}
+        >
+          <Post
+            data={post}
+            me={me as User}
+            detail={false}
+            hasNewPostModal={isMobile}
+            updateResharePostData={updateResharePostData}
+            updateNewPostOpened={updateMobileNewPostOpened}
+          />
+        </div>
+      )
+    }
+    let endElem;
+    if (noMore) {
+      endElem = (
+        <div
+          key={posts.length}
+          className='home-load-more home-load-more-disabled'
+        >No more new posts</div>
+      )
+    }
+    else if (loadingMore) {
+      endElem = (
+        <div
+          key={posts.length}
+          className='home-load-more home-load-more-disabled'
+        >Loading...</div>
+      )
+    } else {
+      endElem = (
+        <div
+          key={posts.length}
+          className='home-load-more'
+          onClick={async () => {
+            await dispatch(loadMorePosts())
+          }}
+        >Load more</div>
+      )
+    }
+    postElements.push(endElem)
+
+    return (
+      <Masonry
+        breakpointCols={getUseMultiColumn() ? {
+          default: 4,
+          3350: 4,
+          2450: 3,
+          1650: 2,
+          950: 1,
+        } : 1}
+        className="home-posts-masonry-grid"
+        columnClassName="home-posts-masonry-grid_column"
       >
-        <Post
-          data={post}
-          me={me as User}
-          detail={false}
-          hasNewPostModal={isMobile}
-          updateResharePostData={updateResharePostData}
-          updateNewPostOpened={updateMobileNewPostOpened}
-        />
-      </div>
+        {postElements}
+      </Masonry>
     )
   }
-  let endElem;
-  if (noMore) {
-    endElem = (
-      <div
-        key={posts.length}
-        className='home-load-more home-load-more-disabled'
-      >No more new posts</div>
-    )
-  }
-  else if (loadingMore) {
-    endElem = (
-      <div
-        key={posts.length}
-        className='home-load-more home-load-more-disabled'
-      >Loading...</div>
-    )
-  } else {
-    endElem = (
-      <div
-        key={posts.length}
-        className='home-load-more'
-        onClick={async () => {
-          await dispatch(loadMorePosts())
-        }}
-      >Load more</div>
-    )
-  }
-  postElements.push(endElem)
 
   const newPostElem = (
     <NewPost
@@ -133,19 +146,7 @@ const Home = () => {
           'home-posts-wrapper'
         }
       >
-        <Masonry
-          breakpointCols={getUseMultiColumn() ? {
-            default: 4,
-            3350: 4,
-            2450: 3,
-            1650: 2,
-            950: 1,
-          } : 1}
-          className="home-posts-masonry-grid"
-          columnClassName="home-posts-masonry-grid_column"
-        >
-          {postElements}
-        </Masonry>
+        {leftColumnsContent()}
       </div>
       {isMobile ?
         <>
