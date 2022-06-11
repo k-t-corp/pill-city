@@ -28,19 +28,18 @@ interface RssToken {
 const Settings = () => {
   const me = useAppSelector(state => state.me.me)
 
+  const [displayName, updateDisplayName] = useState<string | null>('')
+  const [email, updateEmail] = useState<string | null>('')
+  const [emailValidated, updateEmailValidated] = useState(false)
+  const [rssToken, updateRssToken] = useState<RssToken | null>()
+  const [rssCodesChecked, updateRssCodesChecked] = useState<{[action: string]: boolean} | undefined>(undefined)
+  const [multipleColumns, updateMultipleColumns] = useState(getUseMultiColumn())
+
   const [displayNameModalOpened, updateDisplayNameModalOpened] = useState(false)
   const [emailModalOpened, updateEmailModalOpened] = useState(false)
   const [avatarModalOpened, updateAvatarModalOpened] = useState(false)
   const [bannerModalOpened, updateBannerModalOpened] = useState(false)
   const [rssTokenModalOpened, updateRssTokenModalOpened] = useState(false)
-
-  const [loading, updateLoading] = useState(true)
-  const [displayName, updateDisplayName] = useState<string>('')
-  const [email, updateEmail] = useState<string>('')
-  const [emailValidated, updateEmailValidated] = useState(false)
-  const [rssToken, updateRssToken] = useState<RssToken | undefined>()
-  const [rssCodesChecked, updateRssCodesChecked] = useState<{[action: string]: boolean} | undefined>(undefined)
-  const [multipleColumns, updateMultipleColumns] = useState(getUseMultiColumn())
 
   useEffect(() => {
     if (validateEmail(email)) {
@@ -56,7 +55,6 @@ const Settings = () => {
         return
       }
       updateDisplayName(me.display_name || '')
-
       updateEmail(await api.getEmail())
       const rssToken = await api.getRssToken() as RssToken
       updateRssToken(rssToken)
@@ -67,7 +65,6 @@ const Settings = () => {
           })
         )
       )
-      updateLoading(false)
     })()
   }, [me])
 
@@ -76,14 +73,6 @@ const Settings = () => {
     // This is needed so that the App component is fully reloaded
     // so that getting the first home page and auto refresh is disabled
     window.location.href = '/signin'
-  }
-
-  if (loading) {
-    return (
-      <div className="settings-wrapper">
-        <div className="settings-status">Loading...</div>
-      </div>
-    )
   }
 
   const dispatch = useAppDispatch()
@@ -110,7 +99,7 @@ const Settings = () => {
     <div className="settings-wrapper">
       <div className="settings-row" onClick={() => {updateDisplayNameModalOpened(true)}}>
         <div className="settings-row-header">Display name</div>
-        <div className="settings-row-content">{displayName || 'Click to update'}</div>
+        <div className="settings-row-content">{displayName !== null ? (displayName || 'Click to update') : 'Loading...'}</div>
       </div>
       <div className="settings-row" onClick={() => {updateEmailModalOpened(true)}}>
         <div className="settings-row-header">Email</div>
@@ -126,7 +115,7 @@ const Settings = () => {
       </div>
       <div className="settings-row" onClick={() => {updateRssTokenModalOpened(true)}}>
         <div className="settings-row-header">RSS Notifications</div>
-        <div className="settings-row-content">{rssToken && rssToken.rss_token ? 'Enabled' : 'Disabled'}</div>
+        <div className="settings-row-content">{rssToken ? rssToken.rss_token ? 'Enabled' : 'Disabled' : 'Loading...'}</div>
       </div>
       <div className="settings-row" onClick={() => {
         setUseMultiColumn(!multipleColumns)
@@ -147,7 +136,7 @@ const Settings = () => {
         <PillForm>
           <PillInput
             placeholder='Display name'
-            value={displayName}
+            value={displayName || ''}
             onChange={updateDisplayName}
           />
           <PillButtons>
@@ -160,10 +149,8 @@ const Settings = () => {
               text='Confirm'
               variant={PillButtonVariant.Positive}
               onClick={async () => {
-                updateLoading(true)
                 await api.updateDisplayName(displayName)
                 await dispatch(loadMe())
-                updateLoading(false)
                 updateDisplayNameModalOpened(false)
               }}
             />
@@ -178,7 +165,7 @@ const Settings = () => {
         <PillForm>
           <PillInput
             placeholder='Email'
-            value={email}
+            value={email || ''}
             onChange={updateEmail}
           />
           <PillButtons>
@@ -194,20 +181,9 @@ const Settings = () => {
                 if (!validateEmail(email)) {
                   return
                 }
-                updateLoading(true)
-                try {
-                  await api.updateEmail(email)
-                } catch (e: any) {
-                  if (e.message) {
-                    alert(e.message)
-                  } else {
-                    console.error(e)
-                  }
-                } finally {
-                  await dispatch(loadMe())
-                  updateLoading(false)
-                  updateEmailModalOpened(false)
-                }
+                await api.updateEmail(email)
+                await dispatch(loadMe())
+                updateEmailModalOpened(false)
               }}
               disabled={!emailValidated}
             />
@@ -223,11 +199,8 @@ const Settings = () => {
           dismiss={() => {
             updateAvatarModalOpened(false)
           }}
-          beforeUpdate={() => {
-            updateLoading(true)
-          }}
+          beforeUpdate={() => {}}
           afterUpdate={() => {
-            updateLoading(false)
             updateAvatarModalOpened(false)
           }}
         />
@@ -242,11 +215,8 @@ const Settings = () => {
           dismiss={() => {
             updateBannerModalOpened(false)
           }}
-          beforeUpdate={() => {
-            updateLoading(true)
-          }}
+          beforeUpdate={() => {}}
           afterUpdate={() => {
-            updateLoading(false)
             updateBannerModalOpened(false)
           }}
         />
