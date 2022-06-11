@@ -6,11 +6,19 @@ import 'react-image-lightbox/style.css';
 import App from './App';
 import register from './registerServiceWorker';
 import store from "./store/store";
+import {PersistGate} from "redux-persist/integration/react";
+import {persistStore} from "redux-persist";
+
+const persistor = persistStore(store);
 
 ReactDOM.render(
-  <ReduxProvider store={store}>
-    <App />
-  </ReduxProvider>,
+  <React.StrictMode>
+    <ReduxProvider store={store}>
+      <PersistGate persistor={persistor}>
+        <App />
+      </PersistGate>
+    </ReduxProvider>
+  </React.StrictMode>,
   document.getElementById('root')
 );
 register();

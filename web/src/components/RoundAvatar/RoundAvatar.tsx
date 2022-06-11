@@ -6,6 +6,7 @@ import AvatarV2 from "../MediaV2/AvatarV2";
 
 interface Props {
   user: User | null
+  disableNavigateToProfile?: boolean
 }
 
 export default (props: Props) => {
@@ -19,6 +20,9 @@ export default (props: Props) => {
         cursor: props.user !== null ? 'pointer' : 'default'
       }}
       onClick={e => {
+        if (props.disableNavigateToProfile) {
+          return
+        }
         // This component is sometimes nested in other clickable places so need this
         e.stopPropagation()
         if (props.user === null) {

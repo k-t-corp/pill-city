@@ -20,7 +20,6 @@ const InfiniteScrollBefore = 5
 const Profile = () => {
   const { id: userId } = useParams<{id?: string}>()
   const me = useAppSelector(state => state.me.me)
-  const meLoading = useAppSelector(state => state.me.loading)
 
   const [user, updateUser] = useState<User | null>(null)
   const [userNotFound, updateUserNotFound] = useState(false)
@@ -40,12 +39,12 @@ const Profile = () => {
 
   useEffect(() => {
     (async () => {
-      if (meLoading) {
+      if (!me) {
         return
       }
       if (!userId) {
         updateUser(me)
-        updatePosts(await api.getProfile((me as User).id))
+        updatePosts(await api.getProfile(me.id))
         updatePostsLoading(false)
         updateFollowLoading(false)
       } else {
@@ -66,7 +65,7 @@ const Profile = () => {
         }
       }
     })()
-  }, [meLoading])
+  }, [me])
 
   const loadMorePosts = async () => {
     if (loadingMorePosts || user === null) {
@@ -95,7 +94,7 @@ const Profile = () => {
   const profilePosts = () => {
     if (userNotFound) {
       return (<div className="profile-status">User not found</div>)
-    } else if (postsLoading) {
+    } else if (postsLoading || !me) {
       return (<div className="profile-status">Loading...</div>)
     } else if (posts.length === 0) {
       return (<div className="profile-status">No posts here</div>)
@@ -118,7 +117,7 @@ const Profile = () => {
           >
             <PostComponent
               data={post}
-              me={me as User}
+              me={me}
               updateResharePostData={updateResharePost}
               hasNewPostModal={true}
               updateNewPostOpened={updateNewPostOpened}
@@ -171,10 +170,10 @@ const Profile = () => {
   }
 
   const userInfoButton = () => {
-    if (meLoading) {
+    if (!me) {
       return null
     }
-    if (!userId || userId === (me as User).id) {
+    if (!userId || userId === me.id) {
       return (
         <div
           className="profile-info-button"
@@ -200,20 +199,20 @@ const Profile = () => {
   const [followingCounts, updateFollowingCounts] = useState<{following_count: number, follower_count: number} | null>(null)
   useEffect(() => {
     (async () => {
-      if (meLoading) {
+      if (!me) {
         return
       }
-      if (!userId || userId === (me as User).id) {
+      if (!userId || userId === me.id) {
         updateFollowingCounts(await api.getFollowingCounts())
       }
     })()
-  }, [meLoading])
+  }, [me])
 
   const userFollowingCounts = () => {
-    if (meLoading) {
+    if (!me) {
       return null
     }
-    if (!userId || userId === (me as User).id) {
+    if (!userId || userId === me.id) {
       if (followingCounts === null) {
         return null
       }
@@ -263,7 +262,10 @@ const Profile = () => {
             updateNewPostOpened(false)
           }}
           afterPosting={(post) => {
-            if (!userId || userId === (me as User).id) {
+            if (!me) {
+              return
+            }
+            if (!userId || userId === me.id) {
               updatePosts([post, ...posts])
             }
           }}

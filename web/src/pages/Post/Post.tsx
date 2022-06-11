@@ -5,14 +5,12 @@ import NewPost from "../../components/NewPost/NewPost";
 import api from "../../api/Api";
 import {useAppSelector} from "../../store/hooks";
 import PillModal from "../../components/PillModal/PillModal";
-import User from "../../models/User";
 import Post, {ResharedPost} from "../../models/Post";
 import './Post.css'
 
 const PostPage = () => {
   const { id: postId } = useParams<{ id: string }>()
   const me = useAppSelector(state => state.me.me)
-  const meLoading = useAppSelector(state => state.me.loading)
 
   const [loading, updateLoading] = useState(true)
   const [post, updatePost] = useState<Post | null>(null)
@@ -34,7 +32,7 @@ const PostPage = () => {
   }
 
   const renderPost = () => {
-    if (loading || meLoading) {
+    if (loading || !me) {
       return (<div className="post-status">Loading...</div>)
     }
     if (!post) {
@@ -45,7 +43,7 @@ const PostPage = () => {
         <PostComponent
           data={post}
           highlightCommentId={highlightCommentId}
-          me={me as User}
+          me={me}
           detail={true}
           hasNewPostModal={true}
           updateNewPostOpened={updateMobileNewPostOpened}
