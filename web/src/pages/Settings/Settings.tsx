@@ -28,7 +28,6 @@ interface RssToken {
 
 const Settings = () => {
   const me = useAppSelector(state => state.me.me)
-  const meLoading = useAppSelector(state => state.me.loading)
 
   const [displayNameModalOpened, updateDisplayNameModalOpened] = useState(false)
   const [emailModalOpened, updateEmailModalOpened] = useState(false)
@@ -54,9 +53,6 @@ const Settings = () => {
 
   useEffect(() => {
     (async () => {
-      if (meLoading) {
-        return
-      }
       const myProfile = me as User
       updateDisplayName(myProfile.display_name || '')
 
@@ -72,7 +68,7 @@ const Settings = () => {
       )
       updateLoading(false)
     })()
-  }, [meLoading])
+  }, [])
 
   const handleSignOut = () => {
     removeAccessToken()
@@ -81,7 +77,7 @@ const Settings = () => {
     window.location.href = '/signin'
   }
 
-  if (meLoading || loading) {
+  if (loading) {
     return (
       <div className="settings-wrapper">
         <div className="settings-status">Loading...</div>
