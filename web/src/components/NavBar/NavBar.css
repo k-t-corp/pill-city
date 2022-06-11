@@ -49,6 +49,22 @@
     color: #ffffff;
 }
 
+.nav-bar-name-and-avatar {
+    margin-left: auto;
+    margin-right: 10px;
+}
+
+.nav-bar-avatar {
+    width: 30px;
+    height: 30px;
+    margin-left: 10px;
+}
+
+.mobile-nav-bar-avatar {
+    width: 30px;
+    height: 30px;
+}
+
 .nav-bar-notification-indicator-wrapper {
     position: relative;
     width: 0;
