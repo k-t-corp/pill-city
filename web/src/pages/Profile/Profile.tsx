@@ -20,7 +20,6 @@ const InfiniteScrollBefore = 5
 const Profile = () => {
   const { id: userId } = useParams<{id?: string}>()
   const me = useAppSelector(state => state.me.me)
-  const meLoading = useAppSelector(state => state.me.loading)
 
   const [user, updateUser] = useState<User | null>(null)
   const [userNotFound, updateUserNotFound] = useState(false)
@@ -40,9 +39,6 @@ const Profile = () => {
 
   useEffect(() => {
     (async () => {
-      if (meLoading) {
-        return
-      }
       if (!userId) {
         updateUser(me)
         updatePosts(await api.getProfile((me as User).id))
@@ -66,7 +62,7 @@ const Profile = () => {
         }
       }
     })()
-  }, [meLoading])
+  }, [])
 
   const loadMorePosts = async () => {
     if (loadingMorePosts || user === null) {
@@ -171,9 +167,6 @@ const Profile = () => {
   }
 
   const userInfoButton = () => {
-    if (meLoading) {
-      return null
-    }
     if (!userId || userId === (me as User).id) {
       return (
         <div
@@ -200,19 +193,13 @@ const Profile = () => {
   const [followingCounts, updateFollowingCounts] = useState<{following_count: number, follower_count: number} | null>(null)
   useEffect(() => {
     (async () => {
-      if (meLoading) {
-        return
-      }
       if (!userId || userId === (me as User).id) {
         updateFollowingCounts(await api.getFollowingCounts())
       }
     })()
-  }, [meLoading])
+  }, [])
 
   const userFollowingCounts = () => {
-    if (meLoading) {
-      return null
-    }
     if (!userId || userId === (me as User).id) {
       if (followingCounts === null) {
         return null
