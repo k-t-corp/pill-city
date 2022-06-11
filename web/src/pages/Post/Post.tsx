@@ -12,7 +12,6 @@ import './Post.css'
 const PostPage = () => {
   const { id: postId } = useParams<{ id: string }>()
   const me = useAppSelector(state => state.me.me)
-  const meLoading = useAppSelector(state => state.me.loading)
 
   const [loading, updateLoading] = useState(true)
   const [post, updatePost] = useState<Post | null>(null)
@@ -34,7 +33,7 @@ const PostPage = () => {
   }
 
   const renderPost = () => {
-    if (loading || meLoading) {
+    if (loading) {
       return (<div className="post-status">Loading...</div>)
     }
     if (!post) {
