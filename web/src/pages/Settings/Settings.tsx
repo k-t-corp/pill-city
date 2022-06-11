@@ -103,6 +103,7 @@ const Settings = () => {
       </div>
       <div className="settings-row" onClick={() => {updateEmailModalOpened(true)}}>
         <div className="settings-row-header">Email</div>
+        {/*unlike display name, if email is not set, it also returns null (the same as loading lol)*/}
         <div className="settings-row-content">{email || 'Click to update'}</div>
       </div>
       <div className="settings-row" onClick={() => {updateAvatarModalOpened(true)}}>
