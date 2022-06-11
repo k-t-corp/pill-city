@@ -20,8 +20,10 @@ const reducers = combineReducers({
   notifications: notificationsReducer
 })
 
+export const persistKey = 'persist'
+
 const persistConfig = {
-  key: 'persist',
+  key: persistKey,
   storage,
   whitelist: ['me']
 }

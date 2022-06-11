@@ -16,6 +16,7 @@ import PillInput from "../../components/PillInput/PillInput";
 import PillButtons from "../../components/PillButtons/PillButtons";
 import PillButton, {PillButtonVariant} from "../../components/PillButtons/PillButton";
 import PillCheckbox from "../../components/PillCheckbox/PillCheckbox";
+import {purgeCache} from "../../store/persistorUtils";
 
 type NotifyingActionToRssCode = {[action: string]: string}
 
@@ -70,6 +71,7 @@ const Settings = () => {
 
   const handleSignOut = () => {
     removeAccessToken()
+    purgeCache()
     // This is needed so that the App component is fully reloaded
     // so that getting the first home page and auto refresh is disabled
     window.location.href = '/signin'

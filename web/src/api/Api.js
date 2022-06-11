@@ -1,6 +1,7 @@
 import axios from 'axios'
 import ApiError from './ApiError'
 import {getAccessToken, setAccessToken, accessTokenExists} from "./AuthStorage";
+import {purgeCache} from "../store/persistorUtils";
 
 export class Api {
   constructor(endpoint) {
@@ -71,6 +72,7 @@ export class Api {
       throw new ApiError(res)
     }
     const {access_token, expires} = res.data
+    purgeCache()
     setAccessToken(access_token, expires)
     this.axiosInstance.defaults.headers = {
       ...this.axiosInstance.defaults.headers,
