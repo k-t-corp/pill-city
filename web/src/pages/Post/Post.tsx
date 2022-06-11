@@ -5,7 +5,6 @@ import NewPost from "../../components/NewPost/NewPost";
 import api from "../../api/Api";
 import {useAppSelector} from "../../store/hooks";
 import PillModal from "../../components/PillModal/PillModal";
-import User from "../../models/User";
 import Post, {ResharedPost} from "../../models/Post";
 import './Post.css'
 
@@ -33,7 +32,7 @@ const PostPage = () => {
   }
 
   const renderPost = () => {
-    if (loading) {
+    if (loading || !me) {
       return (<div className="post-status">Loading...</div>)
     }
     if (!post) {
@@ -44,7 +43,7 @@ const PostPage = () => {
         <PostComponent
           data={post}
           highlightCommentId={highlightCommentId}
-          me={me as User}
+          me={me}
           detail={true}
           hasNewPostModal={true}
           updateNewPostOpened={updateMobileNewPostOpened}

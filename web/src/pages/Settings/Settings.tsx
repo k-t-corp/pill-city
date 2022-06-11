@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react'
 import {removeAccessToken} from "../../api/AuthStorage";
 import About from "../../components/About/About";
 import UpdateAvatar from "../../components/UpdateAvatar/UpdateAvatar";
-import User from "../../models/User";
 import api from "../../api/Api";
 import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import UpdateBanner from "../../components/UpdateBanner/UpdateBanner";
@@ -53,8 +52,10 @@ const Settings = () => {
 
   useEffect(() => {
     (async () => {
-      const myProfile = me as User
-      updateDisplayName(myProfile.display_name || '')
+      if (!me) {
+        return
+      }
+      updateDisplayName(me.display_name || '')
 
       updateEmail(await api.getEmail())
       const rssToken = await api.getRssToken() as RssToken
@@ -68,7 +69,7 @@ const Settings = () => {
       )
       updateLoading(false)
     })()
-  }, [])
+  }, [me])
 
   const handleSignOut = () => {
     removeAccessToken()

@@ -8,7 +8,6 @@ import PostModel from "../../models/Post"
 import useInView from 'react-cool-inview'
 import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import {loadMorePosts, pollPosts} from "../../store/homeSlice";
-import User from "../../models/User";
 import {ResharedPost} from "../../models/Post";
 import PillModal from "../../components/PillModal/PillModal";
 import { PencilIcon } from '@heroicons/react/solid';
@@ -40,7 +39,7 @@ const Home = () => {
   })
 
   const leftColumnsContent = () => {
-    if (loading) {
+    if (loading || !me) {
       return (
         <div className="home-status">Loading...</div>
       )
@@ -70,7 +69,7 @@ const Home = () => {
         >
           <Post
             data={post}
-            me={me as User}
+            me={me}
             detail={false}
             hasNewPostModal={isMobile}
             updateResharePostData={updateResharePostData}
