@@ -5,7 +5,7 @@ dev-deps:
 dev-api:
 		docker-compose down
 		docker-compose up -d
-		set -o allexport; source .env; FLASK_ENVIRONMENT=development heroku local -f Procfile.dev
+		set -o allexport; source .env; heroku local -f Procfile.dev
 		docker-compose down
 
 dev-release:
