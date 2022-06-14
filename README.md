@@ -23,7 +23,7 @@ Run `cp .example.env .env` and `make dev-deps`
 
 #### Run API locally
 ``` shell
-python-devkit up
+up  # python-devkit alias
 ```
 You will see the web frontend at [localhost:3000](http://localhost:3000)
 
@@ -64,7 +64,7 @@ cd web && yarn start
    1. Replace `localhost` in `CDN_URL` with your LAN IP
 4. Update `web/.example.env`
    2. Replace `localhost` in `REACT_APP_API_ENDPOINT` with your LAN IP
-5. Run `python-devkit up` and `cd web && yarn start` as usual
+5. Run `up` and `cd web && yarn start` as usual
 
 ## Security
 Please send security findings to [`security@pill.city`](mailto:security@pill.city).
