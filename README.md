@@ -14,8 +14,7 @@ The API server stores information in a MongoDB database, and it uses S3 to store
 ### Software prerequisites
 * Python 3.7+
 * Node.js v14 and Yarn
-* Docker and docker-compose
-* Heroku CLI (used for running Procfile locally)
+* [python-devkit](https://github.com/k-t-corp/python-devkit)
 
 ### API development
 
@@ -24,7 +23,7 @@ Run `cp .example.env .env` and `make dev-deps`
 
 #### Run API locally
 ``` shell
-make dev-api
+python-devkit up
 ```
 You will see the web frontend at [localhost:3000](http://localhost:3000)
 
@@ -43,6 +42,7 @@ make dev-dump
 Use ID `ika` and password `1234` to log in
 
 #### Run API database schema migration
+Make sure you have the API running
 ``` shell
 make dev-release
 ```
@@ -64,7 +64,7 @@ cd web && yarn start
    1. Replace `localhost` in `CDN_URL` with your LAN IP
 4. Update `web/.example.env`
    2. Replace `localhost` in `REACT_APP_API_ENDPOINT` with your LAN IP
-5. Run `make dev-api` and `cd web && yarn start` as usual
+5. Run `python-devkit up` and `cd web && yarn start` as usual
 
 ## Security
 Please send security findings to [`security@pill.city`](mailto:security@pill.city).
