@@ -12,8 +12,8 @@ The project consists of an API server written in Python/Flask, and a web fronten
 The API server stores information in a MongoDB database, and it uses S3 to store images and other types of media
 
 ### Software prerequisites
-* Python 3.7+
-* Node.js v14 and Yarn
+* `Python 3.9` and [`virtualenv`](http://packaging.python.org/guides/installing-using-pip-and-virtualenv/)
+* Node.js v16 and Yarn
 * [python-devkit](https://github.com/k-t-corp/python-devkit)
 
 ### API development
