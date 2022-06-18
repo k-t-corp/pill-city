@@ -3,7 +3,7 @@ import uuid
 import tempfile
 from typing import Tuple
 from mongoengine import connect, disconnect
-from PIL import Image
+from PIL import Image, ImageOps
 from colorthief import ColorThief
 from pillcity.models import Media
 from pillcity.utils.s3 import get_s3_client
@@ -38,7 +38,7 @@ def process_image(_id: str):
 
         logger.info(f"Converting media {media.id} to resized webp")
         resized_fp = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
-        original_im = Image.open(original_fp).convert("RGBA")
+        original_im = ImageOps.exif_transpose(Image.open(original_fp)).convert("RGBA")
         im = Image.new("RGBA", original_im.size, "WHITE")
         im.paste(original_im, mask=original_im)
         im.thumbnail(IMAGE_RESIZE_SIZE)
