@@ -1,5 +1,5 @@
 import User from "./User";
-import Circle from "./Circle";
+import {AnonymizedCircle} from "./Circle";
 import Media from "./Media";
 import MediaUrlV2 from "./MediaUrlV2";
 
@@ -58,7 +58,7 @@ export default interface Post extends Previewable {
   reshared_from: ResharedPost | null,
   reactions: Reaction[],
   comments: Comment[],
-  circles: Circle[],
+  circles: AnonymizedCircle[],
   is_update_avatar: boolean
   poll: Poll
 }

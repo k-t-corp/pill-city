@@ -36,21 +36,31 @@ class ResharedFrom(fields.Raw):
         })
 
 
-class Circle(fields.Raw):
-    def format(self, value):
-        if not value:
-            return None
-        oid = value.id
-        circle = get_in_circle_cache(oid)
+class AnonymizedCircles(fields.Raw):
+    def format(self, lazy_circles):
+        circles = []
         user_id = get_jwt_identity()
         user = get_in_user_cache_by_user_id(user_id)
-        if user == circle.owner or user in circle.members:
-            return marshal(circle, {
-                # not using circle_fields because not exposing what members a circle has
-                'id': fields.String(attribute='eid'),
-                'name': fields.String,
-            })
-        return None
+
+        for lazy_circle in lazy_circles:
+            if not lazy_circle:
+                continue
+            oid = lazy_circle.id
+            circle = get_in_circle_cache(oid)
+            if user == circle.owner:
+                circles.append({
+                    # not using circle_fields because not exposing what members a circle has
+                    'id': circle.eid,
+                    'name': circle.name,
+                })
+            elif user in circle.members:
+                circles.append({
+                    # not using circle_fields because not exposing what members a circle has
+                    'id': circle.eid,
+                    'count': len(circle.members),
+                })
+
+        return circles
 
 
 post_fields = {
@@ -69,7 +79,7 @@ post_fields = {
         'author': fields.Nested(user_fields),
     }), attribute='reactions2'),
     'comments': fields.List(fields.Nested(comment_fields), attribute='comments2'),
-    'circles': fields.List(Circle),
+    'circles': AnonymizedCircles,
     'deleted': fields.Boolean,
     'is_update_avatar': fields.Boolean,
     'poll': fields.Nested({

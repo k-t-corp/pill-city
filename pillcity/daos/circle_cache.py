@@ -11,7 +11,7 @@ def set_in_circle_cache(circle: Circle):
 
 
 @timer
-def get_in_circle_cache(oid: ObjectId):
+def get_in_circle_cache(oid: ObjectId) -> Circle:
     r_circle = r.hget(RCircle, str(oid))
     if not r_circle:
         circle = Circle.objects.get(id=oid)
