@@ -7,7 +7,6 @@ interface MyCircle {
 
 interface OthersCircle {
   id: string
-  count: number
 }
 
 export type AnonymizedCircle = MyCircle | OthersCircle

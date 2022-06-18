@@ -292,10 +292,6 @@ components:
           type: string
           description: Circle name. Only contains valid data if the embedding post's author is the circle owner
           example: 圈子
-        count:
-          type: number
-          description: Member count of the circle. Only contains valid data if the embedding post's author is NOT the circle owner
-          example: 5
     Reaction:
       required:
         - id

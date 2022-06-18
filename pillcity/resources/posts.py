@@ -57,7 +57,6 @@ class AnonymizedCircles(fields.Raw):
                 circles.append({
                     # not using circle_fields because not exposing what members a circle has
                     'id': circle.eid,
-                    'count': len(circle.members),
                 })
 
         return circles
