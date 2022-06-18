@@ -119,7 +119,24 @@ export default (props: Props) => {
   if (props.data.is_public) {
     sharingScope = 'Public'
   } else if (props.data.circles.length !== 0) {
-    sharingScope = props.data.circles.filter(_ => _).map(c => c.name).join(', ')
+    let circleNames: string[] = []
+    let circlesCount = 0
+    for (let circle of props.data.circles) {
+      if ("name" in circle) {
+        circleNames = [...circleNames, circle.name]
+      } else {
+        circlesCount += 1
+      }
+    }
+    if (circleNames.length > 0) {
+      sharingScope = circleNames.join(', ')
+    } else if (circlesCount === 0) {
+      sharingScope = 'Only you'
+    } else if (circlesCount === 1) {
+      sharingScope = '1 circle'
+    } else {
+      sharingScope = `${circlesCount} circles`
+    }
   } else {
     sharingScope = 'Only you'
   }

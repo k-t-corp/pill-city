@@ -280,6 +280,18 @@ components:
           type: string
           description: Circle name
           example: 圈子
+    AnonymizedCircle:
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          description: Permanent ID for the circle
+          example: a3137edb-e629-49ac-b1f1-3343fd97329c
+        name:
+          type: string
+          description: Circle name. Only contains valid data if the embedding post's author is the circle owner
+          example: 圈子
     Reaction:
       required:
         - id
@@ -394,7 +406,7 @@ components:
           type: array
           description: Circles that the post is published in
           items:
-            $ref: '#/components/schemas/Circle'
+            $ref: '#/components/schemas/AnonymizedCircle'
         deleted:
           type: boolean
           description: Whether the post is deleted
