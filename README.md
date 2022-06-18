@@ -61,7 +61,7 @@ cd web && yarn start
 1. Figure out your LAN IP. You can do this by running `cd web && yarn start` and inspect the `On Your Network` IP printed by `create-react-app`
 2. Stop `yarn start`
 3. Update `.env`
-   1. Replace `localhost` in `CDN_URL` with your LAN IP
+   1. Replace `localhost` in `CDN_URL`, `S3_ENDPOINT_URL` and `STS_ENDPOINT_URL` with your LAN IP
 4. Update `web/.example.env`
    2. Replace `localhost` in `REACT_APP_API_ENDPOINT` with your LAN IP
 5. Run `up` and `cd web && yarn start` as usual
