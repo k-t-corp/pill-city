@@ -90,7 +90,7 @@ export default (props: Props) => {
 
   const [sendPost, updateSendPost] = useState(true)
 
-  const onDrop = (e: any) => {
+  const onDrop = (e: React.DragEvent) => {
     e.preventDefault()
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       let img = e.dataTransfer.files[0];

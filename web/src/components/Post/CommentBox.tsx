@@ -42,22 +42,20 @@ export default (props: Props) => {
     if (posting) {
       return
     }
-    if (fl && fl[0]) {
-      if (fl.length> 1) {
-        alert(`Only allowed to upload 1 image`);
-      } else {
-        let uploadedMedias: File[] = []
-        for (let i = 0; i < fl.length; i++) {
-          const f = fl[i]
-          const heic = f.name.toLowerCase().endsWith(".heic")
-          if (heic) {
-            addToast("Converting heic image, please wait a while before image shows up...", true)
-          }
-          uploadedMedias.push(heic ? await convertHeicFileToPng(f) : f)
-        }
-        updateMedias(medias.concat(uploadedMedias))
-      }
+    if (medias.length >= 1) {
+      addToast(`Only allowed to upload 1 image`);
+      return
     }
+    let uploadedMedias: File[] = []
+    for (let i = 0; i < fl.length; i++) {
+      const f = fl[i]
+      const heic = f.name.toLowerCase().endsWith(".heic")
+      if (heic) {
+        addToast("Converting heic image, please wait a while before image shows up...", true)
+      }
+      uploadedMedias.push(heic ? await convertHeicFileToPng(f) : f)
+    }
+    updateMedias(medias.concat(uploadedMedias))
   }
 
   const isContentValid = () => {
@@ -150,6 +148,7 @@ export default (props: Props) => {
           onChange={(newContent) => {
             updateContent(newContent)
           }}
+          onAddMedia={onChangeMedias}
           disabled={false}
           textAreaClassName='post-comment-box-input'
           placeholder={contentPlaceholder}

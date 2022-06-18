@@ -6,9 +6,7 @@
     text-align: center;
     color: #838383;
     font-size: x-large;
+    line-height: 1.5em;
     border-radius: 4px;
-}
-
-.upload-media-drop-zone:hover {
     cursor: pointer;
 }

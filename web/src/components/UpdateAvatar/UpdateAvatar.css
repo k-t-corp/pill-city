@@ -5,6 +5,8 @@
     padding: 40px;
     text-align: center;
     color: #838383;
-    font-size: xx-large;
+    font-size: x-large;
+    line-height: 1.5em;
     border-radius: 4px;
+    cursor: pointer;
 }
