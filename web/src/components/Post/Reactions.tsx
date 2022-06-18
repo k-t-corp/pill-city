@@ -80,13 +80,12 @@ export default (props: Props) => {
     updateLoading(false)
   }
 
-  const addEmoji = async (event: any, emojiObject: any) => {
+  const addEmoji = async (emoji: string) => {
     updateEmojiPickerOpened(false)
     if (loading) {
       return
     }
     updateLoading(true)
-    const emoji = emojiObject.emoji
     const res = await api.addReaction(emoji, props.postId)
     updateReactions([
       ...reactions,
@@ -174,7 +173,12 @@ export default (props: Props) => {
               width: '100%',
               height: '100vh'
             }}
-            onEmojiClick={addEmoji} preload={true} native={true}
+            onEmojiClick={async (e, o) => {
+              e.preventDefault()
+              await addEmoji(o.emoji)
+            }}
+            preload={true}
+            native={true}
           />
         </PillModal>
       )
@@ -182,7 +186,14 @@ export default (props: Props) => {
       emojiPicker = (
         <div id="post-reaction-emoji-picker-wrapper" ref={emojiPickerRef}>
           <div className="post-reaction-emoji-picker">
-            <Picker onEmojiClick={addEmoji} preload={true} native={true}/>
+            <Picker
+              onEmojiClick={async (e, o) => {
+                e.preventDefault()
+                await addEmoji(o.emoji)
+              }}
+              preload={true}
+              native={true}
+            />
           </div>
         </div>
       )
@@ -191,7 +202,15 @@ export default (props: Props) => {
 
   reactionElems.push(
     <div key='add-reaction'>
-      <div className={addReactionClassName} onClick={showEmojiPicker}>
+      <div
+        className={addReactionClassName}
+        onClick={showEmojiPicker}
+        onDoubleClick={async e => {
+          e.preventDefault()
+          updateEmojiPickerOpened(false)
+          await addEmoji("➕")
+        }}
+      >
         <span className="post-emoji" role="img" aria-label="Add Reaction">➕</span>
         {reactions.length === 0 ? "Add Reaction" : null}
       </div>
