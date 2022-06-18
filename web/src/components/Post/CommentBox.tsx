@@ -49,7 +49,7 @@ export default (props: Props) => {
         let uploadedMedias: File[] = []
         for (let i = 0; i < fl.length; i++) {
           const f = fl[i]
-          const heic = f.name.endsWith(".heic")
+          const heic = f.name.toLowerCase().endsWith(".heic")
           if (heic) {
             addToast("Converting heic image, please wait a while before image shows up...", true)
           }

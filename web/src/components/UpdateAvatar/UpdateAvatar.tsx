@@ -65,7 +65,7 @@ export default (props: Props) => {
   const onUpload = async (event: any) => {
     if (event.target.files && event.target.files[0]) {
       let f = event.target.files[0];
-      const heic = f.name.endsWith(".heic")
+      const heic = f.name.toLowerCase().endsWith(".heic")
       if (heic) {
         addToast("Converting heic image, please wait a while before image shows up...", true)
       }

@@ -6,5 +6,5 @@ export default async (f: File): Promise<File> => {
   const heicFetched = await fetch(heicUrl)
   const heicBlob = await heicFetched.blob()
   const pngBlob = await heic2any({ blob: heicBlob }) as Blob
-  return new File([pngBlob], f.name.replace(".heic", ".png"))
+  return new File([pngBlob], f.name.toLowerCase().replace(".heic", ".png"))
 }
