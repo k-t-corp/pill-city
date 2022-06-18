@@ -166,9 +166,13 @@ export default (props: Props) => {
         let uploadedMedias: NewPostMediaUploaded[] = []
         for (let i = 0; i < fl.length; i++) {
           const f = fl[i]
+          const heic = f.name.endsWith(".heic")
+          if (heic) {
+            addToast("Converting heic image, please wait a while before image shows up...", true)
+          }
           uploadedMedias.push({
             type: 'Uploaded',
-            media: f.name.endsWith(".heic") ? await convertHeicFileToPng(f) : f,
+            media: heic ? await convertHeicFileToPng(f) : f,
           })
         }
         updateMedias(medias.concat(uploadedMedias))

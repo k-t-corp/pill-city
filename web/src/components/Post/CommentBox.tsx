@@ -49,7 +49,11 @@ export default (props: Props) => {
         let uploadedMedias: File[] = []
         for (let i = 0; i < fl.length; i++) {
           const f = fl[i]
-          uploadedMedias.push(f.name.endsWith(".heic") ? await convertHeicFileToPng(f) : f)
+          const heic = f.name.endsWith(".heic")
+          if (heic) {
+            addToast("Converting heic image, please wait a while before image shows up...", true)
+          }
+          uploadedMedias.push(heic ? await convertHeicFileToPng(f) : f)
         }
         updateMedias(medias.concat(uploadedMedias))
       }

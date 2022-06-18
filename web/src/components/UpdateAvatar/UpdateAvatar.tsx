@@ -11,6 +11,7 @@ import PillButtons from "../PillButtons/PillButtons";
 import PillButton, {PillButtonVariant} from "../PillButtons/PillButton";
 import PillForm from "../PillForm/PillForm";
 import convertHeicFileToPng from "../../utils/convertHeicFileToPng";
+import {useToast} from "../Toast/ToastProvider";
 
 
 const getCroppedImg = async (image: HTMLImageElement, crop: Crop): Promise<Blob> => {
@@ -59,10 +60,16 @@ interface Props {
 
 export default (props: Props) => {
   const [objectUrl, updateObjectUrl] = useState("")
+  const {addToast} = useToast()
+
   const onUpload = async (event: any) => {
     if (event.target.files && event.target.files[0]) {
       let f = event.target.files[0];
-      f = f.name.endsWith(".heic") ? await convertHeicFileToPng(f) : f
+      const heic = f.name.endsWith(".heic")
+      if (heic) {
+        addToast("Converting heic image, please wait a while before image shows up...", true)
+      }
+      f = heic ? await convertHeicFileToPng(f) : f
       const newObjectUrl = URL.createObjectURL(f)
       updateObjectUrl(newObjectUrl)
     }
