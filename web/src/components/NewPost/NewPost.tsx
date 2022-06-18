@@ -159,25 +159,23 @@ export default (props: Props) => {
     if (posting) {
       return
     }
-    if (fl && fl[0]) {
-      if (fl.length > 4) {
-        alert(`Only allowed to upload 4 images`);
-      } else {
-        let uploadedMedias: NewPostMediaUploaded[] = []
-        for (let i = 0; i < fl.length; i++) {
-          const f = fl[i]
-          const heic = f.name.toLowerCase().endsWith(".heic")
-          if (heic) {
-            addToast("Converting heic image, please wait a while before image shows up...", true)
-          }
-          uploadedMedias.push({
-            type: 'Uploaded',
-            media: heic ? await convertHeicFileToPng(f) : f,
-          })
-        }
-        updateMedias(medias.concat(uploadedMedias))
-      }
+    if (medias.length >= 4) {
+      addToast(`Only allowed to upload 4 images`)
+      return
     }
+    let uploadedMedias: NewPostMediaUploaded[] = []
+    for (let i = 0; i < fl.length; i++) {
+      const f = fl[i]
+      const heic = f.name.toLowerCase().endsWith(".heic")
+      if (heic) {
+        addToast("Converting heic image, please wait a while before image shows up...", true)
+      }
+      uploadedMedias.push({
+        type: 'Uploaded',
+        media: heic ? await convertHeicFileToPng(f) : f,
+      })
+    }
+    updateMedias(medias.concat(uploadedMedias))
   }
 
   const sharingScopeOnChange = (options: OnChangeValue<SharingScopeOption, true>) => {
@@ -324,6 +322,7 @@ export default (props: Props) => {
           onChange={(newContent) => {
             updateContent(newContent)
           }}
+          onAddMedia={onChangeMedias}
           disabled={posting}
           textAreaClassName='new-post-text-box'
         />

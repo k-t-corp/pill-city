@@ -9,6 +9,7 @@ import "@webscopeio/react-textarea-autocomplete/style.css";
 interface Props {
   content: string
   onChange: (newContent: string) => void
+  onAddMedia: (fl: FileList) => void
   disabled: boolean
   textAreaClassName?: string
   placeholder?: string
@@ -41,6 +42,20 @@ export default (props: Props) => {
       }}
       dropdownStyle={{
         zIndex: 999
+      }}
+      onPaste={e => {
+        const files = e.clipboardData.files
+        if (files.length === 0) {
+          return
+        }
+        for (let i = 0; i < files.length; ++i) {
+          const f = files[i]
+          if (!f.type.startsWith("image/")) {
+            return
+          }
+        }
+        e.preventDefault()
+        props.onAddMedia(files)
       }}
     />
   )
