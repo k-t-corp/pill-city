@@ -16,6 +16,7 @@ import {PhotographIcon} from "@heroicons/react/solid";
 import AddMedia from "../AddMedia/AddMedia";
 import PillModal from "../PillModal/PillModal";
 import Media from "../../models/Media";
+import convertHeicFileToPng from "../../utils/convertHeicFileToPng";
 
 interface Props {
   me: User,
@@ -37,7 +38,7 @@ export default (props: Props) => {
 
   const { addToast } = useToast()
 
-  const onChangeMedias = (fl: FileList) => {
+  const onChangeMedias = async (fl: FileList) => {
     if (posting) {
       return
     }
@@ -45,11 +46,12 @@ export default (props: Props) => {
       if (fl.length> 1) {
         alert(`Only allowed to upload 1 image`);
       } else {
-        let selectedMedias = []
+        let uploadedMedias: File[] = []
         for (let i = 0; i < fl.length; i++) {
-          selectedMedias.push(fl[i])
+          const f = fl[i]
+          uploadedMedias.push(f.name.endsWith(".heic") ? await convertHeicFileToPng(f) : f)
         }
-        updateMedias(selectedMedias)
+        updateMedias(medias.concat(uploadedMedias))
       }
     }
   }

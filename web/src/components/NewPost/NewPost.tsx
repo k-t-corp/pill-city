@@ -22,6 +22,7 @@ import AddPoll from "../AddPoll/AddPoll";
 import {QuestionMarkCircleIcon} from "@heroicons/react/outline";
 import PillCheckbox from "../PillCheckbox/PillCheckbox";
 import Select, {OnChangeValue} from "react-select";
+import convertHeicFileToPng from "../../utils/convertHeicFileToPng";
 
 interface Props {
   beforePosting: () => void
@@ -46,6 +47,7 @@ interface NewPostMediaOwned {
   type: 'Owned'
   media: Media
 }
+
 export interface AddPollChoice {
   text: string
 }
@@ -153,7 +155,7 @@ export default (props: Props) => {
     updatePosting(false)
   }
 
-  const onChangeMedias = (fl: FileList) => {
+  const onChangeMedias = async (fl: FileList) => {
     if (posting) {
       return
     }
@@ -161,16 +163,15 @@ export default (props: Props) => {
       if (fl.length > 4) {
         alert(`Only allowed to upload 4 images`);
       } else {
-        let selectedMedias = []
+        let uploadedMedias: NewPostMediaUploaded[] = []
         for (let i = 0; i < fl.length; i++) {
-          selectedMedias.push(fl[i])
-        }
-        updateMedias(medias.concat(selectedMedias.map(sm => {
-          return {
+          const f = fl[i]
+          uploadedMedias.push({
             type: 'Uploaded',
-            media: sm
-          }
-        })))
+            media: f.name.endsWith(".heic") ? await convertHeicFileToPng(f) : f,
+          })
+        }
+        updateMedias(medias.concat(uploadedMedias))
       }
     }
   }
