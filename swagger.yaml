@@ -484,6 +484,12 @@ components:
         errored_next_refetch_seconds:
           type: number
           description: If the URL preview fails to fetch, the epoch time in seconds when this URL will be refetched
+        index_start:
+          type: number
+          description: The starting index of the URL in content
+        index_end:
+          type: number
+          description: The ending index of the URL in content, exclusive
     CloudEmoticonEntry:
       required:
         - description
