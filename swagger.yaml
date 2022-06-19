@@ -419,6 +419,12 @@ components:
           nullable: true
           allOf:
             - $ref: '#/components/schemas/Poll'
+        link_previews:
+          type: array
+          description: Link previews extracted from the text content
+          items:
+            $ref: '#/components/schemas/LinkPreview'
+          default: [ ]
     Message:
       required:
         - msg
@@ -450,6 +456,34 @@ components:
           type: string
           description: Processed media dominant color in hex
           example: 8F4092
+    LinkPreview:
+      required:
+        - url
+        - state
+        - index_start
+        - index_end
+      properties:
+        url:
+          type: string
+          description: The previewed URL
+        title:
+          type: string
+          description: Title for the URL
+        subtitle:
+          type: string
+          description: Subtitle for the URL
+        image_urls:
+          type: array
+          items:
+            type: string
+          description: Image URLs for the URL
+        state:
+          type: string
+          enum: ["fetching", "fetched", "errored"]
+          description: The fetching state of this URL preview
+        errored_next_refetch_seconds:
+          type: number
+          description: If the URL preview fails to fetch, the epoch time in seconds when this URL will be refetched
     CloudEmoticonEntry:
       required:
         - description
