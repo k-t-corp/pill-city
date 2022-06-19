@@ -321,7 +321,7 @@ export default (props: Props) => {
               }}
             >
               <PhotographIcon className='new-post-attachment-icon'/>
-              <span>{medias.length > 0 ? 'Edit media' : 'Add media'}</span>
+              <span>Media</span>
             </div>
             <div
               className="new-post-attachment-button"
@@ -332,7 +332,7 @@ export default (props: Props) => {
               }}
             >
               <ChartSquareBarIcon className='new-post-attachment-icon'/>
-              <span>{pollChoices.length > 0 ? 'Edit poll' : 'Add poll'}</span>
+              <span>Poll</span>
             </div>
           </div>
       }
