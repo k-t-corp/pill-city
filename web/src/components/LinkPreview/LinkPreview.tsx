@@ -3,26 +3,27 @@ import InstantPreview, {getInstantPreview} from "./InstantPreview";
 import FetchedPreview from "./FetchedPreview";
 import './LinkPreview.css'
 import {useState} from "react";
+import LinkPreview from "../../models/LinkPreview";
 
 interface Props {
-  url: URL,
+  preview: LinkPreview,
 }
 
 export default (props: Props) => {
-  const { url } = props
+  const { preview } = props
   const [clicked, updateClicked] = useState(false)
 
-  const instantPreview = getInstantPreview(url)
+  const instantPreview = getInstantPreview(preview.url)
 
   if (!clicked) {
     return (
       <FetchedPreview
-        url={url.toString()}
+        preview={preview}
         onClick={() => {
-          if (instantPreview) {
+          if (!instantPreview) {
             updateClicked(true)
           } else {
-            window.open(url, '_blank')
+            window.open(preview.url, '_blank')
           }
         }}
       />

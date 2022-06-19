@@ -18,7 +18,18 @@ interface YouTubeVideoInstantPreview {
 
 type InstantPreviews = YouTubeVideoInstantPreview
 
-export const getInstantPreview = (parsedUrl: URL): InstantPreviews | undefined => {
+export const getInstantPreview = (url: string): InstantPreviews | undefined => {
+  let parsedUrl
+  try {
+    parsedUrl = new URL(url)
+  } catch (e) {
+    return
+  }
+
+  if (!parsedUrl) {
+    return
+  }
+
   if (youtubeDomains.indexOf(parsedUrl.hostname) !== -1) {
     if (parsedUrl.pathname === '/watch') {
       const vid = parsedUrl.searchParams.get('v')
