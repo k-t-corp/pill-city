@@ -38,6 +38,15 @@
 .post-comment-box-buttons {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+}
+
+.post-comment-box-attachment-icon {
+    width: 25px;
+    height: 25px;
+    margin-right: 10px;
+    color: #727272;
+    cursor: pointer;
 }
 
 .post-comment-box-post-button {
@@ -46,8 +55,7 @@
     font-size: small;
     background-color: #E05140;
     color: white;
-    border-radius: 5px;
-    width: auto;
+    border-radius: 4px;
     cursor: pointer;
 }
 
