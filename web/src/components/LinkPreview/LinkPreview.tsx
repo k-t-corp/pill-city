@@ -14,23 +14,25 @@ export default (props: Props) => {
   const [clicked, updateClicked] = useState(false)
 
   const instantPreview = getInstantPreview(preview.url)
+  const fetchedPreview = (
+    <FetchedPreview
+      preview={preview}
+      onClick={() => {
+        updateClicked(true)
+        if (!instantPreview) {
+          window.open(preview.url, '_blank')
+        }
+      }}
+    />
+  )
 
-  if (!clicked) {
-    return (
-      <FetchedPreview
-        preview={preview}
-        onClick={() => {
-          if (!instantPreview) {
-            updateClicked(true)
-          } else {
-            window.open(preview.url, '_blank')
-          }
-        }}
-      />
-    )
-  }
   if (instantPreview) {
-    return <InstantPreview instantPreview={instantPreview}/>
+    if (!clicked) {
+      return fetchedPreview
+    } else {
+      return <InstantPreview instantPreview={instantPreview}/>
+    }
   }
-  return null
+
+  return fetchedPreview
 }
