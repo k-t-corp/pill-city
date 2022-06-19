@@ -1,15 +1,34 @@
 import React, {useState} from "react";
 import LinkPreview from "../LinkPreview/LinkPreview";
 import Post from "../../models/Post";
-import './Previews.css'
 import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/solid";
+import LinkPreviewModel from "../../models/LinkPreview";
+import {useInterval} from "react-interval-hook";
+import api from "../../api/Api";
+import './Previews.css'
 
 interface Props {
   post: Post
 }
 
 export default (props: Props) => {
-  const previewElems = props.post.link_previews.map(_ => <LinkPreview preview={_}/>)
+  const [previews, updatePreviews] = useState<LinkPreviewModel[]>(props.post.link_previews)
+
+  useInterval(async () => {
+    for (let preview of previews) {
+      if (preview.state === 'fetching') {
+        const newPreview = await api.getLinkPreview(preview.url)
+        updatePreviews(previews.map(p => {
+          if (p.url !== preview.url) {
+            return p
+          }
+          return newPreview
+        }))
+      }
+    }
+  }, 5000, { immediate: true })
+
+  const previewElems = previews.map(_ => <LinkPreview key={_.url} preview={_}/>)
 
   if (previewElems.length === 0) {
     return null

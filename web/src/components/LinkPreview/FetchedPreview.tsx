@@ -12,8 +12,18 @@ interface Props {
 export default (props: Props) => {
   const {preview} = props
 
-  if (preview === null || preview.state === 'fetching') {
-    return null
+  if (preview.state === 'fetching') {
+    return (
+      <div className="fetched-preview">
+        Fetching preview for {' '}
+        <a
+          href={preview.url}
+          className='fetched-preview-link'
+          target="_blank"
+          rel="noreferrer noopener"
+        >{preview.url}</a>
+      </div>
+    )
   } else if (preview.state === 'errored') {
     return (
       <div className="fetched-preview">
