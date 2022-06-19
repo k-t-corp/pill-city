@@ -1,5 +1,6 @@
 from flask_restful import reqparse, Resource, fields, marshal_with, marshal
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from urlextract import URLExtract
 from pillcity.daos.user import find_user, find_user_or_raise
 from pillcity.daos.user_cache import get_in_user_cache_by_user_id
 from pillcity.daos.circle import find_circle
@@ -8,11 +9,13 @@ from pillcity.daos.post import dangerously_get_post, create_post, sees_post, ret
 from pillcity.daos.post_cache import get_in_post_cache
 from pillcity.daos.circle_cache import get_in_circle_cache
 from pillcity.daos.exceptions import UnauthorizedAccess, BadRequest
+from pillcity.daos.link_preview import get_link_preview
 from .users import user_fields
 from .pagination import pagination_parser
 from .mention import check_mentioned_user_ids
 from .comments import comment_fields
 from .media import check_media_object_names, MediaUrls, MediaUrl, MediaUrlsV2, MediaUrlV2
+from .link_preview import link_preview_fields
 
 MaxPostMediaCount = 4
 
@@ -62,6 +65,25 @@ class AnonymizedCircles(fields.Raw):
         return circles
 
 
+url_extractor = URLExtract()
+url_extractor.update_when_older(30)
+
+
+class LinkPreviews(fields.Raw):
+    def format(self, content):
+        previews = []
+        for url, (index_start, index_end) in url_extractor.find_urls(content, get_indices=True):
+            p = get_link_preview(url)
+            if p:
+                p = marshal(p, link_preview_fields)
+                p.update({
+                    'index_start': index_start,
+                    'index_end': index_end
+                })
+                previews.append(p)
+        return previews
+
+
 post_fields = {
     'id': fields.String(attribute='eid'),
     'created_at_seconds': fields.Integer(attribute='created_at'),
@@ -90,7 +112,8 @@ post_fields = {
             'voters': fields.List(fields.Nested(user_fields))
         })),
         'close_by_seconds': fields.Integer(attribute='close_by')
-    })
+    }),
+    "link_previews": LinkPreviews(attribute='content')
 }
 
 
