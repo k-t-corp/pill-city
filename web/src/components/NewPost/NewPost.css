@@ -22,7 +22,6 @@
 
 .new-post-text-box {
     margin-top: 10px;
-    margin-bottom: 6px;
     width: 100%;
     min-height: 20vh;
     max-height: 40vh;
@@ -48,13 +47,26 @@
     border: 1px #b4b4b4 solid;
 }
 
-.new-post-media-button {
-    position: absolute;
-    top: 15px;
-    right: 5px;
-    width: 20px;
+.new-post-attachment-buttons {
+    display: flex;
+    flex-direction: row;
+}
+
+.new-post-attachment-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     cursor: pointer;
-    z-index: 3;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: #727272;
+    margin-right: 10px;
+}
+
+.new-post-attachment-icon {
+    width: 25px;
+    height: 25px;
+    margin-right: 2px;
 }
 
 .new-post-poll-button {
@@ -72,7 +84,7 @@
 }
 
 .new-post-sharing-scope-dropdown {
-    width: 80%;
+    width: 100%;
 }
 
 .new-post-sharing-scope-question {
@@ -102,11 +114,11 @@
 .new-post-btns {
     display: flex;
     justify-content: flex-end;
-    margin-top: 10px;
+    margin-top: 15px;
 }
 
 .new-post-post-btn {
-    padding: 12px 25px;
+    padding: 10px 20px;
     font-weight: bold;
     font-size: medium;
     background-color: #E05140;
@@ -147,9 +159,9 @@
 }
 
 .new-post-resharable {
-    margin-top: 10px;
     display: flex;
     align-items: center;
+    margin-right: 15px;
 }
 
 .new-post-reshare-content-summary {

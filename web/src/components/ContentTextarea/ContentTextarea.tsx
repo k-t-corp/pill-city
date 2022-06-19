@@ -35,10 +35,10 @@ export default (props: Props) => {
         }
       }}
       style={{
-        fontSize: '13.333px'
+        fontSize: '14px'
       }}
       itemStyle={{
-        fontSize: '13.333px'
+        fontSize: '14px'
       }}
       dropdownStyle={{
         zIndex: 999

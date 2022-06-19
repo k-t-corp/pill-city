@@ -153,14 +153,6 @@ export default (props: Props) => {
           textAreaClassName='post-comment-box-input'
           placeholder={contentPlaceholder}
         />
-        <PhotographIcon
-          className='post-comment-box-attachment-button'
-          onClick={() => {
-            if (!posting) {
-              updateMediaOpened(true)
-            }
-          }}
-        />
         <PillModal
           isOpen={mediaOpened}
           onClose={() => {updateMediaOpened(false)}}
@@ -180,6 +172,14 @@ export default (props: Props) => {
           <MediaPane mediaUrls={medias.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.media_url))}/>
       }
       <div className="post-comment-box-buttons">
+        <PhotographIcon
+          className='post-comment-box-attachment-icon'
+          onClick={() => {
+            if (!posting) {
+              updateMediaOpened(true)
+            }
+          }}
+        />
         <div
           className={
             isContentValid() && !posting ?

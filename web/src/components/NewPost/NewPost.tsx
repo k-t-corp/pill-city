@@ -270,28 +270,10 @@ export default (props: Props) => {
       <div className="new-post-text-box-container">
         {props.resharePostData === null &&
           <>
-            <PhotographIcon
-              className='new-post-media-button'
-              style={{color: medias.length > 0 ? 'black' : '#b2b2b2'}}
-              onClick={() => {
-                if (!posting) {
-                  updateAddingMedia(true)
-                }
-              }}
-            />
-            <ChartSquareBarIcon
-              className='new-post-poll-button'
-              style={{color: pollChoices.length > 0 ? 'black' : '#b2b2b2'}}
-              onClick={() => {
-                if (!posting) {
-                  updateAddingPoll(true)
-                }
-              }}
-            />
             <PillModal
               isOpen={addingMedia}
               onClose={() => {updateAddingMedia(false)}}
-              title="Add media"
+              title={medias.length > 0 ? "Edit media" : "Add media"}
             >
               <AddMedia
                 onChangeMedias={onChangeMedias}
@@ -307,7 +289,7 @@ export default (props: Props) => {
             <PillModal
               isOpen={addingPoll}
               onClose={() => {updateAddingPoll(false)}}
-              title="Add poll"
+              title={pollChoices.length > 0 ? 'Edit poll' : "Add poll"}
             >
               <AddPoll
                 choices={pollChoices}
@@ -327,7 +309,33 @@ export default (props: Props) => {
           textAreaClassName='new-post-text-box'
         />
       </div>
-
+      {
+        props.resharePostData === null &&
+          <div className="new-post-attachment-buttons">
+            <div
+              className="new-post-attachment-button"
+              onClick={() => {
+                if (!posting) {
+                  updateAddingMedia(true)
+                }
+              }}
+            >
+              <PhotographIcon className='new-post-attachment-icon'/>
+              <span>Media</span>
+            </div>
+            <div
+              className="new-post-attachment-button"
+              onClick={() => {
+                if (!posting) {
+                  updateAddingPoll(true)
+                }
+              }}
+            >
+              <ChartSquareBarIcon className='new-post-attachment-icon'/>
+              <span>Poll</span>
+            </div>
+          </div>
+      }
       <div className='new-post-sharing-scope'>
         <Select
           placeholder='Who can see it'
@@ -338,6 +346,29 @@ export default (props: Props) => {
           onChange={sharingScopeOnChange}
           isDisabled={posting}
           className='new-post-sharing-scope-dropdown'
+          styles={{
+            control: styles => ({
+              ...styles,
+              borderRadius: '4px',
+              borderColor: '#e0e0e0',
+              boxShadow: "none",
+              '&:hover': {
+                borderColor: '#e0e0e0'
+              },
+              '&:focus': {
+                borderColor: '#e0e0e0'
+              }
+            }),
+            indicatorSeparator: _ => ({ display: 'none' }),
+            option: styles => ({
+              ...styles,
+              backgroundColor: 'white',
+              cursor: 'pointer',
+              '&:hover': {
+                backgroundColor: '#e0e0e0',
+              }
+            })
+          }}
         />
         <div className='new-post-sharing-scope-question' onClick={e => {
           e.preventDefault()
@@ -356,40 +387,40 @@ export default (props: Props) => {
             selections in this case are just for your own record.</p>
         </PillModal>
       </div>
-      {props.resharePostData === null &&
-        <div className="new-post-resharable">
-          <PillCheckbox
-            checked={resharable}
-            onChange={resharableOnChange}
-            label='Enable Resharing'
-            disabled={posting}
-          />
-          <div className='new-post-enable-resharing-question' onClick={e => {
-            e.preventDefault()
-            updateEnableResharingExplanationOpened(true)
-          }}>
-            <QuestionMarkCircleIcon />
-          </div>
-          <PillModal
-            isOpen={enableResharingExplanationOpened}
-            onClose={() => {updateEnableResharingExplanationOpened(false)}}
-            title='Enable Resharing'
-          >
-            <p>If you enable resharing, other users can potentially reshare the post to "public" (anyone on this
-              site)</p>
-            <p>All interactions such as comments and reactions belong to the resharing post unless users explicitly
-              click into your original post and interact with it</p>
-          </PillModal>
-        </div>
-      }
       <div className='new-post-btns'>
         {props.resharePostData === null ?
-          <div
-            className={!isValid() || posting ? 'new-post-post-btn new-post-post-btn-disabled' : 'new-post-post-btn'}
-            onClick={postButtonOnClick}
-          >
-            Post
-          </div> :
+          <>
+            <div className="new-post-resharable">
+              <PillCheckbox
+                checked={resharable}
+                onChange={resharableOnChange}
+                label='Enable Resharing'
+                disabled={posting}
+              />
+              <div className='new-post-enable-resharing-question' onClick={e => {
+                e.preventDefault()
+                updateEnableResharingExplanationOpened(true)
+              }}>
+                <QuestionMarkCircleIcon />
+              </div>
+              <PillModal
+                isOpen={enableResharingExplanationOpened}
+                onClose={() => {updateEnableResharingExplanationOpened(false)}}
+                title='Enable Resharing'
+              >
+                <p>If you enable resharing, other users can potentially reshare the post to "public" (anyone on this
+                  site)</p>
+                <p>All interactions such as comments and reactions belong to the resharing post unless users explicitly
+                  click into your original post and interact with it</p>
+              </PillModal>
+            </div>
+            <div
+              className={!isValid() || posting ? 'new-post-post-btn new-post-post-btn-disabled' : 'new-post-post-btn'}
+              onClick={postButtonOnClick}
+            >
+              Post
+            </div>
+          </> :
           <div className='new-post-reshare-controls'>
             <div className='new-post-reshare-question' onClick={e => {
               e.preventDefault()
