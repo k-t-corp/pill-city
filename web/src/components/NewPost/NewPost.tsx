@@ -270,28 +270,10 @@ export default (props: Props) => {
       <div className="new-post-text-box-container">
         {props.resharePostData === null &&
           <>
-            <PhotographIcon
-              className='new-post-media-button'
-              style={{color: medias.length > 0 ? 'black' : '#b2b2b2'}}
-              onClick={() => {
-                if (!posting) {
-                  updateAddingMedia(true)
-                }
-              }}
-            />
-            <ChartSquareBarIcon
-              className='new-post-poll-button'
-              style={{color: pollChoices.length > 0 ? 'black' : '#b2b2b2'}}
-              onClick={() => {
-                if (!posting) {
-                  updateAddingPoll(true)
-                }
-              }}
-            />
             <PillModal
               isOpen={addingMedia}
               onClose={() => {updateAddingMedia(false)}}
-              title="Add media"
+              title={medias.length > 0 ? "Edit media" : "Add media"}
             >
               <AddMedia
                 onChangeMedias={onChangeMedias}
@@ -307,7 +289,7 @@ export default (props: Props) => {
             <PillModal
               isOpen={addingPoll}
               onClose={() => {updateAddingPoll(false)}}
-              title="Add poll"
+              title={pollChoices.length > 0 ? 'Edit poll' : "Add poll"}
             >
               <AddPoll
                 choices={pollChoices}
@@ -327,7 +309,33 @@ export default (props: Props) => {
           textAreaClassName='new-post-text-box'
         />
       </div>
-
+      {
+        props.resharePostData === null &&
+          <div className="new-post-attachment-buttons">
+            <div
+              className="new-post-attachment-button"
+              onClick={() => {
+                if (!posting) {
+                  updateAddingMedia(true)
+                }
+              }}
+            >
+              <PhotographIcon className='new-post-attachment-icon'/>
+              <span>{medias.length > 0 ? 'Edit media' : 'Add media'}</span>
+            </div>
+            <div
+              className="new-post-attachment-button"
+              onClick={() => {
+                if (!posting) {
+                  updateAddingPoll(true)
+                }
+              }}
+            >
+              <ChartSquareBarIcon className='new-post-attachment-icon'/>
+              <span>{pollChoices.length > 0 ? 'Edit poll' : 'Add poll'}</span>
+            </div>
+          </div>
+      }
       <div className='new-post-sharing-scope'>
         <Select
           placeholder='Who can see it'
