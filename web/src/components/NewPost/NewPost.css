@@ -114,11 +114,11 @@
 .new-post-btns {
     display: flex;
     justify-content: flex-end;
-    margin-top: 10px;
+    margin-top: 15px;
 }
 
 .new-post-post-btn {
-    padding: 12px 25px;
+    padding: 10px 20px;
     font-weight: bold;
     font-size: medium;
     background-color: #E05140;
@@ -159,9 +159,9 @@
 }
 
 .new-post-resharable {
-    margin-top: 10px;
     display: flex;
     align-items: center;
+    margin-right: 15px;
 }
 
 .new-post-reshare-content-summary {

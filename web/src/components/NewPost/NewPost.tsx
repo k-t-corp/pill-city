@@ -387,40 +387,40 @@ export default (props: Props) => {
             selections in this case are just for your own record.</p>
         </PillModal>
       </div>
-      {props.resharePostData === null &&
-        <div className="new-post-resharable">
-          <PillCheckbox
-            checked={resharable}
-            onChange={resharableOnChange}
-            label='Enable Resharing'
-            disabled={posting}
-          />
-          <div className='new-post-enable-resharing-question' onClick={e => {
-            e.preventDefault()
-            updateEnableResharingExplanationOpened(true)
-          }}>
-            <QuestionMarkCircleIcon />
-          </div>
-          <PillModal
-            isOpen={enableResharingExplanationOpened}
-            onClose={() => {updateEnableResharingExplanationOpened(false)}}
-            title='Enable Resharing'
-          >
-            <p>If you enable resharing, other users can potentially reshare the post to "public" (anyone on this
-              site)</p>
-            <p>All interactions such as comments and reactions belong to the resharing post unless users explicitly
-              click into your original post and interact with it</p>
-          </PillModal>
-        </div>
-      }
       <div className='new-post-btns'>
         {props.resharePostData === null ?
-          <div
-            className={!isValid() || posting ? 'new-post-post-btn new-post-post-btn-disabled' : 'new-post-post-btn'}
-            onClick={postButtonOnClick}
-          >
-            Post
-          </div> :
+          <>
+            <div className="new-post-resharable">
+              <PillCheckbox
+                checked={resharable}
+                onChange={resharableOnChange}
+                label='Enable Resharing'
+                disabled={posting}
+              />
+              <div className='new-post-enable-resharing-question' onClick={e => {
+                e.preventDefault()
+                updateEnableResharingExplanationOpened(true)
+              }}>
+                <QuestionMarkCircleIcon />
+              </div>
+              <PillModal
+                isOpen={enableResharingExplanationOpened}
+                onClose={() => {updateEnableResharingExplanationOpened(false)}}
+                title='Enable Resharing'
+              >
+                <p>If you enable resharing, other users can potentially reshare the post to "public" (anyone on this
+                  site)</p>
+                <p>All interactions such as comments and reactions belong to the resharing post unless users explicitly
+                  click into your original post and interact with it</p>
+              </PillModal>
+            </div>
+            <div
+              className={!isValid() || posting ? 'new-post-post-btn new-post-post-btn-disabled' : 'new-post-post-btn'}
+              onClick={postButtonOnClick}
+            >
+              Post
+            </div>
+          </> :
           <div className='new-post-reshare-controls'>
             <div className='new-post-reshare-question' onClick={e => {
               e.preventDefault()
