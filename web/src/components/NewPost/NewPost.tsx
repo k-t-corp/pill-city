@@ -346,6 +346,29 @@ export default (props: Props) => {
           onChange={sharingScopeOnChange}
           isDisabled={posting}
           className='new-post-sharing-scope-dropdown'
+          styles={{
+            control: styles => ({
+              ...styles,
+              borderRadius: '4px',
+              borderColor: '#e0e0e0',
+              boxShadow: "none",
+              '&:hover': {
+                borderColor: '#e0e0e0'
+              },
+              '&:focus': {
+                borderColor: '#e0e0e0'
+              }
+            }),
+            indicatorSeparator: _ => ({ display: 'none' }),
+            option: styles => ({
+              ...styles,
+              backgroundColor: 'white',
+              cursor: 'pointer',
+              '&:hover': {
+                backgroundColor: '#e0e0e0',
+              }
+            })
+          }}
         />
         <div className='new-post-sharing-scope-question' onClick={e => {
           e.preventDefault()
