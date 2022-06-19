@@ -4,8 +4,8 @@
     "display": "standalone",
     "scope": "/",
     "start_url": "/",
-    "name": "pill.city",
-    "short_name": "pill.city",
+    "name": "Pill City",
+    "short_name": "Pill City",
     "description": "An one-of-a-kind social network",
     "icons": [
         {

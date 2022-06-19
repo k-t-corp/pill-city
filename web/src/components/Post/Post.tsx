@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react'
-import parseContent from "../../utils/parseContent";
+import parseContent, {parseContentWithLinkPreviews} from "../../utils/parseContent";
 import {pastTime} from "../../utils/timeDelta";
 import {useHistory} from "react-router-dom";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
@@ -207,7 +207,7 @@ export default (props: Props) => {
           {
             !deleted ?
               !props.data.is_update_avatar ?
-                parseContent(props.data.content, `post-content ${props.detail ? '' : 'post-content-summary'}`)
+                parseContentWithLinkPreviews(props.data.content, props.data.link_previews,`post-content ${props.detail ? '' : 'post-content-summary'}`)
                 :
                 <div className='post-content' style={{fontStyle: 'italic'}}>@{props.data.author.id} has a new
                   avatar!</div>

@@ -2,6 +2,7 @@ import User from "./User";
 import {AnonymizedCircle} from "./Circle";
 import Media from "./Media";
 import MediaUrlV2 from "./MediaUrlV2";
+import LinkPreview from "./LinkPreview";
 
 export interface NestedComment {
   id: string
@@ -60,5 +61,6 @@ export default interface Post extends Previewable {
   comments: Comment[],
   circles: AnonymizedCircle[],
   is_update_avatar: boolean
-  poll: Poll
+  poll: Poll,
+  link_previews: LinkPreview[]
 }

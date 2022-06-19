@@ -1,40 +1,34 @@
 import React, {useState} from "react";
 import LinkPreview from "../LinkPreview/LinkPreview";
-import {Previewable} from "../../models/Post";
-import './Previews.css'
+import Post from "../../models/Post";
 import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/solid";
-
-// https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
-const regExForUrl = /(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*))/g
-
-const parseUrls = (content: string): URL[] => {
-  // @ts-ignore
-  return [...content.matchAll(regExForUrl)].map(a => a[1]).map(u => {
-    try {
-      return new URL(u)
-    } catch {
-      return null
-    }
-  }).filter(pu => pu !== null)
-}
+import LinkPreviewModel from "../../models/LinkPreview";
+import {useInterval} from "react-interval-hook";
+import api from "../../api/Api";
+import './Previews.css'
 
 interface Props {
-  post: Previewable
+  post: Post
 }
 
 export default (props: Props) => {
-  const {content} = props.post
+  const [previews, updatePreviews] = useState<LinkPreviewModel[]>(props.post.link_previews)
 
-  const previewElems = []
+  useInterval(async () => {
+    for (let preview of previews) {
+      if (preview.state === 'fetching') {
+        const newPreview = await api.getLinkPreview(preview.url)
+        updatePreviews(previews.map(p => {
+          if (p.url !== preview.url) {
+            return p
+          }
+          return newPreview
+        }))
+      }
+    }
+  }, 5000, { immediate: true })
 
-  const parsedUrls = parseUrls(content)
-  for (const parsedUrl of parsedUrls) {
-    previewElems.push(
-      <LinkPreview
-        url={parsedUrl}
-      />
-    )
-  }
+  const previewElems = previews.map(_ => <LinkPreview key={_.url} preview={_}/>)
 
   if (previewElems.length === 0) {
     return null
