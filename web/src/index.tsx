@@ -4,7 +4,7 @@ import {Provider as ReduxProvider} from 'react-redux'
 import 'semantic-ui-css/semantic.min.css';
 import 'react-image-lightbox/style.css';
 import App from './App';
-import register from './registerServiceWorker';
+import register, {unregister} from './registerServiceWorker';
 import store from "./store/store";
 import {PersistGate} from "redux-persist/integration/react";
 import {persistStore} from "redux-persist";
@@ -21,4 +21,11 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 );
-register();
+
+const userAgent = window.navigator.userAgent;
+if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
+  // todo: this is a workaround for https://github.com/pill-city/server/issues/379
+  unregister()
+} else {
+  register();
+}
