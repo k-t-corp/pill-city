@@ -100,6 +100,7 @@ export default (props: Props) => {
   }
 
   const dispatch = useAppDispatch()
+  const [updating, updateUpdating] = useState(false)
 
   return (
     <PillForm>
@@ -147,14 +148,19 @@ export default (props: Props) => {
             }
 
             props.beforeUpdate()
+            updateUpdating(true)
+
             const croppedImg = await getCroppedImg(avatarImageRef.current, crop);
             const data = new FormData();
             data.append('file', croppedImg, 'new-avatar');
             data.append('update_post', sendPost ? '1' : '0')
             await api.updateAvatar(data)
             await dispatch(loadMe())
+
+            updateUpdating(false)
             props.afterUpdate()
           }}
+          disabled={updating}
         />
         <PillCheckbox
           checked={sendPost}

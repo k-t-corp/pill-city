@@ -26,11 +26,14 @@ export default (props: Props) => {
     <div
       className='pill-button'
       style={{
-        cursor: props.disabled ? 'auto' : 'pointer',
+        cursor: props.disabled ? 'not-allowed' : 'pointer',
         backgroundColor: props.disabled ? '#727272' : variantToBackgroundColor(props.variant)
       }}
       onClick={e => {
         e.preventDefault()
+        if (props.disabled) {
+          return
+        }
         props.onClick()
       }}
     >{props.text}</div>
