@@ -1,6 +1,7 @@
 from pillcity.models import User, Post
 from .post import sees_post
 from .exceptions import UnauthorizedAccess, BadRequest
+from .post_cache import set_in_post_cache, exists_in_post_cache
 
 
 def vote(self: User, parent_post: Post, choice_id: str):
@@ -31,5 +32,9 @@ def vote(self: User, parent_post: Post, choice_id: str):
         elif self in c.voters:
             # this is not hte choice that the use casts but it's the choice before
             c.voters.remove(self)
+
+    if exists_in_post_cache(parent_post.id):
+        # only set in post cache if it already exists
+        set_in_post_cache(parent_post)
 
     parent_post.save()
