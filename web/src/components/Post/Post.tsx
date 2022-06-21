@@ -216,10 +216,10 @@ export default (props: Props) => {
           }
         </div>
         {props.data.reshared_from &&
-        <ResharedPost
-          resharedFrom={props.data.reshared_from}
-          showDetail={props.detail}
-        />
+          <ResharedPost
+            resharedFrom={props.data.reshared_from}
+            showDetail={props.detail}
+          />
         }
         {!deleting && !deleted &&
           <MediaCollage mediaUrls={mediaUrls} />

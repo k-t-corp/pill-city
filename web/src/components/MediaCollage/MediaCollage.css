@@ -1,6 +1,4 @@
 .media-collage {
-    margin-top: 10px;
-    margin-bottom: 10px;
     display: flex;
 }
 
@@ -14,6 +12,14 @@
     flex-grow: 1;
     flex-basis: 0;
     margin: 3px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    height: 300px;
+}
+
+.media-collage-img-container-edgeless {
+    flex-grow: 1;
+    flex-basis: 0;
     border: 1px solid #e0e0e0;
     border-radius: 4px;
     height: 300px;
