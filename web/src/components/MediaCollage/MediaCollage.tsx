@@ -25,6 +25,7 @@ export default (props: Props) => {
   }
 
   const imgContainerClassName = props.edgeless ? 'media-collage-img-container-edgeless' : 'media-collage-img-container'
+  const imgContainerHalfClassName = props.edgeless ? 'media-collage-img-container-half-edgeless' : 'media-collage-img-container-half'
 
   if (mediaUrls.length === 1) {
     elements = [
@@ -63,13 +64,13 @@ export default (props: Props) => {
         }}/>
       </div>,
       <div className='media-collage-img-col-container' key={1}>
-        <div className={`${imgContainerClassName} media-collage-img-container-half`}>
+        <div className={`${imgContainerClassName} ${imgContainerHalfClassName}`}>
           <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[1]} onClick={e => {
             e.preventDefault()
             onClick(1)
           }}/>
         </div>
-        <div className={`${imgContainerClassName} media-collage-img-container-half`}>
+        <div className={`${imgContainerClassName} ${imgContainerHalfClassName}`}>
           <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[2]} onClick={e => {
             e.preventDefault()
             onClick(2)
@@ -82,13 +83,13 @@ export default (props: Props) => {
   if (mediaUrls.length === 4) {
     elements = [
       <div className='media-collage-img-col-container' key={0}>
-        <div className={`${imgContainerClassName} media-collage-img-container-half`}>
+        <div className={`${imgContainerClassName} ${imgContainerHalfClassName}`}>
           <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[0]} onClick={e => {
             e.preventDefault()
             onClick(0)
           }}/>
         </div>
-        <div className={`${imgContainerClassName} media-collage-img-container-half`}>
+        <div className={`${imgContainerClassName} ${imgContainerHalfClassName}`}>
           <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[2]} onClick={e => {
             e.preventDefault()
             onClick(2)
@@ -96,13 +97,13 @@ export default (props: Props) => {
         </div>
       </div>,
       <div className='media-collage-img-col-container' key={1}>
-        <div className={`${imgContainerClassName} media-collage-img-container-half`}>
+        <div className={`${imgContainerClassName} ${imgContainerHalfClassName}`}>
           <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[1]} onClick={e => {
             e.preventDefault()
             onClick(1)
           }}/>
         </div>
-        <div className={`${imgContainerClassName} media-collage-img-container-half`}>
+        <div className={`${imgContainerClassName} ${imgContainerHalfClassName}`}>
           <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[3]} onClick={e => {
             e.preventDefault()
             onClick(3)

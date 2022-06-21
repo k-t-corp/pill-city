@@ -29,6 +29,10 @@
     height: 148px;
 }
 
+.media-collage-img-container-half-edgeless {
+    height: 150px;
+}
+
 .media-collage-img {
     object-fit: cover;
     width: 100%;
