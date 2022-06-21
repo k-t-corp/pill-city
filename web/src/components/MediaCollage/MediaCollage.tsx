@@ -89,17 +89,17 @@ export default (props: Props) => {
           }}/>
         </div>
         <div className={`${imgContainerClassName} media-collage-img-container-half`}>
-          <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[1]} onClick={e => {
+          <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[2]} onClick={e => {
             e.preventDefault()
-            onClick(1)
+            onClick(2)
           }}/>
         </div>
       </div>,
       <div className='media-collage-img-col-container' key={1}>
         <div className={`${imgContainerClassName} media-collage-img-container-half`}>
-          <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[2]} onClick={e => {
+          <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[1]} onClick={e => {
             e.preventDefault()
-            onClick(2)
+            onClick(1)
           }}/>
         </div>
         <div className={`${imgContainerClassName} media-collage-img-container-half`}>
