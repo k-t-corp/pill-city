@@ -66,19 +66,6 @@
     margin: 15px 0;
 }
 
-.post-poll {
-    margin-bottom: 15px;
-}
-
-.post-poll-choice {
-    padding-top: 0.5em;
-    padding-left: 0.5em;
-    height: 2.5em;
-    margin-bottom: 0.5em;
-    font-size: small;
-    border-radius: 5px;
-}
-
 /*Post Interactions*/
 .post-interactions-wrapper {
     width: 100%;

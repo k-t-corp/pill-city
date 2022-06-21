@@ -24,17 +24,15 @@ export interface Reaction {
   author: User
 }
 
-export interface Previewable {
-  media_urls: string[]
-  media_urls_v2: MediaUrlV2[]
-  content: string,
-  deleted: boolean
-}
-
-export interface ResharedPost extends Previewable {
+export interface ResharedPost {
   id: string
   created_at_seconds: number
   author: User
+  content: string,
+  media_urls: string[]
+  media_urls_v2: MediaUrlV2[]
+  poll: Poll,
+  deleted: boolean
 }
 
 export interface PollChoice {
@@ -50,7 +48,7 @@ export interface Poll {
   close_by_seconds: number
 }
 
-export default interface Post extends Previewable {
+export default interface Post {
   id: string
   created_at_seconds: number
   author: User
@@ -60,6 +58,10 @@ export default interface Post extends Previewable {
   reactions: Reaction[],
   comments: Comment[],
   circles: AnonymizedCircle[],
+  media_urls: string[]
+  media_urls_v2: MediaUrlV2[]
+  content: string,
+  deleted: boolean
   is_update_avatar: boolean
   poll: Poll,
   link_previews: LinkPreview[]

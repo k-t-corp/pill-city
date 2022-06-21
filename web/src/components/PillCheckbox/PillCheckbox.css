@@ -12,6 +12,11 @@
     background-color: #E05140;
 }
 
+.react-toggle--checked .react-toggle-thumb {
+    left: 27px;
+    border-color: #E05140;
+}
+
 .pill-checkbox-label {
     margin-left: 10px;
 }

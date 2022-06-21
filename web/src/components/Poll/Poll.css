@@ -1,0 +1,7 @@
+.post-poll-choice {
+    padding-top: 0.5em;
+    padding-left: 0.5em;
+    height: 2.5em;
+    font-size: small;
+    border-radius: 5px;
+}

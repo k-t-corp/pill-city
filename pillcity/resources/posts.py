@@ -14,8 +14,9 @@ from .users import user_fields
 from .pagination import pagination_parser
 from .mention import check_mentioned_user_ids
 from .comments import comment_fields
-from .media import check_media_object_names, MediaUrls, MediaUrl, MediaUrlsV2, MediaUrlV2
+from .media import check_media_object_names, MediaUrls, MediaUrlsV2
 from .link_preview import link_preview_fields
+from .poll import poll_fields
 
 MaxPostMediaCount = 4
 
@@ -35,6 +36,7 @@ class ResharedFrom(fields.Raw):
             'content': fields.String,
             'media_urls': MediaUrls(attribute='media_list'),
             'media_urls_v2': MediaUrlsV2(attribute='media_list'),
+            'poll': fields.Nested(poll_fields),
             'deleted': fields.Boolean
         })
 
@@ -103,16 +105,7 @@ post_fields = {
     'circles': AnonymizedCircles,
     'deleted': fields.Boolean,
     'is_update_avatar': fields.Boolean,
-    'poll': fields.Nested({
-        'choices': fields.List(fields.Nested({
-            'id': fields.String(attribute='eid'),
-            'content': fields.String,
-            'media': MediaUrl(attribute='media'),
-            "media_url_v2": MediaUrlV2(attribute='media'),
-            'voters': fields.List(fields.Nested(user_fields))
-        })),
-        'close_by_seconds': fields.Integer(attribute='close_by')
-    }),
+    'poll': fields.Nested(poll_fields),
     "link_previews": LinkPreviews(attribute='content')
 }
 
