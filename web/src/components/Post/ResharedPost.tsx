@@ -6,16 +6,20 @@ import {ResharedPost} from "../../models/Post";
 import './ResharedPost.css'
 import ClickableId from "../ClickableId/ClickableId";
 import MediaCollage from "../MediaCollage/MediaCollage";
+import Poll from "../Poll/Poll";
+import User from "../../models/User";
 
 interface Props {
   resharedFrom: ResharedPost,
   showDetail: boolean,
+  me: User
 }
 
 export default (props: Props) => {
   const { resharedFrom } = props
 
   const history = useHistory()
+  const hasPoll = resharedFrom.poll.choices && resharedFrom.poll.choices.length > 0
 
   return (
     <>
@@ -44,6 +48,10 @@ export default (props: Props) => {
         {
           !resharedFrom.deleted &&
           <MediaCollage mediaUrls={resharedFrom.media_urls_v2} edgeless={true}/>
+        }
+        {
+          !resharedFrom.deleted && hasPoll &&
+          <Poll poll={resharedFrom.poll} postId={resharedFrom.id} me={props.me} edgeless={true}/>
         }
       </div>
     </>

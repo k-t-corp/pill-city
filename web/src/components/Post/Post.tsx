@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react'
-import parseContent, {parseContentWithLinkPreviews} from "../../utils/parseContent";
+import {parseContentWithLinkPreviews} from "../../utils/parseContent";
 import {pastTime} from "../../utils/timeDelta";
 import {useHistory} from "react-router-dom";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
@@ -8,14 +8,15 @@ import ResharedPost from "./ResharedPost";
 import ClickableId from "../ClickableId/ClickableId";
 import Comment from "./Comment";
 import CommentBox from "./CommentBox";
-import Post, {Comment as CommentModel, ResharedPost as ResharedPostModel, Poll} from "../../models/Post";
+import Post, {Comment as CommentModel, ResharedPost as ResharedPostModel} from "../../models/Post";
 import User from "../../models/User";
 import Previews from "./Previews";
 import api from "../../api/Api";
-import "./Post.css"
 import {BanIcon, ChatIcon, DotsVerticalIcon, ShareIcon} from "@heroicons/react/solid";
 import PillDropdownMenu from "../PillDropdownMenu/PillDropdownMenu";
 import MediaCollage from "../MediaCollage/MediaCollage";
+import "./Post.css"
+import Poll from '../Poll/Poll';
 
 interface Props {
   data: Post
@@ -41,8 +42,6 @@ export default (props: Props) => {
   const [replyingToComment, updateReplyingToComment] = useState<CommentModel | null>(null)
 
   const [mediaUrls, updateMediaUrls] = useState(props.data.media_urls_v2)
-  const [poll, updatePoll] = useState<Poll>(props.data.poll)
-  const [voting, updateVoting] = useState(false)
 
   const history = useHistory()
 
@@ -219,6 +218,7 @@ export default (props: Props) => {
           <ResharedPost
             resharedFrom={props.data.reshared_from}
             showDetail={props.detail}
+            me={props.me}
           />
         }
         {!deleting && !deleted &&
@@ -227,57 +227,8 @@ export default (props: Props) => {
         {!deleting && !deleted &&
           <Previews post={props.data}/>
         }
-        {poll.choices && poll.choices.length > 0 &&
-          <div className='post-poll'>
-            {poll.choices.map((c, i) => {
-              // whether me has voted for this choice
-              const voted = c.voters.map(u => u.id).indexOf(props.me.id) !== -1
-
-              const votes = c.voters.length
-              const totalVotes = poll.choices.map(c => c.voters).reduce((prev, cur) => [...prev, ...cur]).length
-              let percent = 0
-              if (totalVotes !== 0) {
-                percent = votes / totalVotes
-              }
-
-              return (
-                <div
-                  key={i}
-                  className='post-poll-choice'
-                  style={{
-                    cursor: voting ? 'auto' : 'pointer',
-                    backgroundColor: voting ? '#ffffff' : voted ? '#E05140' : '#f0f0f0',
-                    color: voting ? '#000000' : voted ? '#ffffff' : '#000000'
-                  }}
-                  onClick={async (e) => {
-                    e.preventDefault()
-                    if (voting) {
-                      return
-                    }
-                    updateVoting(true)
-                    await api.vote(props.data.id, c.id)
-
-                    updatePoll({...poll, choices: poll.choices.map(cc => {
-                      if (cc.voters.map(u => u.id).filter(id => id === props.me.id).length > 0) {
-                        // if the user previously picked this choice
-                        return {
-                          ...cc, voters: cc.voters.filter(u => u.id !== props.me.id)
-                        }
-                      } else if (c.id === cc.id) {
-                        // if the user now picks this choice
-                        return {
-                          ...cc, voters: [...cc.voters, props.me]
-                        }
-                      } else {
-                        return cc
-                      }
-                    })})
-                    updateVoting(false)
-                  }}
-                >{`${c.content} (${(percent * 100).toFixed()}%, ${votes} votes)`}</div>
-              )
-            })}
-          </div>
+        {!deleting && !deleted &&
+          <Poll poll={props.data.poll} postId={props.data.id} me={props.me}/>
         }
         {
           !deleting && !deleted &&
