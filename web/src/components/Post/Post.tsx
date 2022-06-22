@@ -10,13 +10,14 @@ import Comment from "./Comment";
 import CommentBox from "./CommentBox";
 import Post, {Comment as CommentModel, ResharedPost as ResharedPostModel} from "../../models/Post";
 import User from "../../models/User";
-import Previews from "./Previews";
+import Previews from "./LinkPreviews";
 import api from "../../api/Api";
 import {BanIcon, ChatIcon, DotsVerticalIcon, ShareIcon} from "@heroicons/react/solid";
 import PillDropdownMenu from "../PillDropdownMenu/PillDropdownMenu";
 import MediaCollage from "../MediaCollage/MediaCollage";
 import "./Post.css"
 import Poll from '../Poll/Poll';
+import PillSlide from "../PillSlide/PillSlide";
 
 interface Props {
   data: Post
@@ -153,6 +154,52 @@ export default (props: Props) => {
     updateReplyingToComment(null)
   }
 
+  const postAttachments: JSX.Element[] = []
+  if (props.data.reshared_from) {
+    postAttachments.push(
+      <ResharedPost
+        key={'reshared-post'}
+        resharedFrom={props.data.reshared_from}
+        showDetail={props.detail}
+        me={props.me}
+      />
+    )
+    if (props.data.link_previews.length > 0) {
+      postAttachments.push(
+        <Previews
+          key={'reshared-post-previews'}
+          post={props.data}
+        />
+      )
+    }
+  } else {
+    if (mediaUrls.length > 0) {
+      postAttachments.push(
+        <MediaCollage
+          key={'post-media'}
+          mediaUrls={mediaUrls}
+        />)
+    }
+    if (props.data.poll.choices && props.data.poll.choices.length > 0) {
+      postAttachments.push(
+        <Poll
+          key={'post-poll'}
+          poll={props.data.poll}
+          postId={props.data.id}
+          me={props.me}
+        />
+      )
+    }
+    if (props.data.link_previews.length > 0) {
+      postAttachments.push(
+        <Previews
+          key={'post-link-previews'}
+          post={props.data}
+        />
+      )
+    }
+  }
+
   return (
     <div className="post-wrapper">
       <div className="post-op">
@@ -202,7 +249,7 @@ export default (props: Props) => {
             }
           </div>
         </div>
-        <div className='post-content-wrapper'>
+        <div>
           {
             !deleted ?
               !props.data.is_update_avatar ?
@@ -214,21 +261,13 @@ export default (props: Props) => {
               <div className='post-content' style={{fontStyle: 'italic'}}>This post has been deleted</div>
           }
         </div>
-        {props.data.reshared_from &&
-          <ResharedPost
-            resharedFrom={props.data.reshared_from}
-            showDetail={props.detail}
-            me={props.me}
-          />
-        }
         {!deleting && !deleted &&
-          <MediaCollage mediaUrls={mediaUrls} />
-        }
-        {!deleting && !deleted &&
-          <Previews post={props.data}/>
-        }
-        {!deleting && !deleted &&
-          <Poll poll={props.data.poll} postId={props.data.id} me={props.me}/>
+          <div className='post-attachments-wrapper'>
+            {/*@ts-ignore*/}
+            <PillSlide>
+              {postAttachments}
+            </PillSlide>
+          </div>
         }
         {
           !deleting && !deleted &&

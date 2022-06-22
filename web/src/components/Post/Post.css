@@ -66,6 +66,10 @@
     margin: 15px 0;
 }
 
+.post-attachments-wrapper {
+    margin-bottom: 15px;
+}
+
 /*Post Interactions*/
 .post-interactions-wrapper {
     width: 100%;
