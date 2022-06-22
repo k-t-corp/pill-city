@@ -7,14 +7,16 @@ interface Props extends React.ImgHTMLAttributes<HTMLImageElement> {
 }
 
 export default (props: Props) => {
+  const {mediaUrlV2, ...imageProps} = props
+
   if (!props.mediaUrlV2.processed) {
     return (
       <LazyImage
         src={props.mediaUrlV2.original_url}
-        placeholder={({ imageProps, ref}) => (
+        placeholder={({ imageProps: placeHolderImageProps, ref}) => (
           <img
-            {...props}
             {...imageProps}
+            {...placeHolderImageProps}
             ref={ref}
             alt=""
             style={{
@@ -22,10 +24,10 @@ export default (props: Props) => {
             }}
           />
         )}
-        actual={({ imageProps }) => (
+        actual={({ imageProps: actualImageProps }) => (
           <img
             {...props}
-            {...imageProps}
+            {...actualImageProps}
             alt=""
           />
         )}
@@ -36,10 +38,10 @@ export default (props: Props) => {
   return (
     <LazyImage
       src={processed.processed_url}
-      placeholder={({ imageProps, ref}) => (
+      placeholder={({ imageProps: placeHolderImageProps, ref}) => (
         <img
-          {...props}
           {...imageProps}
+          {...placeHolderImageProps}
           ref={ref}
           alt=""
           style={{
@@ -47,10 +49,10 @@ export default (props: Props) => {
           }}
         />
       )}
-      actual={({ imageProps }) => (
+      actual={({ imageProps: actualImageProps }) => (
         <img
-          {...props}
           {...imageProps}
+          {...actualImageProps}
           alt=""
         />
       )}

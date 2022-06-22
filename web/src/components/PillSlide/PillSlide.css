@@ -1,0 +1,19 @@
+.pill-slide-nav-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.pill-slide-nav {
+    width: 25px;
+    height: 25px;
+}
+
+.pill-slide-nav:hover {
+    cursor: pointer;
+}
+
+.pill-slide-nav-hidden {
+    visibility: hidden;
+}

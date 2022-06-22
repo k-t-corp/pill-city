@@ -41,3 +41,10 @@
     cursor: pointer;
 }
 
+.media-collage-lightbox-download-icon {
+    width: 30px;
+    height: 25px;
+    margin-bottom: 15px;
+    margin-right: 5px;
+    cursor: pointer;
+}

@@ -4,6 +4,7 @@ import Lightbox from "react-image-lightbox";
 import MediaUrlV2 from "../../models/MediaUrlV2";
 import MediaV2 from "../MediaV2/MediaV2";
 import getMediaV2Url from "../../utils/getMediaV2Url";
+import {DownloadIcon} from "@heroicons/react/solid";
 
 interface Props {
   mediaUrls: MediaUrlV2[]
@@ -134,13 +135,18 @@ export default (props: Props) => {
             updateShowingMediaIndex(showingMediaIndex + 1)
           }
           onCloseRequest={() => {updateShowingMediaIndex(-1)}}
-          animationDuration={0}
           toolbarButtons={[
-            <a
-              href={mediaUrls[showingMediaIndex].original_url}
-              target='_blank'
-            >Original</a>
+            <div
+              className='media-collage-lightbox-download-icon'
+              onClick={e => {
+                e.preventDefault()
+                window.open(mediaUrls[showingMediaIndex].original_url, '_blank')
+              }}
+            >
+              <DownloadIcon />
+            </div>
           ]}
+          animationDuration={200}
         />
       }
     </div>
