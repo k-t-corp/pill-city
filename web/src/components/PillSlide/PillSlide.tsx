@@ -5,6 +5,7 @@ import './PillSlide.css'
 
 export interface Slide {
   title: string,
+  icon: JSX.Element,
   el: JSX.Element
 }
 
@@ -25,6 +26,7 @@ export default (props: Props) => {
 
   const [showingIndex, updateShowingIndex] = useState(0)
   const titles = slides.map(_ => _.title)
+  const icons = slides.map(_ => _.icon)
 
   return (
     <>
@@ -42,12 +44,17 @@ export default (props: Props) => {
           onClick={() => updateShowingIndex(showingIndex - 1)}
         >
           <ChevronLeftIcon />
+          {showingIndex !== 0 && icons[showingIndex - 1]}
         </div>
-        <span>{titles[showingIndex]}</span>
+        <div className='pill-slide-title'>
+          <div className='pill-slide-title-icon'>{icons[showingIndex]}</div>
+          <div>{titles[showingIndex]}</div>
+        </div>
         <div
           className={`pill-slide-nav${showingIndex === slides.length - 1 ? ' pill-slide-nav-hidden' : ''}`}
           onClick={() => updateShowingIndex(showingIndex + 1)}
         >
+          {showingIndex !== slides.length - 1 && icons[showingIndex + 1]}
           <ChevronRightIcon />
         </div>
       </div>

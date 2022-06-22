@@ -12,7 +12,15 @@ import Post, {Comment as CommentModel, ResharedPost as ResharedPostModel} from "
 import User from "../../models/User";
 import LinkPreviews from "./LinkPreviews";
 import api from "../../api/Api";
-import {BanIcon, ChatIcon, DotsVerticalIcon, ShareIcon} from "@heroicons/react/solid";
+import {
+  BanIcon,
+  ChartSquareBarIcon,
+  ChatIcon,
+  DotsVerticalIcon,
+  LinkIcon,
+  PhotographIcon,
+  ShareIcon
+} from "@heroicons/react/solid";
 import PillDropdownMenu from "../PillDropdownMenu/PillDropdownMenu";
 import MediaCollage from "../MediaCollage/MediaCollage";
 import "./Post.css"
@@ -158,6 +166,7 @@ export default (props: Props) => {
   if (props.data.reshared_from) {
     postAttachments.push({
       title: 'Reshared Post',
+      icon: <ShareIcon />,
       el: <ResharedPost
         key={'reshared-post'}
         resharedFrom={props.data.reshared_from}
@@ -168,6 +177,7 @@ export default (props: Props) => {
     if (props.data.link_previews.length > 0) {
       postAttachments.push({
         title: 'Link Previews',
+        icon: <LinkIcon />,
         el: <LinkPreviews
           key={'reshared-post-previews'}
           post={props.data}
@@ -177,6 +187,7 @@ export default (props: Props) => {
     if (mediaUrls.length > 0) {
       postAttachments.push({
         title: 'Media',
+        icon: <PhotographIcon />,
         el: <MediaCollage
           key={'post-media'}
           mediaUrls={mediaUrls}
@@ -185,6 +196,7 @@ export default (props: Props) => {
     if (props.data.poll.choices && props.data.poll.choices.length > 0) {
       postAttachments.push({
         title: 'Poll',
+        icon: <ChartSquareBarIcon />,
         el: <Poll
           key={'post-poll'}
           poll={props.data.poll}
@@ -196,6 +208,7 @@ export default (props: Props) => {
     if (props.data.link_previews.length > 0) {
       postAttachments.push({
         title: 'Link Previews',
+        icon: <LinkIcon />,
         el: <LinkPreviews
           key={'post-link-previews'}
           post={props.data}
