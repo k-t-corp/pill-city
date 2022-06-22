@@ -3,22 +3,28 @@ import SwipeableViews from 'react-swipeable-views';
 import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/solid";
 import './PillSlide.css'
 
+export interface Slide {
+  title: string,
+  el: JSX.Element
+}
+
 interface Props {
-  children: JSX.Element | JSX.Element[]
+  slides: Slide[]
 }
 
 export default (props: Props) => {
-  const children = React.Children.toArray(props.children)
-  
-  if (children.length === 0) {
+  const {slides} = props
+
+  if (slides.length === 0) {
     return null
   }
-  
-  if (children.length === 1) {
-    return children[0]
+
+  if (slides.length === 1) {
+    return slides[0].el
   }
 
   const [showingIndex, updateShowingIndex] = useState(0)
+  const titles = slides.map(_ => _.title)
 
   return (
     <>
@@ -28,7 +34,7 @@ export default (props: Props) => {
           updateShowingIndex(i)
         }}
       >
-        {props.children}
+        {slides.map(_ => _.el)}
       </SwipeableViews>
       <div className='pill-slide-nav-wrapper'>
         <div
@@ -37,9 +43,9 @@ export default (props: Props) => {
         >
           <ChevronLeftIcon />
         </div>
-        <span>{showingIndex + 1}/{children.length}</span>
+        <span>{titles[showingIndex]}</span>
         <div
-          className={`pill-slide-nav${showingIndex === children.length - 1 ? ' pill-slide-nav-hidden' : ''}`}
+          className={`pill-slide-nav${showingIndex === slides.length - 1 ? ' pill-slide-nav-hidden' : ''}`}
           onClick={() => updateShowingIndex(showingIndex + 1)}
         >
           <ChevronRightIcon />

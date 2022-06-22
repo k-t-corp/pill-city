@@ -10,14 +10,14 @@ import Comment from "./Comment";
 import CommentBox from "./CommentBox";
 import Post, {Comment as CommentModel, ResharedPost as ResharedPostModel} from "../../models/Post";
 import User from "../../models/User";
-import Previews from "./LinkPreviews";
+import LinkPreviews from "./LinkPreviews";
 import api from "../../api/Api";
 import {BanIcon, ChatIcon, DotsVerticalIcon, ShareIcon} from "@heroicons/react/solid";
 import PillDropdownMenu from "../PillDropdownMenu/PillDropdownMenu";
 import MediaCollage from "../MediaCollage/MediaCollage";
 import "./Post.css"
 import Poll from '../Poll/Poll';
-import PillSlide from "../PillSlide/PillSlide";
+import PillSlide, {Slide} from "../PillSlide/PillSlide";
 
 interface Props {
   data: Post
@@ -154,49 +154,53 @@ export default (props: Props) => {
     updateReplyingToComment(null)
   }
 
-  const postAttachments: JSX.Element[] = []
+  const postAttachments: Slide[] = []
   if (props.data.reshared_from) {
-    postAttachments.push(
-      <ResharedPost
+    postAttachments.push({
+      title: 'Reshared Post',
+      el: <ResharedPost
         key={'reshared-post'}
         resharedFrom={props.data.reshared_from}
         showDetail={props.detail}
         me={props.me}
       />
-    )
+    })
     if (props.data.link_previews.length > 0) {
-      postAttachments.push(
-        <Previews
+      postAttachments.push({
+        title: 'Link Previews',
+        el: <LinkPreviews
           key={'reshared-post-previews'}
           post={props.data}
-        />
-      )
+        />})
     }
   } else {
     if (mediaUrls.length > 0) {
-      postAttachments.push(
-        <MediaCollage
+      postAttachments.push({
+        title: 'Media',
+        el: <MediaCollage
           key={'post-media'}
           mediaUrls={mediaUrls}
-        />)
+        />})
     }
     if (props.data.poll.choices && props.data.poll.choices.length > 0) {
-      postAttachments.push(
-        <Poll
+      postAttachments.push({
+        title: 'Poll',
+        el: <Poll
           key={'post-poll'}
           poll={props.data.poll}
           postId={props.data.id}
           me={props.me}
         />
-      )
+      })
     }
     if (props.data.link_previews.length > 0) {
-      postAttachments.push(
-        <Previews
+      postAttachments.push({
+        title: 'Link Previews',
+        el: <LinkPreviews
           key={'post-link-previews'}
           post={props.data}
         />
-      )
+      })
     }
   }
 
@@ -263,10 +267,7 @@ export default (props: Props) => {
         </div>
         {!deleting && !deleted &&
           <div className='post-attachments-wrapper'>
-            {/*@ts-ignore*/}
-            <PillSlide>
-              {postAttachments}
-            </PillSlide>
+            <PillSlide slides={postAttachments}/>
           </div>
         }
         {
