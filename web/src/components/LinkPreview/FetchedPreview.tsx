@@ -11,6 +11,8 @@ interface Props {
 
 export default (props: Props) => {
   const {preview} = props
+  const title = preview.title.trim()
+  const subtitle = preview.subtitle.trim()
 
   if (preview.state === 'fetching') {
     return (
@@ -56,12 +58,12 @@ export default (props: Props) => {
 
         }
         {
-          (preview.title || preview.subtitle) &&
+          (title || subtitle) &&
             <div
               className={preview.image_urls.length === 0 ? "fetched-preview" : "fetched-preview fetched-preview-with-image"}
             >
-              <div className='fetched-preview-title'>{summary(preview.title, 100)}</div>
-              <div className='fetched-preview-subtitle'>{summary(preview.subtitle, 150)}</div>
+              <div className='fetched-preview-title'>{summary(title, 100)}</div>
+              <div className='fetched-preview-subtitle'>{summary(subtitle, 150)}</div>
             </div>
         }
       </div>
