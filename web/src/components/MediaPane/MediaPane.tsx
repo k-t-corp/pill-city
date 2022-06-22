@@ -89,7 +89,7 @@ export default (props: Props) => {
             updateShowingMediaIndex(showingMediaIndex + 1)
           }
           onCloseRequest={() => {updateShowingMediaIndex(-1)}}
-          animationDuration={0}
+          animationDuration={200}
         />
       }
     </>
