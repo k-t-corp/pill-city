@@ -42,7 +42,7 @@ export default (props: Props) => {
               cursor: voting ? 'auto' : 'pointer',
               backgroundColor: voting ? '#ffffff' : voted ? '#E05140' : '#f0f0f0',
               color: voting ? '#000000' : voted ? '#ffffff' : '#000000',
-              marginBottom: props.edgeless ? undefined : '0.5em'
+              marginBottom: props.edgeless ? '4px' : '0.5em'
             }}
             onClick={async (e) => {
               e.preventDefault()

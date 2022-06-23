@@ -8,7 +8,6 @@ import './MediaCollage.css'
 
 interface Props {
   mediaUrls: MediaUrlV2[]
-  edgeless?: boolean
 }
 
 export default (props: Props) => {
@@ -31,14 +30,23 @@ export default (props: Props) => {
       >
         {mediaUrls.map(mu => {
           const imageUrl = getMediaV2Url(mu)
+          let width
+          let height
+          if (mu.processed) {
+            width = mu.width
+            height = mu.height
+          } else {
+            width = 480
+            height = 270
+          }
 
           return (
             <Item
-              key={imageUrl}
-              original={imageUrl}
+              key={mu.original_url}
+              original={mu.original_url}
               thumbnail={imageUrl}
-              // width="400px"
-              // height="100%"
+              width={width}
+              height={height}
             >
               {({ref, open}) => (
                 <div ref={ref as React.Ref<HTMLDivElement>}>
