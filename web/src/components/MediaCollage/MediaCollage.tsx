@@ -1,10 +1,10 @@
-import React, {useState} from "react";
-import './MediaCollage.css'
-import Lightbox from "react-image-lightbox";
+import React from "react";
 import MediaUrlV2 from "../../models/MediaUrlV2";
 import MediaV2 from "../MediaV2/MediaV2";
 import getMediaV2Url from "../../utils/getMediaV2Url";
-import {DownloadIcon} from "@heroicons/react/solid";
+import 'photoswipe/dist/photoswipe.css'
+import {Gallery, Item} from 'react-photoswipe-gallery'
+import './MediaCollage.css'
 
 interface Props {
   mediaUrls: MediaUrlV2[]
@@ -18,137 +18,37 @@ export default (props: Props) => {
     return null
   }
 
-  const [showingMediaIndex, updateShowingMediaIndex] = useState(-1)
-  let elements: JSX.Element[] = []
-
-  const onClick = (i: number) => {
-    updateShowingMediaIndex(i)
-  }
-
-  const imgContainerClassName = props.edgeless ? 'media-collage-img-container-edgeless' : 'media-collage-img-container'
-  const imgContainerHalfClassName = props.edgeless ? 'media-collage-img-container-half-edgeless' : 'media-collage-img-container-half'
-
-  if (mediaUrls.length === 1) {
-    elements = [
-      <div className={imgContainerClassName} key={0}>
-        <MediaV2 className='media-collage-img' mediaUrlV2={mediaUrls[0]} onClick={e => {
-          e.preventDefault()
-          onClick(0)
-        }}/>
-      </div>
-    ]
-  }
-
-  if (mediaUrls.length === 2) {
-    elements = [
-      <div className={imgContainerClassName} key={0}>
-        <MediaV2 className='media-collage-img' mediaUrlV2={mediaUrls[0]} onClick={e => {
-          e.preventDefault()
-          onClick(0)
-        }}/>
-      </div>,
-      <div className={imgContainerClassName} key={1}>
-        <MediaV2 className='media-collage-img' mediaUrlV2={mediaUrls[1]} onClick={e => {
-          e.preventDefault()
-          onClick(1)
-        }}/>
-      </div>
-    ]
-  }
-
-  if (mediaUrls.length === 3) {
-    elements = [
-      <div className={imgContainerClassName} key={0}>
-        <MediaV2 className='media-collage-img' mediaUrlV2={mediaUrls[0]} onClick={e => {
-          e.preventDefault()
-          onClick(0)
-        }}/>
-      </div>,
-      <div className='media-collage-img-col-container' key={1}>
-        <div className={`${imgContainerClassName} ${imgContainerHalfClassName}`}>
-          <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[1]} onClick={e => {
-            e.preventDefault()
-            onClick(1)
-          }}/>
-        </div>
-        <div className={`${imgContainerClassName} ${imgContainerHalfClassName}`}>
-          <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[2]} onClick={e => {
-            e.preventDefault()
-            onClick(2)
-          }}/>
-        </div>
-      </div>
-    ]
-  }
-
-  if (mediaUrls.length === 4) {
-    elements = [
-      <div className='media-collage-img-col-container' key={0}>
-        <div className={`${imgContainerClassName} ${imgContainerHalfClassName}`}>
-          <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[0]} onClick={e => {
-            e.preventDefault()
-            onClick(0)
-          }}/>
-        </div>
-        <div className={`${imgContainerClassName} ${imgContainerHalfClassName}`}>
-          <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[2]} onClick={e => {
-            e.preventDefault()
-            onClick(2)
-          }}/>
-        </div>
-      </div>,
-      <div className='media-collage-img-col-container' key={1}>
-        <div className={`${imgContainerClassName} ${imgContainerHalfClassName}`}>
-          <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[1]} onClick={e => {
-            e.preventDefault()
-            onClick(1)
-          }}/>
-        </div>
-        <div className={`${imgContainerClassName} ${imgContainerHalfClassName}`}>
-          <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[3]} onClick={e => {
-            e.preventDefault()
-            onClick(3)
-          }}/>
-        </div>
-      </div>
-    ]
-  }
-
   return (
-    <div
-      className='media-collage'
-      style={{
-        marginTop: props.edgeless ? undefined : '10px',
-        marginBottom: props.edgeless ? undefined : '10px',
-      }}
-    >
-      {elements}
-      {showingMediaIndex !== -1 &&
-        <Lightbox
-          mainSrc={getMediaV2Url(mediaUrls[showingMediaIndex])}
-          prevSrc={showingMediaIndex !== 0 ? getMediaV2Url(mediaUrls[showingMediaIndex - 1]) : undefined}
-          onMovePrevRequest={() =>
-            updateShowingMediaIndex(showingMediaIndex - 1)
-          }
-          nextSrc={showingMediaIndex !== mediaUrls.length - 1 ? getMediaV2Url(mediaUrls[showingMediaIndex + 1]) : undefined}
-          onMoveNextRequest={() =>
-            updateShowingMediaIndex(showingMediaIndex + 1)
-          }
-          onCloseRequest={() => {updateShowingMediaIndex(-1)}}
-          toolbarButtons={[
-            <div
-              className='media-collage-lightbox-download-icon'
-              onClick={e => {
-                e.preventDefault()
-                window.open(mediaUrls[showingMediaIndex].original_url, '_blank')
-              }}
+    <Gallery withDownloadButton>
+      <div
+        style={{
+          height: '309px',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gridTemplateRows: '150px 150px',
+          gridGap: '4px 4px',
+        }}
+      >
+        {mediaUrls.map(mu => {
+          const imageUrl = getMediaV2Url(mu)
+
+          return (
+            <Item
+              key={imageUrl}
+              original={imageUrl}
+              thumbnail={imageUrl}
+              // width="400px"
+              // height="100%"
             >
-              <DownloadIcon />
-            </div>
-          ]}
-          animationDuration={200}
-        />
-      }
-    </div>
+              {({ref, open}) => (
+                <div ref={ref as React.Ref<HTMLDivElement>}>
+                  <MediaV2 onClick={open} mediaUrlV2={mu} className='media-collage-item'/>
+                </div>
+              )}
+            </Item>
+          )
+        })}
+      </div>
+    </Gallery>
   )
 }

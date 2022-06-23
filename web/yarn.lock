@@ -7781,6 +7781,11 @@ performance-now@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz"
 
+photoswipe@^5.2.8:
+  version "5.2.8"
+  resolved "https://registry.yarnpkg.com/photoswipe/-/photoswipe-5.2.8.tgz#c276a17dac575c746262472ceb594fc390786176"
+  integrity sha512-tsbG+1ILcli4mR3Tzp4xdxCUSSJaz14wct4dSznk3suVst9tBdt6vDlSASOw/VFqSkcDjbRUA1tC1LoF2DCkzg==
+
 picomatch@^2.0.4, picomatch@^2.2.1:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-2.3.0.tgz"
@@ -8914,6 +8919,11 @@ react-modal@^3.14.4:
     prop-types "^15.7.2"
     react-lifecycles-compat "^3.0.0"
     warning "^4.0.3"
+
+react-photoswipe-gallery@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/react-photoswipe-gallery/-/react-photoswipe-gallery-2.2.1.tgz#ec79d99424e56b3a949aae369bbd1b458f6e474c"
+  integrity sha512-xaUKKmwRLCpEzB8+bU7yxjXvRBHaInpBcI6YQY0UOeFctHAL3jGRDk9j2YbwmlgN7kRStHTcyrSNxr+zSaOnKg==
 
 react-redux@^7.2.6:
   version "7.2.6"
