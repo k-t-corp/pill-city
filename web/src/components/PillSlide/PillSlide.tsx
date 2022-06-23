@@ -35,6 +35,7 @@ export default (props: Props) => {
         onChangeIndex={i => {
           updateShowingIndex(i)
         }}
+        resistance={true}
       >
         {slides.map(_ => _.el)}
       </SwipeableViews>
