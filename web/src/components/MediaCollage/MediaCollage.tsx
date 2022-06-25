@@ -1,7 +1,6 @@
 import React from "react";
 import MediaUrlV2 from "../../models/MediaUrlV2";
 import MediaV2 from "../MediaV2/MediaV2";
-import getMediaV2Url from "../../utils/getMediaV2Url";
 import 'photoswipe/dist/photoswipe.css'
 import {Gallery, Item} from 'react-photoswipe-gallery'
 import './MediaCollage.css'
@@ -18,7 +17,12 @@ export default (props: Props) => {
   }
 
   return (
-    <Gallery withDownloadButton>
+    <Gallery
+      withDownloadButton
+      options={{
+        loop: false
+      }}
+    >
       <div
         style={{
           height: '309px',
@@ -29,24 +33,12 @@ export default (props: Props) => {
         }}
       >
         {mediaUrls.map(mu => {
-          const imageUrl = getMediaV2Url(mu)
-          let width
-          let height
-          if (mu.processed) {
-            width = mu.width
-            height = mu.height
-          } else {
-            width = 480
-            height = 270
-          }
-
           return (
             <Item
               key={mu.original_url}
-              original={mu.original_url}
-              thumbnail={imageUrl}
-              width={width}
-              height={height}
+              content={
+                <MediaV2 mediaUrlV2={mu} className='media-collage-pswp-content'/>
+              }
             >
               {({ref, open}) => (
                 <div ref={ref as React.Ref<HTMLDivElement>}>
