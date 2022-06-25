@@ -18,7 +18,25 @@ export default (props: Props) => {
 
   return (
     <Gallery
-      withDownloadButton
+      uiElements={[
+        {
+          name: 'download-button',
+          ariaLabel: 'Download',
+          order: 9,
+          isButton: true,
+          html: {
+            isCustomSVG: true,
+            inner: '<path d="M20.5 14.3 17.1 18V10h-2.2v7.9l-3.4-3.6L10 16l6 6.1 6-6.1ZM23 23H9v2h14Z" id="pswp__icn-download"/>',
+            outlineID: 'pswp__icn-download-btn',
+          },
+          appendTo: 'bar',
+          onClick: (e, el, pswpInstance) => {
+            console.log(pswpInstance.currSlide.data.src)
+            //@ts-ignore
+            window.open(pswpInstance.currSlide.data.src, '_blank')
+          },
+        }
+      ]}
       options={{
         loop: false
       }}
@@ -36,6 +54,7 @@ export default (props: Props) => {
           return (
             <Item
               key={mu.original_url}
+              original={mu.original_url}
               content={
                 <MediaV2 mediaUrlV2={mu} className='media-collage-pswp-content'/>
               }
