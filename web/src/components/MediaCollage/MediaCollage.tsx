@@ -23,7 +23,7 @@ export default (props: Props) => {
     gridRowEnd: number,
     itemHeight: string,
     mediaUrl: MediaUrlV2
-  }[] = []
+  }[]
 
   if (mediaUrls.length === 1) {
     mediaUrlWithCssGridProperties = [
@@ -155,16 +155,31 @@ export default (props: Props) => {
       >
         {mediaUrlWithCssGridProperties.map(m => {
           const {mediaUrl: mu} = m
+          let pswpItemProps: any = {
+            original: mu.original_url
+          }
+          if (mu.processed) {
+            pswpItemProps = {
+              ...pswpItemProps,
+              thumbnail: mu.processed_url,
+              width: mu.width,
+              height: mu.height
+            }
+          } else {
+            pswpItemProps = {
+              ...pswpItemProps,
+              content: (
+                <div className='media-collage-pswp-content'>
+                  <MediaV2 mediaUrlV2={mu} className='media-collage-pswp-image'/>
+                </div>
+              )
+            }
+          }
 
           return (
             <Item
               key={mu.original_url}
-              original={mu.original_url}
-              content={
-                <div className='media-collage-pswp-content'>
-                  <MediaV2 mediaUrlV2={mu} className='media-collage-pswp-image'/>
-                </div>
-              }
+              {...pswpItemProps}
             >
               {({ref, open}) => (
                 <div
