@@ -31,7 +31,6 @@ export default (props: Props) => {
           },
           appendTo: 'bar',
           onClick: (e, el, pswpInstance) => {
-            console.log(pswpInstance.currSlide.data.src)
             //@ts-ignore
             window.open(pswpInstance.currSlide.data.src, '_blank')
           },

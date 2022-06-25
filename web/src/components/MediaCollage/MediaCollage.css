@@ -12,5 +12,11 @@
     top: 50%;
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
-    border-radius: 4px;
+    width: 750px
+}
+
+@media only screen and (max-width: 750px) {
+    .media-collage-pswp-content {
+        width: 300px
+    }
 }
