@@ -1,14 +1,12 @@
-import React, {useState} from "react";
-import './MediaCollage.css'
-import Lightbox from "react-image-lightbox";
+import React from "react";
 import MediaUrlV2 from "../../models/MediaUrlV2";
 import MediaV2 from "../MediaV2/MediaV2";
-import getMediaV2Url from "../../utils/getMediaV2Url";
-import {DownloadIcon} from "@heroicons/react/solid";
+import 'photoswipe/dist/photoswipe.css'
+import {Gallery, Item} from 'react-photoswipe-gallery'
+import './MediaCollage.css'
 
 interface Props {
   mediaUrls: MediaUrlV2[]
-  edgeless?: boolean
 }
 
 export default (props: Props) => {
@@ -18,137 +16,177 @@ export default (props: Props) => {
     return null
   }
 
-  const [showingMediaIndex, updateShowingMediaIndex] = useState(-1)
-  let elements: JSX.Element[] = []
-
-  const onClick = (i: number) => {
-    updateShowingMediaIndex(i)
-  }
-
-  const imgContainerClassName = props.edgeless ? 'media-collage-img-container-edgeless' : 'media-collage-img-container'
-  const imgContainerHalfClassName = props.edgeless ? 'media-collage-img-container-half-edgeless' : 'media-collage-img-container-half'
+  let mediaUrlWithCssGridProperties: {
+    gridColumnStart: number,
+    gridColumnEnd: number,
+    gridRowStart: number,
+    gridRowEnd: number,
+    itemHeight: string,
+    mediaUrl: MediaUrlV2
+  }[] = []
 
   if (mediaUrls.length === 1) {
-    elements = [
-      <div className={imgContainerClassName} key={0}>
-        <MediaV2 className='media-collage-img' mediaUrlV2={mediaUrls[0]} onClick={e => {
-          e.preventDefault()
-          onClick(0)
-        }}/>
-      </div>
+    mediaUrlWithCssGridProperties = [
+      {
+        mediaUrl: mediaUrls[0],
+        gridColumnStart: 1,
+        gridColumnEnd: 3,
+        gridRowStart: 1,
+        gridRowEnd: 3,
+        itemHeight: '309px'
+      }
     ]
-  }
-
-  if (mediaUrls.length === 2) {
-    elements = [
-      <div className={imgContainerClassName} key={0}>
-        <MediaV2 className='media-collage-img' mediaUrlV2={mediaUrls[0]} onClick={e => {
-          e.preventDefault()
-          onClick(0)
-        }}/>
-      </div>,
-      <div className={imgContainerClassName} key={1}>
-        <MediaV2 className='media-collage-img' mediaUrlV2={mediaUrls[1]} onClick={e => {
-          e.preventDefault()
-          onClick(1)
-        }}/>
-      </div>
+  } else if (mediaUrls.length === 2) {
+    mediaUrlWithCssGridProperties = [
+      {
+        mediaUrl: mediaUrls[0],
+        gridColumnStart: 1,
+        gridColumnEnd: 2,
+        gridRowStart: 1,
+        gridRowEnd: 3,
+        itemHeight: '309px'
+      },
+      {
+        mediaUrl: mediaUrls[1],
+        gridColumnStart: 2,
+        gridColumnEnd: 3,
+        gridRowStart: 1,
+        gridRowEnd: 3,
+        itemHeight: '309px'
+      }
     ]
-  }
-
-  if (mediaUrls.length === 3) {
-    elements = [
-      <div className={imgContainerClassName} key={0}>
-        <MediaV2 className='media-collage-img' mediaUrlV2={mediaUrls[0]} onClick={e => {
-          e.preventDefault()
-          onClick(0)
-        }}/>
-      </div>,
-      <div className='media-collage-img-col-container' key={1}>
-        <div className={`${imgContainerClassName} ${imgContainerHalfClassName}`}>
-          <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[1]} onClick={e => {
-            e.preventDefault()
-            onClick(1)
-          }}/>
-        </div>
-        <div className={`${imgContainerClassName} ${imgContainerHalfClassName}`}>
-          <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[2]} onClick={e => {
-            e.preventDefault()
-            onClick(2)
-          }}/>
-        </div>
-      </div>
+  } else if (mediaUrls.length === 3) {
+    mediaUrlWithCssGridProperties = [
+      {
+        mediaUrl: mediaUrls[0],
+        gridColumnStart: 1,
+        gridColumnEnd: 2,
+        gridRowStart: 1,
+        gridRowEnd: 3,
+        itemHeight: '309px'
+      },
+      {
+        mediaUrl: mediaUrls[1],
+        gridColumnStart: 2,
+        gridColumnEnd: 3,
+        gridRowStart: 1,
+        gridRowEnd: 2,
+        itemHeight: '150px'
+      },
+      {
+        mediaUrl: mediaUrls[2],
+        gridColumnStart: 2,
+        gridColumnEnd: 3,
+        gridRowStart: 2,
+        gridRowEnd: 3,
+        itemHeight: '150px'
+      }
     ]
-  }
-
-  if (mediaUrls.length === 4) {
-    elements = [
-      <div className='media-collage-img-col-container' key={0}>
-        <div className={`${imgContainerClassName} ${imgContainerHalfClassName}`}>
-          <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[0]} onClick={e => {
-            e.preventDefault()
-            onClick(0)
-          }}/>
-        </div>
-        <div className={`${imgContainerClassName} ${imgContainerHalfClassName}`}>
-          <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[2]} onClick={e => {
-            e.preventDefault()
-            onClick(2)
-          }}/>
-        </div>
-      </div>,
-      <div className='media-collage-img-col-container' key={1}>
-        <div className={`${imgContainerClassName} ${imgContainerHalfClassName}`}>
-          <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[1]} onClick={e => {
-            e.preventDefault()
-            onClick(1)
-          }}/>
-        </div>
-        <div className={`${imgContainerClassName} ${imgContainerHalfClassName}`}>
-          <MediaV2 className='media-collage-img media-collage-img-half' mediaUrlV2={mediaUrls[3]} onClick={e => {
-            e.preventDefault()
-            onClick(3)
-          }}/>
-        </div>
-      </div>
+  } else {
+    mediaUrlWithCssGridProperties = [
+      {
+        mediaUrl: mediaUrls[0],
+        gridColumnStart: 1,
+        gridColumnEnd: 2,
+        gridRowStart: 1,
+        gridRowEnd: 2,
+        itemHeight: '150px'
+      },
+      {
+        mediaUrl: mediaUrls[1],
+        gridColumnStart: 2,
+        gridColumnEnd: 3,
+        gridRowStart: 1,
+        gridRowEnd: 2,
+        itemHeight: '150px'
+      },
+      {
+        mediaUrl: mediaUrls[2],
+        gridColumnStart: 1,
+        gridColumnEnd: 2,
+        gridRowStart: 2,
+        gridRowEnd: 3,
+        itemHeight: '150px'
+      },
+      {
+        mediaUrl: mediaUrls[3],
+        gridColumnStart: 2,
+        gridColumnEnd: 3,
+        gridRowStart: 2,
+        gridRowEnd: 3,
+        itemHeight: '150px'
+      }
     ]
   }
 
   return (
-    <div
-      className='media-collage'
-      style={{
-        marginTop: props.edgeless ? undefined : '10px',
-        marginBottom: props.edgeless ? undefined : '10px',
+    <Gallery
+      uiElements={[
+        {
+          name: 'download-button',
+          ariaLabel: 'Download',
+          order: 9,
+          isButton: true,
+          html: {
+            isCustomSVG: true,
+            inner: '<path d="M20.5 14.3 17.1 18V10h-2.2v7.9l-3.4-3.6L10 16l6 6.1 6-6.1ZM23 23H9v2h14Z" id="pswp__icn-download"/>',
+            outlineID: 'pswp__icn-download-btn',
+          },
+          appendTo: 'bar',
+          onClick: (e, el, pswpInstance) => {
+            //@ts-ignore
+            window.open(pswpInstance.currSlide.data.src, '_blank')
+          },
+        }
+      ]}
+      options={{
+        loop: false
       }}
     >
-      {elements}
-      {showingMediaIndex !== -1 &&
-        <Lightbox
-          mainSrc={getMediaV2Url(mediaUrls[showingMediaIndex])}
-          prevSrc={showingMediaIndex !== 0 ? getMediaV2Url(mediaUrls[showingMediaIndex - 1]) : undefined}
-          onMovePrevRequest={() =>
-            updateShowingMediaIndex(showingMediaIndex - 1)
-          }
-          nextSrc={showingMediaIndex !== mediaUrls.length - 1 ? getMediaV2Url(mediaUrls[showingMediaIndex + 1]) : undefined}
-          onMoveNextRequest={() =>
-            updateShowingMediaIndex(showingMediaIndex + 1)
-          }
-          onCloseRequest={() => {updateShowingMediaIndex(-1)}}
-          toolbarButtons={[
-            <div
-              className='media-collage-lightbox-download-icon'
-              onClick={e => {
-                e.preventDefault()
-                window.open(mediaUrls[showingMediaIndex].original_url, '_blank')
-              }}
+      <div
+        style={{
+          height: '309px',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gridTemplateRows: '150px 150px',
+          gridGap: '4px 4px',
+        }}
+      >
+        {mediaUrlWithCssGridProperties.map(m => {
+          const {mediaUrl: mu} = m
+
+          return (
+            <Item
+              key={mu.original_url}
+              original={mu.original_url}
+              content={
+                <MediaV2 mediaUrlV2={mu} className='media-collage-pswp-content'/>
+              }
             >
-              <DownloadIcon />
-            </div>
-          ]}
-          animationDuration={200}
-        />
-      }
-    </div>
+              {({ref, open}) => (
+                <div
+                  ref={ref as React.Ref<HTMLDivElement>}
+                  style={{
+                    gridColumnStart: m.gridColumnStart,
+                    gridColumnEnd: m.gridColumnEnd,
+                    gridRowStart: m.gridRowStart,
+                    gridRowEnd: m.gridRowEnd,
+                  }}
+                >
+                  <MediaV2
+                    onClick={open}
+                    mediaUrlV2={mu}
+                    className='media-collage-item'
+                    style={{
+                      height: m.itemHeight
+                    }}
+                  />
+                </div>
+              )}
+            </Item>
+          )
+        })}
+      </div>
+    </Gallery>
   )
 }

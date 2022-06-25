@@ -47,7 +47,7 @@ export default (props: Props) => {
       <div className='post-reshared-attachments-wrapper'>
         {
           !resharedFrom.deleted &&
-          <MediaCollage mediaUrls={resharedFrom.media_urls_v2} edgeless={true}/>
+          <MediaCollage mediaUrls={resharedFrom.media_urls_v2} />
         }
         {
           !resharedFrom.deleted && hasPoll &&

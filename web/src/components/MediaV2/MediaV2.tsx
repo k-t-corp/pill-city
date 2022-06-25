@@ -26,7 +26,7 @@ export default (props: Props) => {
         )}
         actual={({ imageProps: actualImageProps }) => (
           <img
-            {...props}
+            {...imageProps}
             {...actualImageProps}
             alt=""
           />
