@@ -7,15 +7,26 @@
 
 .media-collage-pswp-content {
     position: absolute;
-    left: 50%;
     top: 50%;
+    left: 50%;
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
-    width: 750px
+}
+
+.media-collage-pswp-image {
+    width: auto;
 }
 
 @media only screen and (max-width: 750px) {
     .media-collage-pswp-content {
-        width: 300px
+        position: absolute;
+        top: 50%;
+        left: auto;
+        -webkit-transform: translateY(-50%);
+        transform: translateY(-50%);
+    }
+
+    .media-collage-pswp-image {
+        width: 100%;
     }
 }

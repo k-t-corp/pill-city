@@ -140,7 +140,8 @@ export default (props: Props) => {
         }
       ]}
       options={{
-        loop: false
+        loop: false,
+        wheelToZoom: true
       }}
     >
       <div
@@ -160,7 +161,9 @@ export default (props: Props) => {
               key={mu.original_url}
               original={mu.original_url}
               content={
-                <MediaV2 mediaUrlV2={mu} className='media-collage-pswp-content'/>
+                <div className='media-collage-pswp-content'>
+                  <MediaV2 mediaUrlV2={mu} className='media-collage-pswp-image'/>
+                </div>
               }
             >
               {({ref, open}) => (
