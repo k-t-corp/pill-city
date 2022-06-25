@@ -16,6 +16,109 @@ export default (props: Props) => {
     return null
   }
 
+  let mediaUrlWithCssGridProperties: {
+    gridColumnStart: number,
+    gridColumnEnd: number,
+    gridRowStart: number,
+    gridRowEnd: number,
+    itemHeight: string,
+    mediaUrl: MediaUrlV2
+  }[] = []
+
+  if (mediaUrls.length === 1) {
+    mediaUrlWithCssGridProperties = [
+      {
+        mediaUrl: mediaUrls[0],
+        gridColumnStart: 1,
+        gridColumnEnd: 3,
+        gridRowStart: 1,
+        gridRowEnd: 3,
+        itemHeight: '309px'
+      }
+    ]
+  } else if (mediaUrls.length === 2) {
+    mediaUrlWithCssGridProperties = [
+      {
+        mediaUrl: mediaUrls[0],
+        gridColumnStart: 1,
+        gridColumnEnd: 2,
+        gridRowStart: 1,
+        gridRowEnd: 3,
+        itemHeight: '309px'
+      },
+      {
+        mediaUrl: mediaUrls[1],
+        gridColumnStart: 2,
+        gridColumnEnd: 3,
+        gridRowStart: 1,
+        gridRowEnd: 3,
+        itemHeight: '309px'
+      }
+    ]
+  } else if (mediaUrls.length === 3) {
+    mediaUrlWithCssGridProperties = [
+      {
+        mediaUrl: mediaUrls[0],
+        gridColumnStart: 1,
+        gridColumnEnd: 2,
+        gridRowStart: 1,
+        gridRowEnd: 3,
+        itemHeight: '309px'
+      },
+      {
+        mediaUrl: mediaUrls[1],
+        gridColumnStart: 2,
+        gridColumnEnd: 3,
+        gridRowStart: 1,
+        gridRowEnd: 2,
+        itemHeight: '150px'
+      },
+      {
+        mediaUrl: mediaUrls[2],
+        gridColumnStart: 2,
+        gridColumnEnd: 3,
+        gridRowStart: 2,
+        gridRowEnd: 3,
+        itemHeight: '150px'
+      }
+    ]
+  } else {
+    mediaUrlWithCssGridProperties = [
+      {
+        mediaUrl: mediaUrls[0],
+        gridColumnStart: 1,
+        gridColumnEnd: 2,
+        gridRowStart: 1,
+        gridRowEnd: 2,
+        itemHeight: '150px'
+      },
+      {
+        mediaUrl: mediaUrls[1],
+        gridColumnStart: 2,
+        gridColumnEnd: 3,
+        gridRowStart: 1,
+        gridRowEnd: 2,
+        itemHeight: '150px'
+      },
+      {
+        mediaUrl: mediaUrls[2],
+        gridColumnStart: 1,
+        gridColumnEnd: 2,
+        gridRowStart: 2,
+        gridRowEnd: 3,
+        itemHeight: '150px'
+      },
+      {
+        mediaUrl: mediaUrls[3],
+        gridColumnStart: 2,
+        gridColumnEnd: 3,
+        gridRowStart: 2,
+        gridRowEnd: 3,
+        itemHeight: '150px'
+      }
+    ]
+  }
+
   return (
     <Gallery
       uiElements={[
@@ -49,7 +152,9 @@ export default (props: Props) => {
           gridGap: '4px 4px',
         }}
       >
-        {mediaUrls.map(mu => {
+        {mediaUrlWithCssGridProperties.map(m => {
+          const {mediaUrl: mu} = m
+
           return (
             <Item
               key={mu.original_url}
@@ -59,8 +164,23 @@ export default (props: Props) => {
               }
             >
               {({ref, open}) => (
-                <div ref={ref as React.Ref<HTMLDivElement>}>
-                  <MediaV2 onClick={open} mediaUrlV2={mu} className='media-collage-item'/>
+                <div
+                  ref={ref as React.Ref<HTMLDivElement>}
+                  style={{
+                    gridColumnStart: m.gridColumnStart,
+                    gridColumnEnd: m.gridColumnEnd,
+                    gridRowStart: m.gridRowStart,
+                    gridRowEnd: m.gridRowEnd,
+                  }}
+                >
+                  <MediaV2
+                    onClick={open}
+                    mediaUrlV2={mu}
+                    className='media-collage-item'
+                    style={{
+                      height: m.itemHeight
+                    }}
+                  />
                 </div>
               )}
             </Item>
