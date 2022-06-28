@@ -115,6 +115,44 @@ const App = () => {
     <ToastProvider>
       <Router>
         <Switch>
+          {/*unauthenticated*/}
+          <Route path="/signup">
+            <NotAuthenticated>
+              <SignUp />
+            </NotAuthenticated>
+          </Route>
+          <Route path="/signin">
+            <NotAuthenticated>
+              <SignIn />
+            </NotAuthenticated>
+          </Route>
+          <Route path="/forget">
+            <ForgetPassword />
+          </Route>
+          <Route path="/reset">
+            <ResetPassword />
+          </Route>
+          {/*sub pages*/}
+          <Route path='/post/:id'>
+            <Authenticated updateMobilePage={updateMobileCurrentPage}>
+              <Post />
+            </Authenticated>
+          </Route>
+          <Route path="/profile/:id">
+            <Authenticated updateMobilePage={updateMobileCurrentPage}>
+              <Profile />
+            </Authenticated>
+          </Route>
+          <Route path="/settings">
+            <Authenticated updateMobilePage={updateMobileCurrentPage}>
+              <Settings />
+            </Authenticated>
+          </Route>
+          <Route path="/admin">
+            <Authenticated updateMobilePage={updateMobileCurrentPage}>
+              <Admin />
+            </Authenticated>
+          </Route>
           {/*mobile main pages*/}
           <Route path="/users">
             <Authenticated updateMobilePage={updateMobileCurrentPage}>
@@ -160,44 +198,6 @@ const App = () => {
                   <Profile />
               }
             </Authenticated>
-          </Route>
-          {/*sub pages*/}
-          <Route path='/post/:id'>
-            <Authenticated updateMobilePage={updateMobileCurrentPage}>
-              <Post />
-            </Authenticated>
-          </Route>
-          <Route path="/profile/:id">
-            <Authenticated updateMobilePage={updateMobileCurrentPage}>
-              <Profile />
-            </Authenticated>
-          </Route>
-          <Route path="/settings">
-            <Authenticated updateMobilePage={updateMobileCurrentPage}>
-              <Settings />
-            </Authenticated>
-          </Route>
-          <Route path="/admin">
-            <Authenticated updateMobilePage={updateMobileCurrentPage}>
-              <Admin />
-            </Authenticated>
-          </Route>
-          {/*unauthenticated*/}
-          <Route path="/signup">
-            <NotAuthenticated>
-              <SignUp />
-            </NotAuthenticated>
-          </Route>
-          <Route path="/signin">
-            <NotAuthenticated>
-              <SignIn />
-            </NotAuthenticated>
-          </Route>
-          <Route path="/forget">
-            <ForgetPassword />
-          </Route>
-          <Route path="/reset">
-            <ResetPassword />
           </Route>
           <Redirect to='/'/>
         </Switch>
