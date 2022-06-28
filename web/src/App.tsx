@@ -115,51 +115,22 @@ const App = () => {
     <ToastProvider>
       <Router>
         <Switch>
-          {/*mobile main pages*/}
-          <Route path="/users">
-            <Authenticated updateMobilePage={updateMobileCurrentPage}>
-              {
-                isMobile ?
-                  <MobileHome currentPage={mobileCurrentPage} onChangePage={updateMobileCurrentPage}/> :
-                  <Users />
-              }
-            </Authenticated>
+          {/*unauthenticated*/}
+          <Route path="/signup">
+            <NotAuthenticated>
+              <SignUp />
+            </NotAuthenticated>
           </Route>
-          <Route path="/circles">
-            <Authenticated updateMobilePage={updateMobileCurrentPage}>
-              {
-                isMobile ?
-                  <MobileHome currentPage={mobileCurrentPage} onChangePage={updateMobileCurrentPage}/> :
-                  <Circles />
-              }
-            </Authenticated>
+          <Route path="/signin">
+            <NotAuthenticated>
+              <SignIn />
+            </NotAuthenticated>
           </Route>
-          <Route exact={true} path='/'>
-            <Authenticated updateMobilePage={updateMobileCurrentPage} freeWidth={true}>
-              {
-                isMobile ?
-                  <MobileHome currentPage={mobileCurrentPage} onChangePage={updateMobileCurrentPage}/>:
-                  <Home />
-              }
-            </Authenticated>
+          <Route path="/forget">
+            <ForgetPassword />
           </Route>
-          <Route path="/notifications">
-            <Authenticated updateMobilePage={updateMobileCurrentPage}>
-              {
-                isMobile ?
-                  <MobileHome currentPage={mobileCurrentPage} onChangePage={updateMobileCurrentPage}/> :
-                  <Notifications />
-              }
-            </Authenticated>
-          </Route>
-          <Route path="/profile">
-            <Authenticated updateMobilePage={updateMobileCurrentPage}>
-              {
-                isMobile ?
-                  <MobileHome currentPage={mobileCurrentPage} onChangePage={updateMobileCurrentPage}/> :
-                  <Profile />
-              }
-            </Authenticated>
+          <Route path="/reset">
+            <ResetPassword />
           </Route>
           {/*sub pages*/}
           <Route path='/post/:id'>
@@ -182,22 +153,51 @@ const App = () => {
               <Admin />
             </Authenticated>
           </Route>
-          {/*unauthenticated*/}
-          <Route path="/signup">
-            <NotAuthenticated>
-              <SignUp />
-            </NotAuthenticated>
+          {/*mobile main pages*/}
+          <Route exact={true} path='/'>
+            <Authenticated updateMobilePage={updateMobileCurrentPage} freeWidth={true}>
+              {
+                isMobile ?
+                  <MobileHome currentPage={mobileCurrentPage} onChangePage={updateMobileCurrentPage}/>:
+                  <Home />
+              }
+            </Authenticated>
           </Route>
-          <Route path="/signin">
-            <NotAuthenticated>
-              <SignIn />
-            </NotAuthenticated>
+          <Route path="/users">
+            <Authenticated updateMobilePage={updateMobileCurrentPage}>
+              {
+                isMobile ?
+                  <MobileHome currentPage={mobileCurrentPage} onChangePage={updateMobileCurrentPage}/> :
+                  <Users />
+              }
+            </Authenticated>
           </Route>
-          <Route path="/forget">
-            <ForgetPassword />
+          <Route path="/circles">
+            <Authenticated updateMobilePage={updateMobileCurrentPage}>
+              {
+                isMobile ?
+                  <MobileHome currentPage={mobileCurrentPage} onChangePage={updateMobileCurrentPage}/> :
+                  <Circles />
+              }
+            </Authenticated>
           </Route>
-          <Route path="/reset">
-            <ResetPassword />
+          <Route path="/notifications">
+            <Authenticated updateMobilePage={updateMobileCurrentPage}>
+              {
+                isMobile ?
+                  <MobileHome currentPage={mobileCurrentPage} onChangePage={updateMobileCurrentPage}/> :
+                  <Notifications />
+              }
+            </Authenticated>
+          </Route>
+          <Route path="/profile">
+            <Authenticated updateMobilePage={updateMobileCurrentPage}>
+              {
+                isMobile ?
+                  <MobileHome currentPage={mobileCurrentPage} onChangePage={updateMobileCurrentPage}/> :
+                  <Profile />
+              }
+            </Authenticated>
           </Route>
           <Redirect to='/'/>
         </Switch>
