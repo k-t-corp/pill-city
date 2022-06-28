@@ -32,6 +32,7 @@ import {ErrorBoundary} from "react-error-boundary";
 import {useMediaQuery} from "react-responsive";
 import MobileNavBar from "./components/NavBar/MobileNavBar";
 import DesktopNavBar from "./components/NavBar/DesktopNavBar";
+import MobileHome from "./pages/MobileHome/MobileHome";
 
 Modal.setAppElement('#root');
 
@@ -49,7 +50,7 @@ const Authenticated = (props: AuthenticatedProps) => {
   const NavBar = isMobile ? MobileNavBar : DesktopNavBar
 
   return (
-    <>
+    <div>
       <NavBar />
       <div
         className="app-container"
@@ -57,7 +58,7 @@ const Authenticated = (props: AuthenticatedProps) => {
       >
         {props.children}
       </div>
-    </>
+    </div>
   )
 }
 
@@ -103,13 +104,19 @@ const App = () => {
     }
   }, 5000)
 
+  const isMobile = useMediaQuery({query: '(max-width: 750px)'})
+
   return (
     <ToastProvider>
       <Router>
         <Switch>
           <Route exact={true} path='/'>
             <Authenticated freeWidth={true}>
-              <Home />
+              {
+                isMobile ?
+                  <MobileHome />:
+                  <Home />
+              }
             </Authenticated>
           </Route>
           <Route path='/post/:id'>
