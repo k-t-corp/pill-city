@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import MobileNavBar from "../../components/NavBar/MobileNavBar";
 import SwipeableViews from "react-swipeable-views";
 import Users from "../Users/Users";
@@ -7,23 +7,29 @@ import Notifications from "../Notifications/Notifications";
 import Home from "../Home/Home";
 import Profile from "../Profile/Profile";
 
-export default () => {
-  const [currentSlide, updateCurrentSlide] = useState(2)
+interface Props {
+  currentPage: number
+  onChangePage: (page: number) => void
+}
 
+export default (props: Props) => {
   return (
     <div>
-      <MobileNavBar />
       <SwipeableViews
-        containerStyle={{"height": "100vh"}}
-        index={currentSlide}
-        onChangeIndex={i => updateCurrentSlide(i)}
+        containerStyle={{"height": "calc(100vh - 50px)"}}
+        index={props.currentPage}
+        onChangeIndex={props.onChangePage}
       >
-        <Users />
         <Circles />
+        <Users />
         <Home />
         <Notifications />
         <Profile />
       </SwipeableViews>
+      <MobileNavBar
+        currentPage={props.currentPage}
+        onChangePage={props.onChangePage}
+      />
     </div>
   )
 }

@@ -1,18 +1,24 @@
 import React from "react"
-import {useHistory, useLocation} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import {useAppSelector} from "../../store/hooks";
 import CirclesIcon from "../PillIcons/CirclesIcon";
 import {BellIcon, HomeIcon, UserAddIcon, UserCircleIcon} from "@heroicons/react/solid";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import "./NavBar.css"
 
-const handleNavItemActiveClass = (currentPath: string, expectedPath: string) => {
-  return currentPath === expectedPath ? "nav-bar-button-active" : ''
+const handleNavItemActiveClass = (currentPage: number, expectedPage: number) => {
+  return currentPage === expectedPage ? "nav-bar-button-active" : ''
 }
 
-export default () => {
+interface Props {
+  currentPage: number
+  onChangePage: (page: number) => void
+}
+
+export default (props: Props) => {
+  const {currentPage} = props
+
   const history = useHistory()
-  const path =  useLocation().pathname
 
   const hasNewNotifications = useAppSelector(state => state.notifications.notifications.filter(n => n.unread).length > 0)
   const me = useAppSelector(state => state.me.me)
@@ -20,8 +26,9 @@ export default () => {
   return (
     <div className="nav-bar-container nav-bar-bottom">
       <div
-        className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/circles")}`}
+        className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(currentPage, 0)}`}
         onClick={() => {
+          props.onChangePage(0)
           history.push('/circles')
           window.scrollTo({ top: 0, behavior: 'smooth'})
         }}
@@ -29,8 +36,9 @@ export default () => {
         <CirclesIcon />
       </div>
       <div
-        className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/users")}`}
+        className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(currentPage, 1)}`}
         onClick={() => {
+          props.onChangePage(1)
           history.push('/users')
           window.scrollTo({ top: 0, behavior: 'smooth'})
         }}
@@ -38,8 +46,9 @@ export default () => {
         <UserAddIcon />
       </div>
       <div
-        className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/")}`}
+        className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(currentPage, 2)}`}
         onClick={() => {
+          props.onChangePage(2)
           history.push('/')
           window.scrollTo({ top: 0, behavior: 'smooth'})
         }}
@@ -53,8 +62,9 @@ export default () => {
         }
       </div>
       <div
-        className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/notifications")}`}
+        className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(currentPage, 3)}`}
         onClick={() => {
+          props.onChangePage(3)
           history.push('/notifications')
           window.scrollTo({ top: 0, behavior: 'smooth'})
         }}
@@ -63,8 +73,9 @@ export default () => {
         <BellIcon />
       </div>
       <div
-        className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(path, "/profile")}`}
+        className={`nav-bar-button-container nav-bar-button-container-spaced ${handleNavItemActiveClass(currentPage, 4)}`}
         onClick={() => {
+          props.onChangePage(4)
           history.push('/profile')
           window.scrollTo({ top: 0, behavior: 'smooth'})
         }}

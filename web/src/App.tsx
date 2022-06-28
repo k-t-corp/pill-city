@@ -1,4 +1,4 @@
-import React, {ReactElement, useEffect} from 'react';
+import React, {ReactElement, useEffect, useState} from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -38,6 +38,7 @@ Modal.setAppElement('#root');
 
 interface AuthenticatedProps {
   children: ReactElement
+  updateMobilePage: (page: number) => void
   freeWidth?: boolean
 }
 
@@ -47,11 +48,14 @@ const Authenticated = (props: AuthenticatedProps) => {
   }
 
   const isMobile = useMediaQuery({query: '(max-width: 750px)'})
-  const NavBar = isMobile ? MobileNavBar : DesktopNavBar
 
   return (
     <div>
-      <NavBar />
+      {
+        isMobile ?
+          <MobileNavBar currentPage={-1} onChangePage={props.updateMobilePage}/>:
+          <DesktopNavBar />
+      }
       <div
         className="app-container"
         style={{maxWidth: getUseMultiColumn() && props.freeWidth ? undefined : '1200px'}}
@@ -105,60 +109,80 @@ const App = () => {
   }, 5000)
 
   const isMobile = useMediaQuery({query: '(max-width: 750px)'})
+  const [mobileCurrentPage, updateMobileCurrentPage] = useState(2)
 
   return (
     <ToastProvider>
       <Router>
         <Switch>
-          <Route exact={true} path='/'>
-            <Authenticated freeWidth={true}>
+          {/*mobile main pages*/}
+          <Route path="/users">
+            <Authenticated updateMobilePage={updateMobileCurrentPage}>
               {
                 isMobile ?
-                  <MobileHome />:
+                  <MobileHome currentPage={mobileCurrentPage} onChangePage={updateMobileCurrentPage}/> :
+                  <Users />
+              }
+            </Authenticated>
+          </Route>
+          <Route path="/circles">
+            <Authenticated updateMobilePage={updateMobileCurrentPage}>
+              {
+                isMobile ?
+                  <MobileHome currentPage={mobileCurrentPage} onChangePage={updateMobileCurrentPage}/> :
+                  <Circles />
+              }
+            </Authenticated>
+          </Route>
+          <Route exact={true} path='/'>
+            <Authenticated updateMobilePage={updateMobileCurrentPage} freeWidth={true}>
+              {
+                isMobile ?
+                  <MobileHome currentPage={mobileCurrentPage} onChangePage={updateMobileCurrentPage}/>:
                   <Home />
               }
             </Authenticated>
           </Route>
+          <Route path="/notifications">
+            <Authenticated updateMobilePage={updateMobileCurrentPage}>
+              {
+                isMobile ?
+                  <MobileHome currentPage={mobileCurrentPage} onChangePage={updateMobileCurrentPage}/> :
+                  <Notifications />
+              }
+            </Authenticated>
+          </Route>
+          <Route path="/profile">
+            <Authenticated updateMobilePage={updateMobileCurrentPage}>
+              {
+                isMobile ?
+                  <MobileHome currentPage={mobileCurrentPage} onChangePage={updateMobileCurrentPage}/> :
+                  <Profile />
+              }
+            </Authenticated>
+          </Route>
+          {/*sub pages*/}
           <Route path='/post/:id'>
-            <Authenticated>
+            <Authenticated updateMobilePage={updateMobileCurrentPage}>
               <Post />
             </Authenticated>
           </Route>
           <Route path="/profile/:id">
-            <Authenticated>
+            <Authenticated updateMobilePage={updateMobileCurrentPage}>
               <Profile />
-            </Authenticated>
-          </Route>
-          <Route path="/profile">
-            <Authenticated>
-              <Profile />
-            </Authenticated>
-          </Route>
-          <Route path="/notifications">
-            <Authenticated>
-              <Notifications />
-            </Authenticated>
-          </Route>
-          <Route path="/users">
-            <Authenticated>
-              <Users />
-            </Authenticated>
-          </Route>
-          <Route path="/circles">
-            <Authenticated>
-              <Circles />
             </Authenticated>
           </Route>
           <Route path="/settings">
-            <Authenticated>
+            <Authenticated updateMobilePage={updateMobileCurrentPage}>
               <Settings />
             </Authenticated>
           </Route>
           <Route path="/admin">
-            <Authenticated>
+            <Authenticated updateMobilePage={updateMobileCurrentPage}>
               <Admin />
             </Authenticated>
           </Route>
+          {/*unauthenticated*/}
           <Route path="/signup">
             <NotAuthenticated>
               <SignUp />
