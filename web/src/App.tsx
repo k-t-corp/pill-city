@@ -24,12 +24,14 @@ import {Api} from "./api/Api";
 import ForgetPassword from "./pages/ForgetPassword/ForgetPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import Modal from "react-modal";
-import NavBar from "./components/NavBar/NavBar";
 import {accessTokenExists} from "./api/AuthStorage";
 import {getUseMultiColumn} from "./utils/SettingsStorage";
 import './App.css'
 import Circles from "./pages/Circles/Circles";
 import {ErrorBoundary} from "react-error-boundary";
+import {useMediaQuery} from "react-responsive";
+import MobileNavBar from "./components/NavBar/MobileNavBar";
+import DesktopNavBar from "./components/NavBar/DesktopNavBar";
 
 Modal.setAppElement('#root');
 
@@ -42,6 +44,10 @@ const Authenticated = (props: AuthenticatedProps) => {
   if (!accessTokenExists()) {
     return <Redirect to='/signin'/>
   }
+
+  const isMobile = useMediaQuery({query: '(max-width: 750px)'})
+  const NavBar = isMobile ? MobileNavBar : DesktopNavBar
+
   return (
     <>
       <NavBar />
