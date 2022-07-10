@@ -14,6 +14,7 @@ comment_parser = reqparse.RequestParser()
 comment_parser.add_argument('content', type=str, required=True)
 comment_parser.add_argument('mentioned_user_ids', type=str, action='append', default=[])
 comment_parser.add_argument('media_object_names', type=str, action="append", default=[])
+comment_parser.add_argument('reply_to_comment_id', type=str, required=False, default=None)
 
 nested_comment_fields = {
     'id': fields.String(attribute='eid'),
@@ -23,6 +24,7 @@ nested_comment_fields = {
     'media_urls': MediaUrls(attribute='media_list'),
     'media_urls_v2': MediaUrlsV2(attribute='media_list'),
     'deleted': fields.Boolean,
+    'reply_to_comment_id': fields.String,
 }
 
 comment_fields = dict({
@@ -48,7 +50,8 @@ class Comments(Resource):
             parent_post=post,
             parent_comment=None,
             mentioned_users=check_mentioned_user_ids(args['mentioned_user_ids']),
-            media_list=check_media_object_names(args['media_object_names'], MaxCommentMediaCount)
+            media_list=check_media_object_names(args['media_object_names'], MaxCommentMediaCount),
+            reply_to_comment_id=None
         )
         return comment, 201
 
@@ -83,13 +86,17 @@ class NestedComments(Resource):
             return {'msg': 'Cannot nest more than two levels of comment'}, 403
 
         args = comment_parser.parse_args()
+        reply_to_comment_id = None
+        if args['reply_to_comment_id']:
+            reply_to_comment_id = args['reply_to_comment_id']
         nested_comment = create_comment(
             user,
             content=args['content'],
             parent_post=post,
             parent_comment=comment,
             mentioned_users=check_mentioned_user_ids(args['mentioned_user_ids']),
-            media_list=check_media_object_names(args['media_object_names'], MaxCommentMediaCount)
+            media_list=check_media_object_names(args['media_object_names'], MaxCommentMediaCount),
+            reply_to_comment_id=reply_to_comment_id
         )
         return nested_comment, 201
 

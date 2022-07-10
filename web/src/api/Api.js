@@ -345,7 +345,7 @@ export class Api {
     return res.data
   }
 
-  async postNestedComment(content, postId, commentId, mentionedUserIds, mediaData, ownedMediaObjectNames) {
+  async postNestedComment(content, postId, commentId, mentionedUserIds, mediaData, ownedMediaObjectNames, replyToNestedCommentId) {
     Api.throwOnUnauthorized()
     let allMediaObjNames = []
     if (mediaData.length !== 0) {
@@ -357,7 +357,8 @@ export class Api {
       {
         content,
         mentioned_user_ids: mentionedUserIds,
-        media_object_names: allMediaObjNames
+        media_object_names: allMediaObjNames,
+        reply_to_comment_id: replyToNestedCommentId
       }
     )
     if (res.status !== 201) {

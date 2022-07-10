@@ -7,8 +7,8 @@ import Reactions from "./Reactions";
 import ResharedPost from "./ResharedPost";
 import ClickableId from "../ClickableId/ClickableId";
 import Comment from "./Comment";
-import CommentBox from "./CommentBox";
-import Post, {Comment as CommentModel, ResharedPost as ResharedPostModel} from "../../models/Post";
+import CommentBox from "./NewComment";
+import Post, {Comment as CommentModel, ResharedPost as ResharedPostModel, NestedComment as NestedCommentModel} from "../../models/Post";
 import User from "../../models/User";
 import LinkPreviews from "./LinkPreviews";
 import api from "../../api/Api";
@@ -49,6 +49,8 @@ export default (props: Props) => {
   const [addingComment, updateAddingComment] = useState(false)
   // currently replying to comment
   const [replyingToComment, updateReplyingToComment] = useState<CommentModel | null>(null)
+  // currently replying to nested comment
+  const [replyingToNestedComment, updateReplyingToNestedComment] = useState<NestedCommentModel | null>(null)
 
   const [mediaUrls, updateMediaUrls] = useState(props.data.media_urls_v2)
 
@@ -78,11 +80,12 @@ export default (props: Props) => {
         onReply={() => {
           updateAddingComment(true)
           updateReplyingToComment(comment)
+          updateReplyingToNestedComment(null)
         }}
         onNestedCommentReply={(nestedComment) => {
           updateAddingComment(true)
           updateReplyingToComment(comment)
-          updateCommentContent(`@${nestedComment.author.id} `)
+          updateReplyingToNestedComment(nestedComment)
         }}
       />
     )
@@ -313,6 +316,7 @@ export default (props: Props) => {
           content={commentContent}
           updateContent={updateCommentContent}
           replyingToComment={replyingToComment}
+          replyingToNestedComment={replyingToNestedComment}
           addComment={(newComment) => {
             updateComments([...comments, newComment])
           }}

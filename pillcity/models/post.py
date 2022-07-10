@@ -28,6 +28,7 @@ class Comment(EmbeddedDocument):
     # no reverse delete rule but that's fine because when the comment is "deleted", media_list is manually reset
     media_list = ListField(LazyReferenceField(Media), default=[])  # type: List[Media]
     deleted = BooleanField(required=False, default=False)
+    reply_to_comment_id = StringField(required=False, default='')
 
     def make_href(self, parent_post):
         return f"/post/{parent_post.eid}#comment-{self.eid}"
