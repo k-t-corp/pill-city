@@ -14,7 +14,8 @@ from .media import use_media_list
 
 
 def create_comment(self: User, content: str, parent_post: Post, parent_comment: Optional[Comment],
-                   mentioned_users: List[User], media_list: List[Media]) -> Optional[Comment]:
+                   mentioned_users: List[User], media_list: List[Media],
+                   reply_to_comment_id: Optional[str]) -> Comment:
     """
     Create a comment for the user
 
@@ -24,6 +25,7 @@ def create_comment(self: User, content: str, parent_post: Post, parent_comment: 
     :param parent_comment: The comment that this (maybe) nested comment is attached to
     :param mentioned_users: List of mentioned users
     :param media_list: List of media attachment
+    :param reply_to_comment_id: Replying to a nested comment (only for nested comment)
     :return The new comment object
     """
     # context_home_or_profile=False because context_home_or_profile only affects public posts
@@ -51,6 +53,8 @@ def create_comment(self: User, content: str, parent_post: Post, parent_comment: 
         new_comment.content = bleach.clean(content)
     new_comment.created_at = now_seconds()
     new_comment.media_list = media_list
+    if reply_to_comment_id:
+        new_comment.reply_to_comment_id = reply_to_comment_id
 
     if not parent_comment:
         parent_post.comments2.append(new_comment)

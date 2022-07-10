@@ -1,20 +1,20 @@
-/* TODO: all classnames not starting with post-comment-box are duplicated */
-.post-comment-box-wrapper {
+/* TODO: all classnames not starting with post-new-comment are duplicated */
+.post-new-comment-wrapper {
     margin-top: 20px;
     padding-top: 5px;
 }
 
-.post-comment-box-input-area {
+.post-new-comment-input-area {
     display: flex;
 }
 
-.post-comment-box-avatar {
+.post-new-comment-avatar {
     width: 35px;
     height: 35px;
     flex-shrink: 0;
 }
 
-.post-comment-box-input {
+.post-new-comment-input {
     border: none;
     flex: 1;
     resize: none;
@@ -23,11 +23,11 @@
     height: auto;
 }
 
-.post-comment-box-input:focus {
+.post-new-comment-input:focus {
     outline: none !important;
 }
 
-.post-comment-box-attachment-button {
+.post-new-comment-attachment-button {
     top: 15px;
     right: 5px;
     width: 20px;
@@ -35,13 +35,13 @@
     z-index: 999;
 }
 
-.post-comment-box-buttons {
+.post-new-comment-buttons {
     display: flex;
     justify-content: flex-end;
     align-items: center;
 }
 
-.post-comment-box-attachment-icon {
+.post-new-comment-attachment-icon {
     width: 25px;
     height: 25px;
     margin-right: 10px;
@@ -49,7 +49,7 @@
     cursor: pointer;
 }
 
-.post-comment-box-post-button {
+.post-new-comment-post-button {
     padding: 5px 8px;
     font-weight: bold;
     font-size: small;
@@ -59,7 +59,7 @@
     cursor: pointer;
 }
 
-.post-comment-box-post-button-invalid {
+.post-new-comment-post-button-invalid {
     background-color: #767676;
     cursor: none;
     pointer-events: none;

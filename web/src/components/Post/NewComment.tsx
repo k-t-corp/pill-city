@@ -11,12 +11,12 @@ import {useToast} from "../Toast/ToastProvider";
 import summary from "../../utils/summary";
 import ContentTextarea from "../ContentTextarea/ContentTextarea";
 import api from "../../api/Api";
-import './CommentBox.css'
 import {PhotographIcon} from "@heroicons/react/solid";
 import AddMedia from "../AddMedia/AddMedia";
 import PillModal from "../PillModal/PillModal";
 import Media from "../../models/Media";
 import convertHeicFileToPng from "../../utils/convertHeicFileToPng";
+import './NewComment.css'
 
 interface Props {
   me: User,
@@ -24,6 +24,7 @@ interface Props {
   content: string
   updateContent: (newContent: string) => void
   replyingToComment: Comment | null
+  replyingToNestedComment: NestedComment | null
   addComment: (comment: Comment) => void
   addNestedComment: (nestedComment: NestedComment) => void
   afterSendingComment: () => void
@@ -95,7 +96,8 @@ export default (props: Props) => {
           props.replyingToComment.id,
           parseMentioned(content),
           mediaData,
-          ownedMedias.map(_ => _.object_name)
+          ownedMedias.map(_ => _.object_name),
+          props.replyingToNestedComment && props.replyingToNestedComment.id
         )
         props.addNestedComment(newNestedComment)
       } catch (e) {
@@ -131,16 +133,18 @@ export default (props: Props) => {
   }
 
   let contentPlaceholder
-  if (props.replyingToComment) {
-    contentPlaceholder = `Replying to "${summary(props.replyingToComment.content, 10)}"`
+  if (props.replyingToNestedComment) {
+    contentPlaceholder = `Replying to "${summary(props.replyingToNestedComment.content, 20)}"`
+  } else if (props.replyingToComment) {
+    contentPlaceholder = `Replying to "${summary(props.replyingToComment.content, 20)}"`
   } else {
     contentPlaceholder = `Replying to "${summary(props.post.content, 20)}"`
   }
 
   return (
-    <div className="post-comment-box-wrapper fade-in">
-      <div className="post-comment-box-input-area">
-        <div className="post-comment-box-avatar">
+    <div className="post-new-comment-wrapper fade-in">
+      <div className="post-new-comment-input-area">
+        <div className="post-new-comment-avatar">
           <RoundAvatar user={props.me}/>
         </div>
         <ContentTextarea
@@ -150,7 +154,7 @@ export default (props: Props) => {
           }}
           onAddMedia={onChangeMedias}
           disabled={false}
-          textAreaClassName='post-comment-box-input'
+          textAreaClassName='post-new-comment-input'
           placeholder={contentPlaceholder}
         />
         <PillModal
@@ -171,9 +175,9 @@ export default (props: Props) => {
         (medias.length + ownedMedias.length) > 0 &&
           <MediaPane mediaUrls={medias.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.media_url))}/>
       }
-      <div className="post-comment-box-buttons">
+      <div className="post-new-comment-buttons">
         <PhotographIcon
-          className='post-comment-box-attachment-icon'
+          className='post-new-comment-attachment-icon'
           onClick={() => {
             if (!posting) {
               updateMediaOpened(true)
@@ -183,8 +187,8 @@ export default (props: Props) => {
         <div
           className={
             isContentValid() && !posting ?
-              "post-comment-box-post-button" :
-              "post-comment-box-post-button post-comment-box-post-button-invalid"
+              "post-new-comment-post-button" :
+              "post-new-comment-post-button post-new-comment-post-button-invalid"
           }
           onClick={sendComment}
         >Comment</div>
