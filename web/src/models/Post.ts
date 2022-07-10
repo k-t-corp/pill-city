@@ -4,18 +4,21 @@ import Media from "./Media";
 import MediaUrlV2 from "./MediaUrlV2";
 import LinkPreview from "./LinkPreview";
 
-export interface NestedComment {
+interface BaseComment {
   id: string
   created_at_seconds: number
   author: User
   content: string
   deleted: boolean
   media_urls: string[],
-  media_urls_v2: MediaUrlV2[]
+  media_urls_v2: MediaUrlV2[],
+  reply_to_comment_id: string
 }
 
-export interface Comment extends NestedComment {
-  comments: NestedComment[]
+export type NestedComment = BaseComment
+
+export interface Comment extends BaseComment {
+  comments: BaseComment[]
 }
 
 export interface Reaction {

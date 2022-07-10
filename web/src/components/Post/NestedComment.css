@@ -21,6 +21,14 @@
     margin-left: 3px;
 }
 
+.post-nested-comment-reply-to {
+    height: 15px;
+    width: 15px;
+    margin-top: 2px;
+    color: #777777;
+    cursor: pointer;
+}
+
 .post-nested-comment-content {
     overflow-wrap: break-word;
     flex: 1;

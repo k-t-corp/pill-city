@@ -7,7 +7,7 @@ import Post, {NestedComment, Comment} from "../../models/Post";
 import User from "../../models/User";
 import api from "../../api/Api";
 import './NestedComment.css'
-import {DotsVerticalIcon} from "@heroicons/react/solid";
+import {DotsVerticalIcon, ReplyIcon} from "@heroicons/react/solid";
 import PillDropdownMenu from "../PillDropdownMenu/PillDropdownMenu";
 import MediaCollage from "../MediaCollage/MediaCollage";
 
@@ -19,6 +19,7 @@ interface Props {
   highlightCommentId?: string
   highlightCommentRef: any
   onReply: (nestedComment: NestedComment) => void
+  onHighlightComment: (nestedCommentId: string) => void
 }
 
 export default (props: Props) => {
@@ -56,19 +57,28 @@ export default (props: Props) => {
       className={`post-nested-comment ${isHighlightComment ? "highlight-comment" : ""}`}
     >
       <div className="post-nested-comment-avatar">
-        <RoundAvatar user={!deleted ? nestedComment.author : null}/>
+        <RoundAvatar user={!deleting && !deleted ? nestedComment.author : null}/>
       </div>
       <div className="post-nested-comment-name">
-        <ClickableId user={!deleted ? nestedComment.author : null}/>:&nbsp;
+        <ClickableId user={!deleting && !deleted ? nestedComment.author : null}/>:&nbsp;
       </div>
+      {
+        !deleting && !deleted && nestedComment.reply_to_comment_id &&
+        <div className='post-nested-comment-reply-to' onClick={e => {
+          e.preventDefault()
+          props.onHighlightComment(nestedComment.reply_to_comment_id)
+        }}>
+          <ReplyIcon />
+        </div>
+      }
       <div className="post-nested-comment-content">
         {
-          !deleted ?
+          !deleting && !deleted ?
             parseContent(nestedComment.content, "") :
             <div style={{fontStyle: 'italic'}}>This comment has been deleted</div>
         }
         {
-          !deleted && nestedComment.media_urls.length > 0 &&
+          !deleting && !deleted && nestedComment.media_urls.length > 0 &&
           <div>
             <MediaCollage mediaUrls={[nestedComment.media_urls_v2[0]]}/>
           </div>

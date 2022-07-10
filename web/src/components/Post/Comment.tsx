@@ -29,6 +29,7 @@ export default (props: Props) => {
   const isHighlightComment = props.highlightCommentId
   const [ deleting, updateDeleting ] = useState(false)
   const [ deleted, updateDeleted ] = useState(comment.deleted)
+  const [ replyHighlightCommentId, updateReplyHighlightCommentId ] = useState('')
 
   const nestedCommentElems = []
   for (let i = 0; i < comment.comments.length; i++) {
@@ -40,9 +41,12 @@ export default (props: Props) => {
         nestedComment={nestedComment}
         parentComment={comment}
         post={props.post}
-        highlightCommentId={props.highlightCommentId}
+        highlightCommentId={replyHighlightCommentId ? replyHighlightCommentId : props.highlightCommentId}
         highlightCommentRef={props.highlightCommentRef}
         onReply={props.onNestedCommentReply}
+        onHighlightComment={commentId => {
+          updateReplyHighlightCommentId(commentId)
+        }}
       />
     )
   }

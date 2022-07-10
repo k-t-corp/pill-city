@@ -24,6 +24,7 @@ nested_comment_fields = {
     'media_urls': MediaUrls(attribute='media_list'),
     'media_urls_v2': MediaUrlsV2(attribute='media_list'),
     'deleted': fields.Boolean,
+    'reply_to_comment_id': fields.String,
 }
 
 comment_fields = dict({
