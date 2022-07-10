@@ -22,10 +22,4 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-const userAgent = window.navigator.userAgent;
-if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
-  // todo: this is a workaround for https://github.com/pill-city/server/issues/379
-  unregister()
-} else {
-  register();
-}
+register();
