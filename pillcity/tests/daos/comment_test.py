@@ -25,7 +25,7 @@ class CommentTest(BaseTestCase):
         post = post[0]
 
         # User2 comment on post1 while mentioning user3 and then deletes it
-        comment = create_comment(user2, 'comment', post, None, [user3], [])
+        comment = create_comment(user2, 'comment', post, None, [user3], [], None)
         deleted_comment = delete_comment(user2, comment.eid, post)
 
         # User1 should see nullified notification
@@ -89,11 +89,11 @@ class CommentTest(BaseTestCase):
         post = post[0]
 
         # User2 comment on post1 and then deletes it
-        comment = create_comment(user2, 'comment', post, None, [], [])
+        comment = create_comment(user2, 'comment', post, None, [], [], None)
         deleted_comment = delete_comment(user2, comment.eid, post)
 
         # Even user1 is not able to make a nested comment on the deleted commetn
         def op_create_nested_comment():
-            create_comment(user1, 'nested comment', post, deleted_comment, [], [])
+            create_comment(user1, 'nested comment', post, deleted_comment, [], [], None)
 
         self.assertRaises(UnauthorizedAccess, op_create_nested_comment)
