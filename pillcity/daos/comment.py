@@ -1,3 +1,4 @@
+import enum
 import bleach
 from typing import List, Optional
 from pillcity.daos.media import delete_media_list
@@ -62,26 +63,7 @@ def create_comment(self: User, content: str, parent_post: Post, parent_comment: 
         parent_comment.comments.append(new_comment)
     parent_post.save()
 
-    if not parent_comment:
-        create_notification(
-            self,
-            notifying_href=new_comment.make_href(parent_post),
-            notifying_summary=new_comment.content,
-            notifying_action=NotifyingAction.Comment,
-            notified_href=parent_post.make_href(),
-            notified_summary=parent_post.content,
-            owner=parent_post.author
-        )
-    else:
-        create_notification(
-            self,
-            notifying_href=new_comment.make_href(parent_post),
-            notifying_summary=new_comment.content,
-            notifying_action=NotifyingAction.Comment,
-            notified_href=parent_comment.make_href(parent_post),
-            notified_summary=parent_comment.content,
-            owner=parent_comment.author
-        )
+    create_comment_notifications(self, new_comment, parent_comment, parent_post)
 
     mention(
         self,
@@ -91,6 +73,65 @@ def create_comment(self: User, content: str, parent_post: Post, parent_comment: 
     )
 
     return new_comment
+
+
+def create_comment_notifications(
+        self: User, new_comment: Comment, parent_comment: Optional[Comment], parent_post: Post
+):
+    if not parent_comment:
+        # comment to a post, just notify the post owner
+        create_notification(
+            self,
+            notifying_href=new_comment.make_href(parent_post),
+            notifying_summary=new_comment.content,
+            notifying_action=NotifyingAction.Comment,
+            notified_href=parent_post.make_href(),
+            notified_summary=parent_post.content,
+            owner=parent_post.author
+        )
+        return
+
+    if not new_comment.reply_to_comment_id:
+        # nested comment but only to its parent comment, just notify the parent comment owner
+        create_notification(
+            self,
+            notifying_href=new_comment.make_href(parent_post),
+            notifying_summary=new_comment.content,
+            notifying_action=NotifyingAction.Comment,
+            notified_href=parent_comment.make_href(parent_post),
+            notified_summary=parent_comment.content,
+            owner=parent_comment.author
+        )
+        return
+
+    # nested comment replying to a previous nested comment
+    replied_comment = dangerously_get_comment(new_comment.reply_to_comment_id, parent_post)
+
+    if not replied_comment:
+        return
+
+    # notify the replied comment owner
+    create_notification(
+        self,
+        notifying_href=new_comment.make_href(parent_post),
+        notifying_summary=new_comment.content,
+        notifying_action=NotifyingAction.Comment,
+        notified_href=replied_comment.make_href(parent_post),
+        notified_summary=replied_comment.content,
+        owner=replied_comment.author
+    )
+
+    if replied_comment.author != parent_comment.author:
+        # notify the parent comment owner if it's different from the replied nested comment owner
+        create_notification(
+            self,
+            notifying_href=new_comment.make_href(parent_post),
+            notifying_summary=new_comment.content,
+            notifying_action=NotifyingAction.Comment,
+            notified_href=parent_comment.make_href(parent_post),
+            notified_summary=parent_comment.content,
+            owner=parent_comment.author
+        )
 
 
 def dangerously_get_comment(comment_id: str, parent_post: Post) -> Optional[Comment]:
