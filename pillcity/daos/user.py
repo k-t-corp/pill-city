@@ -42,7 +42,7 @@ def sign_up(
             official_user_id = os.getenv('OFFICIAL')
             official_user = find_user(official_user_id)
             if official_user:
-                add_following(new_user, official_user)
+                follow(new_user, official_user)
         set_in_user_cache(new_user)
     except NotUniqueError:
         return False
@@ -114,16 +114,15 @@ def search_users(keyword: str) -> List[User]:
     return matched_users
 
 
-def add_following(self, user):
+def follow(self: User, user: User):
     """
-    Add a following
+    Follow a user
 
-    :param (User) self: The acting user
-    :param (User) user: the added user
-    :return (bool): Whether adding is successful.
+    :param self: The acting user
+    :param user: the followed user
     """
     if user in self.followings:
-        return False
+        raise BadRequest()
     self.followings.append(user)
     self.save()
     set_in_user_cache(self)
@@ -136,35 +135,20 @@ def add_following(self, user):
         notified_summary='',
         owner=user
     )
-    return True
 
 
-def remove_following(self, user):
+def unfollow(self: User, user: User):
     """
     Remove a following
 
-    :param (User) self: The acting user
-    :param (User) user: the removed user
-    :return (bool): Whether removing is successful.
+    :param self: The acting user
+    :param user: the unfollowed user
     """
     if user not in self.followings:
-        return False
+        raise BadRequest()
     self.followings = list(filter(lambda u: u.id != user.id, self.followings))
     self.save()
     set_in_user_cache(self)
-    return True
-
-
-def is_following(self, user_id):
-    """
-    Whether a user is following another user
-
-    :param (User) self: The acting user
-    :param (str) user_id: The another user id that needs to tell whether following or not
-    :return (bool): Whether a user is following another user
-    """
-    user = find_user(user_id)
-    return user.id in map(lambda u: u.id, self.followings)
 
 
 def update_profile_pic(self, profile_pic):
@@ -344,16 +328,6 @@ def unblock(self: User, user: User):
     self.blocking = list(filter(lambda u: u.id != user.id, self.blocking))
     self.save()
     set_in_user_cache(self)
-
-
-def is_blocked(self: User, user: User):
-    """
-    Whether a user is blocking another user
-
-    :param self: The acting user
-    :param user: The another user id that needs to tell whether it's blocked or not
-    """
-    return user in self.blocking
 
 
 def find_ghost_user_or_raise() -> User:

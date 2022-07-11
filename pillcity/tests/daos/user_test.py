@@ -1,5 +1,6 @@
 from .base_test_case import BaseTestCase
-from pillcity.daos.user import sign_up, sign_in, find_user, is_following, add_following, remove_following
+from pillcity.daos.user import sign_up, sign_in, find_user, follow, unfollow
+from pillcity.daos.exceptions import BadRequest
 
 
 class TestUserDao(BaseTestCase):
@@ -31,10 +32,14 @@ class TestUserDao(BaseTestCase):
         user1 = find_user('user1')
         user2 = find_user('user2')
 
-        self.assertTrue(add_following(user1, user2))
-        self.assertTrue(is_following(user1, 'user2'))
-        self.assertFalse(add_following(user1, user2))
+        follow(user1, user2)
 
-        self.assertTrue(remove_following(user1, user2))
-        self.assertFalse(is_following(user1, 'user2'))
-        self.assertFalse(remove_following(user1, user2))
+        def op():
+            follow(user1, user2)
+        self.assertRaises(BadRequest, op)
+
+        unfollow(user1, user2)
+
+        def op2():
+            unfollow(user1, user2)
+        self.assertRaises(BadRequest, op2)
