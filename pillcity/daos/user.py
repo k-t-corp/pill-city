@@ -6,7 +6,7 @@ from pillcity.models import User, Media
 from pillcity.utils.profiling import timer
 from pillcity.utils.make_uuid import make_dashless_uuid
 from pillcity.models import NotifyingAction
-from .exceptions import UnauthorizedAccess, NotFound
+from .exceptions import UnauthorizedAccess, NotFound, BadRequest
 from .user_cache import set_in_user_cache, get_users_in_user_cache, get_in_user_cache_by_user_id
 from .notification import create_notification
 from .media import use_media, delete_media
@@ -316,6 +316,44 @@ def get_user_by_rss_token(token: str) -> Optional[User]:
         if user.rss_token == token:
             return user
     return None
+
+
+def block(self: User, user: User):
+    """
+    Block a user
+
+    :param self: The acting user
+    :param user: the blocked user
+    """
+    if user in self.blocking:
+        raise BadRequest()
+    self.blocking.append(user)
+    self.save()
+    set_in_user_cache(self)
+
+
+def unblock(self: User, user: User):
+    """
+    Unblock a user
+
+    :param self: The acting user
+    :param user: the unblocked user
+    """
+    if user not in self.blocking:
+        raise BadRequest()
+    self.blocking = list(filter(lambda u: u.id != user.id, self.blocking))
+    self.save()
+    set_in_user_cache(self)
+
+
+def is_blocked(self: User, user: User):
+    """
+    Whether a user is blocking another user
+
+    :param self: The acting user
+    :param user: The another user id that needs to tell whether it's blocked or not
+    """
+    return user in self.blocking
 
 
 def find_ghost_user_or_raise() -> User:
