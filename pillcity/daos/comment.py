@@ -75,12 +75,6 @@ def create_comment(self: User, content: str, parent_post: Post, parent_comment: 
     return new_comment
 
 
-class CommentNotifiedType(enum.Enum):
-    Post = 1
-    Comment = 2
-    NestedComment = 3
-
-
 def create_comment_notifications(
         self: User, new_comment: Comment, parent_comment: Optional[Comment], parent_post: Post
 ):
