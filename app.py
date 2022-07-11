@@ -22,6 +22,7 @@ from pillcity.resources.media import Media, MaxMediaCount
 from pillcity.resources.reactions import Reactions, Reaction
 from pillcity.resources.circles import Circles, CircleName, CircleMember, Circle
 from pillcity.resources.followings import Following
+from pillcity.resources.blocks import Blocks
 from pillcity.resources.notifications import Notifications, NotificationRead, NotificationsAllRead
 from pillcity.resources.invitations_codes import InvitationCode, InvitationCodes, ClearMediaUrlCache
 from pillcity.resources.link_preview import LinkPreview
@@ -242,6 +243,7 @@ api.add_resource(CircleMember, '/api/circle/<string:circle_id>/membership/<strin
 api.add_resource(Circle, '/api/circle/<string:circle_id>')
 
 api.add_resource(Following, '/api/following/<string:following_user_id>')
+api.add_resource(Blocks, '/api/block/<string:blocking_user_id>')
 
 api.add_resource(NotificationRead, '/api/notification/<string:notification_id>/read')
 api.add_resource(NotificationsAllRead, '/api/notifications/read')
