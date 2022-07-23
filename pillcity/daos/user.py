@@ -121,7 +121,7 @@ def follow(self: User, user: User):
     :param self: The acting user
     :param user: the followed user
     """
-    if user in self.followings:
+    if user in self.followings or user in self.blocking:
         raise BadRequest()
     self.followings.append(user)
     self.save()
@@ -309,7 +309,7 @@ def block(self: User, user: User):
     :param self: The acting user
     :param user: the blocked user
     """
-    if user in self.blocking:
+    if user in self.blocking or user in self.followings:
         raise BadRequest()
     self.blocking.append(user)
     self.save()
