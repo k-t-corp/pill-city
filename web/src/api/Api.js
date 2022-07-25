@@ -584,6 +584,17 @@ export class Api {
     return res.data
   }
 
+  async getBlocking() {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.get(
+      `/me/blocking`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
+
   async getNotifications(fromId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(

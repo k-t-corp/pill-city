@@ -14,7 +14,7 @@ from pillcity.daos.user_cache import populate_user_cache
 from pillcity.daos.invitation_code import check_invitation_code, claim_invitation_code
 from pillcity.daos.rss import notifying_action_to_rss_code, rss_code_to_notifying_action
 from pillcity.resources.users import Users, User, MyAvatar, MyProfilePic, MyDisplayName, Me, SearchedUsers, MyEmail, \
-    MyFollowingCounts, MyRssToken, MyFollowings
+    MyFollowingCounts, MyRssToken, MyFollowings, MyBlocking
 from pillcity.daos.rss import get_rss_notifications_xml
 from pillcity.resources.posts import Profile, Home, Posts, Post, PostMedia
 from pillcity.resources.comments import NestedComments, Comments, NestedComment, Comment
@@ -215,6 +215,7 @@ api.add_resource(MyDisplayName, '/api/me/displayName')
 api.add_resource(MyEmail, '/api/me/email')
 api.add_resource(MyFollowingCounts, '/api/me/followingCounts')
 api.add_resource(MyFollowings, '/api/me/followings')
+api.add_resource(MyBlocking, '/api/me/blocking')
 api.add_resource(Me, '/api/me')
 
 api.add_resource(Users, '/api/users')

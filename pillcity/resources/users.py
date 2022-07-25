@@ -197,7 +197,7 @@ class IsBlocking(fields.Raw):
         return ObjectId(value) in map(lambda u: u.id, user.blocking)
 
 
-user_with_following_fields = dict({
+user_with_following_and_blocking_fields = dict({
     'is_following': IsFollowing(attribute='id'),
     'is_blocking': IsBlocking(attribute='id'),
 }, **user_fields)
@@ -205,7 +205,7 @@ user_with_following_fields = dict({
 
 class Users(Resource):
     @jwt_required()
-    @marshal_with(user_with_following_fields)
+    @marshal_with(user_with_following_and_blocking_fields)
     def get(self):
         """
         Get all users other than the logged in user
@@ -221,7 +221,7 @@ searched_user_parser.add_argument('keyword', type=str, required=True)
 
 class SearchedUsers(Resource):
     @jwt_required()
-    @marshal_with(user_with_following_fields)
+    @marshal_with(user_with_following_and_blocking_fields)
     def post(self):
         """
         Get all users that match a keyword to the search criteria
@@ -233,7 +233,7 @@ class SearchedUsers(Resource):
 
 class User(Resource):
     @jwt_required()
-    @marshal_with(user_with_following_fields)
+    @marshal_with(user_with_following_and_blocking_fields)
     def get(self, user_id):
         """
         Get a specific user by ID
@@ -269,7 +269,7 @@ class MyFollowingCounts(Resource):
     @marshal_with(user_following_counts_fields)
     def get(self):
         user_id = get_jwt_identity()
-        user = find_user(user_id)
+        user = find_user_or_raise(user_id)
         return user
 
 
@@ -278,8 +278,17 @@ class MyFollowings(Resource):
     @marshal_with(user_fields)
     def get(self):
         user_id = get_jwt_identity()
-        user = find_user(user_id)
+        user = find_user_or_raise(user_id)
         return user.followings
+
+
+class MyBlocking(Resource):
+    @jwt_required()
+    @marshal_with(user_fields)
+    def get(self):
+        user_id = get_jwt_identity()
+        user = find_user_or_raise(user_id)
+        return user.blocking
 
 
 class MyRssToken(Resource):
