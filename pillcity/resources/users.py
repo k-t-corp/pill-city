@@ -188,8 +188,18 @@ class IsFollowing(fields.Raw):
         return ObjectId(value) in map(lambda u: u.id, user.followings)
 
 
+class IsBlocking(fields.Raw):
+    def format(self, value):
+        user_id = get_jwt_identity()
+        user = find_user(user_id)
+        if not user:
+            return False
+        return ObjectId(value) in map(lambda u: u.id, user.blocking)
+
+
 user_with_following_fields = dict({
-    'is_following': IsFollowing(attribute='id')
+    'is_following': IsFollowing(attribute='id'),
+    'is_blocking': IsBlocking(attribute='id'),
 }, **user_fields)
 
 
