@@ -839,6 +839,28 @@ export class Api {
     }
     return res.data
   }
+
+  async block(blockingUserId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.post(
+      `/block/${blockingUserId}`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
+
+  async unblock(unblockingUserId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.delete(
+      `/block/${unblockingUserId}`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
 }
 
 const api = new Api(process.env.REACT_APP_API_ENDPOINT)
