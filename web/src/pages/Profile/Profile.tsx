@@ -46,6 +46,7 @@ const Profile = () => {
       if (!me) {
         return
       }
+      updatePostsLoading(true)
       if (!userId) {
         updateUser(me)
         updatePosts(await api.getProfile(me.id))
@@ -71,7 +72,7 @@ const Profile = () => {
         }
       }
     })()
-  }, [me])
+  }, [me, userId])
 
   const loadMorePosts = async () => {
     if (loadingMorePosts || user === null) {
