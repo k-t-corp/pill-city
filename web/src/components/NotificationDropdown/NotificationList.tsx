@@ -31,10 +31,12 @@ export default (_: Props) => {
   const res = []
   for (let i = 0; i < notifications.length; i++) {
     const notification = notifications[i]
-    res.push(<NotificationItem
-      notification={notification}
-      key={i}
-    />)
+    if (!notification.notifier_blocked) {
+      res.push(<NotificationItem
+        notification={notification}
+        key={i}
+      />)
+    }
   }
   if (!loadingMore) {
     res.push(

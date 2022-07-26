@@ -27,6 +27,7 @@ export default (props: Props) => {
   const isHighlightComment = props.highlightCommentId === nestedComment.id
   const [ deleted, updateDeleted ] = useState(nestedComment.deleted)
   const [ deleting, updateDeleting ] = useState(false)
+  const blocked = props.nestedComment.blocked
 
   const onReply = () => {
     if (deleting) {
@@ -57,10 +58,10 @@ export default (props: Props) => {
       className={`post-nested-comment ${isHighlightComment ? "highlight-comment" : ""}`}
     >
       <div className="post-nested-comment-avatar">
-        <RoundAvatar user={!deleting && !deleted ? nestedComment.author : null}/>
+        <RoundAvatar user={!deleting && !deleted && !blocked ? nestedComment.author : null}/>
       </div>
       <div className="post-nested-comment-name">
-        <ClickableId user={!deleting && !deleted ? nestedComment.author : null}/>:&nbsp;
+        <ClickableId user={!deleting && !deleted && !blocked ? nestedComment.author : null}/>:&nbsp;
       </div>
       {
         !deleting && !deleted && nestedComment.reply_to_comment_id &&
@@ -74,11 +75,13 @@ export default (props: Props) => {
       <div className="post-nested-comment-content">
         {
           !deleting && !deleted ?
-            parseContent(nestedComment.content, "") :
-            <div style={{fontStyle: 'italic'}}>This comment has been deleted</div>
+            !blocked ?
+              parseContent(nestedComment.content, "") :
+            <div style={{fontStyle: 'italic'}}>This user has been blocked</div> :
+          <div style={{fontStyle: 'italic'}}>This comment has been deleted</div>
         }
         {
-          !deleting && !deleted && nestedComment.media_urls.length > 0 &&
+          !deleting && !deleted && !blocked && nestedComment.media_urls.length > 0 &&
           <div>
             <MediaCollage mediaUrls={[nestedComment.media_urls_v2[0]]}/>
           </div>
@@ -86,7 +89,7 @@ export default (props: Props) => {
         <div className='post-nested-comment-actions'>
           <span className="post-nested-comment-time">{pastTime(nestedComment.created_at_seconds)}</span>
           {
-            !deleting && !deleted && !parentComment.deleted &&
+            !deleting && !deleted && !blocked && !parentComment.deleted &&
             <span className="post-nested-comment-reply-btn" onClick={onReply}>
             Reply
           </span>
