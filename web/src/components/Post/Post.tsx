@@ -279,7 +279,7 @@ export default (props: Props) => {
                   :
                   <div className='post-content' style={{fontStyle: 'italic'}}>@{props.data.author.id} has a new
                     avatar!</div> :
-                <div className='post-content' style={{fontStyle: 'italic'}}>This user has been blocked</div>
+                <div className='post-content' style={{fontStyle: 'italic'}}>This user is blocked</div>
               :
               <div className='post-content' style={{fontStyle: 'italic'}}>This post has been deleted</div>
           }

@@ -90,7 +90,7 @@ export default (props: Props) => {
             !deleting && !deleted ?
               !blocked ?
                 parseContent(comment.content, "") :
-              <div style={{fontStyle: 'italic'}}>This user has been blocked</div> :
+              <div style={{fontStyle: 'italic'}}>This user is blocked</div> :
             <div style={{fontStyle: 'italic'}}>This comment has been deleted</div>
           }
           {
