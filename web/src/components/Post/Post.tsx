@@ -41,6 +41,7 @@ interface Props {
 export default (props: Props) => {
   const [deleted, updateDeleted] = useState(props.data.deleted)
   const [deleting, updateDeleting] = useState(false)
+  const blocked = props.data.blocked
   const [commentContent, updateCommentContent] = useState('')
 
   // existing comment data cached in state
@@ -226,10 +227,10 @@ export default (props: Props) => {
         <div className="post-op-info-wrapper">
           <div className="post-op-info-left">
             <div className="post-avatar">
-              <RoundAvatar user={props.data.author}/>
+              <RoundAvatar user={!blocked ? props.data.author : null}/>
             </div>
             <div className="post-name">
-              <ClickableId user={props.data.author}/>
+              <ClickableId user={!blocked ? props.data.author : null}/>
             </div>
             <div className="post-visibility">
               &#x25B8; {sharingScope}
@@ -242,7 +243,7 @@ export default (props: Props) => {
               {pastTime(props.data.created_at_seconds)}
             </div>
             {
-              props.me.id === props.data.author.id && !deleted &&
+              props.me.id === props.data.author.id && !deleted && !deleting &&
               <PillDropdownMenu
                 items={
                   mediaUrls.length > 0 && props.data.content ? [
@@ -271,23 +272,24 @@ export default (props: Props) => {
         </div>
         <div>
           {
-            !deleted ?
-              !props.data.is_update_avatar ?
-                parseContentWithLinkPreviews(props.data.content, props.data.link_previews,`post-content ${props.detail ? '' : 'post-content-summary'}`)
-                :
-                <div className='post-content' style={{fontStyle: 'italic'}}>@{props.data.author.id} has a new
-                  avatar!</div>
+            !deleting && !deleted ?
+              !blocked ?
+                !props.data.is_update_avatar ?
+                  parseContentWithLinkPreviews(props.data.content, props.data.link_previews,`post-content ${props.detail ? '' : 'post-content-summary'}`)
+                  :
+                  <div className='post-content' style={{fontStyle: 'italic'}}>@{props.data.author.id} has a new
+                    avatar!</div> :
+                <div className='post-content' style={{fontStyle: 'italic'}}>This user has been blocked</div>
               :
               <div className='post-content' style={{fontStyle: 'italic'}}>This post has been deleted</div>
           }
         </div>
-        {!deleting && !deleted &&
+        {!deleting && !deleted && !blocked &&
           <div className='post-attachments-wrapper'>
             <PillSlide slides={postAttachments}/>
           </div>
         }
-        {
-          !deleting && !deleted &&
+        {!deleting && !deleted && !blocked &&
           <div className="post-interactions-wrapper">
             <Reactions
               reactions={props.data.reactions}

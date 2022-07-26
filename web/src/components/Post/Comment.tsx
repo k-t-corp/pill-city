@@ -29,6 +29,7 @@ export default (props: Props) => {
   const isHighlightComment = props.highlightCommentId
   const [ deleting, updateDeleting ] = useState(false)
   const [ deleted, updateDeleted ] = useState(comment.deleted)
+  const blocked = props.comment.blocked
   const [ replyHighlightCommentId, updateReplyHighlightCommentId ] = useState('')
 
   const nestedCommentElems = []
@@ -78,20 +79,22 @@ export default (props: Props) => {
       className={`post-comment ${isHighlightComment ? "highlight-comment" : ""}`}
     >
       <div className="post-comment-avatar">
-        <RoundAvatar user={!deleted ? comment.author : null}/>
+        <RoundAvatar user={!deleting && !deleted && !blocked ? comment.author : null}/>
       </div>
       <div className="post-comment-main-content">
         <div className="post-comment-name">
-          <ClickableId user={!deleted ? comment.author : null}/>
+          <ClickableId user={!deleting && !deleted && !blocked ? comment.author : null}/>
         </div>
         <div className={`post-comment-content ${props.detail ? '' : 'post-comment-content-summary'}`}>
           {
-            !deleted ?
-              parseContent(comment.content, "") :
-              <div style={{fontStyle: 'italic'}}>This comment has been deleted</div>
+            !deleting && !deleted ?
+              !blocked ?
+                parseContent(comment.content, "") :
+              <div style={{fontStyle: 'italic'}}>This user has been blocked</div> :
+            <div style={{fontStyle: 'italic'}}>This comment has been deleted</div>
           }
           {
-            !deleted && comment.media_urls.length > 0 &&
+            !deleting && !deleted && !blocked && comment.media_urls.length > 0 &&
             <div>
               <MediaCollage mediaUrls={[comment.media_urls_v2[0]]}/>
             </div>
@@ -102,7 +105,7 @@ export default (props: Props) => {
             {pastTime(comment.created_at_seconds)}
           </div>
           {
-            !deleting && !deleted &&
+            !deleting && !deleted && !blocked &&
             <span className="post-comment-reply-btn" onClick={onReply}>
               Reply
             </span>
