@@ -50,7 +50,7 @@ def get_rss_notifications_xml(self: User, types: Set[NotifyingAction], types_str
 
     # add_entry seems to be reversed... how weird
     for notification in reversed(get_notifications(self, None, 50)):
-        if notification.notifying_action in types and notification.notifier not in self.blocking:
+        if notification.notifying_action in types:
             notification_dt = datetime.datetime.fromtimestamp(notification.created_at, tz=tz.tzutc())
 
             fe = fg.add_entry()

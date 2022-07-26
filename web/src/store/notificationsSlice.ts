@@ -22,7 +22,7 @@ const notificationsSlice = createSlice({
   initialState,
   reducers: {
     setNotifications: (state, action) => {
-      state.notifications = action.payload.filter((n: any) => !n.notifier_blocked)
+      state.notifications = action.payload
     },
     unsetLoading: state => {
       state.loading = false
