@@ -71,7 +71,7 @@ const Profile = () => {
         }
       }
     })()
-  }, [me])
+  }, [me, userId])
 
   const loadMorePosts = async () => {
     if (loadingMorePosts || user === null) {
