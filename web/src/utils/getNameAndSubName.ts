@@ -11,7 +11,7 @@ export default (user: User | null): { name: string, subName?: string } => {
       name = user.id
     }
   } else {
-    name = 'Deleted/Blocked user'
+    name = '...'
   }
   return { name, subName }
 }
