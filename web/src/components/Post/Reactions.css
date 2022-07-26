@@ -9,12 +9,21 @@
     margin-right: 5px;
     margin-top: 3px;
     border-radius: 4px;
+    max-height: 25px;
     background-color: #f0f0f0;
+    color: #767676;
+
     font-weight: bold;
     font-size: small;
     display: flex;
     align-items: center;
     cursor: pointer;
+}
+
+.post-reaction-icon {
+    width: 25px;
+    height: 25px;
+    padding: 5px
 }
 
 .post-reaction:hover {

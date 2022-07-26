@@ -8,6 +8,7 @@ import PillModal from "../PillModal/PillModal";
 import api from "../../api/Api";
 import './Reactions.css'
 import {useMediaQuery} from "react-responsive";
+import {PlusIcon} from "@heroicons/react/solid";
 
 const groupReactions = (reactions: Reaction[]) => {
   const groupedReactions: {[emoji: string]: {key: number, author: User, reactionId: string}[]} = {}
@@ -143,7 +144,6 @@ export default (props: Props) => {
     reactionElems.push(
       <div className={className} key={emoji} onClick={() => toggleEmoji(emoji)}>
         <span className="post-emoji" role="img">{emoji}</span>
-        {/*<span>&nbsp;{reactionsWithEmoji.length}</span>*/}
       </div>
     )
   }
@@ -211,8 +211,10 @@ export default (props: Props) => {
           await addEmoji("➕")
         }}
       >
-        <span className="post-emoji" role="img" aria-label="Add Reaction">➕</span>
-        {reactions.length === 0 ? "Add Reaction" : null}
+        <div className='post-reaction-icon'>
+          <PlusIcon />
+        </div>
+        {reactions.length === 0 ? "Reaction" : null}
       </div>
       {emojiPicker}
     </div>
