@@ -107,7 +107,7 @@ export default () => {
     (async () => {
       updateLoading(true)
       updateCircles(await api.getCircles())
-      updateUsers(await api.getUsers())
+      updateUsers((await api.getUsers()).filter((u: any) => !u.is_blocking))
       updateLoading(false)
     })()
   }, [])

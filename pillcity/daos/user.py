@@ -6,7 +6,7 @@ from pillcity.models import User, Media
 from pillcity.utils.profiling import timer
 from pillcity.utils.make_uuid import make_dashless_uuid
 from pillcity.models import NotifyingAction
-from .exceptions import UnauthorizedAccess, NotFound
+from .exceptions import UnauthorizedAccess, NotFound, BadRequest
 from .user_cache import set_in_user_cache, get_users_in_user_cache, get_in_user_cache_by_user_id
 from .notification import create_notification
 from .media import use_media, delete_media
@@ -42,7 +42,7 @@ def sign_up(
             official_user_id = os.getenv('OFFICIAL')
             official_user = find_user(official_user_id)
             if official_user:
-                add_following(new_user, official_user)
+                follow(new_user, official_user)
         set_in_user_cache(new_user)
     except NotUniqueError:
         return False
@@ -114,16 +114,15 @@ def search_users(keyword: str) -> List[User]:
     return matched_users
 
 
-def add_following(self, user):
+def follow(self: User, user: User):
     """
-    Add a following
+    Follow a user
 
-    :param (User) self: The acting user
-    :param (User) user: the added user
-    :return (bool): Whether adding is successful.
+    :param self: The acting user
+    :param user: the followed user
     """
-    if user in self.followings:
-        return False
+    if user in self.followings or user in self.blocking:
+        raise BadRequest()
     self.followings.append(user)
     self.save()
     set_in_user_cache(self)
@@ -136,35 +135,20 @@ def add_following(self, user):
         notified_summary='',
         owner=user
     )
-    return True
 
 
-def remove_following(self, user):
+def unfollow(self: User, user: User):
     """
     Remove a following
 
-    :param (User) self: The acting user
-    :param (User) user: the removed user
-    :return (bool): Whether removing is successful.
+    :param self: The acting user
+    :param user: the unfollowed user
     """
     if user not in self.followings:
-        return False
+        raise BadRequest()
     self.followings = list(filter(lambda u: u.id != user.id, self.followings))
     self.save()
     set_in_user_cache(self)
-    return True
-
-
-def is_following(self, user_id):
-    """
-    Whether a user is following another user
-
-    :param (User) self: The acting user
-    :param (str) user_id: The another user id that needs to tell whether following or not
-    :return (bool): Whether a user is following another user
-    """
-    user = find_user(user_id)
-    return user.id in map(lambda u: u.id, self.followings)
 
 
 def update_profile_pic(self, profile_pic):
@@ -316,6 +300,34 @@ def get_user_by_rss_token(token: str) -> Optional[User]:
         if user.rss_token == token:
             return user
     return None
+
+
+def block(self: User, user: User):
+    """
+    Block a user
+
+    :param self: The acting user
+    :param user: the blocked user
+    """
+    if user in self.blocking or user in self.followings:
+        raise BadRequest()
+    self.blocking.append(user)
+    self.save()
+    set_in_user_cache(self)
+
+
+def unblock(self: User, user: User):
+    """
+    Unblock a user
+
+    :param self: The acting user
+    :param user: the unblocked user
+    """
+    if user not in self.blocking:
+        raise BadRequest()
+    self.blocking = list(filter(lambda u: u.id != user.id, self.blocking))
+    self.save()
+    set_in_user_cache(self)
 
 
 def find_ghost_user_or_raise() -> User:

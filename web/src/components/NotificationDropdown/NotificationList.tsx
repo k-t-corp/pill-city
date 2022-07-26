@@ -35,6 +35,7 @@ export default (_: Props) => {
       notification={notification}
       key={i}
     />)
+
   }
   if (!loadingMore) {
     res.push(

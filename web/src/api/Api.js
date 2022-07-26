@@ -584,6 +584,17 @@ export class Api {
     return res.data
   }
 
+  async getBlocking() {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.get(
+      `/me/blocking`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
+
   async getNotifications(fromId) {
     Api.throwOnUnauthorized()
     const res = await this.axiosInstance.get(
@@ -833,6 +844,28 @@ export class Api {
   async vote(postId, choiceId) {
     const res = await this.axiosInstance.post(
       `/post/${postId}/poll/${choiceId}`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
+
+  async block(blockingUserId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.post(
+      `/block/${blockingUserId}`
+    )
+    if (res.status !== 200) {
+      throw new ApiError(res)
+    }
+    return res.data
+  }
+
+  async unblock(unblockingUserId) {
+    Api.throwOnUnauthorized()
+    const res = await this.axiosInstance.delete(
+      `/block/${unblockingUserId}`
     )
     if (res.status !== 200) {
       throw new ApiError(res)

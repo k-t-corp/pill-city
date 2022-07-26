@@ -10,6 +10,7 @@ interface BaseComment {
   author: User
   content: string
   deleted: boolean
+  blocked: boolean
   media_urls: string[],
   media_urls_v2: MediaUrlV2[],
   reply_to_comment_id: string
@@ -36,6 +37,7 @@ export interface ResharedPost {
   media_urls_v2: MediaUrlV2[]
   poll: Poll,
   deleted: boolean
+  blocked: boolean
 }
 
 export interface PollChoice {
@@ -65,6 +67,7 @@ export default interface Post {
   media_urls_v2: MediaUrlV2[]
   content: string,
   deleted: boolean
+  blocked: boolean
   is_update_avatar: boolean
   poll: Poll,
   link_previews: LinkPreview[]

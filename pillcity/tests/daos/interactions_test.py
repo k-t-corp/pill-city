@@ -1,6 +1,6 @@
 from .base_test_case import BaseTestCase
 from pillcity.models import Post, NotifyingAction, Notification
-from pillcity.daos.user import sign_up, find_user, add_following
+from pillcity.daos.user import sign_up, find_user, follow
 from pillcity.daos.circle import create_circle, find_circle, toggle_member
 from pillcity.daos.post import create_post, dangerously_get_post, owns_post, sees_post, retrieves_posts_on_home, \
     retrieves_posts_on_profile
@@ -187,7 +187,7 @@ class InteractionsTest(BaseTestCase):
         post2 = dangerously_get_post(post2_id)
 
         # user2 follows user1
-        add_following(user2, user1)
+        follow(user2, user1)
 
         # User2 not owns but sees, sees on profile, comments, nested-comments, reacts and reshares on post1
         self._assert_user_to_post_privilege(
@@ -254,7 +254,7 @@ class InteractionsTest(BaseTestCase):
         toggle_member(user1, circle1, user3)
 
         # Only user2 follows user1
-        add_following(user2, user1)
+        follow(user2, user1)
 
         # Create reshareable post1 by user1 into circle1
         post1_id = create_post(user1, 'post1', False, [circle1], True, None, [], [], False, [], [], None).eid
@@ -318,7 +318,7 @@ class InteractionsTest(BaseTestCase):
         toggle_member(user1, circle1, user3)
 
         # Only user2 follows user1
-        add_following(user2, user1)
+        follow(user2, user1)
 
         # Create post1 by user1 into circle1
         create_post(user1, 'post1', False, [circle1], False, None, [], [], False, [], [], None)

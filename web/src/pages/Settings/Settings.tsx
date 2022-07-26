@@ -17,6 +17,7 @@ import PillButtons from "../../components/PillButtons/PillButtons";
 import PillButton, {PillButtonVariant} from "../../components/PillButtons/PillButton";
 import PillCheckbox from "../../components/PillCheckbox/PillCheckbox";
 import {purgeCache} from "../../store/persistorUtils";
+import User from "../../models/User";
 
 type NotifyingActionToRssCode = {[action: string]: string}
 
@@ -35,12 +36,14 @@ const Settings = () => {
   const [rssToken, updateRssToken] = useState<RssToken | null>()
   const [rssCodesChecked, updateRssCodesChecked] = useState<{[action: string]: boolean} | undefined>(undefined)
   const [multipleColumns, updateMultipleColumns] = useState(getUseMultiColumn())
+  const [blocking, updateBlocking] = useState<User[]>([])
 
   const [displayNameModalOpened, updateDisplayNameModalOpened] = useState(false)
   const [emailModalOpened, updateEmailModalOpened] = useState(false)
   const [avatarModalOpened, updateAvatarModalOpened] = useState(false)
   const [bannerModalOpened, updateBannerModalOpened] = useState(false)
   const [rssTokenModalOpened, updateRssTokenModalOpened] = useState(false)
+  const [blockedUsersModalOpened, updateBlockedUsersModalOpened] = useState(false)
 
   useEffect(() => {
     if (validateEmail(email)) {
@@ -66,6 +69,7 @@ const Settings = () => {
           })
         )
       )
+      updateBlocking(await api.getBlocking())
     })()
   }, [me])
 
@@ -126,6 +130,10 @@ const Settings = () => {
       }}>
         <div className="settings-row-header">Multiple columns on home</div>
         <div className="settings-row-content">{`${multipleColumns ? "Enabled" : "Disabled"}. Click to ${multipleColumns ? 'disable' : 'enable'}.`}</div>
+      </div>
+      <div className="settings-row" onClick={() => {updateBlockedUsersModalOpened(true)}}>
+        <div className="settings-row-header">Blocked users</div>
+        <div className="settings-row-content">{blocking.length} users blocked</div>
       </div>
       <div className="settings-row" onClick={handleSignOut}>
         <div className="settings-row-header">Sign out</div>
@@ -285,6 +293,24 @@ const Settings = () => {
                 updateRssToken(await api.rotateRssToken())
               }}>Click here to enable</a>
             </div>
+        }
+      </PillModal>
+      <PillModal
+        isOpen={blockedUsersModalOpened}
+        onClose={() => {updateBlockedUsersModalOpened(false)}}
+        title="Blocked users"
+      >
+        {blocking.length > 0 ?
+          <ul>
+            {blocking.map(u => {
+              return (
+                <li key={u.id}>
+                  <a href={`/profile/${u.id}`}>{u.id}</a>
+                </li>
+              )
+            })}
+          </ul> :
+          <p>No blocked users</p>
         }
       </PillModal>
     </div>

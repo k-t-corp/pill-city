@@ -14,6 +14,8 @@ import {ResharedPost} from "../../models/Post";
 import PillModal from "../../components/PillModal/PillModal";
 import "./Profile.css"
 import AvatarV2 from "../../components/MediaV2/AvatarV2";
+import PillDropdownMenu, {DropdownMenuItem} from "../../components/PillDropdownMenu/PillDropdownMenu";
+import {DotsVerticalIcon} from "@heroicons/react/solid";
 
 const InfiniteScrollBefore = 5
 
@@ -34,6 +36,8 @@ const Profile = () => {
 
   const [isFollowing, updateIsFollowing] = useState(false)
   const [followLoading, updateFollowLoading] = useState(true)
+  const [isBlocking, updateIsBlocking] = useState(false)
+  const [blockLoading, updateBlockLoading] = useState(true)
 
   const history = useHistory()
 
@@ -42,6 +46,7 @@ const Profile = () => {
       if (!me) {
         return
       }
+      updatePostsLoading(true)
       if (!userId) {
         updateUser(me)
         updatePosts(await api.getProfile(me.id))
@@ -53,9 +58,11 @@ const Profile = () => {
           user = await api.getUser(userId)
           updateUser(user)
           updateIsFollowing(user.is_following)
+          updateIsBlocking(user.is_blocking)
           updatePosts(await api.getProfile(userId))
           updatePostsLoading(false)
           updateFollowLoading(false)
+          updateBlockLoading(false)
         } catch (e) {
           if (e instanceof ApiError && e.statusCode === 404) {
             updateUserNotFound(true)
@@ -65,7 +72,7 @@ const Profile = () => {
         }
       }
     })()
-  }, [me])
+  }, [me, userId])
 
   const loadMorePosts = async () => {
     if (loadingMorePosts || user === null) {
@@ -96,6 +103,8 @@ const Profile = () => {
       return (<div className="profile-status">User not found</div>)
     } else if (postsLoading || !me) {
       return (<div className="profile-status">Loading...</div>)
+    } else if (isBlocking) {
+      return (<div className="profile-status">User is blocked</div>)
     } else if (posts.length === 0) {
       return (<div className="profile-status">No posts here</div>)
     } else {
@@ -169,32 +178,81 @@ const Profile = () => {
     updateFollowLoading(false)
   }
 
+  const unblock = async () => {
+    if (blockLoading) {
+      return
+    }
+    updateBlockLoading(true)
+    await api.unblock(userId)
+    updateIsBlocking(false)
+    updateBlockLoading(false)
+  }
+
+  const block = async () => {
+    if (blockLoading) {
+      return
+    }
+    if (!confirm("The blocked user is still able to see and interact with your posts, but you won't see them in your home feed or notifications")) {
+      return
+    }
+    updateBlockLoading(true)
+    await api.block(userId)
+    updateIsBlocking(true)
+    updateBlockLoading(false)
+  }
+
   const userInfoButton = () => {
     if (!me) {
       return null
     }
     if (!userId || userId === me.id) {
       return (
-        <div
-          className="profile-info-button"
-          onClick={() => {
-            history.push(`/settings`)
-          }}
-        >
-          Update profile & settings
+        <div className='profile-info-buttons'>
+          <div
+            className="profile-info-button"
+            onClick={() => {
+              history.push(`/settings`)
+            }}
+          >
+            Update profile & settings
+          </div>
         </div>
       )
     } else {
       return (
-        <div
-          className={!followLoading ? "profile-info-button" : "profile-info-button profile-info-button-disabled"}
-          onClick={followOnClick}
-        >{isFollowing ? 'Unfollow' : 'Follow'}</div>
+        <div className='profile-info-buttons'>
+          {!isBlocking && <div
+            className={!followLoading ? "profile-info-button" : "profile-info-button profile-info-button-disabled"}
+            onClick={followOnClick}
+          >{isFollowing ? 'Unfollow' : 'Follow'}</div>}
+          {isBlocking && <div
+            className={!blockLoading ? "profile-info-button" : "profile-info-button profile-info-button-disabled"}
+            onClick={unblock}
+          >Unblock</div>}
+          {!isFollowing && !isBlocking &&
+            <PillDropdownMenu
+              items={[
+                {
+                  text: 'Block',
+                  onClick: block
+                }
+              ]}
+            >
+              <div className="profile-more-actions-trigger">
+                <DotsVerticalIcon />
+              </div>
+            </PillDropdownMenu>
+          }
+        </div>
       )
     }
   }
 
-  const { name, subName } = getNameAndSubName(userId ? user : me)
+  let { name, subName } = getNameAndSubName(userId ? user : me)
+  if (isBlocking) {
+    name = `@${userId}`
+    subName = undefined
+  }
 
   const [followingCounts, updateFollowingCounts] = useState<{following_count: number, follower_count: number} | null>(null)
   useEffect(() => {
@@ -238,7 +296,7 @@ const Profile = () => {
           {/* Not using RoundAvatar here because it doesn't need to be clicked + it has extra styles*/}
           <AvatarV2
             className="profile-avatar-img"
-            user={user}
+            user={!isBlocking ? user : null}
           />
         </div>
         <span className="profile-user-name">{name}</span>

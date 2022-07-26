@@ -14,7 +14,7 @@ from pillcity.daos.user_cache import populate_user_cache
 from pillcity.daos.invitation_code import check_invitation_code, claim_invitation_code
 from pillcity.daos.rss import notifying_action_to_rss_code, rss_code_to_notifying_action
 from pillcity.resources.users import Users, User, MyAvatar, MyProfilePic, MyDisplayName, Me, SearchedUsers, MyEmail, \
-    MyFollowingCounts, MyRssToken, MyFollowings
+    MyFollowingCounts, MyRssToken, MyFollowings, MyBlocking
 from pillcity.daos.rss import get_rss_notifications_xml
 from pillcity.resources.posts import Profile, Home, Posts, Post, PostMedia
 from pillcity.resources.comments import NestedComments, Comments, NestedComment, Comment
@@ -22,6 +22,7 @@ from pillcity.resources.media import Media, MaxMediaCount
 from pillcity.resources.reactions import Reactions, Reaction
 from pillcity.resources.circles import Circles, CircleName, CircleMember, Circle
 from pillcity.resources.followings import Following
+from pillcity.resources.blocks import Blocks
 from pillcity.resources.notifications import Notifications, NotificationRead, NotificationsAllRead
 from pillcity.resources.invitations_codes import InvitationCode, InvitationCodes, ClearMediaUrlCache
 from pillcity.resources.link_preview import LinkPreview
@@ -214,6 +215,7 @@ api.add_resource(MyDisplayName, '/api/me/displayName')
 api.add_resource(MyEmail, '/api/me/email')
 api.add_resource(MyFollowingCounts, '/api/me/followingCounts')
 api.add_resource(MyFollowings, '/api/me/followings')
+api.add_resource(MyBlocking, '/api/me/blocking')
 api.add_resource(Me, '/api/me')
 
 api.add_resource(Users, '/api/users')
@@ -242,6 +244,7 @@ api.add_resource(CircleMember, '/api/circle/<string:circle_id>/membership/<strin
 api.add_resource(Circle, '/api/circle/<string:circle_id>')
 
 api.add_resource(Following, '/api/following/<string:following_user_id>')
+api.add_resource(Blocks, '/api/block/<string:blocking_user_id>')
 
 api.add_resource(NotificationRead, '/api/notification/<string:notification_id>/read')
 api.add_resource(NotificationsAllRead, '/api/notifications/read')
