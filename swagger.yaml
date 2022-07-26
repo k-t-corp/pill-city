@@ -229,6 +229,10 @@ components:
           type: boolean
           description: Whether the nested comment is deleted
           default: false
+        blocked:
+          type: boolean
+          description: Whether the nested comment's author is blocked
+          default: false
     Comment:
       required:
         - id
@@ -265,6 +269,10 @@ components:
         deleted:
           type: boolean
           description: Whether the comment is deleted
+          default: false
+        blocked:
+          type: boolean
+          description: Whether the comment's author is blocked
           default: false
         comments:
           type: array
@@ -414,6 +422,10 @@ components:
         deleted:
           type: boolean
           description: Whether the post is deleted
+          default: false
+        blocked:
+          type: boolean
+          description: Whether the post's author is blocked
           default: false
         is_update_avatar:
           type: boolean
