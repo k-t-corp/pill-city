@@ -9,6 +9,7 @@ export default interface Notification {
   notified_href: string;
   notified_deleted: boolean;
   notifier: User;
+  notifier_blocked: boolean;
   notifying_deleted: boolean;
   notifying_summary: string;
   unread: boolean;

@@ -13,7 +13,7 @@ from pillcity.daos.link_preview import get_link_preview
 from .users import user_fields
 from .pagination import pagination_parser
 from .mention import check_mentioned_user_ids
-from .comments import comment_fields
+from .comments import comment_fields, Blocked
 from .media import check_media_object_names, MediaUrls, MediaUrlsV2
 from .link_preview import link_preview_fields
 from .poll import poll_fields
@@ -104,6 +104,7 @@ post_fields = {
     'comments': fields.List(fields.Nested(comment_fields), attribute='comments2'),
     'circles': AnonymizedCircles,
     'deleted': fields.Boolean,
+    'blocked': Blocked(attribute='author'),
     'is_update_avatar': fields.Boolean,
     'poll': fields.Nested(poll_fields),
     "link_previews": LinkPreviews(attribute='content')

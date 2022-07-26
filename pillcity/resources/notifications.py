@@ -1,6 +1,6 @@
 from flask_restful import Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from pillcity.daos.user import find_user
+from pillcity.daos.user import find_user, get_in_user_cache_by_user_id
 from pillcity.daos.notification import get_notifications, mark_notification_as_read, mark_all_notifications_as_read, \
     poll_notifications
 from .users import user_fields
@@ -12,10 +12,18 @@ class NotifyingAction(fields.Raw):
         return notifying_action.value
 
 
+class NotifierBlocked(fields.Raw):
+    def format(self, notifier):
+        user_id = get_jwt_identity()
+        user = get_in_user_cache_by_user_id(user_id)
+        return user and notifier and notifier in user.blocking
+
+
 notification_fields = {
     'id': fields.String(attribute='eid'),
     'created_at_seconds': fields.Integer(attribute='created_at'),
     'notifier': fields.Nested(user_fields),
+    'notifier_blocked': NotifierBlocked(attribute='notifier'),
     'notifying_href': fields.String,
     'notifying_summary': fields.String,
     'notifying_action': NotifyingAction,
