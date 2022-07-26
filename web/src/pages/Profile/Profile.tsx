@@ -192,6 +192,9 @@ const Profile = () => {
     if (blockLoading) {
       return
     }
+    if (!confirm("The blocked user is still able to see and interact with your posts, but you won't see them in your home feed and notifications")) {
+      return
+    }
     updateBlockLoading(true)
     await api.block(userId)
     updateIsBlocking(true)
