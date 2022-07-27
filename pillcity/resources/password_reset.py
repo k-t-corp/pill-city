@@ -1,5 +1,6 @@
 import smtplib
 import os
+import logging
 from email.mime.text import MIMEText
 from flask_restful import Resource, reqparse
 from pillcity.daos.password_reset import forget_password, reset_password
@@ -20,11 +21,11 @@ Go to https://{domain}/reset?code={code} to reset your password
     msg['Subject'] = f'Reset your {domain} password'
     msg['From'] = smtp_from
     msg['To'] = email
-    print(f"Going to send email {msg}")
+    logging.info(f"Going to send email {msg}")
     if smtp_enabled != "true":
         return
 
-    print(f"Sending email {msg}")
+    logging.info(f"Sending email {msg}")
     smtp_server = os.environ['SMTP_HOST']
     smtp_port = int(os.environ['SMTP_PORT'])
     smtp_username = os.environ['SMTP_USERNAME']

@@ -1,3 +1,4 @@
+import logging
 import requests
 import json
 from typing import Optional
@@ -9,7 +10,7 @@ class CloudEmoticon(PillCityPlugin):
     def _poll_emoticons(self):
         resp = requests.get("https://raw.githubusercontent.com/cloud-emoticon/store-repos/master/kt-favorites.json")
         resp = resp.json()
-        print(f"Polled {len(resp['categories'])} categories")
+        logging.info(f"Polled {len(resp['categories'])} categories")
         resp = json.dumps(resp)
         self.get_context().redis_set("emoticons", resp)
 
@@ -17,7 +18,7 @@ class CloudEmoticon(PillCityPlugin):
         self._poll_emoticons()
 
     def job(self):
-        print("Polling latest emoticons")
+        logging.info("Polling latest emoticons")
         self._poll_emoticons()
 
     def job_interval_seconds(self) -> int:

@@ -1,5 +1,6 @@
 import os
 import re
+import logging
 import sentry_sdk
 from os import urandom
 from mongoengine import connect
@@ -32,9 +33,11 @@ from pillcity.resources.poll import Vote
 from pillcity.resources.plugins import Plugins
 from pillcity.utils.now import now_seconds
 
+logging.basicConfig(level=logging.INFO)
+
 # Sentry
 if os.getenv('SENTRY_DSN'):
-    print('Enabling sentry')
+    logging.info('Enabling sentry')
     sentry_sdk.init(
         dsn=os.getenv('SENTRY_DSN'),
         integrations=[FlaskIntegration()],
@@ -42,7 +45,7 @@ if os.getenv('SENTRY_DSN'):
         traces_sample_rate=0
     )
 else:
-    print('Not enabling sentry')
+    logging.info('Not enabling sentry')
 
 # Flask app
 app = Flask(__name__)
@@ -77,15 +80,15 @@ CORS(app, resources={r"/api/*": {"origins": "*"}})
 # Open Registration
 is_open_registration = os.environ.get('OPEN_REGISTRATION', 'false') == 'true'
 if is_open_registration:
-    print('Open registration')
+    logging.info('Open registration')
 else:
-    print("Invite-only")
+    logging.info("Invite-only")
 
 # Git commit
 git_commit = os.getenv('GIT_COMMIT', None)
 if git_commit:
     git_commit = git_commit[: 7]
-print(f'Git commit {git_commit}')
+logging.info(f'Git commit {git_commit}')
 
 
 # Other routes
