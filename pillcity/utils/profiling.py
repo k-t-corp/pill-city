@@ -1,4 +1,5 @@
 import os
+import logging
 import functools
 from .now import now_ms
 
@@ -13,6 +14,6 @@ def timer(func):
         value = func(*args, **kwargs)
         end_time = now_ms()
         run_time = end_time - start_time
-        print(f"Finished {func.__name__!r} in {run_time} milliseconds")
+        logging.info(f"Finished {func.__name__!r} in {run_time} milliseconds")
         return value
     return wrapper_timer

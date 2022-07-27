@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 from mongoengine.errors import ValidationError
 from pillcity.models import LinkPreview, LinkPreviewState
@@ -30,9 +31,9 @@ def get_link_preview(url: str) -> Optional[LinkPreview]:
                     link_preview.save()
                     generate_link_preview.delay(url)
                 else:
-                    print(f"Haven't got to the next link preview time for url {url}")
+                    logging.info(f"Haven't got to the next link preview time for url {url}")
             else:
-                print(f"Exhausted link preview retries for url {url}")
+                logging.info(f"Exhausted link preview retries for url {url}")
         return link_preview
     except (ValueError, ValidationError):
         return None

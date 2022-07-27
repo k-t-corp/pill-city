@@ -1,6 +1,9 @@
 import os
+import logging
 from pymongo.uri_parser import parse_uri
 from mongoengine import connect
+
+logging.basicConfig(level=logging.INFO)
 
 uri = os.environ['MONGODB_URI']
 connect(
@@ -8,4 +11,4 @@ connect(
     db=parse_uri(uri)['database']
 )
 
-print("Running release")
+logging.info("Running release")
