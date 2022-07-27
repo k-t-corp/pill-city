@@ -14,7 +14,7 @@ import {ResharedPost} from "../../models/Post";
 import PillModal from "../../components/PillModal/PillModal";
 import "./Profile.css"
 import AvatarV2 from "../../components/MediaV2/AvatarV2";
-import PillDropdownMenu, {DropdownMenuItem} from "../../components/PillDropdownMenu/PillDropdownMenu";
+import PillDropdownMenu from "../../components/PillDropdownMenu/PillDropdownMenu";
 import {DotsVerticalIcon} from "@heroicons/react/solid";
 
 const InfiniteScrollBefore = 5
@@ -178,6 +178,23 @@ const Profile = () => {
     updateFollowLoading(false)
   }
 
+  const unfollowAndBlock = async () => {
+    if (followLoading || blockLoading) {
+      return
+    }
+    if (!confirm("The blocked user is still able to see and interact with your posts, but you won't see them in your home feed or notifications")) {
+      return
+    }
+    updateFollowLoading(true)
+    updateBlockLoading(true)
+    await api.unfollow(userId)
+    await api.block(userId)
+    updateIsFollowing(false)
+    updateIsBlocking(true)
+    updateFollowLoading(false)
+    updateBlockLoading(false)
+  }
+
   const unblock = async () => {
     if (blockLoading) {
       return
@@ -225,6 +242,20 @@ const Profile = () => {
             className={!followLoading ? "profile-info-button" : "profile-info-button profile-info-button-disabled"}
             onClick={followOnClick}
           >{isFollowing ? 'Unfollow' : 'Follow'}</div>}
+          {isFollowing &&
+            <PillDropdownMenu
+              items={[
+                {
+                  text: 'Unfollow and block',
+                  onClick: unfollowAndBlock
+                }
+              ]}
+            >
+              <div className="profile-more-actions-trigger">
+                <DotsVerticalIcon />
+              </div>
+            </PillDropdownMenu>
+          }
           {isBlocking && <div
             className={!blockLoading ? "profile-info-button" : "profile-info-button profile-info-button-disabled"}
             onClick={unblock}
