@@ -37,8 +37,6 @@ def create_notification(
     """
     if self.id == owner.id:
         return
-    if self in owner.blocking:
-        return
     new_notification = Notification()
     new_notification.eid = make_uuid()
     new_notification.notifier = self

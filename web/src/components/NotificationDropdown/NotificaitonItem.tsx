@@ -14,9 +14,6 @@ interface Props {
 }
 
 const notificationSummary = (notification: Notification) => {
-  if (notification.notifier_blocked) {
-    return '...'
-  }
   const notification_summary = notification.notifying_summary
   return summary(notification_summary, 100)
 }
@@ -41,9 +38,7 @@ export default (props: Props) => {
 
   // todo: this is all duplicate with backend lol
   let notifier
-  if (notification.notifier_blocked) {
-    notifier = null
-  } else if (notification.notifying_action !== "mention") {
+  if (notification.notifying_action !== "mention") {
     notifier = !notification.notifying_deleted ? notification.notifier : null
   } else {
     notifier = !notification.notified_deleted ? notification.notifier : null
@@ -75,7 +70,7 @@ export default (props: Props) => {
       <div className="notification-first-row" onClick={notificationOnClick}>
         <div className="notification-info">
           <div className="post-avatar notification-avatar">
-            <RoundAvatar user={notifier}/>
+            <RoundAvatar user={notification.notifier}/>
           </div>
           <div className="notification-notifier">
             <div className="notification-notifier-wrapper">
