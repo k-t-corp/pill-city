@@ -208,6 +208,9 @@ errors = {
     },
     'Conflict': {
         'status': 409
+    },
+    'ExpiredSignatureError': {
+        'status': 401
     }
 }
 api = Api(app, errors=errors)
