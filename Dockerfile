@@ -49,4 +49,4 @@ COPY uwsgi.ini .
 ENV PATH="./venv/bin:$PATH"
 ENV PYTHONFAULTHANDLER=1
 EXPOSE 5000
-ENTRYPOINT ["gunicorn", "--ini", "uwsgi.ini"]
+ENTRYPOINT ["uwsgi", "--ini", "uwsgi.ini"]
