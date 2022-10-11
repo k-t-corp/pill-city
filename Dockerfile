@@ -43,10 +43,10 @@ COPY entrypoint-worker.sh .
 COPY entrypoint-release.sh .
 COPY entrypoint-beat.sh .
 COPY swagger.yaml .
+COPY uwsgi.ini .
 
 # pre-compile bytecode and enable PYTHONFAULTHANDLER (catches error in c)
 ENV PATH="./venv/bin:$PATH"
 ENV PYTHONFAULTHANDLER=1
-ENV PORT=5000
 EXPOSE 5000
-ENTRYPOINT ["gunicorn", "app:app", "--log-file", "-"]
+ENTRYPOINT ["gunicorn", "--ini", "uwsgi.ini"]
