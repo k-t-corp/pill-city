@@ -10,17 +10,6 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  web-build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-      - run: yarn install
-        working-directory: ./web
-      - run: yarn build
-        working-directory: ./web
   python-build-and-test:
     runs-on: ubuntu-latest
     steps:
@@ -39,7 +28,6 @@ jobs:
           nosetests
   build-and-push-image:
     needs:
-      - web-build
       - python-build-and-test
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
