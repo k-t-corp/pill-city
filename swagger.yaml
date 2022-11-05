@@ -559,7 +559,9 @@ components:
               - password
             properties:
               id:
-                $ref: '#/components/schemas/User/properties/id'
+                type: string
+                description: The permanent short ID for the user
+                example: kt
               password:
                 type: string
                 description: User's password
