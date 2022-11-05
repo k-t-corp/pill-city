@@ -18,7 +18,7 @@ jobs:
         uses: openapi-generators/openapitools-generator-action@v1
         with:
           generator: dart
-          config-file: swagger.yaml
+          openapi-file: swagger.yaml
           template-dir: generated-dart-sdk
 
       - name: Checkout Dart SDK repository
