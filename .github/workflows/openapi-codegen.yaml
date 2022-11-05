@@ -19,7 +19,6 @@ jobs:
         with:
           generator: dart
           openapi-file: swagger.yaml
-          template-dir: generated-dart-sdk
 
       - name: Checkout Dart SDK repository
         uses: actions/checkout@v3
@@ -29,7 +28,7 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
 
       - name: Copy all contents into Dart SDK repository
-        run: rsync -av ./generated-dart-sdk/ ./dart-sdk
+        run: rsync -av ./dart-client/ ./dart-sdk
 
       - name: Push Dart SDK repository
         working-directory: dart-sdk
