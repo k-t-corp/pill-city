@@ -36,7 +36,7 @@ class ResharedFrom(fields.Raw):
             'content': fields.String,
             'media_urls': MediaUrls(attribute='media_list'),
             'media_urls_v2': MediaUrlsV2(attribute='media_list'),
-            'poll': fields.Nested(poll_fields),
+            'poll': fields.Nested(poll_fields, allow_null=True),
             'deleted': fields.Boolean
         })
 
@@ -106,7 +106,7 @@ post_fields = {
     'deleted': fields.Boolean,
     'blocked': Blocked(attribute='author'),
     'is_update_avatar': fields.Boolean,
-    'poll': fields.Nested(poll_fields),
+    'poll': fields.Nested(poll_fields, allow_null=True),
     "link_previews": LinkPreviews(attribute='content')
 }
 
