@@ -109,21 +109,9 @@ def get_media_url_v2(object_name: str) -> dict:
     }
 
 
-class MediaUrl(fields.Raw):
-    def format(self, object_name: str):
-        return get_media_url(object_name)
-
-
 class MediaUrlV2(fields.Raw):
     def format(self, object_name: str):
         return get_media_url_v2(object_name)
-
-
-class MediaUrls(fields.Raw):
-    def format(self, media_list: List[Media]):
-        if not media_list:
-            return []
-        return list(map(lambda m: get_media_url(m.id), media_list))
 
 
 class MediaUrlsV2(fields.Raw):
@@ -135,7 +123,6 @@ class MediaUrlsV2(fields.Raw):
 
 media_fields = {
     "object_name": fields.String(attribute='id'),
-    "media_url": MediaUrl(attribute='id'),
     "media_url_v2": MediaUrlV2(attribute='id')
 }
 

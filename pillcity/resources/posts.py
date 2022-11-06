@@ -14,7 +14,7 @@ from .users import user_fields
 from .pagination import pagination_parser
 from .mention import check_mentioned_user_ids
 from .comments import comment_fields, Blocked
-from .media import check_media_object_names, MediaUrls, MediaUrlsV2
+from .media import check_media_object_names, MediaUrlsV2
 from .link_preview import link_preview_fields
 from .poll import poll_fields
 
@@ -34,7 +34,6 @@ class ResharedFrom(fields.Raw):
             'created_at_seconds': fields.Integer(attribute='created_at'),
             'author': fields.Nested(user_fields),
             'content': fields.String,
-            'media_urls': MediaUrls(attribute='media_list'),
             'media_urls_v2': MediaUrlsV2(attribute='media_list'),
             'poll': fields.Nested(poll_fields, allow_null=True),
             'deleted': fields.Boolean
@@ -94,7 +93,6 @@ post_fields = {
     'is_public': fields.Boolean,
     'reshareable': fields.Boolean,
     'reshared_from': ResharedFrom(attribute='reshared_from'),
-    'media_urls': MediaUrls(attribute='media_list'),
     'media_urls_v2': MediaUrlsV2(attribute='media_list'),
     'reactions': fields.List(fields.Nested({
         'id': fields.String(attribute='eid'),
