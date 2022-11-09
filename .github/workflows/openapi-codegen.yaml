@@ -19,6 +19,7 @@ jobs:
         with:
           generator: dart
           openapi-file: swagger.yaml
+          command-args: --additional-properties=pubAuthor=KTachibanaM,pubAuthorEmail=feedback@pill.city,pubDescription="Auto-generated Dart SDK for pill.city",pubHomepage=https://github.com/pill-city/dart-sdk,pubLibrary=pill_city_api,pubName=pill_city
 
       - name: Checkout Dart SDK repository
         uses: actions/checkout@v3
