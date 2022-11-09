@@ -17,9 +17,17 @@ jobs:
       - name: Generate Dart SDK
         uses: openapi-generators/openapitools-generator-action@v1
         with:
-          generator: dart
+          generator: dart-dio
           openapi-file: swagger.yaml
           command-args: '--additional-properties=pubAuthor=KTachibanaM,pubAuthorEmail=feedback@pill.city,pubHomepage=https://github.com/pill-city/dart-sdk,pubLibrary=pill_city_api,pubName=pill_city'
+
+      - name: Generate generated code for Dart SDK
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.3.7'
+          channel: 'stable'
+        working-directory: ./dart-client
+        run: flutter pub get && flutter pub run build_runner build --delete-conflicting-outputs
 
       - name: Checkout Dart SDK repository
         uses: actions/checkout@v3
