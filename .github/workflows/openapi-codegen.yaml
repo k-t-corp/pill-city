@@ -14,6 +14,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.3.7'
+          channel: 'stable'
+
       - name: Generate Dart SDK
         uses: openapi-generators/openapitools-generator-action@v1
         with:
@@ -22,12 +28,10 @@ jobs:
           command-args: '--additional-properties=pubAuthor=KTachibanaM,pubAuthorEmail=feedback@pill.city,pubHomepage=https://github.com/pill-city/dart-sdk,pubLibrary=pill_city_api,pubName=pill_city'
 
       - name: Generate generated code for Dart SDK
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.3.7'
-          channel: 'stable'
-      - run: pushd ./dart-client && flutter pub get && popd
-      - run: pushd ./dart-client && flutter pub run build_runner build --delete-conflicting-outputs && popd
+        working-directory: dart-dio-client
+        run:
+          - flutter pub get
+          - flutter pub run build_runner build --delete-conflicting-outputs
 
       - name: Checkout Dart SDK repository
         uses: actions/checkout@v3
@@ -37,7 +41,7 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
 
       - name: Copy all contents into Dart SDK repository
-        run: rsync -av ./dart-client/ ./dart-sdk
+        run: rsync -av ./dart-dio-client/ ./dart-sdk
 
       - name: Push Dart SDK repository
         working-directory: dart-sdk
