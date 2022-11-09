@@ -26,8 +26,8 @@ jobs:
         with:
           flutter-version: '3.3.7'
           channel: 'stable'
-        working-directory: ./dart-client
-        run: flutter pub get && flutter pub run build_runner build --delete-conflicting-outputs
+      - run: pushd ./dart-client && flutter pub get && popd
+      - run: pushd ./dart-client && flutter pub run build_runner build --delete-conflicting-outputs && popd
 
       - name: Checkout Dart SDK repository
         uses: actions/checkout@v3
