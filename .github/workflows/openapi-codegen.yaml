@@ -38,7 +38,11 @@ jobs:
           path: dart-sdk
           token: ${{ secrets.GH_TOKEN }}
 
-      - name: Copy all contents into Dart SDK repository
+      - name: Remove all files from Dart SDK repository
+        working-directory: dart-sdk
+        run: git rm -r '*'
+
+      - name: Copy all generated code into Dart SDK repository
         run: rsync -av ./dart-dio-client/ ./dart-sdk
 
       - name: Push Dart SDK repository
