@@ -46,6 +46,7 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
+          git --no-pager diff
           git add --all
           git commit -m "Update SDK"
           git push
