@@ -132,12 +132,6 @@ components:
           type: number
           description: In epoch seconds, when the user signed up
           example: 1631528113
-        avatar_url:
-          type: string
-          description: URL to the user's avatar
-          format: url
-          example: https://pill-city.s3.us-west-2.amazonaws.com/avatars/kt-1646414449.png
-          default: null
         avatar_url_v2:
           $ref: '#/components/schemas/MediaUrlV2'
         profile_pic:
@@ -171,13 +165,6 @@ components:
           description: Text content for the reshared post
           example: Hello, World!
           default: ''
-        media_urls:
-          type: array
-          description: URLs for the reshared post's media
-          items:
-            type: string
-          example: ["https://pill-city.s3.us-west-2.amazonaws.com/avatars/kt-1646414449.png", "https://pill-city.s3.us-west-2.amazonaws.com/avatars/ika-1631578.png"]
-          default: []
         media_urls_v2:
           type: array
           description: v2 media URLs for the comment's media
@@ -212,13 +199,6 @@ components:
           description: Text content for the nested comment
           example: Hello, World!
           default: ''
-        media_urls:
-          type: array
-          description: URLs for the nested comment's media
-          items:
-            type: string
-          example: ["https://pill-city.s3.us-west-2.amazonaws.com/avatars/kt-1646414449.png", "https://pill-city.s3.us-west-2.amazonaws.com/avatars/ika-1631578.png"]
-          default: []
         media_urls_v2:
           type: array
           description: v2 media URLs for the comment's media
@@ -253,13 +233,6 @@ components:
           description: Text content for the comment
           example: Hello, World!
           default: ''
-        media_urls:
-          type: array
-          description: URLs for the comment's media
-          items:
-            type: string
-          example: ["https://pill-city.s3.us-west-2.amazonaws.com/avatars/kt-1646414449.png", "https://pill-city.s3.us-west-2.amazonaws.com/avatars/ika-1631578.png"]
-          default: []
         media_urls_v2:
           type: array
           description: v2 media URLs for the comment's media
@@ -391,13 +364,6 @@ components:
           nullable: true
           allOf:
             - $ref: '#/components/schemas/ResharedPost'
-        media_urls:
-          type: array
-          description: URLs for the post's media
-          items:
-            type: string
-          example: ["https://pill-city.s3.us-west-2.amazonaws.com/avatars/kt-1646414449.png", "https://pill-city.s3.us-west-2.amazonaws.com/avatars/ika-1631578.png"]
-          default: []
         media_urls_v2:
           type: array
           description: v2 media URLs for the comment's media
