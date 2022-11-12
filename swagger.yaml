@@ -422,7 +422,7 @@ components:
       properties:
         original_url:
           type: string
-          description: URL to the original media.
+          description: URL to the original media
         processed:
           type: boolean
           description: Whether the media has been processed/optimized
