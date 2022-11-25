@@ -234,6 +234,10 @@ components:
           type: boolean
           description: Whether the nested comment's author is blocked
           default: false
+        reply_to_comment_id:
+          type: string
+          description: The ID of the comment that this comment is replying to
+          default: false
     Comment:
       required:
         - id
