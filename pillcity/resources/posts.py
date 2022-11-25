@@ -209,7 +209,7 @@ class Post(Resource):
 
         post = dangerously_get_post(post_id)
         if not sees_post(user, post, context_home_or_profile=False):
-            return {'msg': 'Do not have permission to see the post'}, 403
+            return {'msg': 'Do not have permission to see the post'}, 401
         return post
 
     @jwt_required()

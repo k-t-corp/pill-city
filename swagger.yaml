@@ -71,6 +71,27 @@ paths:
           $ref: '#/components/responses/400BadRequest'
         '401':
           $ref: '#/components/responses/401Unauthorized'
+  /post/{postId}:
+    get:
+      summary: Get a post by its ID
+      operationId: getPost
+      tags: [ "core" ]
+      parameters:
+        - in: path
+          name: postId
+          schema:
+            type: string
+          required: true
+          description: Post ID
+      responses:
+        '200':
+          description: Successfully got the post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
   /me:
     get:
       summary: Get the logged in user
