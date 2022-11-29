@@ -26,22 +26,7 @@ paths:
           $ref: '#/components/responses/400BadRequest'
         '401':
           $ref: '#/components/responses/401Unauthorized'
-  /availablePlugins:
-    get:
-      summary: Get all available plugins
-      operationId: getAvailablePlugins
-      security: []
-      tags: [ "core" ]
-      responses:
-        '200':
-          description: Successfully got all available plugins
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: string
-                example: ["cloudemoticon"]
+
   /home:
     get:
       summary: Get or poll latest home posts
@@ -71,6 +56,22 @@ paths:
           $ref: '#/components/responses/400BadRequest'
         '401':
           $ref: '#/components/responses/401Unauthorized'
+  /posts:
+    post:
+      summary: Create a new post
+      operationId: createPost
+      tags: [ "core" ]
+      requestBody:
+        $ref: '#/components/requestBodies/CreatePostRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/CreatePostSuccessfulResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '404':
+          $ref: '#/components/responses/404NotFound'
   /post/{postId}:
     get:
       summary: Get a post by its ID
@@ -106,6 +107,22 @@ paths:
                 $ref: '#/components/schemas/User'
         '401':
           $ref: '#/components/responses/401Unauthorized'
+  /availablePlugins:
+    get:
+      summary: Get all available plugins
+      operationId: getAvailablePlugins
+      security: [ ]
+      tags: [ "core" ]
+      responses:
+        '200':
+          description: Successfully got all available plugins
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example: [ "cloudemoticon" ]
   /plugins:
     get:
       summary: Get plugins enabled by the user
@@ -560,6 +577,38 @@ components:
                 type: string
                 description: User's password
                 example: thisissupersecure
+    CreatePostRequest:
+      content:
+        application/json:
+          schema:
+            required:
+              - is_public
+              - reshareable
+            properties:
+              content:
+                type: string
+                description: Text content for the post
+                example: 你好，世界！
+              is_public:
+                type: boolean
+                description: Whether the post is public. Overrides circle_ids on retrieving if both are set.
+                example: true
+              circle_ids:
+                type: array
+                items:
+                  type: string
+                description: IDs of circles to publish the post in
+                example: [ "a3137edb-e629-49ac-b1f1-3343fd97329c" ]
+              reshareable:
+                type: boolean
+                description: Whether the post is reshareable
+                example: true
+              media_object_names:
+                type: array
+                items:
+                  type: string
+                description: Object names of the uploaded media to attach to the post
+                example: [ "media/b64bde42-6b29-436f-98a9-5baabcb81e8e.jpeg" ]
   responses:
     SignInSuccessfulResponse:
       description: Successfully signed in
@@ -578,6 +627,12 @@ components:
                 type: number
                 description: In epoch seconds, when the bearer token will expire
                 example: 1652301806
+    CreatePostSuccessfulResponse:
+      description: Successfully created a post
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Post'
     400BadRequest:
       description: Bad request, invalid request body
       content:
@@ -586,6 +641,18 @@ components:
             $ref: '#/components/schemas/Message'
     401Unauthorized:
       description: Unauthorized, invalid access token or wrong user ID/password
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+    403Forbidden:
+      description: Forbidden, not allowed to execute a certain action
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+    404NotFound:
+      description: Not found, a certain object is not found
       content:
         application/json:
           schema:
