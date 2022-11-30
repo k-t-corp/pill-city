@@ -107,6 +107,20 @@ paths:
                 $ref: '#/components/schemas/User'
         '401':
           $ref: '#/components/responses/401Unauthorized'
+  /circles:
+    get:
+        summary: Get a user's circles
+        operationId: getCircles
+        tags: [ "core" ]
+        responses:
+          '200':
+            description: Successfully got a user's circles
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Circle'
   /availablePlugins:
     get:
       summary: Get all available plugins
@@ -298,6 +312,7 @@ components:
       required:
         - id
         - name
+        - members
       properties:
         id:
           type: string
@@ -307,6 +322,11 @@ components:
           type: string
           description: Circle name
           example: 圈子
+        members:
+          type: array
+          description: Members of the circle
+          items:
+            $ref: '#/components/schemas/User'
     AnonymizedCircle:
       required:
         - id
