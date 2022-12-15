@@ -1,7 +1,12 @@
 from .base_test_case import BaseTestCase
 from pillcity.daos.content import format_content, FormattedContentType, FormattedContentSegment, FormattedContent
+from pillcity.daos.user import sign_up
 
 class ContentTest(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.user = sign_up('kt233', '123456')
+
     def test_string_without_any_format(self):
         self.assertEqual(
             FormattedContent(

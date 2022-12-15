@@ -2,6 +2,7 @@ import dataclasses
 import re
 from typing import List, Set
 from urlextract import URLExtract
+from .user_cache import get_in_user_cache_by_user_id
 
 
 url_extractor = URLExtract()
@@ -92,10 +93,11 @@ def format_content(content: str) -> FormattedContent:
         match_start, match_end = match.start(), match.end()
         actual_start = 0 if match_start == 0 else match_start + 1
         user_id = actual_content[actual_start + 1: match_end]
-        for i in range(actual_start, match_end):
-            chars[i].types.add(FormattedContentType.MENTION)
-            chars[i].reference = len(references)
-        references.append(user_id)
+        if get_in_user_cache_by_user_id(user_id):
+            for i in range(actual_start, match_end):
+                chars[i].types.add(FormattedContentType.MENTION)
+                chars[i].reference = len(references)
+            references.append(user_id)
 
     # merge chars so that nearby chars with the same format types and reference are merged
     segments = []  # type: List[FormattedContentSegment]
