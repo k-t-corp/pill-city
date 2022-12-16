@@ -1,6 +1,6 @@
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from pillcity.daos.user import find_user, get_in_user_cache_by_user_id
+from pillcity.daos.user import find_user
 from pillcity.daos.post import dangerously_get_post
 from pillcity.daos.comment import create_comment, dangerously_get_comment, delete_comment
 from pillcity.daos.exceptions import UnauthorizedAccess
@@ -8,6 +8,7 @@ from .mention import check_mentioned_user_ids
 from .users import user_fields
 from .media import check_media_object_names, MediaUrlsV2
 from .content import FormattedContent
+from .entity_state import EntityState
 
 MaxCommentMediaCount = 1
 
@@ -18,12 +19,6 @@ comment_parser.add_argument('media_object_names', type=str, action="append", def
 comment_parser.add_argument('reply_to_comment_id', type=str, required=False, default=None)
 
 
-class Blocked(fields.Raw):
-    def format(self, author):
-        user_id = get_jwt_identity()
-        user = get_in_user_cache_by_user_id(user_id)
-        return user and author and author in user.blocking
-
 
 nested_comment_fields = {
     'id': fields.String(attribute='eid'),
@@ -32,8 +27,7 @@ nested_comment_fields = {
     'content': fields.String,
     'formatted_content': FormattedContent(attribute='content'),
     'media_urls_v2': MediaUrlsV2(attribute='media_list'),
-    'deleted': fields.Boolean,
-    'blocked': Blocked(attribute='author'),
+    'state': EntityState,
     'reply_to_comment_id': fields.String,
 }
 

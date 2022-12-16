@@ -13,11 +13,12 @@ from pillcity.daos.link_preview import get_link_preview
 from .users import user_fields
 from .pagination import pagination_parser
 from .mention import check_mentioned_user_ids
-from .comments import comment_fields, Blocked
+from .comments import comment_fields
 from .media import check_media_object_names, MediaUrlsV2
 from .link_preview import link_preview_fields
 from .poll import poll_fields
 from .content import FormattedContent
+from .entity_state import EntityState
 
 MaxPostMediaCount = 4
 
@@ -38,7 +39,7 @@ class ResharedFrom(fields.Raw):
             'formatted_content': FormattedContent(attribute='content'),
             'media_urls_v2': MediaUrlsV2(attribute='media_list'),
             'poll': fields.Nested(poll_fields, allow_null=True),
-            'deleted': fields.Boolean
+            'state': EntityState
         })
 
 
@@ -104,11 +105,10 @@ post_fields = {
     }), attribute='reactions2'),
     'comments': fields.List(fields.Nested(comment_fields), attribute='comments2'),
     'circles': AnonymizedCircles,
-    'deleted': fields.Boolean,
-    'blocked': Blocked(attribute='author'),
     'is_update_avatar': fields.Boolean,
     'poll': fields.Nested(poll_fields, allow_null=True),
-    "link_previews": LinkPreviews(attribute='content')
+    "link_previews": LinkPreviews(attribute='content'),
+    'state': EntityState
 }
 
 
