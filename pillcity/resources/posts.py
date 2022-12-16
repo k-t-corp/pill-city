@@ -17,6 +17,7 @@ from .comments import comment_fields, Blocked
 from .media import check_media_object_names, MediaUrlsV2
 from .link_preview import link_preview_fields
 from .poll import poll_fields
+from .content import FormattedContent
 
 MaxPostMediaCount = 4
 
@@ -34,6 +35,7 @@ class ResharedFrom(fields.Raw):
             'created_at_seconds': fields.Integer(attribute='created_at'),
             'author': fields.Nested(user_fields),
             'content': fields.String,
+            'formatted_content': FormattedContent(attribute='content'),
             'media_urls_v2': MediaUrlsV2(attribute='media_list'),
             'poll': fields.Nested(poll_fields, allow_null=True),
             'deleted': fields.Boolean
@@ -90,6 +92,7 @@ post_fields = {
     'created_at_seconds': fields.Integer(attribute='created_at'),
     'author': fields.Nested(user_fields),
     'content': fields.String,
+    'formatted_content': FormattedContent(attribute='content'),
     'is_public': fields.Boolean,
     'reshareable': fields.Boolean,
     'reshared_from': ResharedFrom(attribute='reshared_from'),
