@@ -202,6 +202,7 @@ components:
         - id
         - created_at_seconds
         - author
+        - state
       properties:
         id:
           type: string
@@ -229,15 +230,16 @@ components:
           nullable: true
           allOf:
             - $ref: '#/components/schemas/Poll'
-        deleted:
-          type: boolean
-          description: Whether the reshared post is deleted
-          default: false
+        state:
+          type: string
+          enum: [ 'visible', 'invisible', 'author_blocked', 'deleted' ]
+          description: State of this entity that UI should show
     NestedComment:
       required:
         - id
         - created_at_seconds
         - author
+        - state
       properties:
         id:
           type: string
@@ -261,18 +263,14 @@ components:
           items:
             $ref: '#/components/schemas/MediaUrlV2'
           default: []
-        deleted:
-          type: boolean
-          description: Whether the nested comment is deleted
-          default: false
-        blocked:
-          type: boolean
-          description: Whether the nested comment's author is blocked
-          default: false
         reply_to_comment_id:
           type: string
           description: The ID of the comment that this comment is replying to
           default: false
+        state:
+          type: string
+          enum: [ 'visible', 'invisible', 'author_blocked', 'deleted' ]
+          description: State of this entity that UI should show
     Comment:
       required:
         - id
@@ -301,19 +299,15 @@ components:
           items:
             $ref: '#/components/schemas/MediaUrlV2'
           default: []
-        deleted:
-          type: boolean
-          description: Whether the comment is deleted
-          default: false
-        blocked:
-          type: boolean
-          description: Whether the comment's author is blocked
-          default: false
         comments:
           type: array
           description: Nested comments for the comment
           items:
             $ref: '#/components/schemas/NestedComment'
+        state:
+          type: string
+          enum: [ 'visible', 'invisible', 'author_blocked', 'deleted' ]
+          description: State of this entity that UI should show
     Circle:
       required:
         - id
@@ -404,6 +398,7 @@ components:
         - created_at_seconds
         - author
         - is_public
+        - state
       properties:
         id:
           type: string
@@ -455,14 +450,6 @@ components:
           description: Circles that the post is published in
           items:
             $ref: '#/components/schemas/AnonymizedCircle'
-        deleted:
-          type: boolean
-          description: Whether the post is deleted
-          default: false
-        blocked:
-          type: boolean
-          description: Whether the post's author is blocked
-          default: false
         is_update_avatar:
           type: boolean
           description: Whether the post is an update avatar post
@@ -477,6 +464,10 @@ components:
           items:
             $ref: '#/components/schemas/LinkPreview'
           default: [ ]
+        state:
+          type: string
+          enum: ['visible', 'invisible', 'author_blocked', 'deleted']
+          description: State of this entity that UI should show
     Message:
       required:
         - msg
