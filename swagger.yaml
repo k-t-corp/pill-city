@@ -217,6 +217,8 @@ components:
           description: Text content for the reshared post
           example: Hello, World!
           default: ''
+        formatted_content:
+          $ref: '#/components/schemas/FormattedContent'
         media_urls_v2:
           type: array
           description: v2 media URLs for the comment's media
@@ -251,6 +253,8 @@ components:
           description: Text content for the nested comment
           example: Hello, World!
           default: ''
+        formatted_content:
+          $ref: '#/components/schemas/FormattedContent'
         media_urls_v2:
           type: array
           description: v2 media URLs for the comment's media
@@ -289,6 +293,8 @@ components:
           description: Text content for the comment
           example: Hello, World!
           default: ''
+        formatted_content:
+          $ref: '#/components/schemas/FormattedContent'
         media_urls_v2:
           type: array
           description: v2 media URLs for the comment's media
@@ -413,6 +419,8 @@ components:
           description: Text content for the post
           example: Hello, World!
           default: ''
+        formatted_content:
+          $ref: '#/components/schemas/FormattedContent'
         is_public:
           type: boolean
           description: Whether the post is publicly accessible on the server
@@ -537,6 +545,39 @@ components:
         index_end:
           type: number
           description: The ending index of the URL in content, exclusive
+    FormattedContentSegment:
+      description: A segment in a formatted content string
+      required:
+        - content
+        - types
+      properties:
+        content:
+          type: string
+          description: The text content of this segment
+        types:
+          type: array
+          items:
+            type: string
+            enum: ["strikethrough", "bold", "italic", "url", "mention"]
+          description: The formats for this segment
+        reference:
+          type: integer
+          description: If this segment references external entities such as an URL or mentioned user ID, this is the index of the referenced entity in the parent object's references array
+    FormattedContent:
+      required:
+        - segments
+        - references
+      properties:
+        segments:
+          type: array
+          items:
+            $ref: '#/components/schemas/FormattedContentSegment'
+          description: The segments of this formatted content
+        references:
+          type: array
+          items:
+            type: string
+          description: The external entities that the segments of this formatted content might need to refer to
     CloudEmoticonEntry:
       required:
         - description
