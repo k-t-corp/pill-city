@@ -5,7 +5,7 @@ services:
     volumes:
     - ${PWD}/data/mongodb_data:/data/db
     ports:
-    - 19023:27017
+    - 27017:27017
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/test --quiet
       interval: 10s
@@ -16,7 +16,7 @@ services:
     volumes:
     - ${PWD}/data/redis_data:/data
     ports:
-    - 19024:6379
+    - 6379:6379
     healthcheck:
       test:
       - CMD
@@ -33,7 +33,7 @@ services:
     volumes:
     - ${PWD}/data/minio_data:/data
     ports:
-    - 19025:9000
+    - 9000:9000
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
@@ -46,3 +46,12 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+  localstack:
+    image: localstack/localstack
+    ports:
+    - 4566:4566
+    - 4510-4559:4510-4559
+    environment:
+      DOCKER_HOST: unix:///var/run/docker.sock
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock

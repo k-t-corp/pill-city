@@ -2,6 +2,7 @@
   "services": [
     "mongodb",
     "redis",
-    "minio"
+    "minio",
+    "localstack"
   ]
 }
