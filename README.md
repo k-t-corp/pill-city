@@ -74,3 +74,8 @@ make dev-release
 
 ## Security
 Please send security findings to [`security@pill.city`](mailto:security@pill.city).
+
+## Sponsors
+* This project uses [LocalStack Pro](https://localstack.cloud) for simulating S3 and CloudFront during local development
+
+![LocalStack Banner](./docs/localstack-readme-banner.svg)
