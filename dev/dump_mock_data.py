@@ -44,7 +44,7 @@ class User(object):
 
     def update_avatar(self, fn):
         self._raise_on_unauthenticated()
-        fp = os.path.join('scripts', "dev_mock_data_avatars", fn)
+        fp = os.path.join('dev', "mock_data_avatars", fn)
         with open(fp, 'rb') as f:
             self.sess.post(f'/api/me/avatar', files={
                 'file': f,
@@ -72,7 +72,7 @@ class User(object):
             media_filenames = []
         media_object_names = []
         if media_filenames:
-            media_filepaths = list(map(lambda fn: os.path.join('scripts', 'dev_mock_data_media', fn), media_filenames))
+            media_filepaths = list(map(lambda fn: os.path.join('dev', 'mock_data_media', fn), media_filenames))
             files = {}
             for i, fp in enumerate(media_filepaths):
                 if i < 9:
@@ -107,7 +107,7 @@ class User(object):
             media_filenames = []
         media_object_names = []
         if media_filenames:
-            media_filepaths = list(map(lambda fn: os.path.join('scripts', 'dev_mock_data_media', fn), media_filenames))
+            media_filepaths = list(map(lambda fn: os.path.join('dev', 'mock_data_media', fn), media_filenames))
             files = {}
             for i, fp in enumerate(media_filepaths):
                 if i < 9:
@@ -134,7 +134,7 @@ class User(object):
             media_filenames = []
         media_object_names = []
         if media_filenames:
-            media_filepaths = list(map(lambda fn: os.path.join('scripts', 'dev_mock_data_media', fn), media_filenames))
+            media_filepaths = list(map(lambda fn: os.path.join('dev', 'mock_data_media', fn), media_filenames))
             files = {}
             for i, fp in enumerate(media_filepaths):
                 if i < 9:
@@ -184,22 +184,22 @@ def main():
     # Drop everything in mino
     s3 = boto3.resource(
         's3',
-        endpoint_url="http://localhost:19025",
-        region_name="",
-        aws_access_key_id="minioadmin",
-        aws_secret_access_key="minioadmin"
+        endpoint_url="http://localhost:4566",
+        region_name="us-east-1",
+        aws_access_key_id="test",
+        aws_secret_access_key="test"
     )
-    bucket = s3.Bucket('minigplus')
+    bucket = s3.Bucket('pill-city')
     print("Vacuuming s3")
     bucket.objects.all().delete()
 
     # Drop everything in mongodb
-    mongodb = pymongo.MongoClient("mongodb://localhost:19023/minigplus")
+    mongodb = pymongo.MongoClient("mongodb://localhost:27017/minigplus")
     print("Vacuuming mongodb")
     mongodb.drop_database("minigplus")
 
     # Drop everything in redis
-    r = redis.from_url("redis://localhost:19024")
+    r = redis.from_url("redis://localhost:6379")
     print("Vacuuming redis")
     r.flushall()
 
@@ -241,7 +241,7 @@ def main():
     official.create_post('Welcome to pill.city! '
                          'Click the Users tab on top (or the left most tab if you are on a phone) '
                          'to start following people!', is_public=True)
-    with open('./scripts/xss.txt') as f:
+    with open('./dev/xss.txt') as f:
         kt.create_post(f.read(), is_public=True, circle_ids=[kt_gplus_circle_id])
     kt.create_post(' _Hello, World!_ ', is_public=True)
     xiaomoyu_id = ika.create_post('大家好我是小墨魚 qwq', is_public=True)
