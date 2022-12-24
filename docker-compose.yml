@@ -25,33 +25,14 @@ services:
       interval: 1s
       timeout: 3s
       retries: 30
-  minio:
-    image: minio/minio:RELEASE.2021-06-09T18-51-39Z
-    command:
-    - server
-    - /data
-    volumes:
-    - ${PWD}/data/minio_data:/data
-    ports:
-    - 9000:9000
-    environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
-    healthcheck:
-      test:
-      - CMD
-      - curl
-      - -f
-      - http://localhost:9000/minio/health/live
-      interval: 30s
-      timeout: 20s
-      retries: 3
-  localstack:
-    image: localstack/localstack
+  localstack-pro:
+    image: localstack/localstack-pro
     ports:
     - 4566:4566
     - 4510-4559:4510-4559
     environment:
       DOCKER_HOST: unix:///var/run/docker.sock
+      LOCALSTACK_API_KEY: ${LOCALSTACK_API_KEY}
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock
+    - ${PWD}/data/localstack_pro_data:/var/lib/localstack
