@@ -12,11 +12,30 @@ This is an API server written in Python/Flask. It stores information in a MongoD
 
 ## Dependencies
 * `Python 3.9` and [`virtualenv`](http://packaging.python.org/guides/installing-using-pip-and-virtualenv/)
+* `jq`
+* [`terraform`](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
+* [`tflocal`](https://docs.localstack.cloud/user-guide/integrations/terraform/#using-the-tflocal-script) from `LocalStack`
 * [`saturn`, a development CLI for my Python stacks](https://github.com/k-t-corp/saturn)
 
 ## Prerequisites
-1. `cp .example.env .env`
-2. `make dev-deps`
+1. Install Python dependencies
+
+   ```bash
+   make dev-deps
+   ```
+
+2. Copy configurations
+
+   ```bash
+   cp .example.env .env
+   ```
+
+3. Setup LocalStack Pro
+  * Obtain an trial LocalStack Pro license key and place it in `.env` (the `LOCALSTACK_API_KEY` variable)
+  * Run `docker compose run localstack-pro` to start LocalStack Pro
+  * Run `make dev-localstack-setup` to provision AWS resources on LocalStack Pro
+  * Follow the instructions in the output to update the `AWS_ACCESS_KEY` and `AWS_SECRET_KEY` variables in `.env`
+  * Stop the process started by `docker compose run localstack-pro`
 
 ## Run
 ``` shell
