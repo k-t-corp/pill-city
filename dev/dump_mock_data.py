@@ -185,11 +185,11 @@ def main():
     s3 = boto3.resource(
         's3',
         endpoint_url="http://localhost:4566",
-        region_name="",
-        aws_access_key_id="minioadmin",
-        aws_secret_access_key="minioadmin"
+        region_name="us-east-1",
+        aws_access_key_id="test",
+        aws_secret_access_key="test"
     )
-    bucket = s3.Bucket('minigplus')
+    bucket = s3.Bucket('pill-city')
     print("Vacuuming s3")
     bucket.objects.all().delete()
 

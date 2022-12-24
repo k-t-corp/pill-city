@@ -60,9 +60,8 @@ def get_media_url(object_name: str) -> str:
         ],
     }
     assume_role_response = sts_client.assume_role(
-        # for minio this is moot
-        # for s3 this role allows all media read, but intersects with the inline policy, the temp role
-        #    would still be minimal privilege
+        # this role allows all media read, but intersects with the inline policy,
+        # the temp role would still be minimal privilege
         RoleArn=os.environ['MEDIA_READER_ROLE_ARN'],
         # media-reader is the only principal who can assume the role so this can be fixed
         RoleSessionName='media-reader',

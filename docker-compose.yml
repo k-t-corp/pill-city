@@ -31,6 +31,7 @@ services:
     - 4566:4566
     - 4510-4559:4510-4559
     environment:
+      PERSISTENCE: '1'
       DOCKER_HOST: unix:///var/run/docker.sock
       LOCALSTACK_API_KEY: ${LOCALSTACK_API_KEY}
     volumes:
