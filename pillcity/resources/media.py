@@ -1,10 +1,10 @@
 import os
-import boto3
 import werkzeug
 import uuid
 import base64
 import datetime
 from typing import List
+from urllib.parse import urlparse, parse_qs
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives import serialization
@@ -15,13 +15,12 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from pillcity.models.media import Media
 from pillcity.daos.media import get_media, create_media, get_media_page
 from pillcity.daos.user import find_user
-from pillcity.utils.now import now_ms, now_seconds
+from pillcity.utils.now import now_seconds
 from pillcity.utils.profiling import timer
 from .cache import r, RMediaUrl
 
 
 MaxMediaCount = 4
-PostMediaUrlExpireSeconds = 3600 * 12  # 12 hours
 GetMediaPageCount = 4
 
 
@@ -35,28 +34,32 @@ def rsa_signer(message):
 
 
 # Cache structure within Redis
-# "mediaUrl" -> object_name -> "media url"(space)"media url generated time in ms"
+# "mediaUrl" -> object_name -> "media url"(space)"media url expire time in seconds"
 
 @timer
 def get_media_url(object_name: str) -> str:
     """
     Get the publicly accessible URL to a media
     """
-    # subtract expiry by 10 seconds for some network overhead
     r_media_url = r.hget(RMediaUrl, object_name)
     if r_media_url:
         r_media_url = r_media_url.decode('utf-8')
-        if now_ms() < int(r_media_url.split(" ")[1]) + (PostMediaUrlExpireSeconds - 10) * 1000:
-            return r_media_url.split(" ")[0]
+        media_url, expire_seconds_str = r_media_url.split(' ')
+        # subtract expiry by 10 seconds for some network overhead
+        if now_seconds() < int(expire_seconds_str) - 10:
+            return media_url
 
     key_id = os.environ["CF_SIGNER_KEY_ID"]
     url = f'https://{os.environ["CF_DISTRIBUTION_DOMAIN_NAME"]}/{object_name}'
-    expire_date = datetime.datetime.fromtimestamp(now_seconds() + PostMediaUrlExpireSeconds)
+
+    # TODO: for some reason the returned actual_expire_seconds does not respect try_expire_date
+    try_expire_date = datetime.datetime.now() + datetime.timedelta(hours=12)
 
     cloudfront_signer = CloudFrontSigner(key_id, rsa_signer)
-    media_url = cloudfront_signer.generate_presigned_url(url, date_less_than=expire_date)
+    media_url = cloudfront_signer.generate_presigned_url(url, date_less_than=try_expire_date)
+    actual_expire_seconds = parse_qs(urlparse(media_url).query)['Expires'][0]
 
-    r.hset(RMediaUrl, object_name, f"{media_url} {now_ms()}")
+    r.hset(RMediaUrl, object_name, f"{media_url} {actual_expire_seconds}")
     return media_url
 
 

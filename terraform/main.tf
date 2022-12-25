@@ -60,10 +60,18 @@ locals {
   cf_s3_origin_id = "PillCity"
 }
 
+resource "aws_cloudfront_origin_access_control" "pill-city-cf-oac" {
+  name = "pill-city-dev"
+  origin_access_control_origin_type = "s3"
+  signing_behavior = "always"
+  signing_protocol = "sigv4"
+}
+
 resource "aws_cloudfront_distribution" "pill-city-cf-distribution" {
   origin {
     domain_name = aws_s3_bucket.pill-city-bucket.bucket_regional_domain_name
     origin_id = local.cf_s3_origin_id
+    origin_access_control_id = aws_cloudfront_origin_access_control.pill-city-cf-oac.id
   }
 
   enabled = true
@@ -90,4 +98,30 @@ resource "aws_cloudfront_distribution" "pill-city-cf-distribution" {
   }
 
   price_class = "PriceClass_100"
+}
+
+resource "aws_s3_bucket_policy" "pill-city-bucket-policy" {
+  bucket = aws_s3_bucket.pill-city-bucket.id
+  policy = jsonencode({
+    Version: "2012-10-17"
+    Statement: [
+      {
+        Effect: "Allow"
+        Principal: {
+          Service: "cloudfront.amazonaws.com"
+        }
+        Action: [
+          "s3:GetObject"
+        ]
+        Resource: [
+          "arn:aws:s3:::${aws_s3_bucket.pill-city-bucket.bucket}/*"
+        ]
+        Condition: {
+          StringEquals: {
+            "AWS:SourceArn": aws_cloudfront_distribution.pill-city-cf-distribution.arn
+          }
+        }
+      }
+    ]
+  })
 }
