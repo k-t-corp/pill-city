@@ -1,90 +1,65 @@
 import os
-import boto3
-import json
 import werkzeug
 import uuid
+import base64
+import datetime
 from typing import List
+from urllib.parse import urlparse, parse_qs
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import padding
+from botocore.signers import CloudFrontSigner
 from flask_restful import reqparse, Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from pillcity.models.media import Media
 from pillcity.daos.media import get_media, create_media, get_media_page
 from pillcity.daos.user import find_user
-from pillcity.utils.now import now_ms
+from pillcity.utils.now import now_seconds
 from pillcity.utils.profiling import timer
 from .cache import r, RMediaUrl
 
 
 MaxMediaCount = 4
-PostMediaUrlExpireSeconds = 3600 * 12  # 12 hours
 GetMediaPageCount = 4
 
-S3_AVATARS_PREFIX = "avatars/"
+
+def rsa_signer(message):
+    private_key = serialization.load_pem_private_key(
+        base64.b64decode(os.environ["CF_SIGNER_PRIVATE_KEY_ENCODED"]),
+        password=None,
+        backend=default_backend()
+    )
+    return private_key.sign(message, padding.PKCS1v15(), hashes.SHA1())
 
 
 # Cache structure within Redis
-# "mediaUrl" -> object_name -> "media url"(space)"media url generated time in ms"
+# "mediaUrl" -> object_name -> "media url"(space)"media url expire time in seconds"
 
 @timer
 def get_media_url(object_name: str) -> str:
     """
     Get the publicly accessible URL to a media
     """
-    if object_name.startswith(S3_AVATARS_PREFIX):
-        return f"{os.environ['CDN_URL']}/{object_name}"
-
-    # subtract expiry by 10 seconds for some network overhead
     r_media_url = r.hget(RMediaUrl, object_name)
     if r_media_url:
         r_media_url = r_media_url.decode('utf-8')
-        if now_ms() < int(r_media_url.split(" ")[1]) + (PostMediaUrlExpireSeconds - 10) * 1000:
-            return r_media_url.split(" ")[0]
+        media_url, expire_seconds_str = r_media_url.split(' ')
+        # subtract expiry by 10 seconds for some network overhead
+        if now_seconds() < int(expire_seconds_str) - 10:
+            return media_url
 
-    sts_client = boto3.client(
-        'sts',
-        endpoint_url=os.environ['STS_ENDPOINT_URL'],
-        region_name=os.environ.get('AWS_REGION', ''),
-        aws_access_key_id=os.environ['AWS_ACCESS_KEY'],
-        aws_secret_access_key=os.environ['AWS_SECRET_KEY']
-    )
-    s3_bucket_name = os.environ['S3_BUCKET_NAME']
+    key_id = os.environ["CF_SIGNER_KEY_ID"]
+    url = f'https://{os.environ["CF_DISTRIBUTION_DOMAIN_NAME"]}/{object_name}'
 
-    # obtain temp token
-    read_media_policy = {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Effect": "Allow",
-                "Action": "s3:GetObject",
-                "Resource": [f"arn:aws:s3:::{s3_bucket_name}/{object_name}"],
-            },
-        ],
-    }
-    assume_role_response = sts_client.assume_role(
-        # this role allows all media read, but intersects with the inline policy,
-        # the temp role would still be minimal privilege
-        RoleArn=os.environ['MEDIA_READER_ROLE_ARN'],
-        # media-reader is the only principal who can assume the role so this can be fixed
-        RoleSessionName='media-reader',
-        Policy=json.dumps(read_media_policy),
-        DurationSeconds=PostMediaUrlExpireSeconds,
-    )
-    temp_s3_client = boto3.client(
-        's3',
-        endpoint_url=os.environ['S3_ENDPOINT_URL'],
-        region_name=os.environ.get('AWS_REGION', ''),
-        aws_access_key_id=assume_role_response['Credentials']['AccessKeyId'],
-        aws_secret_access_key=assume_role_response['Credentials']['SecretAccessKey'],
-        aws_session_token=assume_role_response['Credentials']['SessionToken'],
-    )
+    # TODO: for some reason the returned actual_expire_seconds does not respect try_expire_date
+    try_expire_date = datetime.datetime.now() + datetime.timedelta(hours=12)
 
-    # get pre-signed url
-    media_url = temp_s3_client.generate_presigned_url(
-        ClientMethod='get_object',
-        Params={'Bucket': s3_bucket_name, 'Key': object_name},
-        ExpiresIn=PostMediaUrlExpireSeconds
-    )
+    cloudfront_signer = CloudFrontSigner(key_id, rsa_signer)
+    media_url = cloudfront_signer.generate_presigned_url(url, date_less_than=try_expire_date)
+    actual_expire_seconds = parse_qs(urlparse(media_url).query)['Expires'][0]
 
-    r.hset(RMediaUrl, object_name, f"{media_url} {now_ms()}")
+    r.hset(RMediaUrl, object_name, f"{media_url} {actual_expire_seconds}")
     return media_url
 
 

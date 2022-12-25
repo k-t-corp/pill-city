@@ -25,15 +25,3 @@ services:
       interval: 1s
       timeout: 3s
       retries: 30
-  localstack-pro:
-    image: localstack/localstack-pro
-    ports:
-    - 4566:4566
-    - 4510-4559:4510-4559
-    environment:
-      PERSISTENCE: '1'
-      DOCKER_HOST: unix:///var/run/docker.sock
-      LOCALSTACK_API_KEY: ${LOCALSTACK_API_KEY}
-    volumes:
-    - /var/run/docker.sock:/var/run/docker.sock
-    - ${PWD}/data/localstack_pro_data:/var/lib/localstack

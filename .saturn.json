@@ -1,7 +1,6 @@
 {
   "services": [
     "mongodb",
-    "redis",
-    "localstack-pro"
+    "redis"
   ]
 }

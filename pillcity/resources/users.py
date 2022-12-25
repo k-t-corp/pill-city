@@ -11,7 +11,7 @@ from pillcity.daos.post import create_post
 from pillcity.daos.rss import notifying_action_value_to_rss_code
 from pillcity.daos.media import create_media
 from pillcity.utils.now import now_seconds
-from .media import get_media_url_v2, S3_AVATARS_PREFIX
+from .media import get_media_url_v2
 
 
 class UserId(fields.Raw):
@@ -82,7 +82,7 @@ class MyAvatar(Resource):
         # avatars prefix is made explicitly public readable
         # because it's faster to read a user's metadata, and we are fine with all avatars being public
         # BUG: the suffix was previously now_ms() // 1_000_000, meaning the timestamps where at ~1/3 hour scale
-        object_name_stem = f"{S3_AVATARS_PREFIX}{user_id}-{str(now_seconds())}"
+        object_name_stem = f"avatars/{user_id}-{str(now_seconds())}"
         avatar_media = create_media(file, object_name_stem, user)
         if not avatar_media:
             return {'msg': f"Disallowed image type"}, 400
