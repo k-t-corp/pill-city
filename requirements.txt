@@ -21,6 +21,7 @@ markupsafe==2.0.1
 flask-swagger-ui==3.36.0
 colorthief==0.2.1
 urlextract==1.6.0
+cryptography==38.0.4
 
 # testing
 freezegun==1.1.0

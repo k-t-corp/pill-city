@@ -16,8 +16,10 @@ echo "Applying Terraform"
 export AWS_PROFILE=PillCityDevTerraform
 terraform init
 terraform apply -auto-approve
-AWS_ACCESS_KEY=$(cat terraform.tfstate | jq -r '.resources[] | select(.name=="pill-city-admin-secret") .instances[0].attributes.id')
-AWS_SECRET_KEY=$(cat terraform.tfstate | jq -r '.resources[] | select(.name=="pill-city-admin-secret") .instances[0].attributes.secret')
+AWS_ACCESS_KEY=$(cat terraform.tfstate | jq -r '.resources[] | select(.name=="pill-city-admin-user-secret") .instances[0].attributes.id')
+AWS_SECRET_KEY=$(cat terraform.tfstate | jq -r '.resources[] | select(.name=="pill-city-admin-user-secret") .instances[0].attributes.secret')
+CF_SIGNER_KEY_ID=$(cat terraform.tfstate | jq -r '.resources[] | select(.name=="pill-city-cf-public-key") .instances[0].attributes.id')
+CF_DISTRIBUTION_DOMAIN_NAME=$(cat terraform.tfstate | jq -r '.resources[] | select(.name=="pill-city-cf-distribution") .instances[0].attributes.domain_name')
 
 popd || exit
 
@@ -25,3 +27,5 @@ echo "Please replace the following lines in .env file"
 echo "AWS_ACCESS_KEY=${AWS_ACCESS_KEY}"
 echo "AWS_SECRET_KEY=${AWS_SECRET_KEY}"
 echo "CF_SIGNER_PRIVATE_KEY_ENCODED=${CF_SIGNER_PRIVATE_KEY_ENCODED}"
+echo "CF_SIGNER_KEY_ID=${CF_SIGNER_KEY_ID}"
+echo "CF_DISTRIBUTION_DOMAIN_NAME=${CF_DISTRIBUTION_DOMAIN_NAME}"

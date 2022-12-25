@@ -181,15 +181,14 @@ def signup_user(user_id: str, avatar: Optional[str] = None, display_name: Option
 
 
 def main():
-    # Drop everything in mino
+    # Drop everything in S3
     s3 = boto3.resource(
         's3',
-        endpoint_url="http://localhost:4566",
-        region_name="us-east-1",
-        aws_access_key_id="test",
-        aws_secret_access_key="test"
+        region_name=os.environ['AWS_REGION'],
+        aws_access_key_id=os.environ['AWS_ACCESS_KEY'],
+        aws_secret_access_key=os.environ['AWS_SECRET_KEY']
     )
-    bucket = s3.Bucket('pill-city')
+    bucket = s3.Bucket(os.environ['S3_BUCKET_NAME'])
     print("Vacuuming s3")
     bucket.objects.all().delete()
 

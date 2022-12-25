@@ -9,7 +9,7 @@ dev-release:
 		set -o allexport; source .env; ./venv/bin/python release.py
 
 dev-dump:
-		./venv/bin/python ./dev/dump_mock_data.py
+		set -o allexport; source .env; ./venv/bin/python ./dev/dump_mock_data.py
 
 test:
 		./venv/bin/nosetests
