@@ -13,7 +13,7 @@ provider "aws" {
 
 # todo: migrate actual prod configuration over
 resource "aws_s3_bucket" "pill-city-bucket" {
-  bucket = "pill-city-dev"
+  bucket_prefix = "pill-city-dev-"
   acl = "private"
 }
 

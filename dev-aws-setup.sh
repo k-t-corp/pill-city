@@ -16,6 +16,7 @@ echo "Applying Terraform"
 export AWS_PROFILE=PillCityDevTerraform
 terraform init
 terraform apply -auto-approve
+S3_BUCKET_NAME=$(cat terraform.tfstate | jq -r '.resources[] | select(.name=="pill-city-bucket") .instances[0].attributes.bucket')
 AWS_ACCESS_KEY=$(cat terraform.tfstate | jq -r '.resources[] | select(.name=="pill-city-admin-user-secret") .instances[0].attributes.id')
 AWS_SECRET_KEY=$(cat terraform.tfstate | jq -r '.resources[] | select(.name=="pill-city-admin-user-secret") .instances[0].attributes.secret')
 CF_SIGNER_KEY_ID=$(cat terraform.tfstate | jq -r '.resources[] | select(.name=="pill-city-cf-public-key") .instances[0].attributes.id')
@@ -24,6 +25,7 @@ CF_DISTRIBUTION_DOMAIN_NAME=$(cat terraform.tfstate | jq -r '.resources[] | sele
 popd || exit
 
 echo "Please replace the following lines in .env file"
+echo "S3_BUCKET_NAME=${S3_BUCKET_NAME}"
 echo "AWS_ACCESS_KEY=${AWS_ACCESS_KEY}"
 echo "AWS_SECRET_KEY=${AWS_SECRET_KEY}"
 echo "CF_SIGNER_PRIVATE_KEY_ENCODED=${CF_SIGNER_PRIVATE_KEY_ENCODED}"
