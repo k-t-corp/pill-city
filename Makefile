@@ -2,8 +2,8 @@ dev-deps:
 		python3 -m venv venv
 		./venv/bin/pip install -r requirements.txt
 
-dev-localstack-setup:
-		./dev-localstack-setup.sh
+dev-aws-setup:
+		./dev-aws-setup.sh
 
 dev-release:
 		set -o allexport; source .env; ./venv/bin/python release.py
