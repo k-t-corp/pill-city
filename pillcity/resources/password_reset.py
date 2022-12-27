@@ -11,14 +11,14 @@ CLAIM_EXPIRATION_SECONDS = 60
 
 def _send_password_reset_email(email: str, code: str):
     smtp_enabled = os.getenv("SMTP_ENABLED", "false")
-    domain = os.environ['DOMAIN']
-    smtp_from = f"admin@{domain}"
+    web_domain = os.environ['WEB_DOMAIN']
+    smtp_from = os.environ['SMTP_FROM']
 
     msg = MIMEText(f"""Hello,
 
-Go to https://{domain}/reset?code={code} to reset your password
+Go to https://{web_domain}/reset?code={code} to reset your password
 """)
-    msg['Subject'] = f'Reset your {domain} password'
+    msg['Subject'] = f'Reset your {web_domain} password'
     msg['From'] = smtp_from
     msg['To'] = email
     logging.info(f"Going to send email {msg}")
