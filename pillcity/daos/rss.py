@@ -29,9 +29,9 @@ for a, rc in notifying_action_to_rss_code.items():
 
 
 def get_rss_notifications_xml(self: User, types: Set[NotifyingAction], types_str: str) -> str:
-    domain = os.environ['DOMAIN']
+    web_domain = os.environ['WEB_DOMAIN']
     protocol = 'https'
-    if 'localhost:' in domain:
+    if 'localhost:' in web_domain:
         protocol = 'http'
 
     user_id = self.user_id
@@ -42,9 +42,9 @@ def get_rss_notifications_xml(self: User, types: Set[NotifyingAction], types_str
     fg = FeedGenerator()
     # todo: duplicate with the path in app.py
     fg.id(get_rss_notifications_url(self, types_str))
-    fg.title(f"@{user_id}'s {title_descriptions} on {domain}")
-    fg.author({'name': f"@{user_id}@{domain}"})
-    fg.link(href=f'{protocol}://{domain}/notifications', rel='alternate')
+    fg.title(f"@{user_id}'s {title_descriptions} on {web_domain}")
+    fg.author({'name': f"@{user_id}@{web_domain}"})
+    fg.link(href=f'{protocol}://{web_domain}/notifications', rel='alternate')
     fg.language('en')
     fg_updated = None
 
@@ -55,11 +55,11 @@ def get_rss_notifications_xml(self: User, types: Set[NotifyingAction], types_str
 
             fe = fg.add_entry()
             # todo: this is not a valid url lol
-            fe.id(f'{protocol}://{domain}/notification/{notification.eid}')
+            fe.id(f'{protocol}://{web_domain}/notification/{notification.eid}')
             fe.published(notification_dt)
             fe.updated(notification_dt)
             fe.title(plaintext_notification(notification))
-            fe.link(href=f"{protocol}://{domain}{notification.notified_href}")
+            fe.link(href=f"{protocol}://{web_domain}{notification.notified_href}")
             fe.description(plaintext_summary(notification.notified_summary, 150))
             if not fg_updated or notification_dt > fg_updated:
                 fg_updated = notification_dt
