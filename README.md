@@ -91,4 +91,4 @@ make dev-release
 3. Rerun `up`
 
 ## Security
-Please send security findings to [`security@pill.city`](mailto:security@pill.city).
+Please send security findings to [`admin@ktachibana.party`](mailto:admin@ktachibana.party).
