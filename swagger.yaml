@@ -93,7 +93,7 @@ paths:
                 $ref: '#/components/schemas/Post'
         '401':
           $ref: '#/components/responses/401Unauthorized'
-  /post/{postId}/reactions:
+  /posts/{postId}/reactions:
     post:
       summary: Create a reaction to a post
       operationId: createReaction
