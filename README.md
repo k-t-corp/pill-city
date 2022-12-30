@@ -4,7 +4,6 @@ The OpenAPI spec and server for pill.city
 ## Features and Demo
 See client repos
 
-* [Flutter](https://github.com/pill-city/flutter)
 * [Web](https://github.com/pill-city/web)
 
 ## Tech Overview
@@ -63,7 +62,6 @@ The API will be running at `localhost:5000`
 
 See client repos on how to run a graphical interface
 
-* [Flutter](https://github.com/pill-city/flutter)
 * [Web](https://github.com/pill-city/web)
 
 ## Dump dummy data into server
