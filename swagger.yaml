@@ -93,6 +93,25 @@ paths:
                 $ref: '#/components/schemas/Post'
         '401':
           $ref: '#/components/responses/401Unauthorized'
+  /post/{postId}/reactions:
+    post:
+      summary: Create a reaction to a post
+      operationId: createReaction
+      tags: [ "core" ]
+      parameters:
+        - in: path
+          name: postId
+          schema:
+            type: string
+          required: true
+          description: Post ID
+      requestBody:
+        $ref: '#/components/requestBodies/CreateReactionRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/CreateReactionSuccessfulResponse'
+        '404':
+          $ref: '#/components/responses/404NotFound'
   /me:
     get:
       summary: Get the logged in user
@@ -661,6 +680,17 @@ components:
                   type: string
                 description: Object names of the uploaded media to attach to the post
                 example: [ "media/b64bde42-6b29-436f-98a9-5baabcb81e8e.jpeg" ]
+    CreateReactionRequest:
+      content:
+        application/json:
+          schema:
+            required:
+              - emoji
+            properties:
+              emoji:
+                type: string
+                description: The emoji to react with
+                example: ❤️
   responses:
     SignInSuccessfulResponse:
       description: Successfully signed in
@@ -685,6 +715,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Post'
+    CreateReactionSuccessfulResponse:
+      description: Successfully created a reaction
+      content:
+        application/json:
+          schema:
+            required:
+              - id
+            properties:
+              id:
+                type: string
+                description: The ID of the created reaction
+                example: 1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d
     400BadRequest:
       description: Bad request, invalid request body
       content:
