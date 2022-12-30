@@ -22,7 +22,7 @@ class CloudEmoticon(PillCityPlugin):
         self._poll_emoticons()
 
     def job_interval_seconds(self) -> int:
-        return 60
+        return 3600
 
     def flask_blueprint(self) -> Optional[Blueprint]:
         api = Blueprint(__name__, __name__)
