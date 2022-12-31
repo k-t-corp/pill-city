@@ -1,6 +1,6 @@
 type FormattedContentSegmentType = "strikethrough" | "bold" | "italic" | "url" | "mention"
 
-interface FormattedContentSegment {
+export interface FormattedContentSegment {
   content: string;
   types: FormattedContentSegmentType[];
   reference?: number
