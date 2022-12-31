@@ -3,12 +3,14 @@ import {AnonymizedCircle} from "./Circle";
 import MediaUrlV2 from "./MediaUrlV2";
 import LinkPreview from "./LinkPreview";
 import EntityState from "./EntityState";
+import FormattedContent from "./FormattedContent";
 
 interface BaseComment {
   id: string
   created_at_seconds: number
   author: User
   content: string
+  formatted_content?: FormattedContent
   media_urls_v2: MediaUrlV2[]
   reply_to_comment_id: string
   state: EntityState
@@ -31,6 +33,7 @@ export interface ResharedPost {
   created_at_seconds: number
   author: User
   content: string,
+  formatted_content?: FormattedContent
   media_urls_v2: MediaUrlV2[]
   poll: Poll | null,
   state: EntityState
@@ -60,6 +63,7 @@ export default interface Post {
   circles: AnonymizedCircle[],
   media_urls_v2: MediaUrlV2[]
   content: string,
+  formatted_content?: FormattedContent,
   is_update_avatar: boolean
   poll: Poll | null,
   link_previews: LinkPreview[]

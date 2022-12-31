@@ -1,7 +1,6 @@
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
 import {pastTime} from "../../utils/timeDelta";
-import parseContent from "../../utils/parseContent";
 import React, {useState} from "react";
 import {Comment} from "../../models/Post";
 import User from "../../models/User";
@@ -13,6 +12,7 @@ import {DotsVerticalIcon} from "@heroicons/react/solid";
 import PillDropdownMenu from "../PillDropdownMenu/PillDropdownMenu";
 import MediaCollage from "../MediaCollage/MediaCollage";
 import EntityState from "../../models/EntityState";
+import FormattedContent from "../FormattedContent/FormattedContent";
 
 interface Props {
   me: User
@@ -96,7 +96,7 @@ export default (props: Props) => {
           {
             !deleting && !deleted ?
               !blocked ?
-                parseContent(comment.content, "") :
+                comment.formatted_content && <FormattedContent fc={comment.formatted_content}/> :
               <div style={{fontStyle: 'italic'}}>This user is blocked</div> :
             <div style={{fontStyle: 'italic'}}>This comment has been deleted</div>
           }

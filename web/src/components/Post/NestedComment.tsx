@@ -1,6 +1,5 @@
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
-import parseContent from "../../utils/parseContent";
 import {pastTime} from "../../utils/timeDelta";
 import React, {useState} from "react";
 import Post, {NestedComment, Comment} from "../../models/Post";
@@ -11,6 +10,7 @@ import {DotsVerticalIcon, ReplyIcon} from "@heroicons/react/solid";
 import PillDropdownMenu from "../PillDropdownMenu/PillDropdownMenu";
 import MediaCollage from "../MediaCollage/MediaCollage";
 import EntityState from "../../models/EntityState";
+import FormattedContent from "../FormattedContent/FormattedContent";
 
 interface Props {
   me: User
@@ -83,7 +83,7 @@ export default (props: Props) => {
         {
           !deleting && !deleted ?
             !blocked ?
-              parseContent(nestedComment.content, "") :
+              nestedComment.formatted_content && <FormattedContent fc={nestedComment.formatted_content}/> :
             <div style={{fontStyle: 'italic'}}>This user is blocked</div> :
           <div style={{fontStyle: 'italic'}}>This comment has been deleted</div>
         }

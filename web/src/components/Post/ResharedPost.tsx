@@ -1,13 +1,13 @@
 import React from 'react'
 import {useHistory} from "react-router-dom";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
-import parseContent from "../../utils/parseContent";
 import {ResharedPost} from "../../models/Post";
 import './ResharedPost.css'
 import ClickableId from "../ClickableId/ClickableId";
 import MediaCollage from "../MediaCollage/MediaCollage";
 import Poll from "../Poll/Poll";
 import User from "../../models/User";
+import FormattedContent from "../FormattedContent/FormattedContent";
 
 interface Props {
   resharedFrom: ResharedPost,
@@ -37,8 +37,7 @@ export default (props: Props) => {
         <div className={`post-content ${props.showDetail ? '' : 'post-content-summary'}`}>
           {
             resharedFrom.state !== 'deleted' ?
-              parseContent(resharedFrom.content, "")
-              :
+              resharedFrom.formatted_content && <FormattedContent fc={resharedFrom.formatted_content}/> :
               <div style={{fontStyle: 'italic'}}>This post has been deleted</div>
           }
         </div>

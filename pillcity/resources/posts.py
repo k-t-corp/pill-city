@@ -12,7 +12,7 @@ from pillcity.daos.exceptions import UnauthorizedAccess, BadRequest
 from pillcity.daos.link_preview import get_link_preview
 from .users import user_fields
 from .pagination import pagination_parser
-from .mention import check_mentioned_user_ids
+from .mention import get_mentioned_user_ids
 from .comments import comment_fields
 from .media import check_media_object_names, MediaUrlsV2
 from .link_preview import link_preview_fields
@@ -174,7 +174,7 @@ class Posts(Resource):
             reshareable=args['reshareable'],
             reshared_from=reshared_from_post,
             media_list=check_media_object_names(media_object_names, MaxPostMediaCount),
-            mentioned_users=check_mentioned_user_ids(args['mentioned_user_ids']),
+            mentioned_users=get_mentioned_user_ids(args['content']),
             is_update_avatar=False,
             poll_choices=poll_choices,
             poll_choice_media_object_names=poll_choice_media_object_names,

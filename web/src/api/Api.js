@@ -155,7 +155,7 @@ export class Api {
     return res.data
   }
 
-  async postPost(content, isPublic, circleIds, reshareable, resharedFrom, newPostMedias, mentionedUserIds, newPostPollChoices) {
+  async postPost(content, isPublic, circleIds, reshareable, resharedFrom, newPostMedias, newPostPollChoices) {
     Api.throwOnUnauthorized()
 
     // gather uploaded media and their indices
@@ -202,7 +202,6 @@ export class Api {
         reshareable: reshareable,
         reshared_from: resharedFrom,
         media_object_names: mediaObjectNames,
-        mentioned_user_ids: mentionedUserIds,
         poll_choices: pollChoices,
         poll_choice_media_object_names: pollChoiceMediaObjectNames
       }
@@ -313,7 +312,7 @@ export class Api {
     return res.data
   }
 
-  async postComment(content, postId, mentionedUserIds, mediaData, ownedMediaObjectNames) {
+  async postComment(content, postId, mediaData, ownedMediaObjectNames) {
     Api.throwOnUnauthorized()
     let allMediaObjNames = []
     if (mediaData.length !== 0) {
@@ -324,7 +323,6 @@ export class Api {
       `/posts/${postId}/comment`,
       {
         content,
-        mentioned_user_ids: mentionedUserIds,
         media_object_names: allMediaObjNames
       }
     )
@@ -345,7 +343,7 @@ export class Api {
     return res.data
   }
 
-  async postNestedComment(content, postId, commentId, mentionedUserIds, mediaData, ownedMediaObjectNames, replyToNestedCommentId) {
+  async postNestedComment(content, postId, commentId, mediaData, ownedMediaObjectNames, replyToNestedCommentId) {
     Api.throwOnUnauthorized()
     let allMediaObjNames = []
     if (mediaData.length !== 0) {
@@ -356,7 +354,6 @@ export class Api {
       `/posts/${postId}/comment/${commentId}/comment`,
       {
         content,
-        mentioned_user_ids: mentionedUserIds,
         media_object_names: allMediaObjNames,
         reply_to_comment_id: replyToNestedCommentId
       }

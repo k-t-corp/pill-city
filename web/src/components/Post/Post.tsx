@@ -1,5 +1,4 @@
 import React, {useEffect, useRef, useState} from 'react'
-import {parseContentWithLinkPreviews} from "../../utils/parseContent";
 import {pastTime} from "../../utils/timeDelta";
 import {useHistory} from "react-router-dom";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
@@ -24,6 +23,7 @@ import "./Post.css"
 import Poll from '../Poll/Poll';
 import PostAttachments, {PostAttachment} from "./PostAttachments";
 import EntityState from "../../models/EntityState";
+import FormattedContent from "../FormattedContent/FormattedContent";
 
 interface Props {
   post: Post
@@ -261,7 +261,7 @@ export default (props: Props) => {
             !deleting && !deleted ?
               !blocked ?
                 !props.post.is_update_avatar ?
-                  parseContentWithLinkPreviews(props.post.content, props.post.link_previews,`post-content ${props.detail ? '' : 'post-content-summary'}`)
+                  props.post.formatted_content && <FormattedContent fc={props.post.formatted_content} className='post-content'/>
                   :
                   <div className='post-content' style={{fontStyle: 'italic'}}>@{props.post.author.id} has a new
                     avatar!</div> :
