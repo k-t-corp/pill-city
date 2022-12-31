@@ -32,7 +32,7 @@ export default (props: Props) => {
   }, 5000, { immediate: true })
 
   return (
-    <div className='link-previews'>
+    <div>
       {previews.map(_ => <LinkPreview key={_.url} preview={_}/>)}
     </div>
   )
