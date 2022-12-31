@@ -12,7 +12,7 @@ export default (props: Props) => {
       <img
         /*todo: remove user*/
         {...props}
-        src={`${process.env.PUBLIC_URL}/avatar.webp`}
+        src={`${process.env.PUBLIC_URL}/assets/avatar.webp`}
         alt=""
       />
     )

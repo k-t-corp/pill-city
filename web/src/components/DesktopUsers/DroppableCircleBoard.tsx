@@ -39,7 +39,7 @@ export default (props: Props) => {
   let animationIntervalId: any = null;
   const circleAnimation = (circleId: string, user: User) => {
     const avatar: any = document.getElementById(`${circleId}-temp-card-avatar`)
-    avatar.src = !user.avatar_url_v2 ? `${process.env.PUBLIC_URL}/avatar.webp` : getMediaV2Url(user.avatar_url_v2)
+    avatar.src = !user.avatar_url_v2 ? `${process.env.PUBLIC_URL}/assets/avatar.webp` : getMediaV2Url(user.avatar_url_v2)
 
     let elem: any = document.getElementById(`${circleId}-temp-card`);
     let degree = 1;

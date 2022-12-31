@@ -33,7 +33,7 @@ export default (props: Props) => {
       >
         <img
           className="settings-profile-selection-option-img"
-          src={`${process.env.PUBLIC_URL}/banner/${profilePicOptions[i].replace('.png', '.webp')}`}
+          src={`${process.env.PUBLIC_URL}/assets/${profilePicOptions[i].replace('.png', '.webp')}`}
           alt=""
         />
       </div>
@@ -46,7 +46,7 @@ export default (props: Props) => {
     <PillForm>
       <div className="settings-profile-pic-preview" style={{
         backgroundColor: "#9dd0ff",
-        backgroundImage: `url(${process.env.PUBLIC_URL}/banner/${selectedOption.replace('.png', '.webp')})`,
+        backgroundImage: `url(${process.env.PUBLIC_URL}/assets/${selectedOption.replace('.png', '.webp')})`,
       }}/>
       <div className="settings-profile-pic-selections">
         {optionElems}
