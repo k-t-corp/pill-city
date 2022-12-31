@@ -13,7 +13,7 @@ This is an API server written in Python/Flask. It stores information in a MongoD
 * `base64`
 
 ## Prerequisites
-1. Install Python dependencies
+1. Install Python dependencies.
 
    ```bash
    make dev-deps
