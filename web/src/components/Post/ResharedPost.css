@@ -1,0 +1,31 @@
+.post-reshared-wrapper {
+    border: #e0e0e0 solid 1px;
+    margin-left: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 4px;
+}
+
+.post-reshared-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.post-reshared-avatar {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+}
+
+.post-reshared-author {
+    margin-left: 5px;
+    font-weight: bold;
+    font-size: larger;
+}
+
+.post-reshared-attachments-wrapper {
+    margin-left: 15px;
+    margin-bottom: 10px;
+}

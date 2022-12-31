@@ -1,0 +1,22 @@
+.pill-checkbox-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.pill-checkbox.react-toggle--checked .react-toggle-track {
+    background-color: #E05140;
+}
+
+.pill-checkbox.react-toggle--checked:hover:not(.react-toggle--disabled) .react-toggle-track {
+    background-color: #E05140;
+}
+
+.react-toggle--checked .react-toggle-thumb {
+    left: 27px;
+    border-color: #E05140;
+}
+
+.pill-checkbox-label {
+    margin-left: 10px;
+}

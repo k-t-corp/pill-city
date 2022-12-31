@@ -1,0 +1,13 @@
+.toast-container {
+    position: fixed;
+    right: 0;
+    top: 50px;
+}
+
+/* Mobile */
+@media only screen and (max-width: 750px) {
+    .toast-container {
+        top: 5px;
+        width: 100%;
+    }
+}

@@ -1,0 +1,148 @@
+.profile-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 2px 2px 1px 1px #e0e0e0;
+    width: 60%;
+    min-width: 600px;
+    max-width: 1000px;
+    margin: 3em auto 20px auto;
+    padding-bottom: 20px;
+}
+
+.profile-banner-wrapper {
+    width: 100%;
+    height: 250px;
+    background-color: #9dd0ff;
+    background-size: 100px;
+}
+
+.profile-info-buttons {
+    display: flex;
+    flex-direction: row;
+    margin-top: 20px;
+    align-items: center;
+}
+
+.profile-more-actions-trigger {
+    color: #bdbdbd;
+    width: 17px;
+    height: 17px;
+    border-radius: 2px;
+    padding: 2px;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.profile-more-actions-trigger:hover {
+    background-color: #f0f0f0;
+}
+
+.profile-avatar-wrapper {
+    width: 120px;
+    height: 120px;
+    flex-shrink: 0;
+    margin-top: -60px;
+}
+
+.profile-avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: white 3px solid;
+}
+
+.profile-user-name {
+    font-size: x-large;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.profile-user-id {
+    font-size: medium;
+    margin-top: 12px;
+    color: #a6a6a6;
+}
+
+.profile-user-following-counts {
+    margin-top: 6px;
+    color: #a6a6a6;
+}
+
+.profile-info-button {
+    padding: 8px 10px;
+    font-weight: bold;
+    font-size: medium;
+    background-color: #E05140;
+    color: white;
+    border-radius: 5px;
+    width: auto;
+    cursor: pointer;
+}
+
+.profile-info-button-disabled {
+    cursor: not-allowed;
+    background-color: lightgray;
+}
+
+.profile-posts {
+    width: 60%;
+    min-width: 600px;
+    max-width: 1000px;
+}
+
+.profile-status {
+    padding: 13px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 2px 2px 1px 1px #e0e0e0;
+    margin-bottom: 20px;
+    color: gray;
+}
+
+@media only screen and (max-width: 750px) {
+    .profile-user-info {
+        min-width: 0;
+        width: 100%;
+        margin: 0 0 2px;
+    }
+
+    .profile-posts {
+        min-width: 0;
+        width: 100%;
+        margin-bottom: 50px;
+    }
+}
+
+.profile-load-more {
+    padding: 13px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 2px 2px 1px 1px #e0e0e0;
+    margin-bottom: 20px;
+    width: 100%;
+    cursor: pointer;
+    text-align: center;
+    color: cornflowerblue;
+}
+
+.profile-load-more-disable {
+    color: lightgray;
+    cursor: not-allowed;
+}
+
+.profile-load-more:hover {
+    color: #0d71bb;
+}
+
+.profile-load-more-disable:hover {
+    color: lightgray;
+}

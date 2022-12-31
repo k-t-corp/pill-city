@@ -1,0 +1,114 @@
+.post-wrapper {
+    padding: 13px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 2px 2px 1px 1px #e0e0e0;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.post-avatar {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+}
+
+.post-op-info-wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.post-op-info-wrapper > * {
+    display: flex;
+    align-items: center;
+}
+
+.post-more-actions-trigger {
+    color: #bdbdbd;
+    width: 25px;
+    height: 25px;
+    border-radius: 7px;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.post-more-actions-trigger:hover {
+    background-color: #e7e7e7;
+}
+
+.post-op-info-time {
+    color: #767676;
+    cursor: pointer;
+    margin-right: 4px;
+}
+
+.post-name {
+    margin: 0 10px;
+    font-size: large;
+    font-weight: bold;
+}
+
+.post-visibility {
+    font-size: larger;
+    font-weight: bold;
+    color: cornflowerblue;
+}
+
+.post-time {
+    font-size: smaller;
+    color: #767676;
+}
+
+/*Post Content*/
+.post-content {
+    overflow-wrap: break-word;
+    white-space: pre-line;
+    margin: 15px 0;
+}
+
+.post-attachments-wrapper {
+    margin-bottom: 15px;
+}
+
+/*Post Interactions*/
+.post-interactions-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.post-interactions {
+    display: flex;
+}
+
+.post-circle-button {
+    margin-left: 12px;
+    background-color: #f0f0f0;
+    color: #767676;
+    border-radius: 4px;
+    width: 35px;
+    height: 35px;
+    padding: 7px;
+    cursor: pointer;
+}
+
+.post-circle-button:hover {
+    background-color: #e7e7e7;
+}
+
+.post-delete-button {
+    color: white;
+    background-color: pink;
+}
+
+.post-delete-button:hover {
+    background-color: lightpink;
+}
+
+@media only screen and (max-width: 750px) {
+    .post-wrapper {
+        border-radius: 0;
+        margin-bottom: 2px;
+    }
+}

@@ -1,0 +1,139 @@
+.edit-circle-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.edit-circle {
+    cursor: pointer;
+    display: flex;
+}
+
+.edit-circle-name {
+    font-weight: bold;
+    font-size: large;
+    margin-bottom: 20px;
+}
+
+.edit-circle-no-member {
+    text-align: center;
+}
+
+.edit-circle-members {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-column-gap: 5px;
+    grid-row-gap: 5px;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.edit-circle-members::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.edit-circle-members {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.edit-circle-buttons {
+    display: flex;
+    width: 100%;
+    margin-top: 30px;
+    justify-content: space-between;
+}
+
+.edit-circle-buttons>div {
+    font-weight: bold;
+    color: white;
+    border-radius: 5px;
+    width: auto;
+    cursor: pointer;
+    padding: 6px 10px;
+    font-size: medium;
+
+}
+
+.edit-circle-button-delete {
+    background-color: black;
+    margin-right: 20px;
+}
+
+.edit-circle-button-done {
+    background-color: #E05140;
+}
+
+.edit-circle-member-card-wrapper {
+    background-color: #ffffff;
+    width: 100%;
+    height: 50px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 1px 1px #e0e0e0;
+    display: flex;
+    align-items: center;
+}
+
+.edit-circle-member-card-avatar {
+    height: 50px;
+    width: 50px;
+    flex-shrink: 0;
+}
+
+.edit-circle-member-card-avatar-img {
+    width: 100%;
+    height: 100%;
+}
+
+.edit-circle-member-card-name {
+    flex-grow: 1;
+    font-weight: bold;
+    margin-left: 20px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.edit-circle-member-card-delete-button {
+    justify-self: flex-end;
+    flex-shrink: 0;
+    color: #767676;
+    border-radius: 5px;
+    width: 35px;
+    height: 35px;
+    padding: 7px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.edit-circle-member-card-delete-button:hover {
+    color: #E05140;
+}
+
+/*Loader*/
+.lds-dual-ring {
+    display: inline-block;
+    width: 35px;
+    height: 35px;
+}
+.lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 15px;
+    height: 15px;
+    margin: 8px;
+    border-radius: 50%;
+    border: 2px solid;
+    border-color: #888 transparent #888 transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

@@ -1,0 +1,9 @@
+.about {
+    color: lightgray;
+    padding-top: 5px;
+    font-size: smaller;
+}
+
+.about-commit-link {
+    color: #9dd0ff;
+}
