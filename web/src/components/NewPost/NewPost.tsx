@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {useHotkeys} from "react-hotkeys-hook";
 import MediaPane from "../MediaPane/MediaPane";
-import parseMentioned from "../../utils/parseMentioned";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
 import Circle from "../../models/Circle";
@@ -133,7 +132,6 @@ export default (props: Props) => {
         props.resharedPost === null ? resharable : true,
         props.resharedPost === null ? null : props.resharedPost.id,
         props.resharedPost === null ? medias : [],
-        parseMentioned(content),
         pollChoices
       );
     } catch (e) {

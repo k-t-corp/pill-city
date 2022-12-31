@@ -4,7 +4,6 @@ import React, {useState} from "react";
 import User from "../../models/User";
 import {useHotkeys} from "react-hotkeys-hook";
 import FormData from "form-data";
-import parseMentioned from "../../utils/parseMentioned";
 import ApiError from "../../api/ApiError";
 import Post, {Comment, NestedComment} from "../../models/Post";
 import {useToast} from "../Toast/ToastProvider";
@@ -94,7 +93,6 @@ export default (props: Props) => {
           content,
           props.post.id,
           props.replyingToComment.id,
-          parseMentioned(content),
           mediaData,
           ownedMedias.map(_ => _.object_name),
           props.replyingToNestedComment && props.replyingToNestedComment.id
@@ -112,7 +110,6 @@ export default (props: Props) => {
         const newComment = await api.postComment(
           content,
           props.post.id,
-          parseMentioned(content),
           mediaData,
           ownedMedias.map(_ => _.object_name)
         )

@@ -4,7 +4,7 @@ from pillcity.daos.user import find_user
 from pillcity.daos.post import dangerously_get_post
 from pillcity.daos.comment import create_comment, dangerously_get_comment, delete_comment
 from pillcity.daos.exceptions import UnauthorizedAccess
-from .mention import check_mentioned_user_ids
+from .mention import get_mentioned_user_ids
 from .users import user_fields
 from .media import check_media_object_names, MediaUrlsV2
 from .content import FormattedContent
@@ -53,7 +53,7 @@ class Comments(Resource):
             content=args['content'],
             parent_post=post,
             parent_comment=None,
-            mentioned_users=check_mentioned_user_ids(args['mentioned_user_ids']),
+            mentioned_users=get_mentioned_user_ids(args['content']),
             media_list=check_media_object_names(args['media_object_names'], MaxCommentMediaCount),
             reply_to_comment_id=None
         )
@@ -98,7 +98,7 @@ class NestedComments(Resource):
             content=args['content'],
             parent_post=post,
             parent_comment=comment,
-            mentioned_users=check_mentioned_user_ids(args['mentioned_user_ids']),
+            mentioned_users=get_mentioned_user_ids(args['content']),
             media_list=check_media_object_names(args['media_object_names'], MaxCommentMediaCount),
             reply_to_comment_id=reply_to_comment_id
         )
