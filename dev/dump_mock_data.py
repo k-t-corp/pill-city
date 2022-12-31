@@ -252,7 +252,7 @@ def main():
     heisi_id = ahuhu.create_post(None, is_public=False, circle_ids=[ahuhu_limited_circle_id],
                                  reshareable=True,
                                  media_filenames=['heisi1.jpeg', 'heisi2.jpeg', 'heisi3.jpeg', 'heisi4.jpeg'])
-    weiji_id = horo.create_post('你这种伪基佬真淫家早该B了！@mawei ', is_public=True, mentioned_user_ids=['mawei'])
+    weiji_id = horo.create_post('你这种伪基佬真淫家早该B了！ @mawei ', is_public=True, mentioned_user_ids=['mawei'])
     sizhongzhuanfa_id = luxiyuan.create_post(
         '''有一回，骚豆菊苣对我说道：“你用过Android么？”我略略点一点头。
 他说：“用过……我便考你一考。AndroidApp的网络访问方式，是怎样的？”
