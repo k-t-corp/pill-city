@@ -18,17 +18,11 @@ export default () => {
       Web {webGitCommit ? githubLink(webGitCommit) : '?'}{', '}
       API {apiGitCommit ? githubLink(apiGitCommit) : '?'}{', '}
       <a
-        href="https://github.com/pill-city/pill-city/issues"
+        href="https://github.com/k-t-corp/pill-city"
         target='_blank'
         rel='noopener noreferrer'
         className='about-commit-link'
-      >Issues</a>{', '}
-      <a
-        href="https://github.com/pill-city/pill-city/issues/new"
-        target='_blank'
-        rel='noopener noreferrer'
-        className='about-commit-link'
-      >New issue</a>
+      >GitHub</a>
     </p>
   )
 }
