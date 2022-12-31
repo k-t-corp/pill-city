@@ -1,0 +1,21 @@
+.pill-tabs {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 12px;
+}
+
+.pill-tab {
+    margin-right: 12px;
+    padding: 6px;
+    color: #838383;
+    font-weight: bold;
+}
+
+.pill-tab:hover {
+    cursor: pointer;
+}
+
+.pill-tab-selected {
+    color: #0d71bb;
+    border-bottom: 2px solid #0d71bb;
+}

@@ -1,8 +1,10 @@
 import React, {useState} from "react"
 import './PostAttachments.css'
 import PillModal from "../PillModal/PillModal";
+import PillTabs from "../PillTabs/PillTabs";
 
 export interface PostAttachment {
+  title: string,
   el: JSX.Element
 }
 
@@ -22,12 +24,6 @@ export default (props: Props) => {
   }
 
   const [showMoreModalOpened, updateShowMoreModalOpened] = useState(false)
-  let title
-  if (attachments.length === 2) {
-    title = "1 more post attachment"
-  } else {
-    title = `${attachments.length - 1} more post attachments`
-  }
 
   return (
     <>
@@ -35,22 +31,23 @@ export default (props: Props) => {
       <a href="#" onClick={e => {
         e.preventDefault()
         updateShowMoreModalOpened(true)
-      }}>{title}</a>
+      }}>More post attachments</a>
       <PillModal
         isOpen={showMoreModalOpened}
         onClose={() => {
           updateShowMoreModalOpened(false);
         }}
-        title={title}
+        title='More post attachments'
       >
         <div className='post-attachments-modal-content-wrapper'>
-          {attachments.slice(1).map((s, index) => {
-            return (
-              <div key={index}>
-                {s.el}
-              </div>
-            )
-          })}
+          <PillTabs
+            tabs={attachments.slice(1).map(attachment => {
+              return {
+                title: attachment.title,
+                el: attachment.el
+              }
+            })}
+          />
         </div>
       </PillModal>
     </>

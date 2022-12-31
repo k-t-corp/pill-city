@@ -172,6 +172,7 @@ export default (props: Props) => {
   const postAttachments: PostAttachment[] = []
   if (props.post.reshared_from) {
     postAttachments.push({
+      title: 'Reshared post',
       el: <ResharedPost
         key={'reshared-post'}
         resharedFrom={props.post.reshared_from}
@@ -179,32 +180,34 @@ export default (props: Props) => {
         me={props.me}
       />
     })
-  } else {
-    if (mediaUrls.length > 0) {
-      postAttachments.push({
-        el: <MediaCollage
-          key={'post-media'}
-          mediaUrls={mediaUrls}
-        />})
-    }
-    if (props.post.poll !== null) {
-      postAttachments.push({
-        el: <Poll
-          key={'post-poll'}
-          poll={props.post.poll}
-          postId={props.post.id}
-          me={props.me}
-        />
-      })
-    }
-    if (props.post.link_previews.length > 0) {
-      postAttachments.push({
-        el: <LinkPreviews
-          key={'post-link-previews'}
-          post={props.post}
-        />
-      })
-    }
+  }
+  if (props.post.poll !== null) {
+    postAttachments.push({
+      title: 'Poll',
+      el: <Poll
+        key={'post-poll'}
+        poll={props.post.poll}
+        postId={props.post.id}
+        me={props.me}
+      />
+    })
+  }
+  if (mediaUrls.length > 0) {
+    postAttachments.push({
+      title: 'Media',
+      el: <MediaCollage
+        key={'post-media'}
+        mediaUrls={mediaUrls}
+      />})
+  }
+  if (props.post.link_previews.length > 0) {
+    postAttachments.push({
+      title: 'Link Previews',
+      el: <LinkPreviews
+        key={'post-link-previews'}
+        post={props.post}
+      />
+    })
   }
 
   return (
