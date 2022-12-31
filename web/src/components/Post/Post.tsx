@@ -14,18 +14,15 @@ import LinkPreviews from "./LinkPreviews";
 import api from "../../api/Api";
 import {
   BanIcon,
-  ChartSquareBarIcon,
   ChatIcon,
   DotsVerticalIcon,
-  LinkIcon,
-  PhotographIcon,
   ShareIcon
 } from "@heroicons/react/solid";
 import PillDropdownMenu from "../PillDropdownMenu/PillDropdownMenu";
 import MediaCollage from "../MediaCollage/MediaCollage";
 import "./Post.css"
 import Poll from '../Poll/Poll';
-import PillSlide, {Slide} from "../PillSlide/PillSlide";
+import PostAttachments, {PostAttachment} from "./PostAttachments";
 import EntityState from "../../models/EntityState";
 
 interface Props {
@@ -172,11 +169,9 @@ export default (props: Props) => {
     updateReplyingToComment(null)
   }
 
-  const postAttachments: Slide[] = []
+  const postAttachments: PostAttachment[] = []
   if (props.post.reshared_from) {
     postAttachments.push({
-      title: 'Reshared Post',
-      icon: <ShareIcon />,
       el: <ResharedPost
         key={'reshared-post'}
         resharedFrom={props.post.reshared_from}
@@ -184,20 +179,9 @@ export default (props: Props) => {
         me={props.me}
       />
     })
-    if (props.post.link_previews.length > 0) {
-      postAttachments.push({
-        title: 'Link Previews',
-        icon: <LinkIcon />,
-        el: <LinkPreviews
-          key={'reshared-post-previews'}
-          post={props.post}
-        />})
-    }
   } else {
     if (mediaUrls.length > 0) {
       postAttachments.push({
-        title: 'Media',
-        icon: <PhotographIcon />,
         el: <MediaCollage
           key={'post-media'}
           mediaUrls={mediaUrls}
@@ -205,8 +189,6 @@ export default (props: Props) => {
     }
     if (props.post.poll !== null) {
       postAttachments.push({
-        title: 'Poll',
-        icon: <ChartSquareBarIcon />,
         el: <Poll
           key={'post-poll'}
           poll={props.post.poll}
@@ -217,8 +199,6 @@ export default (props: Props) => {
     }
     if (props.post.link_previews.length > 0) {
       postAttachments.push({
-        title: 'Link Previews',
-        icon: <LinkIcon />,
         el: <LinkPreviews
           key={'post-link-previews'}
           post={props.post}
@@ -292,7 +272,7 @@ export default (props: Props) => {
         </div>
         {!deleting && !deleted && !blocked &&
           <div className='post-attachments-wrapper'>
-            <PillSlide slides={postAttachments}/>
+            <PostAttachments attachments={postAttachments}/>
           </div>
         }
         {!deleting && !deleted && !blocked &&
