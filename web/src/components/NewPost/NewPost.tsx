@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react'
 import {useHotkeys} from "react-hotkeys-hook";
-import parseContent from "../../utils/parseContent";
 import MediaPane from "../MediaPane/MediaPane";
 import parseMentioned from "../../utils/parseMentioned";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
@@ -23,6 +22,7 @@ import {QuestionMarkCircleIcon} from "@heroicons/react/outline";
 import PillCheckbox from "../PillCheckbox/PillCheckbox";
 import Select, {OnChangeValue} from "react-select";
 import convertHeicFileToPng from "../../utils/convertHeicFileToPng";
+import FormattedContent from "../FormattedContent/FormattedContent";
 
 interface Props {
   beforePosting: () => void
@@ -224,7 +224,7 @@ export default (props: Props) => {
             </div>
           </div>
           <div className="post-content new-post-reshare-content-summary">
-            {parseContent(props.resharedPost.content, "")}
+            {props.resharedPost.formatted_content && <FormattedContent fc={props.resharedPost.formatted_content}/>}
           </div>
         </div>
       }
