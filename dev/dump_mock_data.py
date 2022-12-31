@@ -276,6 +276,7 @@ def main():
     kt.create_post('test 3', is_public=True, media_filenames=['sif1.png', 'sif2.png', 'sif3.png'])
     kt.create_post('test 4', is_public=True, media_filenames=['sif1.png', 'sif2.png', 'sif3.png', 'sif4.png'])
     kt.create_post('test https://twitter.com/daily_keke', is_public=True, media_filenames=['sif1.png', 'sif2.png', 'sif3.png', 'sif4.png'])
+    kt.create_post('test https://twitter.com/daily_keke https://www.youtube.com/watch?v=y8OnoxKotPQ https://www.pixiv.net/en/artworks/91872507', is_public=True, media_filenames=['sif1.png', 'sif2.png', 'sif3.png', 'sif4.png'])
 
     # Create some reactions
     for i, user in enumerate(everybody_obj):
