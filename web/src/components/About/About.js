@@ -25,7 +25,7 @@ const About = () => {
         target='_blank'
         rel='noopener noreferrer'
         className='about-commit-link'
-      >GitHub.</a>
+      >GitHub</a>
     </p>
   )
 }
