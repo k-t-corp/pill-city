@@ -1,6 +1,5 @@
 from flask_restful import reqparse, Resource, fields, marshal_with, marshal
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from urlextract import URLExtract
 from pillcity.daos.user import find_user, find_user_or_raise
 from pillcity.daos.user_cache import get_in_user_cache_by_user_id
 from pillcity.daos.circle import find_circle
@@ -10,6 +9,7 @@ from pillcity.daos.post_cache import get_in_post_cache
 from pillcity.daos.circle_cache import get_in_circle_cache
 from pillcity.daos.exceptions import UnauthorizedAccess, BadRequest
 from pillcity.daos.link_preview import get_link_preview
+from pillcity.daos.content import format_content
 from .users import user_fields
 from .pagination import pagination_parser
 from .mention import get_mentioned_user_ids
@@ -69,22 +69,19 @@ class AnonymizedCircles(fields.Raw):
         return circles
 
 
-url_extractor = URLExtract()
-url_extractor.update_when_older(30)
-
 
 class LinkPreviews(fields.Raw):
     def format(self, content):
+        fc = format_content(content)
+
         previews = []
-        for url, (index_start, index_end) in url_extractor.find_urls(content, get_indices=True):
-            p = get_link_preview(url)
-            if p:
-                p = marshal(p, link_preview_fields)
-                p.update({
-                    'index_start': index_start,
-                    'index_end': index_end
-                })
-                previews.append(p)
+        for s in fc.segments:
+            if 'url' in s.types and s.reference < len(fc.references):
+                url = fc.references[s.reference]
+                p = get_link_preview(url)
+                if p:
+                    p = marshal(p, link_preview_fields)
+                    previews.append(p)
         return previews
 
 
