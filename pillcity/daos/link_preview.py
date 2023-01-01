@@ -1,4 +1,6 @@
 import logging
+import urllib.parse
+import ipaddress
 from typing import Optional
 from mongoengine.errors import ValidationError
 from pillcity.models import LinkPreview, LinkPreviewState
@@ -9,7 +11,21 @@ from pillcity.utils.now import now_seconds
 MaxRetries = 15
 
 
+def is_url_private(url: str):
+    parsed_url = urllib.parse.urlparse(url)
+    host = parsed_url.hostname
+    if host == 'localhost':
+        return True
+    try:
+        ip = ipaddress.ip_address(host)
+        return ip.is_private
+    except ValueError:
+        return False
+
+
 def get_link_preview(url: str) -> Optional[LinkPreview]:
+    if is_url_private(url):
+        return None
     try:
         link_previews = LinkPreview.objects(url=url)
         if not link_previews:
