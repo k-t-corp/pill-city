@@ -23,7 +23,7 @@ export default ({ children, id, dismissible }: Props) => {
     return () => {
       clearTimeout(timer);
     };
-  }, [id, removeToast]);
+  }, [id, removeToast, dismissible]);
 
   const onCLick = () => {
     if (dismissible) {

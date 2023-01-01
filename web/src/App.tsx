@@ -79,7 +79,7 @@ const ErrorFallback = (props: ErrorFallbackProps) => {
     <div>
       <p>Opps something went wrong</p>
       <p>Message: {props.error.message}</p>
-      <p><a href="#" onClick={props.resetErrorBoundary}>Try again</a></p>
+      <p><button type='button' className='link-button' onClick={props.resetErrorBoundary}>Try again</button></p>
     </div>
   )
 }
@@ -94,7 +94,7 @@ const App = () => {
       dispatch(loadPosts())
       dispatch(loadNotifications())
     }
-  }, [])
+  }, [dispatch])
 
   useInterval(() => {
     if (!Api.isUnauthorized()) {

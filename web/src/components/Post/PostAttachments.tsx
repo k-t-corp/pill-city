@@ -28,10 +28,10 @@ export default (props: Props) => {
   return (
     <>
       {attachments[0].el}
-      <a href="#" onClick={e => {
+      <button type='button' className='link-button' onClick={e => {
         e.preventDefault()
         updateShowMoreModalOpened(true)
-      }}>More post attachments</a>
+      }}>More post attachments</button>
       <PillModal
         isOpen={showMoreModalOpened}
         onClose={() => {

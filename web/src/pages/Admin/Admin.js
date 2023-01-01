@@ -5,9 +5,12 @@ import './Admin.css'
 const Admin = () => {
   const [invitationCodes, updateInvitationCodes] = useState([])
 
-  useEffect(async () => {
-    const invitationCodes = await api.getInvitationCodes()
-    updateInvitationCodes(invitationCodes)
+  useEffect(() => {
+    const _fetch = async () => {
+      const invitationCodes = await api.getInvitationCodes()
+      updateInvitationCodes(invitationCodes)
+    }
+    _fetch()
   }, [])
 
   const codeElem = (i, ic) => {

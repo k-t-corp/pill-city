@@ -1,6 +1,5 @@
 import React from "react";
 import ReactTextareaAutocomplete from "@webscopeio/react-textarea-autocomplete";
-import MentionAutoCompleteLoading from "./MentionAutoCompleteLoading";
 import MentionAutoCompleteUserItem from "./MentionAutoCompleteUserItem";
 import User from "../../models/User";
 import api from '../../api/Api'
@@ -25,7 +24,7 @@ export default (props: Props) => {
       }}
       disabled={props.disabled}
       placeholder={props.placeholder}
-      loadingComponent={MentionAutoCompleteLoading}
+      loadingComponent={() => {return null}}
       trigger={{
         "@": {
           dataProvider: (keyword) => api.searchUsers(keyword),

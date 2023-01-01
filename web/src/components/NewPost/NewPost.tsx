@@ -108,7 +108,7 @@ export default (props: Props) => {
     }
     updatePosting(true)
     if (pollChoices.length > 0) {
-      if (!confirm("Are you sure to send a post with poll? Even if you delete the post, you won't be able to delete the poll results.")) {
+      if (!window.confirm("Are you sure to send a post with poll? Even if you delete the post, you won't be able to delete the poll results.")) {
         return
       }
     }

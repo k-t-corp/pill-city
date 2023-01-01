@@ -143,9 +143,14 @@ export default () => {
       <div className='circles-wrapper'>
         <div className='circles-status'>
           <p>You don't have any circles</p>
-          <p><a href="#" onClick={() => {
-            updateShowingCreateCircleModal(true)
-          }}>Create one</a></p>
+          <p>
+            <button
+              type="button"
+              className="link-button"
+              onClick={() => {
+                updateShowingCreateCircleModal(true)
+              }}>Create one</button>
+          </p>
         </div>
         {renderCreateCircleComponents(showingCreateCircleModal, createCircle, closeCreateCircleModal, openCreateCircleModal)}
       </div>

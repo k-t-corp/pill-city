@@ -5,8 +5,11 @@ import './About.css'
 export default () => {
   const webGitCommit = process.env.REACT_APP_GIT_SHA
   const [apiGitCommit, updateApiGitCommit] = useState(undefined)
-  useEffect(async () => {
-    updateApiGitCommit(await api.getApiGitCommit())
+  useEffect(() => {
+    const _fetch = async () => {
+      updateApiGitCommit(await api.getApiGitCommit())
+    }
+    _fetch()
   }, [])
 
   const githubLink = (commit) => {

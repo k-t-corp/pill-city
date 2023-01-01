@@ -74,7 +74,7 @@ export default (props: Props) => {
         <MemberCard
           key={member.id}
           onDelete={async () => {
-            if (!confirm(`Are you sure you want to remove user @${member.id} from circle "${circle.name}"`)) {
+            if (!window.confirm(`Are you sure you want to remove user @${member.id} from circle "${circle.name}"`)) {
               return
             }
             updateCircle({
@@ -101,7 +101,7 @@ export default (props: Props) => {
             text='Delete'
             variant={PillButtonVariant.Neutral}
             onClick={() => {
-              if (!confirm(`Are you sure you want to delete circle "${circle.name}"?`)) {
+              if (!window.confirm(`Are you sure you want to delete circle "${circle.name}"?`)) {
                 return
               }
               deleteCircle()

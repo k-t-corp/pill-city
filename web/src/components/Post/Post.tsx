@@ -66,7 +66,7 @@ export default (props: Props) => {
     if (highlightCommentId && highlightCommentRef) {
       (highlightCommentRef as any).current.scrollIntoView({behavior: 'smooth'})
     }
-  }, [highlightCommentRef])
+  }, [highlightCommentRef, highlightCommentId])
 
   let commentElems = []
   for (let i = 0; i < comments.length; i++) {

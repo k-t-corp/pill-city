@@ -4,7 +4,7 @@ import {Provider as ReduxProvider} from 'react-redux'
 import 'semantic-ui-css/semantic.min.css';
 import 'react-image-lightbox/style.css';
 import App from './App';
-import register, {unregister} from './registerServiceWorker';
+import register from './registerServiceWorker';
 import store from "./store/store";
 import {PersistGate} from "redux-persist/integration/react";
 import {persistStore} from "redux-persist";

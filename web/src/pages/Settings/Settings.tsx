@@ -269,29 +269,29 @@ const Settings = () => {
                 </div>
               }
               <p/>
-              <a href="#" onClick={async () => {
+              <button type='button' className='link-button' onClick={async () => {
                 await navigator.clipboard.writeText(rssUrl)
                 addToast('Copied to clipboard')
-              }}>Copy to clipboard</a>
+              }}>Copy to clipboard</button>
               <p/>
-              <p>You should <b>not</b> share this URL to anyone else. If you believe this URL is compromised, <a href="#" onClick={async () => {
-                if (confirm('Are you sure you want to rotate RSS token?')) {
+              <p>You should <b>not</b> share this URL to anyone else. If you believe this URL is compromised, <button type='button' className='link-button' onClick={async () => {
+                if (window.confirm('Are you sure you want to rotate RSS token?')) {
                   updateRssToken(await api.rotateRssToken())
                 }
-              }}>click here to rotate RSS token</a></p>
+              }}>click here to rotate RSS token</button></p>
               <p/>
-              <a href="#" onClick={async () => {
-                if (confirm('Are you sure you want to disable RSS Notifications?')) {
+              <button type='button' className='link-button' onClick={async () => {
+                if (window.confirm('Are you sure you want to disable RSS Notifications?')) {
                   await api.deleteRssToken()
                   updateRssToken(undefined)
                 }
-              }}>Click here to disable</a>
+              }}>Click here to disable</button>
             </div> :
             <div>
               <p>RSS Notifications is disabled</p>
-              <a href="#" onClick={async () => {
+              <button type='button' className='link-button' onClick={async () => {
                 updateRssToken(await api.rotateRssToken())
-              }}>Click here to enable</a>
+              }}>Click here to enable</button>
             </div>
         }
       </PillModal>

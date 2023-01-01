@@ -23,7 +23,7 @@ const PostPage = () => {
         updateLoading(false)
       }
     )()
-  }, [])
+  }, [postId])
 
   let highlightCommentId: string | undefined
   const location = useLocation()

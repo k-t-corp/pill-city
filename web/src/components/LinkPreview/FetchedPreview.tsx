@@ -2,7 +2,6 @@ import React from 'react'
 import LinkPreview from "../../models/LinkPreview";
 import summary from "../../utils/summary";
 import './FetchedPreview.css'
-import {futureTime} from "../../utils/timeDelta";
 
 interface Props {
   preview: LinkPreview
@@ -17,7 +16,7 @@ export default (props: Props) => {
 
   const title = preview.title.trim()
   const subtitle = preview.subtitle.trim()
-  
+
   return (
     <div onClick={e => {
       e.preventDefault()

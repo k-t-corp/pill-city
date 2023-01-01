@@ -182,7 +182,7 @@ const Profile = () => {
     if (followLoading || blockLoading) {
       return
     }
-    if (!confirm("The blocked user is still able to see and interact with your posts, but you won't see them in your home feed or notifications")) {
+    if (!window.confirm("The blocked user is still able to see and interact with your posts, but you won't see them in your home feed or notifications")) {
       return
     }
     updateFollowLoading(true)
@@ -209,7 +209,7 @@ const Profile = () => {
     if (blockLoading) {
       return
     }
-    if (!confirm("The blocked user is still able to see and interact with your posts, but you won't see them in your home feed or notifications")) {
+    if (!window.confirm("The blocked user is still able to see and interact with your posts, but you won't see them in your home feed or notifications")) {
       return
     }
     updateBlockLoading(true)
@@ -295,7 +295,7 @@ const Profile = () => {
         updateFollowingCounts(await api.getFollowingCounts())
       }
     })()
-  }, [me])
+  }, [me, userId])
 
   const userFollowingCounts = () => {
     if (!me) {

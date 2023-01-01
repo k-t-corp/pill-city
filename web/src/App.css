@@ -28,3 +28,14 @@ input[type="file"] {
         padding-bottom: calc(50px + env(safe-area-inset-bottom));;
     }
 }
+
+.link-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    display: inline;
+    margin: 0;
+    padding: 0;
+    color: #0d71bb;
+}
