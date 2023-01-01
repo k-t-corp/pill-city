@@ -29,7 +29,7 @@ const notifyingActionToWord = {
   "follow": "followed"
 }
 
-export default (props: Props) => {
+const NotificationItem = (props: Props) => {
   const notification = props.notification
   const history = useHistory()
   const dispatch = useAppDispatch()
@@ -110,3 +110,5 @@ export default (props: Props) => {
     </div>
   )
 }
+
+export default NotificationItem

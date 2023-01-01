@@ -23,18 +23,17 @@ interface Props {
   onHighlightComment: (nestedCommentId: string) => void
 }
 
-export default (props: Props) => {
+const NestedCommentComponent = (props: Props) => {
   const { nestedComment, parentComment, post } = props
-
-  if (nestedComment.state === 'invisible') {
-    return null
-  }
-
   const isHighlightComment = props.highlightCommentId === nestedComment.id
   const [ state, updateState ] = useState<EntityState>(nestedComment.state)
   const [ deleting, updateDeleting ] = useState(false)
   const deleted = state === "deleted"
   const blocked = state === 'author_blocked'
+
+  if (nestedComment.state === 'invisible') {
+    return null
+  }
 
   const onReply = () => {
     if (deleting) {
@@ -121,3 +120,5 @@ export default (props: Props) => {
     </div>
   )
 }
+
+export default NestedCommentComponent

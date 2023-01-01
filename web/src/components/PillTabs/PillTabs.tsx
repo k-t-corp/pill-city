@@ -10,7 +10,7 @@ interface Props {
   tabs: Tab[]
 }
 
-export default (props: Props) => {
+const PillTabs = (props: Props) => {
   const [showingTab, updateShowingTab] = useState(0)
 
   return (
@@ -33,3 +33,5 @@ export default (props: Props) => {
     </>
   )
 }
+
+export default PillTabs

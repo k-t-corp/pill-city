@@ -7,7 +7,7 @@ import {CheckIcon} from "@heroicons/react/solid";
 
 interface Props {}
 
-export default (_: Props) => {
+const NotificationDropdown = (_: Props) => {
   const dispatch = useAppDispatch()
   const unreadNotificationsCount = useAppSelector(state => state.notifications.notifications.filter(n => n.unread).length)
 
@@ -31,3 +31,5 @@ export default (_: Props) => {
     </div>
   )
 }
+
+export default NotificationDropdown

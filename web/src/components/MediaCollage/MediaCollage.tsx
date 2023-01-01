@@ -9,7 +9,7 @@ interface Props {
   mediaUrls: MediaUrlV2[]
 }
 
-export default (props: Props) => {
+const MediaCollage = (props: Props) => {
   const {mediaUrls} = props
 
   if (mediaUrls.length === 0) {
@@ -208,3 +208,5 @@ export default (props: Props) => {
     </Gallery>
   )
 }
+
+export default MediaCollage

@@ -18,7 +18,7 @@ interface Props {
 const ToastProvider = ({ children }: Props) => {
   const [toasts, updateToasts] = useState<Toast[]>([]);
 
-  const addToast = useCallback((content, dismissible) => {
+  const addToast = useCallback((content: string, dismissible?: boolean) => {
     const newId = id++
     updateToasts(toasts => [
       ...toasts,
@@ -31,7 +31,7 @@ const ToastProvider = ({ children }: Props) => {
     return newId
   }, [updateToasts]);
 
-  const removeToast = useCallback(id => {
+  const removeToast = useCallback((id: number) => {
     updateToasts(toasts => toasts.filter(t => t.id !== id));
   }, [updateToasts]);
 

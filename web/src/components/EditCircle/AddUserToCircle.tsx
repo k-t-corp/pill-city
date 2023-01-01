@@ -35,7 +35,7 @@ const UserCard = (props: UserCardProps) => {
   )
 }
 
-export default (props: Props) => {
+const AddUserToCircle = (props: Props) => {
   const {users, onAddUser} = props
 
   let userCardElements = []
@@ -55,3 +55,5 @@ export default (props: Props) => {
     </div>
   )
 }
+
+export default AddUserToCircle

@@ -11,7 +11,7 @@ interface Props {
   title: string
 }
 
-export default (props: Props) => {
+const PillModal = (props: Props) => {
   const isMobile = useMediaQuery({query: '(max-width: 750px)'})
   let styles: CSSProperties
   if (isMobile) {
@@ -67,3 +67,5 @@ export default (props: Props) => {
     </Modal>
   )
 }
+
+export default PillModal

@@ -15,7 +15,7 @@ interface Props {
   me: User
 }
 
-export default (props: Props) => {
+const ResharedPostComponent = (props: Props) => {
   const { resharedFrom } = props
 
   const history = useHistory()
@@ -55,3 +55,5 @@ export default (props: Props) => {
     </>
   )
 }
+
+export default ResharedPostComponent

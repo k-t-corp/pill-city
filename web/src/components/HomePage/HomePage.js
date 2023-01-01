@@ -1,7 +1,7 @@
 import React from "react";
 import "./HomePage.css"
 
-export default (props) => {
+const HomePage = (props) => {
   return (
     <div className="home-page-wrapper">
       <div className="home-page-info-wrapper">
@@ -19,3 +19,5 @@ export default (props) => {
     </div>
   )
 }
+
+export default HomePage

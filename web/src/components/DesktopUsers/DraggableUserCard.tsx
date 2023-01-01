@@ -14,7 +14,7 @@ interface Props {
   updateFollowing: (f: boolean) => void
 }
 
-export default (props: Props) => {
+const DraggableUserCard = (props: Props) => {
   const { user, isFollowing, updateFollowing } = props
   const { name } = getNameAndSubName(props.user)
   const [loading, updateLoading] = useState(false)
@@ -78,3 +78,5 @@ export default (props: Props) => {
     </div>
   )
 }
+
+export default DraggableUserCard

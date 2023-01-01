@@ -51,7 +51,7 @@ export interface AddPollChoice {
   text: string
 }
 
-export default (props: Props) => {
+const NewPost = (props: Props) => {
   const me = useAppSelector(state => state.me.me)
   const [myCircles, updateMyCircles] = useState<Circle[]>([])
 
@@ -447,3 +447,5 @@ export default (props: Props) => {
     </div>
   )
 }
+
+export default NewPost

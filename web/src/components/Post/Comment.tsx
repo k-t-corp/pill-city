@@ -25,19 +25,18 @@ interface Props {
   onNestedCommentReply: (nestedComment: NestedCommentModel) => void
 }
 
-export default (props: Props) => {
+const CommentComponent = (props: Props) => {
   const { comment } = props
-
-  if (comment.state === 'invisible') {
-    return null
-  }
-
   const isHighlightComment = props.highlightCommentId
   const [ deleting, updateDeleting ] = useState(false)
   const [ state, updateState ] = useState<EntityState>(comment.state)
   const deleted = state === "deleted"
   const blocked = state === "author_blocked"
   const [ replyHighlightCommentId, updateReplyHighlightCommentId ] = useState('')
+
+  if (comment.state === 'invisible') {
+    return null
+  }
 
   const nestedCommentElems = []
   for (let i = 0; i < comment.comments.length; i++) {
@@ -139,3 +138,5 @@ export default (props: Props) => {
     </div>
   )
 }
+
+export default CommentComponent

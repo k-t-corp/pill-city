@@ -1,6 +1,6 @@
 import {AxiosResponse} from "axios";
 
-export default class ApiError extends Error {
+class ApiError extends Error {
   statusCode: number;
 
   constructor(response: AxiosResponse) {
@@ -16,3 +16,5 @@ export default class ApiError extends Error {
     this.statusCode = response.status
   }
 }
+
+export default ApiError;

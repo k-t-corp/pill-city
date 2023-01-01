@@ -105,83 +105,79 @@ const App = () => {
   }, 5000)
 
   return (
-    <ToastProvider>
-      <Router>
-        <Switch>
-          <Route exact={true} path='/'>
-            <Authenticated freeWidth={true}>
-              <Home />
-            </Authenticated>
-          </Route>
-          <Route path='/post/:id'>
-            <Authenticated>
-              <Post />
-            </Authenticated>
-          </Route>
-          <Route path="/profile/:id">
-            <Authenticated>
-              <Profile />
-            </Authenticated>
-          </Route>
-          <Route path="/profile">
-            <Authenticated>
-              <Profile />
-            </Authenticated>
-          </Route>
-          <Route path="/notifications">
-            <Authenticated>
-              <Notifications />
-            </Authenticated>
-          </Route>
-          <Route path="/users">
-            <Authenticated>
-              <Users />
-            </Authenticated>
-          </Route>
-          <Route path="/circles">
-            <Authenticated>
-              <Circles />
-            </Authenticated>
-          </Route>
-          <Route path="/settings">
-            <Authenticated>
-              <Settings />
-            </Authenticated>
-          </Route>
-          <Route path="/admin">
-            <Authenticated>
-              <Admin />
-            </Authenticated>
-          </Route>
-          <Route path="/signup">
-            <NotAuthenticated>
-              <SignUp />
-            </NotAuthenticated>
-          </Route>
-          <Route path="/signin">
-            <NotAuthenticated>
-              <SignIn />
-            </NotAuthenticated>
-          </Route>
-          <Route path="/forget">
-            <ForgetPassword />
-          </Route>
-          <Route path="/reset">
-            <ResetPassword />
-          </Route>
-          <Redirect to='/'/>
-        </Switch>
-      </Router>
-    </ToastProvider>
-  );
-}
-
-export default () => {
-  return (
     <ErrorBoundary
       FallbackComponent={ErrorFallback}
     >
-      <App />
+      <ToastProvider>
+        <Router>
+          <Switch>
+            <Route exact={true} path='/'>
+              <Authenticated freeWidth={true}>
+                <Home />
+              </Authenticated>
+            </Route>
+            <Route path='/post/:id'>
+              <Authenticated>
+                <Post />
+              </Authenticated>
+            </Route>
+            <Route path="/profile/:id">
+              <Authenticated>
+                <Profile />
+              </Authenticated>
+            </Route>
+            <Route path="/profile">
+              <Authenticated>
+                <Profile />
+              </Authenticated>
+            </Route>
+            <Route path="/notifications">
+              <Authenticated>
+                <Notifications />
+              </Authenticated>
+            </Route>
+            <Route path="/users">
+              <Authenticated>
+                <Users />
+              </Authenticated>
+            </Route>
+            <Route path="/circles">
+              <Authenticated>
+                <Circles />
+              </Authenticated>
+            </Route>
+            <Route path="/settings">
+              <Authenticated>
+                <Settings />
+              </Authenticated>
+            </Route>
+            <Route path="/admin">
+              <Authenticated>
+                <Admin />
+              </Authenticated>
+            </Route>
+            <Route path="/signup">
+              <NotAuthenticated>
+                <SignUp />
+              </NotAuthenticated>
+            </Route>
+            <Route path="/signin">
+              <NotAuthenticated>
+                <SignIn />
+              </NotAuthenticated>
+            </Route>
+            <Route path="/forget">
+              <ForgetPassword />
+            </Route>
+            <Route path="/reset">
+              <ResetPassword />
+            </Route>
+            <Redirect to='/'/>
+          </Switch>
+        </Router>
+      </ToastProvider>
     </ErrorBoundary>
-  )
+  );
 }
+
+export default App;

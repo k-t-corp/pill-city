@@ -10,7 +10,7 @@ interface Props {
   onCancel: () => void
 }
 
-export default (props: Props) => {
+const CreateNewCircle = (props: Props) => {
   const [name, updateName] = useState('')
 
   return (
@@ -37,3 +37,5 @@ export default (props: Props) => {
     </PillForm>
   )
 }
+
+export default CreateNewCircle

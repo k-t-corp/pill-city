@@ -9,7 +9,7 @@ interface Props {
   onClose: () => void
 }
 
-export default (props: Props) => {
+const AddMedia = (props: Props) => {
   return (
     <UploadMedia
       onChangeMedias={props.onChangeMedias}
@@ -17,3 +17,5 @@ export default (props: Props) => {
     />
   )
 }
+
+export default AddMedia;

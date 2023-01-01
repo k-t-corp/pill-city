@@ -1,6 +1,6 @@
 import React from "react";
 import {createPortal} from "react-dom";
-import Toast from './Toast'
+import ToastComponent from './Toast'
 import './ToastContainer.css'
 
 export interface Toast {
@@ -13,13 +13,15 @@ interface Props {
   toasts: Toast[]
 }
 
-export default ({ toasts }: Props) => {
+const ToastContainer = ({ toasts }: Props) => {
   return createPortal(
     <div className='toast-container'>
       {toasts.map(item => {
-        return <Toast key={item.id} id={item.id} dismissible={item.dismissible}>{item.content}</Toast>
+        return <ToastComponent key={item.id} id={item.id} dismissible={item.dismissible}>{item.content}</ToastComponent>
       })}
     </div>,
     document.body
   );
 }
+
+export default ToastContainer

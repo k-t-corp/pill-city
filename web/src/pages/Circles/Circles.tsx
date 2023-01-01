@@ -95,7 +95,7 @@ const renderCreateCircleComponents = (isOpen: boolean, onCreate: (name: string) 
   )
 }
 
-export default () => {
+const Circles = () => {
   const [loading, updateLoading] = useState(true)
   const [users, updateUsers] = useState<User[]>([])
   const [circles, updateCircles] = useState<Circle[]>([])
@@ -184,3 +184,5 @@ export default () => {
     </div>
   )
 }
+
+export default Circles

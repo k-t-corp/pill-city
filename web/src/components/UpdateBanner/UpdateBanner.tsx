@@ -17,7 +17,7 @@ interface Props {
   afterUpdate: () => void
 }
 
-export default (props: Props) => {
+const UpdateBanner = (props: Props) => {
   const [selectedOption, updateSelectedOption] = useState<string>(props.user ? props.user.profile_pic : 'pill1.png')
 
   let optionElems = []
@@ -71,3 +71,5 @@ export default (props: Props) => {
     </PillForm>
   )
 }
+
+export default UpdateBanner

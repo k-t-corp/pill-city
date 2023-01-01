@@ -35,7 +35,7 @@ const convertSegment = (s: FormattedContentSegment, references: string[]): React
   return node
 }
 
-export default (props: Props) => {
+const FormattedContentComponent = (props: Props) => {
   const { fc, className } = props;
 
   return (
@@ -48,3 +48,5 @@ export default (props: Props) => {
     </div>
   )
 }
+
+export default FormattedContentComponent

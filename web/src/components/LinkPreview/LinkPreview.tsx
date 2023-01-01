@@ -9,7 +9,7 @@ interface Props {
   preview: LinkPreview,
 }
 
-export default (props: Props) => {
+const LinkPreviewComponent = (props: Props) => {
   const { preview } = props
   const [clicked, updateClicked] = useState(false)
 
@@ -36,3 +36,5 @@ export default (props: Props) => {
 
   return fetchedPreview
 }
+
+export default LinkPreviewComponent

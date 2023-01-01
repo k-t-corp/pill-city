@@ -5,10 +5,12 @@ interface Props {
   children: any
 }
 
-export default (props: Props) => {
+const PillButtons = (props: Props) => {
   return (
     <div className='pill-buttons'>
       {props.children}
     </div>
   )
 }
+
+export default PillButtons

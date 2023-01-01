@@ -51,7 +51,7 @@ interface Props {
   showAddUser: boolean
 }
 
-export default (props: Props) => {
+const EditCircle = (props: Props) => {
   const {circle, updateCircle, deleteCircle, users, onClose, showAddUser} = props
   const members = circle.members
   const [showingAddUserModal, updateShowingAddUserModal] = useState(false)
@@ -170,3 +170,5 @@ export default (props: Props) => {
     </>
   )
 }
+
+export default EditCircle

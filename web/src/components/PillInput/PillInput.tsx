@@ -7,7 +7,7 @@ interface Props {
   onChange: (newValue: string) => void
 }
 
-export default (props: Props) => {
+const PillInput = (props: Props) => {
   return (
     <input
       className="pill-input"
@@ -21,3 +21,5 @@ export default (props: Props) => {
     />
   )
 }
+
+export default PillInput

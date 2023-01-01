@@ -10,7 +10,7 @@ interface Props {
   disabled?: boolean
 }
 
-export default (props: Props) => {
+const PillCheckbox = (props: Props) => {
   return (
     <div className='pill-checkbox-container'>
       <Toggle
@@ -30,3 +30,5 @@ export default (props: Props) => {
     </div>
   )
 }
+
+export default PillCheckbox

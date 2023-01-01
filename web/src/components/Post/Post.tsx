@@ -36,10 +36,8 @@ interface Props {
   disableNavigateToPostPage?: true
 }
 
-export default (props: Props) => {
-  if (props.post.state === 'invisible') {
-    return null
-  }
+const PostComponent = (props: Props) => {
+
 
   const [state, updateState] = useState<EntityState>(props.post.state)
   const [deleting, updateDeleting] = useState(false)
@@ -67,6 +65,10 @@ export default (props: Props) => {
       (highlightCommentRef as any).current.scrollIntoView({behavior: 'smooth'})
     }
   }, [highlightCommentRef, highlightCommentId])
+
+  if (props.post.state === 'invisible') {
+    return null
+  }
 
   let commentElems = []
   for (let i = 0; i < comments.length; i++) {
@@ -337,4 +339,4 @@ export default (props: Props) => {
   )
 }
 
-
+export default PostComponent

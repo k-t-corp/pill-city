@@ -6,7 +6,7 @@
     "start_url": "/",
     "name": "Pill City",
     "short_name": "Pill City",
-    "description": "An one-of-a-kind social network",
+    "description": "A social network reminiscent of Google+ with enhancements",
     "icons": [
         {
             "src": "/manifest-icon-192.maskable.png",

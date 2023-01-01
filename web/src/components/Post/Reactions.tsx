@@ -39,7 +39,7 @@ interface Props {
   postId: string
 }
 
-export default (props: Props) => {
+const Reactions = (props: Props) => {
   const [emojiPickerOpened, updateEmojiPickerOpened] = useState(false)
   const [detailNodalOpened, updateDetailNodalOpened] = useState(false)
   const [reactions, updateReactions] = useState<Reaction[]>(props.reactions)
@@ -255,3 +255,5 @@ export default (props: Props) => {
     </div>
   )
 }
+
+export default Reactions

@@ -1,6 +1,6 @@
 import React from "react"
 
-export default () => {
+const CirclesIcon = () => {
   return (
     <svg viewBox="0 0 163 163" fill="white" xmlns="http://www.w3.org/2000/svg">
       <circle cx="67" cy="67" r="60" stroke="black" strokeWidth="15"/>
@@ -8,3 +8,5 @@ export default () => {
     </svg>
   )
 }
+
+export default CirclesIcon

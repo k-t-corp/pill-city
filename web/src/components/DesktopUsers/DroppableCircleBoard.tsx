@@ -18,7 +18,7 @@ interface Props {
   users: User[]
 }
 
-export default (props: Props) => {
+const DroppableCircleBoard = (props: Props) => {
   const {circle, updateCircle, deleteCircle, users} = props
   const members = circle.members
   const [modalOpened, updateModalOpened] = useState(false)
@@ -245,3 +245,5 @@ export default (props: Props) => {
     </div>
   )
 }
+
+export default DroppableCircleBoard

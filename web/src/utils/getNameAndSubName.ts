@@ -1,6 +1,6 @@
 import User from "../models/User";
 
-export default (user: User | null): { name: string, subName?: string } => {
+const getNameAndSubName = (user: User | null): { name: string, subName?: string } => {
   let name
   let subName
   if (user !== null) {
@@ -15,3 +15,5 @@ export default (user: User | null): { name: string, subName?: string } => {
   }
   return { name, subName }
 }
+
+export default getNameAndSubName

@@ -10,11 +10,7 @@ interface Props {
   post: Post
 }
 
-export default (props: Props) => {
-  if (props.post.link_previews.length === 0) {
-    return null
-  }
-
+const LinkPreviews = (props: Props) => {
   const [previews, updatePreviews] = useState<LinkPreviewModel[]>(props.post.link_previews)
 
   useInterval(async () => {
@@ -31,9 +27,15 @@ export default (props: Props) => {
     }
   }, 5000, { immediate: true })
 
+  if (props.post.link_previews.length === 0) {
+    return null
+  }
+
   return (
     <div>
       {previews.map(_ => <LinkPreview key={_.url} preview={_}/>)}
     </div>
   )
 }
+
+export default LinkPreviews

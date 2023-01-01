@@ -29,7 +29,7 @@ interface Props {
   afterSendingComment: () => void
 }
 
-export default (props: Props) => {
+const NewComment = (props: Props) => {
   const {content, updateContent} = props
   const [posting, updatePosting] = useState(false)
   const [medias, updateMedias] = useState<File[]>([])
@@ -193,3 +193,5 @@ export default (props: Props) => {
     </div>
   )
 }
+
+export default NewComment

@@ -12,8 +12,9 @@ interface Props {
   attachments: PostAttachment[]
 }
 
-export default (props: Props) => {
+const PostAttachments = (props: Props) => {
   const {attachments} = props
+  const [showMoreModalOpened, updateShowMoreModalOpened] = useState(false)
 
   if (attachments.length === 0) {
     return null
@@ -22,8 +23,6 @@ export default (props: Props) => {
   if (attachments.length === 1) {
     return attachments[0].el
   }
-
-  const [showMoreModalOpened, updateShowMoreModalOpened] = useState(false)
 
   return (
     <>
@@ -53,3 +52,5 @@ export default (props: Props) => {
     </>
   )
 }
+
+export default PostAttachments

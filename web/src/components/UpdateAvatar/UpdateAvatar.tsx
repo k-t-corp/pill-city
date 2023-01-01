@@ -58,7 +58,7 @@ interface Props {
   afterUpdate: () => void
 }
 
-export default (props: Props) => {
+const UpdateAvatar = (props: Props) => {
   const [objectUrl, updateObjectUrl] = useState("")
   const {addToast} = useToast()
 
@@ -76,7 +76,7 @@ export default (props: Props) => {
   }
 
   const avatarImageRef = useRef<HTMLImageElement>();
-  const onImageLoaded = useCallback((img) => {
+  const onImageLoaded = useCallback((img: any) => {
     avatarImageRef.current = img;
   }, []);
 
@@ -171,3 +171,5 @@ export default (props: Props) => {
     </PillForm>
   )
 }
+
+export default UpdateAvatar

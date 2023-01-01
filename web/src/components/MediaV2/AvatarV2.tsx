@@ -6,7 +6,7 @@ interface Props extends React.ImgHTMLAttributes<HTMLImageElement> {
   user: User | null
 }
 
-export default (props: Props) => {
+const AvatarV2 = (props: Props) => {
   if (!props.user || !props.user.avatar_url_v2) {
     return (
       <img
@@ -24,3 +24,5 @@ export default (props: Props) => {
     />
   )
 }
+
+export default AvatarV2

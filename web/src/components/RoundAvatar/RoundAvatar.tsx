@@ -9,7 +9,7 @@ interface Props {
   disableNavigateToProfile?: boolean
 }
 
-export default (props: Props) => {
+const RoundAvatar = (props: Props) => {
   const history = useHistory()
 
   return (
@@ -33,3 +33,5 @@ export default (props: Props) => {
     />
   )
 }
+
+export default RoundAvatar

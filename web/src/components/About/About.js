@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import api from '../../api/Api'
 import './About.css'
 
-export default () => {
+const About = () => {
   const webGitCommit = process.env.REACT_APP_GIT_SHA
   const [apiGitCommit, updateApiGitCommit] = useState(undefined)
   useEffect(() => {
@@ -29,3 +29,5 @@ export default () => {
     </p>
   )
 }
+
+export default About;

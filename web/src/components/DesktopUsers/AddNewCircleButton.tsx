@@ -7,7 +7,7 @@ interface Props {
   onCreate: (name: string) => void
 }
 
-export default (props: Props) => {
+const AddNewCircleButton = (props: Props) => {
   const [modalOpened, updateModalOpened] = useState(false)
 
   return (
@@ -36,3 +36,5 @@ export default (props: Props) => {
     </>
   )
 }
+
+export default AddNewCircleButton

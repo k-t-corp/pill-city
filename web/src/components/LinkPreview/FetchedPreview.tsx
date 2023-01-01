@@ -8,7 +8,7 @@ interface Props {
   onClick: () => void
 }
 
-export default (props: Props) => {
+const FetchedPreview = (props: Props) => {
   const {preview} = props
   if (preview.state !== 'fetched') {
     return null
@@ -46,3 +46,5 @@ export default (props: Props) => {
     </div>
   )
 }
+
+export default FetchedPreview

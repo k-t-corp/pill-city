@@ -14,7 +14,7 @@ interface Props {
   onDone: () => void
 }
 
-export default (props: Props) => {
+const AddPoll = (props: Props) => {
   const {choices, onChangeChoices} = props
   const [newChoiceText, updateNewChoiceText] = useState('')
 
@@ -63,3 +63,5 @@ export default (props: Props) => {
     </PillForm>
   )
 }
+
+export default AddPoll

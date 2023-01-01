@@ -6,7 +6,7 @@ interface Props {
   onClose: () => void
 }
 
-export default (props: Props) => {
+const UploadMedia = (props: Props) => {
   const onDrop = (e: React.DragEvent) => {
     e.preventDefault()
     props.onChangeMedias(e.dataTransfer.files)
@@ -41,3 +41,5 @@ export default (props: Props) => {
     </>
   )
 }
+
+export default UploadMedia

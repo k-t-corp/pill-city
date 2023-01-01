@@ -14,7 +14,7 @@ interface Props {
   placeholder?: string
 }
 
-export default (props: Props) => {
+const ContentTextarea = (props: Props) => {
   return (
     <ReactTextareaAutocomplete<User>
       className={props.textAreaClassName}
@@ -59,3 +59,5 @@ export default (props: Props) => {
     />
   )
 }
+
+export default ContentTextarea

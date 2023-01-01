@@ -11,13 +11,14 @@ interface Props {
   edgeless?: boolean
 }
 
-export default (props: Props) => {
+const PollComponent = (props: Props) => {
+  const [poll, updatePoll] = useState<Poll>(props.poll)
+  const [voting, updateVoting] = useState(false)
+
   if (!props.poll.choices || props.poll.choices.length === 0) {
     return null
   }
 
-  const [poll, updatePoll] = useState<Poll>(props.poll)
-  const [voting, updateVoting] = useState(false)
 
   return (
     <div style={{
@@ -75,3 +76,5 @@ export default (props: Props) => {
     </div>
   )
 }
+
+export default PollComponent

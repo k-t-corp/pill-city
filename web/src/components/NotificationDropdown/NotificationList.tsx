@@ -5,7 +5,7 @@ import {loadMoreNotifications} from "../../store/notificationsSlice";
 
 interface Props {}
 
-export default (_: Props) => {
+const NotificationList = (_: Props) => {
   const dispatch = useAppDispatch()
 
   const notifications = useAppSelector(state => state.notifications.notifications)
@@ -61,3 +61,5 @@ export default (_: Props) => {
     </div>
   )
 }
+
+export default NotificationList

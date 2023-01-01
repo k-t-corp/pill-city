@@ -25,11 +25,3 @@ export const pastTime = (time: number): string => {
   }
   return d
 }
-
-export const futureTime = (time: number): string => {
-  const d = deltaToString(time - nowSeconds())
-  if (!d) {
-    return new Date(time * 1000).toISOString().split('T')[0];
-  }
-  return d
-}

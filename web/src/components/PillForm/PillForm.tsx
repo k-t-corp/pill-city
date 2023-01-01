@@ -5,10 +5,12 @@ interface Props {
   children: JSX.Element[]
 }
 
-export default (props: Props) => {
+const PillForm = (props: Props) => {
   return (
     <div className='pill-form'>
       {props.children}
     </div>
   )
 }
+
+export default PillForm

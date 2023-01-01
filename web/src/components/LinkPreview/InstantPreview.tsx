@@ -50,7 +50,7 @@ interface Props {
   instantPreview: InstantPreviews
 }
 
-export default (props: Props) => {
+const InstantPreview = (props: Props) => {
   const { instantPreview } = props
 
   if ("youtubeVideoId" in instantPreview) {
@@ -63,3 +63,5 @@ export default (props: Props) => {
   }
   return null
 }
+
+export default InstantPreview

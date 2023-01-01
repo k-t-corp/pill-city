@@ -17,7 +17,7 @@ interface Props {
   deleteCircle: (circle: Circle) => void
 }
 
-export default (props: Props) => {
+const DesktopUsers = (props: Props) => {
   const {loading, users, followings, updateFollowings, circles, updateCircle, deleteCircle} = props
 
   if (loading) {
@@ -77,3 +77,5 @@ export default (props: Props) => {
     </div>
   )
 }
+
+export default DesktopUsers

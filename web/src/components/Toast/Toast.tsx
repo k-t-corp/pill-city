@@ -8,7 +8,7 @@ interface Props {
   dismissible: boolean
 }
 
-export default ({ children, id, dismissible }: Props) => {
+const ToastComponent = ({ children, id, dismissible }: Props) => {
   const { removeToast } = useToast();
 
   useEffect(() => {
@@ -33,3 +33,5 @@ export default ({ children, id, dismissible }: Props) => {
 
   return <div className='toast' style={{cursor: dismissible ? 'pointer' : 'default'}} onClick={onCLick}>{children}</div>
 }
+
+export default ToastComponent

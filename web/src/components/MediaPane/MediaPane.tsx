@@ -10,7 +10,9 @@ interface Props {
   oneRow?: boolean
 }
 
-export default (props: Props) => {
+const MediaPane = (props: Props) => {
+  const [showingMediaIndex, updateShowingMediaIndex] = useState(-1)
+
   if (props.mediaUrls.length === 0 && !props.usePlaceholder) {
     return null
   }
@@ -69,7 +71,6 @@ export default (props: Props) => {
     )
   }
 
-  const [showingMediaIndex, updateShowingMediaIndex] = useState(-1)
   const mediaUrls = props.mediaUrls
 
   return (
@@ -95,3 +96,5 @@ export default (props: Props) => {
     </>
   )
 }
+
+export default MediaPane

@@ -8,7 +8,7 @@ interface Props {
   user: User | null
 }
 
-export default (props: Props) => {
+const ClickableId = (props: Props) => {
   const history = useHistory()
   const { user } = props
 
@@ -32,3 +32,5 @@ export default (props: Props) => {
     </span>
   )
 }
+
+export default ClickableId

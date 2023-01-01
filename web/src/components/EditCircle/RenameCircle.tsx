@@ -12,7 +12,7 @@ interface Props {
   onClose: () => void
 }
 
-export default (props: Props) => {
+const RenameCircle = (props: Props) => {
   const {circle, onUpdate, onClose} = props
   const [name, updateName] = useState(circle.name)
 
@@ -39,3 +39,5 @@ export default (props: Props) => {
     </PillForm>
   )
 }
+
+export default RenameCircle

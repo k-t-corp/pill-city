@@ -11,7 +11,7 @@ interface Props {
   children: JSX.Element,
 }
 
-export default (props: Props) => {
+const PillDropdownMenu = (props: Props) => {
   const dropdownRef = useRef(null);
   const [isActive, updateIsActive] = useState(false);
 
@@ -56,3 +56,5 @@ export default (props: Props) => {
     </div>
   );
 };
+
+export default PillDropdownMenu

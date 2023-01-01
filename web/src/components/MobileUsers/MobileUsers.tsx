@@ -72,7 +72,7 @@ const UserCard = (props: UserCardProps) => {
   )
 }
 
-export default (props: Props) => {
+const MobileUsers = (props: Props) => {
   const {loading, users, followings, updateFollowings} = props
 
   let userCardElements = []
@@ -107,3 +107,5 @@ export default (props: Props) => {
     </div>
   )
 }
+
+export default MobileUsers

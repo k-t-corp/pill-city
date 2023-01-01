@@ -124,10 +124,12 @@ const MobileNavBar = () => {
   )
 }
 
-export default () => {
+const NavBar = () => {
   const isMobile = useMediaQuery({query: '(max-width: 750px)'})
 
   return (
     isMobile ? <MobileNavBar /> : <DesktopNavBar />
   )
 }
+
+export default NavBar

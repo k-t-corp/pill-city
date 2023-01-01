@@ -21,7 +21,7 @@ interface Props {
   disabled?: boolean
 }
 
-export default (props: Props) => {
+const PillButton = (props: Props) => {
   return (
     <div
       className='pill-button'
@@ -39,3 +39,5 @@ export default (props: Props) => {
     >{props.text}</div>
   )
 }
+
+export default PillButton
