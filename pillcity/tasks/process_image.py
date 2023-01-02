@@ -10,7 +10,8 @@ from pillcity.utils.s3 import get_s3_client
 from .celery import app, logger
 
 
-IMAGE_RESIZE_SIZE = (1920, 1080)
+IMAGE_RESIZE_16_9 = (1920, 1080)
+IMAGE_RESIZE_9_16 = (1080, 1920)
 
 
 def rgb_tuple_to_hex_str(rgb_tuple: Tuple[int, int, int]) -> str:
@@ -41,7 +42,11 @@ def process_image(_id: str):
         original_im = ImageOps.exif_transpose(Image.open(original_fp)).convert("RGBA")
         im = Image.new("RGBA", original_im.size, "WHITE")
         im.paste(original_im, mask=original_im)
-        im.thumbnail(IMAGE_RESIZE_SIZE)
+        original_width, original_height = original_im.size
+        if original_width > original_height:
+            im.thumbnail(IMAGE_RESIZE_16_9)
+        else:
+            im.thumbnail(IMAGE_RESIZE_9_16)
         im = im.convert('RGBA')
         im.save(resized_fp, 'webp')
 
@@ -57,14 +62,14 @@ def process_image(_id: str):
 
         logger.info(f"Extracting metadata from processed media {media.id}")
         resized_im = Image.open(resized_fp)
-        width, height = resized_im.size
+        resized_width, resized_height = resized_im.size
         dominant_color_hex = rgb_tuple_to_hex_str(ColorThief(resized_fp).get_color(quality=1))
 
         logger.info(f"Saving processed metadata for media {media.id}")
         media.processed = True
         media.processing = False
-        media.width = width
-        media.height = height
+        media.width = resized_width
+        media.height = resized_height
         media.dominant_color_hex = dominant_color_hex
         media.save()
 
