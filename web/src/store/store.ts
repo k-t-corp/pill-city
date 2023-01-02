@@ -25,7 +25,7 @@ export const persistKey = 'persist'
 const persistConfig = {
   key: persistKey,
   storage,
-  whitelist: ['me']
+  whitelist: ['me', 'home', 'notifications']
 }
 
 const persistedReducer = persistReducer(persistConfig, reducers);
