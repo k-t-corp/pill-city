@@ -3,7 +3,6 @@ import MediaPane from "../MediaPane/MediaPane";
 import React, {useState} from "react";
 import User from "../../models/User";
 import {useHotkeys} from "react-hotkeys-hook";
-import FormData from "form-data";
 import ApiError from "../../api/ApiError";
 import Post, {Comment, NestedComment} from "../../models/Post";
 import {useToast} from "../Toast/ToastProvider";
@@ -32,7 +31,7 @@ interface Props {
 const NewComment = (props: Props) => {
   const {content, updateContent} = props
   const [posting, updatePosting] = useState(false)
-  const [medias, updateMedias] = useState<File[]>([])
+  const [mediaFiles, updateMediaFiles] = useState<File[]>([])
   const [ownedMedias, updateOwnedMedias] = useState<Media[]>([])
   const [mediaOpened, updateMediaOpened] = useState(false)
 
@@ -42,7 +41,7 @@ const NewComment = (props: Props) => {
     if (posting) {
       return
     }
-    if (medias.length >= 1) {
+    if (mediaFiles.length >= 1) {
       addToast(`Only allowed to upload 1 image`);
       return
     }
@@ -55,11 +54,11 @@ const NewComment = (props: Props) => {
       }
       uploadedMedias.push(heic ? await convertHeicFileToPng(f) : f)
     }
-    updateMedias(medias.concat(uploadedMedias))
+    updateMediaFiles(mediaFiles.concat(uploadedMedias))
   }
 
   const isContentValid = () => {
-    return content.trim().length > 0 || medias.length > 0 || ownedMedias.length > 0
+    return content.trim().length > 0 || mediaFiles.length > 0 || ownedMedias.length > 0
   }
 
   useHotkeys('ctrl+enter', () => {
@@ -79,21 +78,14 @@ const NewComment = (props: Props) => {
   const sendComment = async () => {
     updatePosting(true)
 
-    // upload media
-    let mediaData = new FormData()
-    for (let i = 0; i < medias.length; i++) {
-      const blob = new Blob([medias[i]], {type: 'image/*'})
-      mediaData.append(`media${i}`, blob)
-    }
-
     if (props.replyingToComment) {
       // reply nested comment
       try {
-        const newNestedComment = await api.postNestedComment(
+        const newNestedComment = await api.createNestedComment(
           content,
           props.post.id,
           props.replyingToComment.id,
-          mediaData,
+          mediaFiles,
           ownedMedias.map(_ => _.object_name),
           props.replyingToNestedComment && props.replyingToNestedComment.id
         )
@@ -107,10 +99,10 @@ const NewComment = (props: Props) => {
       }
     } else {
       try {
-        const newComment = await api.postComment(
+        const newComment = await api.createComment(
           content,
           props.post.id,
-          mediaData,
+          mediaFiles,
           ownedMedias.map(_ => _.object_name)
         )
         props.addComment(newComment)
@@ -124,7 +116,7 @@ const NewComment = (props: Props) => {
     }
     updatePosting(false)
     updateContent('')
-    updateMedias([])
+    updateMediaFiles([])
     updateOwnedMedias([])
     props.afterSendingComment()
   }
@@ -169,8 +161,8 @@ const NewComment = (props: Props) => {
         </PillModal>
       </div>
       {
-        (medias.length + ownedMedias.length) > 0 &&
-          <MediaPane mediaUrls={medias.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.media_url))}/>
+        (mediaFiles.length + ownedMedias.length) > 0 &&
+          <MediaPane mediaUrls={mediaFiles.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.media_url))}/>
       }
       <div className="post-new-comment-buttons">
         <PhotographIcon

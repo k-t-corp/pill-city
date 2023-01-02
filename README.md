@@ -64,7 +64,7 @@ Make sure you have the server running
 ``` shell
 make dev-dump
 ```
-Use ID `kt` and password `1234` to log in
+Use ID `ika` and password `1234` to log in
 
 ## Run the web UI
 See [README for web](./web/README.md)

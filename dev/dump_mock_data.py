@@ -72,14 +72,11 @@ class User(object):
             media_filenames = []
         media_object_names = []
         if media_filenames:
-            media_filepaths = list(map(lambda fn: os.path.join('dev', 'mock_data_media', fn), media_filenames))
-            files = {}
-            for i, fp in enumerate(media_filepaths):
-                if i < 9:
-                    files['media' + str(i)] = open(fp, 'rb')
-            media_object_names = self.sess.post(f'/api/media', files=files).json()
-            for _, f in files.items():
-                f.close()
+            for fn in media_filenames:
+                fp = os.path.join('dev', 'mock_data_media', fn)
+                with open(fp, 'rb') as f:
+                    files = {'file': f}
+                    media_object_names.append(self.sess.post(f'/api/media', files=files).json()['object_name'])
 
         # post
         if circle_ids is None:
@@ -107,14 +104,11 @@ class User(object):
             media_filenames = []
         media_object_names = []
         if media_filenames:
-            media_filepaths = list(map(lambda fn: os.path.join('dev', 'mock_data_media', fn), media_filenames))
-            files = {}
-            for i, fp in enumerate(media_filepaths):
-                if i < 9:
-                    files['media' + str(i)] = open(fp, 'rb')
-            media_object_names = self.sess.post(f'/api/media', files=files).json()
-            for _, f in files.items():
-                f.close()
+            for fn in media_filenames:
+                fp = os.path.join('dev', 'mock_data_media', fn)
+                with open(fp, 'rb') as f:
+                    files = {'file': f}
+                    media_object_names.append(self.sess.post(f'/api/media', files=files).json()['object_name'])
 
         # comment
         if not mentioned_user_ids:
@@ -134,14 +128,11 @@ class User(object):
             media_filenames = []
         media_object_names = []
         if media_filenames:
-            media_filepaths = list(map(lambda fn: os.path.join('dev', 'mock_data_media', fn), media_filenames))
-            files = {}
-            for i, fp in enumerate(media_filepaths):
-                if i < 9:
-                    files['media' + str(i)] = open(fp, 'rb')
-            media_object_names = self.sess.post(f'/api/media', files=files).json()
-            for _, f in files.items():
-                f.close()
+            for fn in media_filenames:
+                fp = os.path.join('dev', 'mock_data_media', fn)
+                with open(fp, 'rb') as f:
+                    files = {'file': f}
+                    media_object_names.append(self.sess.post(f'/api/media', files=files).json()['object_name'])
 
         # comment
         if not mentioned_user_ids:

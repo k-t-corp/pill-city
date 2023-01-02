@@ -116,7 +116,6 @@ const NewPost = (props: Props) => {
     // parse post parameters
     const actualCircleIds = sharingScope.filter(cn => cn.value !== true).map(_ => _.value)
     const isPublic = sharingScope.filter(cn => cn.value === true).length !== 0
-    console.log(actualCircleIds, isPublic)
 
     // before sending post
     const toastId = addToast('Sending new post', false)
@@ -125,7 +124,7 @@ const NewPost = (props: Props) => {
     // send post
     let post: Post | null = null
     try {
-      post = await api.postPost(
+      post = await api.createPost(
         content,
         isPublic,
         actualCircleIds,

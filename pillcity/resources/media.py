@@ -20,7 +20,6 @@ from pillcity.utils.profiling import timer
 from .cache import r, RMediaUrl
 
 
-MaxMediaCount = 4
 GetMediaPageCount = 4
 
 
@@ -102,16 +101,14 @@ media_fields = {
 
 
 post_media_parser = reqparse.RequestParser()
-for i in range(MaxMediaCount):
-    post_media_parser.add_argument('media' + str(i), type=werkzeug.datastructures.FileStorage, location='files',
-                                   required=False, default=None)
+post_media_parser.add_argument('file', type=werkzeug.datastructures.FileStorage, location='files', required=True)
 
 
 get_media_parser = reqparse.RequestParser()
 get_media_parser.add_argument('page', type=int, required=True, location='args')
 
 
-class Media(Resource):
+class MediaResource(Resource):
     @jwt_required()
     def post(self):
         user_id = get_jwt_identity()
@@ -120,20 +117,14 @@ class Media(Resource):
             return {'msg': f'User {user_id} is not found'}, 404
 
         args = post_media_parser.parse_args()
-        media_files = []
-        for i in range(MaxMediaCount):
-            media_file = args['media' + str(i)]
-            if media_file:
-                media_files.append(media_file)
-        media_object_names = []
-        for media_file in media_files:
-            object_name_stem = f"media/{uuid.uuid4()}"
-            media_object = create_media(media_file, object_name_stem, user)
-            if not media_object:
-                return {'msg': f"Disallowed image type"}, 400
-            media_object_names.append(media_object.id)
-
-        return media_object_names, 201
+        media_file = args['file']
+        object_name_stem = f"media/{uuid.uuid4()}"
+        media_object = create_media(media_file, object_name_stem, user)
+        if not media_object:
+            return {'msg': f"Blacklisted image type"}, 400
+        return {
+            'object_name': media_object.id,
+        }, 201
 
     @jwt_required()
     @marshal_with(media_fields)
