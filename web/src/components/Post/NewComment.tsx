@@ -65,6 +65,7 @@ const NewComment = (props: Props) => {
       addToast(`Failed to upload some images`)
       return
     }
+    addToast(`Uploaded ${newFiles.length} images`, true)
     const newMediaFiles = newFiles.map((f, i) => {
       return {
         file: f,
