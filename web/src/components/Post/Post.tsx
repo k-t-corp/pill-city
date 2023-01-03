@@ -18,7 +18,7 @@ import {
   ShareIcon
 } from "@heroicons/react/solid";
 import PillDropdownMenu from "../PillDropdownMenu/PillDropdownMenu";
-import MediaV2Collage from "../MediaCollage/MediaV2Collage";
+import MediaV2Collage from "../MediaV2Collage/MediaV2Collage";
 import "./Post.css"
 import Poll from '../Poll/Poll';
 import PostAttachments, {PostAttachment} from "./PostAttachments";

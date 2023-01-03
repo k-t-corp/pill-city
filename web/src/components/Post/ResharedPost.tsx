@@ -4,7 +4,7 @@ import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import {ResharedPost} from "../../models/Post";
 import './ResharedPost.css'
 import ClickableId from "../ClickableId/ClickableId";
-import MediaV2Collage from "../MediaCollage/MediaV2Collage";
+import MediaV2Collage from "../MediaV2Collage/MediaV2Collage";
 import Poll from "../Poll/Poll";
 import User from "../../models/User";
 import FormattedContent from "../FormattedContent/FormattedContent";

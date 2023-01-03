@@ -10,7 +10,7 @@ import api from "../../api/Api";
 import "./Comment.css"
 import {DotsVerticalIcon} from "@heroicons/react/solid";
 import PillDropdownMenu from "../PillDropdownMenu/PillDropdownMenu";
-import MediaV2Collage from "../MediaCollage/MediaV2Collage";
+import MediaV2Collage from "../MediaV2Collage/MediaV2Collage";
 import EntityState from "../../models/EntityState";
 import FormattedContent from "../FormattedContent/FormattedContent";
 
