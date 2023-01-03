@@ -1,11 +1,11 @@
-.media-collage-item {
+.media-v2-collage-item {
     cursor: pointer;
     object-fit: cover;
     width: 100%;
     border-radius: 4px;
 }
 
-.media-collage-pswp-content {
+.media-v2-collage-pswp-content {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -13,12 +13,12 @@
     transform: translate(-50%, -50%);
 }
 
-.media-collage-pswp-image {
+.media-v2-collage-pswp-image {
     width: auto;
 }
 
 @media only screen and (max-width: 750px) {
-    .media-collage-pswp-content {
+    .media-v2-collage-pswp-content {
         position: absolute;
         top: 50%;
         left: auto;
@@ -26,7 +26,7 @@
         transform: translateY(-50%);
     }
 
-    .media-collage-pswp-image {
+    .media-v2-collage-pswp-image {
         width: 100%;
     }
 }

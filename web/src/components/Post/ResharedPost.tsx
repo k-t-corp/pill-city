@@ -4,7 +4,7 @@ import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import {ResharedPost} from "../../models/Post";
 import './ResharedPost.css'
 import ClickableId from "../ClickableId/ClickableId";
-import MediaCollage from "../MediaCollage/MediaCollage";
+import MediaV2Collage from "../MediaCollage/MediaV2Collage";
 import Poll from "../Poll/Poll";
 import User from "../../models/User";
 import FormattedContent from "../FormattedContent/FormattedContent";
@@ -45,7 +45,7 @@ const ResharedPostComponent = (props: Props) => {
       <div className='post-reshared-attachments-wrapper'>
         {
           resharedFrom.state !== 'deleted' &&
-          <MediaCollage mediaUrls={resharedFrom.media_urls_v2} />
+          <MediaV2Collage mediaUrls={resharedFrom.media_urls_v2} />
         }
         {
           resharedFrom.state !== 'deleted' && resharedFrom.poll !== null &&

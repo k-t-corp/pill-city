@@ -8,7 +8,7 @@ import api from "../../api/Api";
 import './NestedComment.css'
 import {DotsVerticalIcon, ReplyIcon} from "@heroicons/react/solid";
 import PillDropdownMenu from "../PillDropdownMenu/PillDropdownMenu";
-import MediaCollage from "../MediaCollage/MediaCollage";
+import MediaV2Collage from "../MediaCollage/MediaV2Collage";
 import EntityState from "../../models/EntityState";
 import FormattedContent from "../FormattedContent/FormattedContent";
 
@@ -89,7 +89,7 @@ const NestedCommentComponent = (props: Props) => {
         {
           !deleting && !deleted && !blocked && nestedComment.media_urls_v2.length > 0 &&
           <div>
-            <MediaCollage mediaUrls={[nestedComment.media_urls_v2[0]]}/>
+            <MediaV2Collage mediaUrls={[nestedComment.media_urls_v2[0]]}/>
           </div>
         }
         <div className='post-nested-comment-actions'>
