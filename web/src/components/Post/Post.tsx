@@ -18,7 +18,7 @@ import {
   ShareIcon
 } from "@heroicons/react/solid";
 import PillDropdownMenu from "../PillDropdownMenu/PillDropdownMenu";
-import MediaCollage from "../MediaCollage/MediaCollage";
+import MediaV2Collage from "../MediaV2Collage/MediaV2Collage";
 import "./Post.css"
 import Poll from '../Poll/Poll';
 import PostAttachments, {PostAttachment} from "./PostAttachments";
@@ -197,7 +197,7 @@ const PostComponent = (props: Props) => {
   if (mediaUrls.length > 0) {
     postAttachments.push({
       title: 'Media',
-      el: <MediaCollage
+      el: <MediaV2Collage
         key={'post-media'}
         mediaUrls={mediaUrls}
       />})

@@ -10,7 +10,7 @@ import api from "../../api/Api";
 import "./Comment.css"
 import {DotsVerticalIcon} from "@heroicons/react/solid";
 import PillDropdownMenu from "../PillDropdownMenu/PillDropdownMenu";
-import MediaCollage from "../MediaCollage/MediaCollage";
+import MediaV2Collage from "../MediaV2Collage/MediaV2Collage";
 import EntityState from "../../models/EntityState";
 import FormattedContent from "../FormattedContent/FormattedContent";
 
@@ -102,7 +102,7 @@ const CommentComponent = (props: Props) => {
           {
             !deleting && !deleted && !blocked && comment.media_urls_v2.length > 0 &&
             <div>
-              <MediaCollage mediaUrls={[comment.media_urls_v2[0]]}/>
+              <MediaV2Collage mediaUrls={[comment.media_urls_v2[0]]}/>
             </div>
           }
         </div>

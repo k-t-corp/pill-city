@@ -1,3 +1,26 @@
+.new-post {
+    overflow-y: scroll;
+    max-height: 70vh;
+}
+
+@media only screen and (max-width: 750px) {
+    .new-post {
+        overflow-y: auto;
+        max-height: calc(100vh - 50px);
+    }
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.new-post::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.new-post {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
 .new-post-avatar {
     width: 50px;
     height: 50px;

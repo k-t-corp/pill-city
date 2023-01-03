@@ -52,6 +52,8 @@ class FormattedContent:
     references: List[str]
 
 def format_content(content: str) -> FormattedContent:
+    if not content:
+        return FormattedContent([], [])
     # split the content into individual chars
     # and mark each of them with format according to the regexes
     chars = [FormattedChar(c, set(), -1, True) for c in content] # type: List[FormattedChar]

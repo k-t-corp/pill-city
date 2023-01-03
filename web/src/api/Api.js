@@ -155,35 +155,8 @@ export class Api {
     return res.data
   }
 
-  async postPost(content, isPublic, circleIds, reshareable, resharedFrom, newPostMedias, newPostPollChoices) {
+  async createPost(content, isPublic, circleIds, reshareable, resharedFrom, mediaObjectNames, newPostPollChoices) {
     Api.throwOnUnauthorized()
-
-    // gather uploaded media and their indices
-    let uploadedMediaFormData = new FormData()
-    let uploadedMediaIndex = 0
-    for (let i = 0; i < newPostMedias.length; i++) {
-      const m = newPostMedias[i]
-      if (m.type === 'Uploaded') {
-        const blob = new Blob([m.media], {type: 'image/*'})
-        uploadedMediaFormData.append(`media${uploadedMediaIndex++}`, blob)
-      }
-    }
-
-    // upload media
-    let uploadedMediaObjNames = []
-    if (uploadedMediaFormData.length !== 0) {
-      uploadedMediaObjNames = await this.uploadMedia(uploadedMediaFormData)
-    }
-
-    // build media object names
-    let uploadedMediaObjNamesPtr = 0
-    const mediaObjectNames = newPostMedias.map(m => {
-      if (m.type === 'Uploaded') {
-        return uploadedMediaObjNames[uploadedMediaObjNamesPtr++]
-      } else {
-        return m.media.object_name
-      }
-    })
 
     // build poll related parameters
     let pollChoices = []
@@ -212,11 +185,22 @@ export class Api {
     return res.data
   }
 
-  async uploadMedia(mediaData) {
+  async createMediaAndGetObjectNames(files) {
+    return Promise.all(files.map(async (f) => {
+      const res = await this.createMedia(f)
+      return res['object_name']
+    }));
+  }
+
+  async createMedia(file) {
     Api.throwOnUnauthorized()
+    const blob = new Blob([file], {type: 'image/*'})
+    const form = new FormData()
+    form.append(`file`, blob)
+
     const res = await this.axiosInstance.post(
       `/media`,
-      mediaData,
+      form,
       {
         headers: {
           'accept': 'application/json',
@@ -226,22 +210,6 @@ export class Api {
       }
     )
     if (res.status !== 201) {
-      throw new ApiError(res)
-    }
-    return res.data
-  }
-
-  async getOwnedMedia(pageNumber) {
-    Api.throwOnUnauthorized()
-    const res = await this.axiosInstance.get(
-      `/media`,
-      {
-        params: {
-          page: pageNumber
-        }
-      }
-    )
-    if (res.status !== 200) {
       throw new ApiError(res)
     }
     return res.data
@@ -312,18 +280,14 @@ export class Api {
     return res.data
   }
 
-  async postComment(content, postId, mediaData, ownedMediaObjectNames) {
+  async createComment(content, postId, mediaObjectNames) {
     Api.throwOnUnauthorized()
-    let allMediaObjNames = []
-    if (mediaData.length !== 0) {
-      allMediaObjNames = await this.uploadMedia(mediaData)
-    }
-    allMediaObjNames = allMediaObjNames.concat(ownedMediaObjectNames)
+
     const res = await this.axiosInstance.post(
       `/posts/${postId}/comment`,
       {
         content,
-        media_object_names: allMediaObjNames
+        media_object_names: mediaObjectNames
       }
     )
     if (res.status !== 201) {
@@ -343,18 +307,14 @@ export class Api {
     return res.data
   }
 
-  async postNestedComment(content, postId, commentId, mediaData, ownedMediaObjectNames, replyToNestedCommentId) {
+  async createNestedComment(content, postId, commentId, mediaObjectNames, replyToNestedCommentId) {
     Api.throwOnUnauthorized()
-    let allMediaObjNames = []
-    if (mediaData.length !== 0) {
-      allMediaObjNames = await this.uploadMedia(mediaData)
-    }
-    allMediaObjNames = allMediaObjNames.concat(ownedMediaObjectNames)
+
     const res = await this.axiosInstance.post(
       `/posts/${postId}/comment/${commentId}/comment`,
       {
         content,
-        media_object_names: allMediaObjNames,
+        media_object_names: mediaObjectNames,
         reply_to_comment_id: replyToNestedCommentId
       }
     )
@@ -747,92 +707,6 @@ export class Api {
       `/rssToken`
     )
     if (res.status !== 201) {
-      throw new ApiError(res)
-    }
-    return res.data
-  }
-
-  async createMyMediaSet() {
-    const res = await this.axiosInstance.post(
-      `/mediaSets`,
-      {
-        name: 'default'
-      }
-    )
-    if (res.status !== 201) {
-      throw new ApiError(res)
-    }
-    return res.data
-  }
-
-  async getMyMediaSet() {
-    const res = await this.axiosInstance.get(
-      `/mediaSets?mine=1`
-    )
-    if (res.status !== 200) {
-      throw new ApiError(res)
-    }
-    if (res.data.length === 0) {
-      return null
-    }
-    return res.data[0]
-  }
-
-  async getPublicMediaSets() {
-    const res = await this.axiosInstance.get(
-      `/mediaSets?mine=0`
-    )
-    if (res.status !== 200) {
-      throw new ApiError(res)
-    }
-    return res.data
-  }
-
-  async makeMyMediaSetPublic() {
-    const defaultMediaSetId = (await this.getMyMediaSet()).id
-    const res = await this.axiosInstance.patch(
-      `/mediaSet/${defaultMediaSetId}/public`
-    )
-    if (res.status !== 200) {
-      throw new ApiError(res)
-    }
-    return res.data
-  }
-
-  async addMediaToMyMediaSet(objectName) {
-    const defaultMediaSetId = (await this.getMyMediaSet()).id
-    const res = await this.axiosInstance.post(
-      `/mediaSet/${defaultMediaSetId}/media`,
-      { object_name: objectName }
-    )
-    if (res.status !== 200) {
-      throw new ApiError(res)
-    }
-    return res.data
-  }
-
-  async removeMediaFromMyMediaSet(objectName) {
-    const defaultMediaSetId = (await this.getMyMediaSet()).id
-    const res = await this.axiosInstance.delete(
-      `/mediaSet/${defaultMediaSetId}/media`,
-      {
-        data: {
-          object_name: objectName
-        }
-      }
-    )
-    if (res.status !== 200) {
-      throw new ApiError(res)
-    }
-    return res.data
-  }
-
-  async deleteMyMediaSet() {
-    const defaultMediaSetId = (await this.getMyMediaSet()).id
-    const res = await this.axiosInstance.delete(
-      `/mediaSet/${defaultMediaSetId}`
-    )
-    if (res.status !== 200) {
       throw new ApiError(res)
     }
     return res.data

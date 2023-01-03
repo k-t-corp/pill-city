@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react'
 import {useHotkeys} from "react-hotkeys-hook";
-import MediaPane from "../MediaPane/MediaPane";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
 import Circle from "../../models/Circle";
@@ -11,10 +10,8 @@ import ContentTextarea from "../ContentTextarea/ContentTextarea";
 import {useAppSelector} from "../../store/hooks";
 import {ChartSquareBarIcon, PhotographIcon} from "@heroicons/react/solid";
 import PillModal from "../PillModal/PillModal";
-import AddMedia from "../AddMedia/AddMedia";
 import api from "../../api/Api";
 import "./NewPost.css"
-import Media from "../../models/Media";
 import {arrayMoveImmutable} from "array-move";
 import AddPoll from "../AddPoll/AddPoll";
 import {QuestionMarkCircleIcon} from "@heroicons/react/outline";
@@ -22,6 +19,8 @@ import PillCheckbox from "../PillCheckbox/PillCheckbox";
 import Select, {OnChangeValue} from "react-select";
 import convertHeicFileToPng from "../../utils/convertHeicFileToPng";
 import FormattedContent from "../FormattedContent/FormattedContent";
+import EditingMediaCollage from "../EditingMediaCollage/EditingMediaCollage";
+import UploadMedia from "../UploadMedia/UploadMedia";
 
 interface Props {
   beforePosting: () => void
@@ -37,18 +36,14 @@ interface SharingScopeOption {
 }
 const SharingScopePublicOption = {label: '🌏 Public', value: true}
 
-interface NewPostMediaUploaded {
-  type: 'Uploaded'
-  media: File
-}
-
-interface NewPostMediaOwned {
-  type: 'Owned'
-  media: Media
-}
-
 export interface AddPollChoice {
   text: string
+}
+
+interface MediaFile {
+  file: File
+  objectName: string
+  localObjectUrl: string
 }
 
 const NewPost = (props: Props) => {
@@ -58,7 +53,7 @@ const NewPost = (props: Props) => {
   const [content, updateContent] = useState<string>("")
   const [sharingScope, updateSharingScope] = useState<SharingScopeOption[]>([])
   const [resharable, updateResharable] = useState(true)
-  const [medias, updateMedias] = useState<(NewPostMediaUploaded | NewPostMediaOwned)[]>([])
+  const [mediaFiles, updateMediaFiles] = useState<MediaFile[]>([])
   const [pollChoices, updatePollChoices] = useState<AddPollChoice[]>([])
   const [addingMedia, updateAddingMedia] = useState(false)
   const [addingPoll, updateAddingPoll] = useState(false)
@@ -91,14 +86,14 @@ const NewPost = (props: Props) => {
   })
 
   const isValid = () => {
-    return (content.trim().length !== 0 || medias.length !== 0) && sharingScope.length !== 0
+    return (content.trim().length !== 0 || mediaFiles.length !== 0) && sharingScope.length !== 0
   }
 
   const reset = () => {
     updateContent('')
     updateSharingScope([])
     updateResharable(true)
-    updateMedias([])
+    updateMediaFiles([])
     updatePollChoices([])
   }
 
@@ -116,7 +111,6 @@ const NewPost = (props: Props) => {
     // parse post parameters
     const actualCircleIds = sharingScope.filter(cn => cn.value !== true).map(_ => _.value)
     const isPublic = sharingScope.filter(cn => cn.value === true).length !== 0
-    console.log(actualCircleIds, isPublic)
 
     // before sending post
     const toastId = addToast('Sending new post', false)
@@ -125,13 +119,13 @@ const NewPost = (props: Props) => {
     // send post
     let post: Post | null = null
     try {
-      post = await api.postPost(
+      post = await api.createPost(
         content,
         isPublic,
         actualCircleIds,
         props.resharedPost === null ? resharable : true,
         props.resharedPost === null ? null : props.resharedPost.id,
-        props.resharedPost === null ? medias : [],
+        props.resharedPost === null ? mediaFiles.map(_ => _.objectName) : [],
         pollChoices
       );
     } catch (e) {
@@ -157,23 +151,34 @@ const NewPost = (props: Props) => {
     if (posting) {
       return
     }
-    if (medias.length >= 4) {
+    if (mediaFiles.length + fl.length > 4) {
       addToast(`Only allowed to upload 4 images`)
       return
     }
-    let uploadedMedias: NewPostMediaUploaded[] = []
+    let newFiles: File[] = []
     for (let i = 0; i < fl.length; i++) {
       const f = fl[i]
       const heic = f.name.toLowerCase().endsWith(".heic")
       if (heic) {
         addToast("Converting heic image, please wait a while before image shows up...", true)
       }
-      uploadedMedias.push({
-        type: 'Uploaded',
-        media: heic ? await convertHeicFileToPng(f) : f,
-      })
+      newFiles.push(heic ? await convertHeicFileToPng(f) : f)
     }
-    updateMedias(medias.concat(uploadedMedias))
+    addToast(`Uploading ${newFiles.length} images`, true)
+    const newObjectNames = await api.createMediaAndGetObjectNames(newFiles)
+    if (newObjectNames.length !== newFiles.length) {
+      addToast(`Failed to upload some images`)
+      return
+    }
+    addToast(`Uploaded ${newFiles.length} images`, true)
+    const newMediaFiles = newFiles.map((f, i) => {
+      return {
+        file: f,
+        objectName: newObjectNames[i],
+        localObjectUrl: URL.createObjectURL(f)
+      }
+    })
+    updateMediaFiles(mediaFiles.concat(newMediaFiles))
   }
 
   const sharingScopeOnChange = (options: OnChangeValue<SharingScopeOption, true>) => {
@@ -227,43 +232,24 @@ const NewPost = (props: Props) => {
         </div>
       }
       {props.resharedPost === null &&
-        <>
-          <MediaPane
-            mediaUrls={medias.map(m => {
-              if (m.type === 'Uploaded') {
-                return URL.createObjectURL(m.media)
-              } else {
-                return m.media.media_url
-              }
-            })}
-            mediaOperations={[
-              {
-                op: '<',
-                action: i => {
-                  if (i === 0) {
-                    return
-                  }
-                  updateMedias(arrayMoveImmutable(medias, i - 1, i))
-                }
-              },
-              {
-                op: 'x',
-                action: i => {
-                  updateMedias(medias.filter((_, ii) => i !== ii))
-                }
-              },
-              {
-                op: '>',
-                action: i => {
-                  if (i === medias.length - 1) {
-                    return
-                  }
-                  updateMedias(arrayMoveImmutable(medias, i, i + 1))
-                }
-              },
-            ]}
-          />
-        </>
+        <EditingMediaCollage
+          mediaUrls={mediaFiles.map(_ => _.localObjectUrl)}
+          onMoveLeft={i => {
+            if (i === 0) {
+              return
+            }
+            updateMediaFiles(arrayMoveImmutable(mediaFiles, i - 1, i))
+          }}
+          onMoveRight={i => {
+            if (i === mediaFiles.length - 1) {
+              return
+            }
+            updateMediaFiles(arrayMoveImmutable(mediaFiles, i, i + 1))
+          }}
+          onDelete={i => {
+            updateMediaFiles(mediaFiles.filter((_, ii) => i !== ii))
+          }}
+        />
       }
       <div className="new-post-text-box-container">
         {props.resharedPost === null &&
@@ -271,16 +257,10 @@ const NewPost = (props: Props) => {
             <PillModal
               isOpen={addingMedia}
               onClose={() => {updateAddingMedia(false)}}
-              title={medias.length > 0 ? "Edit media" : "Add media"}
+              title={mediaFiles.length > 0 ? "Edit media" : "Add media"}
             >
-              <AddMedia
+              <UploadMedia
                 onChangeMedias={onChangeMedias}
-                onSelectOwnedMedia={m => {
-                  updateMedias(medias.concat([{
-                    type: 'Owned',
-                    media: m
-                  }]))
-                }}
                 onClose={() => {updateAddingMedia(false)}}
               />
             </PillModal>
