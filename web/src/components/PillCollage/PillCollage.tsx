@@ -27,7 +27,7 @@ const PillCollage = (props: Props) => {
         gridColumnEnd: 3,
         gridRowStart: 1,
         gridRowEnd: 3,
-        itemHeight: '309px',
+        itemHeight: '304px',
       }
     ]
   } else if (items.length === 2) {
@@ -108,7 +108,7 @@ const PillCollage = (props: Props) => {
     <div
       className={containerClassName || ''}
       style={{
-        height: '309px',
+        height: '304px',
         display: 'grid',
         gridTemplateColumns: '1fr 1fr',
         gridTemplateRows: '150px 150px',
