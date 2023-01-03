@@ -9,13 +9,12 @@ import summary from "../../utils/summary";
 import ContentTextarea from "../ContentTextarea/ContentTextarea";
 import api from "../../api/Api";
 import {PhotographIcon} from "@heroicons/react/solid";
-import AddMedia from "../AddMedia/AddMedia";
 import PillModal from "../PillModal/PillModal";
-import Media from "../../models/Media";
 import convertHeicFileToPng from "../../utils/convertHeicFileToPng";
 import './NewComment.css'
 import EditingMediaCollage from "../EditingMediaCollage/EditingMediaCollage";
 import {arrayMoveImmutable} from "array-move";
+import UploadMedia from "../UploadMedia/UploadMedia";
 
 interface Props {
   me: User,
@@ -29,11 +28,16 @@ interface Props {
   afterSendingComment: () => void
 }
 
+interface MediaFile {
+  file: File
+  objectName: string
+  localObjectUrl: string
+}
+
 const NewComment = (props: Props) => {
   const {content, updateContent} = props
   const [posting, updatePosting] = useState(false)
-  const [mediaFiles, updateMediaFiles] = useState<File[]>([])
-  const [ownedMedias, updateOwnedMedias] = useState<Media[]>([])
+  const [mediaFiles, updateMediaFiles] = useState<MediaFile[]>([])
   const [mediaOpened, updateMediaOpened] = useState(false)
 
   const { addToast } = useToast()
@@ -42,24 +46,37 @@ const NewComment = (props: Props) => {
     if (posting) {
       return
     }
-    if (mediaFiles.length >= 1) {
+    if (mediaFiles.length + fl.length > 1) {
       addToast(`Only allowed to upload 1 image`);
       return
     }
-    let uploadedMedias: File[] = []
+    let newFiles: File[] = []
     for (let i = 0; i < fl.length; i++) {
       const f = fl[i]
       const heic = f.name.toLowerCase().endsWith(".heic")
       if (heic) {
         addToast("Converting heic image, please wait a while before image shows up...", true)
       }
-      uploadedMedias.push(heic ? await convertHeicFileToPng(f) : f)
+      newFiles.push(heic ? await convertHeicFileToPng(f) : f)
     }
-    updateMediaFiles(mediaFiles.concat(uploadedMedias))
+    addToast(`Uploading ${newFiles.length} images`, true)
+    const newObjectNames = await api.createMediaAndGetObjectNames(newFiles)
+    if (newObjectNames.length !== newFiles.length) {
+      addToast(`Failed to upload some images`)
+      return
+    }
+    const newMediaFiles = newFiles.map((f, i) => {
+      return {
+        file: f,
+        objectName: newObjectNames[i],
+        localObjectUrl: URL.createObjectURL(f)
+      }
+    })
+    updateMediaFiles(mediaFiles.concat(newMediaFiles))
   }
 
   const isContentValid = () => {
-    return content.trim().length > 0 || mediaFiles.length > 0 || ownedMedias.length > 0
+    return content.trim().length > 0 || mediaFiles.length > 0
   }
 
   useHotkeys('ctrl+enter', () => {
@@ -86,8 +103,7 @@ const NewComment = (props: Props) => {
           content,
           props.post.id,
           props.replyingToComment.id,
-          mediaFiles,
-          ownedMedias.map(_ => _.object_name),
+          mediaFiles.map(_ => _.objectName),
           props.replyingToNestedComment && props.replyingToNestedComment.id
         )
         props.addNestedComment(newNestedComment)
@@ -103,8 +119,7 @@ const NewComment = (props: Props) => {
         const newComment = await api.createComment(
           content,
           props.post.id,
-          mediaFiles,
-          ownedMedias.map(_ => _.object_name)
+          mediaFiles.map(_ => _.objectName)
         )
         props.addComment(newComment)
       } catch (e) {
@@ -118,7 +133,6 @@ const NewComment = (props: Props) => {
     updatePosting(false)
     updateContent('')
     updateMediaFiles([])
-    updateOwnedMedias([])
     props.afterSendingComment()
   }
 
@@ -152,20 +166,20 @@ const NewComment = (props: Props) => {
           onClose={() => {updateMediaOpened(false)}}
           title="Add media"
         >
-          <AddMedia
+          <UploadMedia
             onChangeMedias={onChangeMedias}
-            onSelectOwnedMedia={m => {
-              updateOwnedMedias([m])
-            }}
             onClose={() => {updateMediaOpened(false)}}
           />
         </PillModal>
       </div>
       {
-        (mediaFiles.length + ownedMedias.length) > 0 &&
+        mediaFiles.length > 0 &&
           <EditingMediaCollage
-            mediaUrls={mediaFiles.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.media_url))}
+            mediaUrls={mediaFiles.map(_ => _.localObjectUrl)}
             onMoveLeft={i => {
+              if (i === 0) {
+                return
+              }
               updateMediaFiles(arrayMoveImmutable(mediaFiles, i - 1, i))
             }}
             onMoveRight={i => {

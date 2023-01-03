@@ -155,33 +155,8 @@ export class Api {
     return res.data
   }
 
-  async createPost(content, isPublic, circleIds, reshareable, resharedFrom, newPostMedias, newPostPollChoices) {
+  async createPost(content, isPublic, circleIds, reshareable, resharedFrom, mediaObjectNames, newPostPollChoices) {
     Api.throwOnUnauthorized()
-
-    // gather uploaded media and their indices
-    const uploadedFiles = []
-    for (let i = 0; i < newPostMedias.length; i++) {
-      const m = newPostMedias[i]
-      if (m.type === 'Uploaded') {
-        uploadedFiles.push(m.media)
-      }
-    }
-
-    // upload media
-    let uploadedMediaObjNames = []
-    if (uploadedFiles.length !== 0) {
-      uploadedMediaObjNames = await this.createMediaAndGetObjectNames(uploadedFiles)
-    }
-
-    // build media object names
-    let uploadedMediaObjNamesPtr = 0
-    const mediaObjectNames = newPostMedias.map(m => {
-      if (m.type === 'Uploaded') {
-        return uploadedMediaObjNames[uploadedMediaObjNamesPtr++]
-      } else {
-        return m.media.object_name
-      }
-    })
 
     // build poll related parameters
     let pollChoices = []
@@ -305,18 +280,14 @@ export class Api {
     return res.data
   }
 
-  async createComment(content, postId, mediaFiles, ownedMediaObjectNames) {
+  async createComment(content, postId, mediaObjectNames) {
     Api.throwOnUnauthorized()
-    let allMediaObjNames = []
-    if (mediaFiles.length !== 0) {
-      allMediaObjNames = await this.createMediaAndGetObjectNames(mediaFiles)
-    }
-    allMediaObjNames = allMediaObjNames.concat(ownedMediaObjectNames)
+
     const res = await this.axiosInstance.post(
       `/posts/${postId}/comment`,
       {
         content,
-        media_object_names: allMediaObjNames
+        media_object_names: mediaObjectNames
       }
     )
     if (res.status !== 201) {
@@ -336,18 +307,14 @@ export class Api {
     return res.data
   }
 
-  async createNestedComment(content, postId, commentId, mediaFiles, ownedMediaObjectNames, replyToNestedCommentId) {
+  async createNestedComment(content, postId, commentId, mediaObjectNames, replyToNestedCommentId) {
     Api.throwOnUnauthorized()
-    let mediaObjNames = []
-    if (mediaFiles.length !== 0) {
-      mediaObjNames = await this.createMediaAndGetObjectNames(mediaFiles)
-    }
-    mediaObjNames = mediaObjNames.concat(ownedMediaObjectNames)
+
     const res = await this.axiosInstance.post(
       `/posts/${postId}/comment/${commentId}/comment`,
       {
         content,
-        media_object_names: mediaObjNames,
+        media_object_names: mediaObjectNames,
         reply_to_comment_id: replyToNestedCommentId
       }
     )
