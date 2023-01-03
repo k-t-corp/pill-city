@@ -1,5 +1,4 @@
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
-import MediaPane from "../MediaPane/MediaPane";
 import React, {useState} from "react";
 import User from "../../models/User";
 import {useHotkeys} from "react-hotkeys-hook";
@@ -15,6 +14,7 @@ import PillModal from "../PillModal/PillModal";
 import Media from "../../models/Media";
 import convertHeicFileToPng from "../../utils/convertHeicFileToPng";
 import './NewComment.css'
+import EditingMediaCollage from "../EditingMediaCollage/EditingMediaCollage";
 
 interface Props {
   me: User,
@@ -162,7 +162,9 @@ const NewComment = (props: Props) => {
       </div>
       {
         (mediaFiles.length + ownedMedias.length) > 0 &&
-          <MediaPane mediaUrls={mediaFiles.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.media_url))}/>
+          <EditingMediaCollage
+            mediaUrls={mediaFiles.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.media_url))}
+          />
       }
       <div className="post-new-comment-buttons">
         <PhotographIcon

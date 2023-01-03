@@ -1,0 +1,11 @@
+.editing-media-collage {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: flex;
+}
+
+.editing-media-collage-img {
+    object-fit: cover;
+    width: 100%;
+    border-radius: 4px;
+}

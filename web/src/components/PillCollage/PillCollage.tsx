@@ -11,11 +11,12 @@ interface CssGridProperties {
 export type PillCollageChildFactory = (properties: CssGridProperties) => React.ReactNode
 
 interface Props {
+  containerClassName?: string
   items: PillCollageChildFactory[]
 }
 
 const PillCollage = (props: Props) => {
-  const {items} = props
+  const {items, containerClassName} = props
 
   let childCssGridProperties: CssGridProperties[]
 
@@ -105,6 +106,7 @@ const PillCollage = (props: Props) => {
 
   return (
     <div
+      className={containerClassName || ''}
       style={{
         height: '309px',
         display: 'grid',
