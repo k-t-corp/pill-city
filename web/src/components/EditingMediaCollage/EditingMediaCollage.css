@@ -4,8 +4,47 @@
     display: flex;
 }
 
+.editing-media-collage-img-container {
+    position: relative;
+    z-index: 1;
+}
+
 .editing-media-collage-img {
     object-fit: cover;
     width: 100%;
     border-radius: 4px;
+    position: absolute;
+    z-index: 2;
+    cursor: pointer;
+}
+
+.editing-media-collage-img-index {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 3;
+    background-color: white;
+    width:20px;
+    height: 20px;
+    border-radius: 50%;
+    color: #727272;
+    text-align: center;
+}
+
+.editing-media-collage-img-ops {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 3;
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    border-radius: 4px;
+}
+
+.editing-media-collage-img-op {
+    width: 20px;
+    height: 100%;
+    color: #727272;
+    cursor: pointer;
 }

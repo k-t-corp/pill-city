@@ -15,6 +15,7 @@ import Media from "../../models/Media";
 import convertHeicFileToPng from "../../utils/convertHeicFileToPng";
 import './NewComment.css'
 import EditingMediaCollage from "../EditingMediaCollage/EditingMediaCollage";
+import {arrayMoveImmutable} from "array-move";
 
 interface Props {
   me: User,
@@ -164,6 +165,18 @@ const NewComment = (props: Props) => {
         (mediaFiles.length + ownedMedias.length) > 0 &&
           <EditingMediaCollage
             mediaUrls={mediaFiles.map(URL.createObjectURL).concat(ownedMedias.map(_ => _.media_url))}
+            onMoveLeft={i => {
+              updateMediaFiles(arrayMoveImmutable(mediaFiles, i - 1, i))
+            }}
+            onMoveRight={i => {
+              if (i === mediaFiles.length - 1) {
+                return
+              }
+              updateMediaFiles(arrayMoveImmutable(mediaFiles, i, i + 1))
+            }}
+            onDelete={i => {
+              updateMediaFiles(mediaFiles.filter((_, ii) => i !== ii))
+            }}
           />
       }
       <div className="post-new-comment-buttons">

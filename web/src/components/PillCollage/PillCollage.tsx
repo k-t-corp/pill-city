@@ -37,14 +37,14 @@ const PillCollage = (props: Props) => {
         gridColumnEnd: 2,
         gridRowStart: 1,
         gridRowEnd: 3,
-        itemHeight: '309px',
+        itemHeight: '304px',
       },
       {
         gridColumnStart: 2,
         gridColumnEnd: 3,
         gridRowStart: 1,
         gridRowEnd: 3,
-        itemHeight: '309px',
+        itemHeight: '304px',
       }
     ]
   } else if (items.length === 3) {
@@ -54,7 +54,7 @@ const PillCollage = (props: Props) => {
         gridColumnEnd: 2,
         gridRowStart: 1,
         gridRowEnd: 3,
-        itemHeight: '309px',
+        itemHeight: '304px',
       },
       {
         gridColumnStart: 2,

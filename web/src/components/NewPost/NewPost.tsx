@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react'
 import {useHotkeys} from "react-hotkeys-hook";
-import MediaPane from "../MediaPane/MediaPane";
 import RoundAvatar from "../RoundAvatar/RoundAvatar";
 import ClickableId from "../ClickableId/ClickableId";
 import Circle from "../../models/Circle";
@@ -22,6 +21,7 @@ import PillCheckbox from "../PillCheckbox/PillCheckbox";
 import Select, {OnChangeValue} from "react-select";
 import convertHeicFileToPng from "../../utils/convertHeicFileToPng";
 import FormattedContent from "../FormattedContent/FormattedContent";
+import EditingMediaCollage from "../EditingMediaCollage/EditingMediaCollage";
 
 interface Props {
   beforePosting: () => void
@@ -226,43 +226,27 @@ const NewPost = (props: Props) => {
         </div>
       }
       {props.resharedPost === null &&
-        <>
-          <MediaPane
-            mediaUrls={medias.map(m => {
-              if (m.type === 'Uploaded') {
-                return URL.createObjectURL(m.media)
-              } else {
-                return m.media.media_url
-              }
-            })}
-            mediaOperations={[
-              {
-                op: '<',
-                action: i => {
-                  if (i === 0) {
-                    return
-                  }
-                  updateMedias(arrayMoveImmutable(medias, i - 1, i))
-                }
-              },
-              {
-                op: 'x',
-                action: i => {
-                  updateMedias(medias.filter((_, ii) => i !== ii))
-                }
-              },
-              {
-                op: '>',
-                action: i => {
-                  if (i === medias.length - 1) {
-                    return
-                  }
-                  updateMedias(arrayMoveImmutable(medias, i, i + 1))
-                }
-              },
-            ]}
-          />
-        </>
+        <EditingMediaCollage
+          mediaUrls={medias.map(m => {
+            if (m.type === 'Uploaded') {
+              return URL.createObjectURL(m.media)
+            } else {
+              return m.media.media_url
+            }
+          })}
+          onMoveLeft={i => {
+            updateMedias(arrayMoveImmutable(medias, i - 1, i))
+          }}
+          onMoveRight={i => {
+            if (i === medias.length - 1) {
+              return
+            }
+            updateMedias(arrayMoveImmutable(medias, i, i + 1))
+          }}
+          onDelete={i => {
+            updateMedias(medias.filter((_, ii) => i !== ii))
+          }}
+        />
       }
       <div className="new-post-text-box-container">
         {props.resharedPost === null &&
