@@ -5,7 +5,7 @@ A social network reminiscent of Google+ with enhancements
 This is an API server written in Python/Flask. It stores information in a MongoDB database, and uses S3 to store media.
 
 ## Dependencies
-* `Python 3.9` and [`virtualenv`](http://packaging.python.org/guides/installing-using-pip-and-virtualenv/)
+* `Python 3.11` and [`virtualenv`](http://packaging.python.org/guides/installing-using-pip-and-virtualenv/)
 * [`terraform`](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
 * [`saturn`, a development CLI for my Python stacks](https://github.com/k-t-corp/saturn)
 * `jq`
