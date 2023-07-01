@@ -1,28 +1,8 @@
 import os
-import urllib.parse
 import linkpreview
 from mongoengine import connect, disconnect
 from pillcity.models import LinkPreview, LinkPreviewState
 from .celery import app, logger
-
-twitter_domains = [
-    "twitter.com",
-    "www.twitter.com",
-    "mobile.twitter.com"
-]
-
-
-def _is_twitter(url: str) -> bool:
-    parsed_url = urllib.parse.urlparse(url)
-    if parsed_url.netloc in twitter_domains:
-        return True
-    return False
-
-
-def _get_nitter_url(url: str) -> str:
-    parsed_url = urllib.parse.urlparse(url)
-    parsed_url = parsed_url._replace(netloc=os.environ['NITTER_HOST'])
-    return parsed_url.geturl()
 
 
 @app.task()
@@ -31,14 +11,10 @@ def generate_link_preview(url: str):
     logger.info(f'Generating link preview for url {url}')
     link_preview = LinkPreview.objects.get(url=url)  # type: LinkPreview
     try:
-        processed_url = url
-        if _is_twitter(url):
-            processed_url = _get_nitter_url(url)
-
         proxies = {}
         if link_preview.errored_retries > 0 and 'LINK_PREVIEW_RETRY_PROXIES' in os.environ:
             proxies = {"http": os.environ['LINK_PREVIEW_RETRY_PROXIES'], "https": os.environ['LINK_PREVIEW_RETRY_PROXIES']}
-        preview = linkpreview.link_preview(processed_url, proxies=proxies)
+        preview = linkpreview.link_preview(url, proxies=proxies)
 
         link_preview.title = preview.title
         link_preview.subtitle = preview.description
