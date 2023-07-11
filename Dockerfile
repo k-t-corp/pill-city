@@ -50,4 +50,4 @@ COPY uwsgi.ini .
 ENV PATH="./venv/bin:$PATH"
 ENV PYTHONFAULTHANDLER=1
 EXPOSE 5000
-ENTRYPOINT ["uwsgi", "--ini", "uwsgi.ini"]
+ENTRYPOINT ["/home/app/venv/bin/uwsgi", "--ini", "uwsgi.ini"]
