@@ -44,7 +44,7 @@ class User(object):
 
     def update_avatar(self, fn):
         self._raise_on_unauthenticated()
-        fp = os.path.join('dev', "mock_data_avatars", fn)
+        fp = os.path.join('mock-data', "mock_data_avatars", fn)
         with open(fp, 'rb') as f:
             self.sess.post(f'/api/me/avatar', files={
                 'file': f,
@@ -73,7 +73,7 @@ class User(object):
         media_object_names = []
         if media_filenames:
             for fn in media_filenames:
-                fp = os.path.join('dev', 'mock_data_media', fn)
+                fp = os.path.join('mock-data', 'mock_data_media', fn)
                 with open(fp, 'rb') as f:
                     files = {'file': f}
                     media_object_names.append(self.sess.post(f'/api/media', files=files).json()['object_name'])
@@ -105,7 +105,7 @@ class User(object):
         media_object_names = []
         if media_filenames:
             for fn in media_filenames:
-                fp = os.path.join('dev', 'mock_data_media', fn)
+                fp = os.path.join('mock-data', 'mock_data_media', fn)
                 with open(fp, 'rb') as f:
                     files = {'file': f}
                     media_object_names.append(self.sess.post(f'/api/media', files=files).json()['object_name'])
@@ -129,7 +129,7 @@ class User(object):
         media_object_names = []
         if media_filenames:
             for fn in media_filenames:
-                fp = os.path.join('dev', 'mock_data_media', fn)
+                fp = os.path.join('mock-data', 'mock_data_media', fn)
                 with open(fp, 'rb') as f:
                     files = {'file': f}
                     media_object_names.append(self.sess.post(f'/api/media', files=files).json()['object_name'])
@@ -184,12 +184,12 @@ def main():
     bucket.objects.all().delete()
 
     # Drop everything in mongodb
-    mongodb = pymongo.MongoClient("mongodb://localhost:27017/minigplus")
+    mongodb = pymongo.MongoClient("mongodb://mongo:27017/minigplus")
     print("Vacuuming mongodb")
     mongodb.drop_database("minigplus")
 
     # Drop everything in redis
-    r = redis.from_url("redis://localhost:6379")
+    r = redis.from_url("redis://redis:6379")
     print("Vacuuming redis")
     r.flushall()
 
@@ -198,51 +198,49 @@ def main():
     signup_user('ghost')
     official = signup_user('official')
     kt = signup_user('kt', 'kt.jpeg', 'big KT')
-    ika = signup_user('ika', 'ika.jpeg', 'SMALL ika')
     soybean = signup_user('soybean', 'soybean.png', '騷豆')
     xiaolaba = signup_user('xiaolaba', 'xiaolaba.png', '小喇叭')
     buki = signup_user('buki', 'buki.png', '付不起')
     kyo = signup_user('kyo', 'kyo.png', '許工')
     duff = signup_user('duff', 'duff.jpg', '豆腐老師')
     kele = signup_user('kele', 'kele.jpg', '可樂')
-    ahuhu = signup_user('ahuhu', 'ahuhu.png', '啊呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼呼')
     luxiyuan = signup_user('luxiyuan', 'luxiyuan.jpeg', '陸西圓')
     roddyzhang = signup_user('roddyzhang', 'roddyzhang.png', 'Roddy Zhang')
     mawei = signup_user('mawei', 'mawei.jpg', '馬尾')
     horo = signup_user('horo', 'horo.png')
-    everybody = ['kt', 'soybean', 'xiaolaba', 'buki', 'kyo', 'duff', 'kele', 'ahuhu', 'luxiyuan', 'roddyzhang', 'mawei',
+    everybody = ['kt', 'soybean', 'xiaolaba', 'buki', 'kyo', 'duff', 'kele', 'luxiyuan', 'roddyzhang', 'mawei',
                  'horo']
-    everybody_obj = [kt, soybean, xiaolaba, buki, kyo, duff, kele, ahuhu, luxiyuan, roddyzhang, mawei, horo, ika]
+    everybody_obj = [kt, soybean, xiaolaba, buki, kyo, duff, kele, luxiyuan, roddyzhang, mawei, horo]
 
     # Create some circles
     kt_gplus_circle_id = kt.create_circle('g+')
-    ahuhu_limited_circle_id = ahuhu.create_circle('limited')
+    kele_limited_circle_id = kele.create_circle('limited')
 
     # Add people to circles
-    ahuhu.add_user_to_circle(ahuhu_limited_circle_id, 'ika')
-    ahuhu.add_user_to_circle(ahuhu_limited_circle_id, 'kele')
-    ahuhu.add_user_to_circle(ahuhu_limited_circle_id, 'duff')
+    kele.add_user_to_circle(kele_limited_circle_id, 'luxiyuan')
+    kele.add_user_to_circle(kele_limited_circle_id, 'xiaolaba')
+    kele.add_user_to_circle(kele_limited_circle_id, 'duff')
 
     # Add some followings
     for user in everybody:
-        ika.follow(user)
+        kele.follow(user)
 
     # Create some posts
     official.create_post('Welcome to pill.city! '
                          'Click the Users tab on top (or the left most tab if you are on a phone) '
                          'to start following people!', is_public=True)
-    with open('./dev/xss.txt') as f:
+    with open('./mock-data/xss.txt') as f:
         kt.create_post(f.read(), is_public=True, circle_ids=[kt_gplus_circle_id])
     kt.create_post(' _Hello, World!_ ', is_public=True)
-    xiaomoyu_id = ika.create_post('大家好我是小墨魚 qwq', is_public=True)
-    ika.create_post('@buki  -叔叔快看- ', is_public=True, media_filenames=['gaygineer.jpg'], mentioned_user_ids=['buki'])
+    kt.create_post('@buki  -叔叔快看- ', is_public=True, media_filenames=['gaygineer.jpg'], mentioned_user_ids=['buki'])
     sizhongfangshi_id = soybean.create_post('谁告诉你连着wifi就不会耗流量了？ ！ \n\nApp的网络访问方式起码在Android就有四种，其中一种是仅使用GSM网络',
                                             is_public=True, reshareable=True)
     huoguomei_id = roddyzhang.create_post("打个DOTA打到一般忽然壕语文的麦克风里出现妹子催促他快点打完吃火锅， -耿耿于怀啊- \n\n -JB文必须死- ", is_public=True,
                                           media_filenames=['huoguomei.png'])
-    heisi_id = ahuhu.create_post(None, is_public=False, circle_ids=[ahuhu_limited_circle_id],
+    heisi_id = kele.create_post(None, is_public=False, circle_ids=[kele_limited_circle_id],
                                  reshareable=True,
                                  media_filenames=['heisi1.jpeg', 'heisi2.jpeg', 'heisi3.jpeg', 'heisi4.jpeg'])
+    kotori_id = kt.create_post('啊啊啊啊啊啊阿啊啊啊啊啊啊啊啊 @kele', is_public=True, mentioned_user_ids=['kele'], media_filenames=['kotori1.jpg', 'kotori2.jpg', 'kotori3.jpg', 'kotori4.jpg'])
     weiji_id = horo.create_post('你这种伪基佬真淫家早该B了！ @mawei ', is_public=True, mentioned_user_ids=['mawei'])
     sizhongzhuanfa_id = luxiyuan.create_post(
         '''有一回，骚豆菊苣对我说道：“你用过Android么？”我略略点一点头。
@@ -252,16 +250,16 @@ def main():
 我愈不耐烦了，努着嘴走远。骚豆菊苣刚用指甲蘸了酒，想在柜上画图，见我毫不热心，便又叹一口气，显出极惋惜的样子。''',
         is_public=True, reshareable=True, reshared_from=sizhongfangshi_id)
     kele.create_post('啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊', is_public=True, reshareable=True, reshared_from=heisi_id)
-    kotori_id = kt.create_post('啊啊啊啊啊啊阿啊啊啊啊啊啊啊啊 @ika', is_public=True, mentioned_user_ids=['ika'], media_filenames=['kotori1.jpg', 'kotori2.jpg', 'kotori3.jpg', 'kotori4.jpg'])
-    ika.create_post('23333 https://china.kyodonews.net/news/2021/10/625d1318d9e5-6.html', is_public=True)
-    ika.create_post('http://fsadfsdfqwghfjbasfhasgbfnads.com', is_public=True)
-    ahuhu.create_post('https://twitter.com/U_S_O/status/1358737558155399169', is_public=True)
-    ahuhu.create_post('https://mobile.twitter.com/U_S_O/status/1358737558155399169', is_public=True)
+    kotori_id = kt.create_post('啊啊啊啊啊啊阿啊啊啊啊啊啊啊啊 @kele', is_public=True, mentioned_user_ids=['kele'], media_filenames=['kotori1.jpg', 'kotori2.jpg', 'kotori3.jpg', 'kotori4.jpg'])
+    kt.create_post('23333 https://china.kyodonews.net/news/2021/10/625d1318d9e5-6.html', is_public=True)
+    kt.create_post('http://fsadfsdfqwghfjbasfhasgbfnads.com', is_public=True)
+    kele.create_post('https://twitter.com/U_S_O/status/1358737558155399169', is_public=True)
+    kele.create_post('https://mobile.twitter.com/U_S_O/status/1358737558155399169', is_public=True)
     kt.create_post('https://twitter.com/daily_keke', is_public=True)
     kt.create_post('https://mobile.twitter.com/daily_keke', is_public=True)
     kt.create_post('https://www.youtube.com/watch?v=y8OnoxKotPQ', is_public=True)
     kt.create_post('https://m.youtube.com/watch?v=y8OnoxKotPQ', is_public=True)
-    ahuhu.create_post('https://www.pixiv.net/en/artworks/91872507', is_public=True)
+    kele.create_post('https://www.pixiv.net/en/artworks/91872507', is_public=True)
     kt.create_post('test 1', is_public=True, media_filenames=['sif1.png'])
     kt.create_post('test 2', is_public=True, media_filenames=['sif1.png', 'sif2.png'])
     kt.create_post('test 3', is_public=True, media_filenames=['sif1.png', 'sif2.png', 'sif3.png'])
@@ -276,23 +274,20 @@ def main():
             user.create_reaction(huoguomei_id, '🔥')
         if i < 9:
             user.create_reaction(huoguomei_id, '➕')
-        if i < 8:
-            user.create_reaction(xiaomoyu_id, '➕')
 
     # Create some comments
     duff.create_comment(heisi_id, '啊啊啊啊啊啊啊啊啊')
-    ika.create_comment(heisi_id, '四齋蒸鵝心')
+    kele.create_comment(heisi_id, '四齋蒸鵝心')
     mawei.create_comment(weiji_id, '毛的！！')
     weiji_comment_id = mawei.create_comment(weiji_id, '过几天我就真的要搞基了好吧！！')
     horo.create_nested_comment(weiji_id, weiji_comment_id, '。。。')
     horo.create_nested_comment(weiji_id, weiji_comment_id, '为啥')
     mawei.create_nested_comment(weiji_id, weiji_comment_id, '@horo 都把人家约到家里了好吧！！', ['horo'])
-    kt.create_comment(xiaomoyu_id, '你好我是 kt')
     kyo_kt_kotori_comment_id = kyo.create_comment(kotori_id, None, media_filenames=['szzex1.jpg'])
-    ika_kt_kotori_comment_id = ika.create_comment(kotori_id, '四齋蒸鵝心', media_filenames=['szzex2.jpg'])
-    ika_kt_kotori_comment2_id = ika.create_comment(kotori_id, None, media_filenames=['szzex2.jpg'])
-    ika.create_nested_comment(kotori_id, ika_kt_kotori_comment_id, '四齋蒸鵝心', media_filenames=['szzex2.jpg'])
-    ika.create_nested_comment(kotori_id, ika_kt_kotori_comment2_id, None, media_filenames=['szzex2.jpg'])
+    kele_kt_kotori_comment_id = kele.create_comment(kotori_id, '四齋蒸鵝心', media_filenames=['szzex2.jpg'])
+    kele_kt_kotori_comment2_id = kele.create_comment(kotori_id, None, media_filenames=['szzex2.jpg'])
+    kele.create_nested_comment(kotori_id, kele_kt_kotori_comment_id, '四齋蒸鵝心', media_filenames=['szzex2.jpg'])
+    kele.create_nested_comment(kotori_id, kele_kt_kotori_comment2_id, None, media_filenames=['szzex2.jpg'])
     kyo.delete_comment(kotori_id, kyo_kt_kotori_comment_id)
     kt.delete_post(kotori_id)
 

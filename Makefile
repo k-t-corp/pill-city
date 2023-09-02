@@ -1,15 +1,11 @@
-dev-deps:
-		python3 -m venv venv
-		./venv/bin/pip install -r requirements.txt
-
 dev-aws-setup:
-		./dev-aws-setup.sh
+		./scripts/dev-aws-setup.sh
 
 dev-release:
-		set -o allexport; source .env; ./venv/bin/python release.py
+		./scripts/dev-release.sh
 
 dev-dump:
-		set -o allexport; source .env; ./venv/bin/python ./dev/dump_mock_data.py
+		./scripts/dump-mock-data.sh
 
 test:
-		./venv/bin/nosetests
+		nosetests
