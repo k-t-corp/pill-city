@@ -10,7 +10,7 @@ if [ ! -f public_key.pem ]; then
   echo "Generating CloudFront signing public key"
   openssl rsa -pubout -in private_key.pem -out public_key.pem
 fi
-CF_SIGNER_PRIVATE_KEY_ENCODED=$(base64 -i private_key.pem)
+CF_SIGNER_PRIVATE_KEY_ENCODED=$(base64 -w 0 -i private_key.pem)
 
 echo "Applying Terraform"
 export AWS_PROFILE=PillCityDevTerraform
@@ -24,10 +24,24 @@ CF_DISTRIBUTION_DOMAIN_NAME=$(cat terraform.tfstate | jq -r '.resources[] | sele
 
 popd || exit
 
-echo "Please replace the following lines in .env file"
-echo "S3_BUCKET_NAME=${S3_BUCKET_NAME}"
-echo "AWS_ACCESS_KEY=${AWS_ACCESS_KEY}"
-echo "AWS_SECRET_KEY=${AWS_SECRET_KEY}"
-echo "CF_SIGNER_PRIVATE_KEY_ENCODED=${CF_SIGNER_PRIVATE_KEY_ENCODED}"
-echo "CF_SIGNER_KEY_ID=${CF_SIGNER_KEY_ID}"
-echo "CF_DISTRIBUTION_DOMAIN_NAME=${CF_DISTRIBUTION_DOMAIN_NAME}"
+if ! grep -q S3_BUCKET_NAME= ".env"; then
+  echo "S3_BUCKET_NAME=${S3_BUCKET_NAME}" >> .env
+fi
+if ! grep -q AWS_ACCESS_KEY= ".env"; then
+  echo "AWS_ACCESS_KEY=${AWS_ACCESS_KEY}" >> .env
+fi
+if ! grep -q AWS_SECRET_KEY= ".env"; then
+  echo "AWS_SECRET_KEY=${AWS_SECRET_KEY}" >> .env
+fi
+if ! grep -q CF_SIGNER_PRIVATE_KEY_ENCODED= ".env"; then
+  echo "CF_SIGNER_PRIVATE_KEY_ENCODED=${CF_SIGNER_PRIVATE_KEY_ENCODED}" >> .env
+fi
+if ! grep -q CF_SIGNER_KEY_ID= ".env"; then
+  echo "CF_SIGNER_KEY_ID=${CF_SIGNER_KEY_ID}" >> .env
+fi
+if ! grep -q CF_DISTRIBUTION_DOMAIN_NAME= ".env"; then
+  echo "CF_DISTRIBUTION_DOMAIN_NAME=${CF_DISTRIBUTION_DOMAIN_NAME}" >> .env
+fi
+
+rm pill-city-dev-env.zip
+zip pill-city-dev-env.zip terraform/private_key.pem terraform/public_key.pem terraform/terraform.tfstate .env
