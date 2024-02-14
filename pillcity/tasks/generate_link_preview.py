@@ -41,7 +41,7 @@ def generate_link_preview(url: str):
             processed_url = _get_nitter_url(url)
 
         proxies = {}
-        if link_preview.errored_retries > 0 and 'LINK_PREVIEW_RETRY_PROXIES' in os.environ:
+        if link_preview.errored_retries > 0 and 'LINK_PREVIEW_RETRY_PROXIES' in os.environ and not _is_twitter(url):
             proxies = {"http": os.environ['LINK_PREVIEW_RETRY_PROXIES'], "https": os.environ['LINK_PREVIEW_RETRY_PROXIES']}
         preview = linkpreview.link_preview(processed_url, proxies=proxies)
 
