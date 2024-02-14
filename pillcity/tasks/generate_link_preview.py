@@ -8,7 +8,10 @@ from .celery import app, logger
 twitter_domains = [
     "twitter.com",
     "www.twitter.com",
-    "mobile.twitter.com"
+    "mobile.twitter.com",
+    "x.com",
+    "www.x.com",
+    "mobile.x.com"
 ]
 
 
@@ -22,6 +25,8 @@ def _is_twitter(url: str) -> bool:
 def _get_nitter_url(url: str) -> str:
     parsed_url = urllib.parse.urlparse(url)
     parsed_url = parsed_url._replace(netloc=os.environ['NITTER_HOST'])
+    nitter_https = os.environ['NITTER_HTTPS'] == 'true'
+    parsed_url = parsed_url._replace(scheme='https' if nitter_https else 'http')
     return parsed_url.geturl()
 
 
